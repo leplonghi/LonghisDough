@@ -194,7 +194,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <div
       id="recipe-card"
-      className="h-full rounded-2xl bg-white p-4 shadow-lg transition-colors duration-300 dark:bg-slate-800 sm:p-6 lg:p-8"
+      className="h-full rounded-2xl bg-white p-4 shadow-lg transition-colors duration-300 dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-6 lg:p-8"
     >
       <div className="flex items-center justify-between">
         <div className="h-8 w-8"></div> {/* Spacer */}

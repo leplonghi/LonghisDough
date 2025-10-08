@@ -64,7 +64,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   };
 
   return (
-    <div className="space-y-8 rounded-2xl bg-white p-6 shadow-lg transition-colors duration-300 dark:bg-slate-800 sm:p-8">
+    <div className="space-y-8 rounded-2xl bg-white p-6 shadow-lg transition-colors duration-300 dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-8">
       <FormSection title="Recipe Style">
         <div className="grid grid-cols-3 gap-3">
           <ChoiceButton
