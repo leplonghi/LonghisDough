@@ -8,15 +8,19 @@ import {
 export const YEAST_OPTIONS = [
   {
     value: YeastType.IDY,
-    label: 'Instant Dry Yeast (IDY)',
+    labelKey: 'yeast.idy',
     defaultPercentage: 0.5,
   },
   {
     value: YeastType.ADY,
-    label: 'Active Dry Yeast (ADY)',
+    labelKey: 'yeast.ady',
     defaultPercentage: 0.7,
   },
-  { value: YeastType.FRESH, label: 'Fresh Yeast', defaultPercentage: 1.5 },
+  {
+    value: YeastType.FRESH,
+    labelKey: 'yeast.fresh',
+    defaultPercentage: 1.5,
+  },
 ];
 
 export const RECIPE_STYLE_PRESETS: Record<RecipeStyle, Partial<DoughConfig>> =

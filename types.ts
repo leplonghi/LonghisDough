@@ -1,4 +1,4 @@
-// Fix: Replaced incorrect content with actual type definitions. This file should define and export types, not constants.
+// FIX: Define and export enums and types. The previous content was incorrect, causing circular dependencies.
 export enum YeastType {
   IDY = 'IDY',
   ADY = 'ADY',
@@ -6,18 +6,19 @@ export enum YeastType {
 }
 
 export enum RecipeStyle {
-  NAPOLETANA = 'Napoletana',
+  NAPOLETANA = 'NAPOLETANA',
   NY = 'NY',
-  ROMANA = 'Romana',
+  ROMANA = 'ROMANA',
 }
 
 export enum FermentationTechnique {
-  DIRECT = 'Direct',
-  POOLISH = 'Poolish',
-  BIGA = 'Biga',
+  DIRECT = 'DIRECT',
+  POOLISH = 'POOLISH',
+  BIGA = 'BIGA',
 }
 
-export type Unit = 'g' | 'oz';
+export type Unit = 'g' | 'oz' | 'cups';
+export type Locale = 'en' | 'pt' | 'es';
 
 export interface DoughConfig {
   numPizzas: number;

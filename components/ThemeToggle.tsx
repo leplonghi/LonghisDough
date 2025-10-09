@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../i18n';
 
 type Theme = 'light' | 'dark';
 
@@ -42,11 +43,16 @@ const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => {
+  const { t } = useTranslation();
+  const label =
+    theme === 'light'
+      ? t('header.switch_to_dark')
+      : t('header.switch_to_light');
   return (
     <button
       onClick={toggleTheme}
       className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={label}
     >
       {theme === 'light' ? (
         <MoonIcon className="h-6 w-6" />

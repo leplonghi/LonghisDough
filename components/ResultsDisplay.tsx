@@ -9,6 +9,16 @@ import {
   WeightIcon,
   DownloadIcon,
 } from './IconComponents';
+import { gramsToVolume } from '../helpers';
+import { useTranslation } from '../i18n';
+
+// Inform TypeScript that these libraries are available on the window object
+declare global {
+  interface Window {
+    jspdf: any;
+    html2canvas: any;
+  }
+}
 
 interface ResultsDisplayProps {
   results: DoughResult;
@@ -70,43 +80,47 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   unit,
   onUnitChange,
 }) => {
+  const { t } = useTranslation();
   const GRAMS_TO_OUNCES = 0.035274;
 
-  const formatValue = (
+  const volumeUnits = {
+    cups: t('units.cups'),
+    tbsp: t('units.tbsp'),
+    tsp: t('units.tsp'),
+  };
+
+  const formatWeight = (
     valueInGrams: number,
     precision: { g: number; oz: number },
   ) => {
     if (unit === 'oz') {
       const valueInOunces = valueInGrams * GRAMS_TO_OUNCES;
-      return valueInOunces.toFixed(precision.oz);
+      return `${valueInOunces.toFixed(precision.oz)} ${t('units.oz')}`;
     }
-    return valueInGrams.toFixed(precision.g);
+    return `${valueInGrams.toFixed(precision.g)} ${t('units.g')}`;
   };
 
   const handleExportPDF = () => {
-    const { jsPDF } = window as any;
-    const html2canvas = window as any;
+    const { jsPDF } = window.jspdf;
+    const html2canvas = window.html2canvas;
 
     const contentToExport = document.getElementById('recipe-card');
 
     if (!contentToExport || !jsPDF || !html2canvas) {
-      console.error(
-        'PDF generation failed: A required library or element is missing.',
-      );
+      console.error('PDF generation failed: A required library or element is missing.');
+      alert('Sorry, there was an error exporting the PDF. Please try again later.');
       return;
     }
 
+    const elementBgColor = window.getComputedStyle(contentToExport).backgroundColor;
+
     html2canvas(contentToExport, {
       scale: 2,
-      ignoreElements: (element: Element) =>
-        element.classList.contains('no-print'),
+      backgroundColor: elementBgColor,
+      ignoreElements: (element: Element) => element.classList.contains('no-print'),
     }).then((canvas: any) => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4',
-      });
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       const canvasAspectRatio = canvas.width / canvas.height;
@@ -124,8 +138,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       const yPos = (pdfHeight - imgFinalHeight) / 2;
 
       const today = new Date();
-      const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD
-      const fileName = `Longhis-Pizza-Recipe-${dateString}.pdf`;
+      const dateString = today.toISOString().split('T')[0];
+      const fileName = `DoughLabPro-Recipe-${dateString}.pdf`;
 
       pdf.addImage(imgData, 'PNG', xPos, yPos, imgFinalWidth, imgFinalHeight);
       pdf.save(fileName);
@@ -150,41 +164,61 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         {ingredients.flour !== undefined && (
           <ResultRow
             icon={<FlourIcon />}
-            label="Flour"
-            value={`${formatValue(ingredients.flour, { g: 0, oz: 1 })} ${unit}`}
-            note="The foundation of your dough. '00' flour is traditional for Neapolitan."
+            label={t('results.flour')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('flour', ingredients.flour, volumeUnits)
+                : formatWeight(ingredients.flour, { g: 0, oz: 1 })
+            }
+            note={t('results.notes.flour')}
           />
         )}
         {ingredients.water !== undefined && (
           <ResultRow
             icon={<WaterIcon />}
-            label="Water"
-            value={`${formatValue(ingredients.water, { g: 0, oz: 1 })} ${unit}`}
-            note="Controls dough consistency. Use cold water for long fermentation."
+            label={t('results.water')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('water', ingredients.water, volumeUnits)
+                : formatWeight(ingredients.water, { g: 0, oz: 1 })
+            }
+            note={t('results.notes.water')}
           />
         )}
         {ingredients.salt !== undefined && (
           <ResultRow
             icon={<SaltIcon />}
-            label={`Salt (${config.salt.toFixed(1)}%)`}
-            value={`${formatValue(ingredients.salt, { g: 2, oz: 3 })} ${unit}`}
-            note="Strengthens gluten and adds flavor. Add away from yeast."
+            label={`${t('results.salt')} (${config.salt.toFixed(1)}%)`}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('salt', ingredients.salt, volumeUnits)
+                : formatWeight(ingredients.salt, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.salt')}
           />
         )}
         {ingredients.oil !== undefined && (
           <ResultRow
             icon={<OilIcon />}
-            label={`Oil (${config.oil.toFixed(1)}%)`}
-            value={`${formatValue(ingredients.oil, { g: 2, oz: 3 })} ${unit}`}
-            note="Adds flavor and softness. Omitted in traditional Neapolitan."
+            label={`${t('results.oil')} (${config.oil.toFixed(1)}%)`}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('oil', ingredients.oil, volumeUnits)
+                : formatWeight(ingredients.oil, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.oil')}
           />
         )}
         {ingredients.yeast !== undefined && (
           <ResultRow
             icon={<YeastIcon />}
-            label="Yeast"
-            value={`${formatValue(ingredients.yeast, { g: 2, oz: 3 })} ${unit}`}
-            note="ADY may need activation. IDY can be mixed in directly."
+            label={t('results.yeast')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('yeast', ingredients.yeast, volumeUnits)
+                : formatWeight(ingredients.yeast, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.yeast')}
           />
         )}
       </div>
@@ -199,11 +233,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       <div className="flex items-center justify-between">
         <div className="h-8 w-8"></div> {/* Spacer */}
         <h2 className="text-center text-2xl font-bold text-slate-900 dark:text-white">
-          Your Recipe
+          {t('results.title')}
         </h2>
         <button
           onClick={handleExportPDF}
-          aria-label="Export recipe to PDF"
+          aria-label={t('results.export_pdf_aria')}
           className="no-print rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800"
         >
           <DownloadIcon className="h-6 w-6" />
@@ -222,87 +256,127 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
             }`}
           >
-            Grams (g)
+            {t('results.grams')}
           </button>
           <button
             type="button"
             onClick={() => onUnitChange('oz')}
             aria-pressed={unit === 'oz'}
-            className={`rounded-r-lg px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 ${
+            className={`border-x border-slate-300 px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 dark:border-slate-600 ${
               unit === 'oz'
                 ? 'bg-lime-500 text-white font-semibold shadow-md'
                 : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
             }`}
           >
-            Ounces (oz)
+            {t('results.ounces')}
+          </button>
+          <button
+            type="button"
+            onClick={() => onUnitChange('cups')}
+            aria-pressed={unit === 'cups'}
+            className={`rounded-r-lg px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 ${
+              unit === 'cups'
+                ? 'bg-lime-500 text-white font-semibold shadow-md'
+                : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
+            }`}
+          >
+            {t('results.cups')}
           </button>
         </div>
       </div>
 
       {config.fermentationTechnique !== FermentationTechnique.DIRECT &&
         results.preferment &&
-        renderRecipeSection(`Preferment (${config.fermentationTechnique})`, {
-          flour: results.preferment.flour,
-          water: results.preferment.water,
-          yeast: results.preferment.yeast,
-        })}
+        renderRecipeSection(
+          t('results.preferment_title', {
+            technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
+          }),
+          {
+            flour: results.preferment.flour,
+            water: results.preferment.water,
+            yeast: results.preferment.yeast,
+          },
+        )}
 
       {config.fermentationTechnique !== FermentationTechnique.DIRECT &&
       results.finalDough ? (
-        renderRecipeSection('Final Dough', results.finalDough)
+        renderRecipeSection(t('results.final_dough_title'), results.finalDough)
       ) : (
         <div className="space-y-1">
           <ResultRow
             icon={<FlourIcon />}
-            label="Flour"
-            value={`${formatValue(results.totalFlour, { g: 0, oz: 1 })} ${unit}`}
-            note="The foundation of your dough. '00' flour is traditional for Neapolitan."
+            label={t('results.flour')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('flour', results.totalFlour, volumeUnits)
+                : formatWeight(results.totalFlour, { g: 0, oz: 1 })
+            }
+            note={t('results.notes.flour')}
           />
           <ResultRow
             icon={<WaterIcon />}
-            label="Water"
-            value={`${formatValue(results.totalWater, { g: 0, oz: 1 })} ${unit}`}
-            note="Controls dough consistency. Use cold water for long fermentation."
+            label={t('results.water')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('water', results.totalWater, volumeUnits)
+                : formatWeight(results.totalWater, { g: 0, oz: 1 })
+            }
+            note={t('results.notes.water')}
           />
           <ResultRow
             icon={<SaltIcon />}
-            label={`Salt (${config.salt.toFixed(1)}%)`}
-            value={`${formatValue(results.totalSalt, { g: 2, oz: 3 })} ${unit}`}
-            note="Strengthens gluten and adds flavor. Add away from yeast."
+            label={`${t('results.salt')} (${config.salt.toFixed(1)}%)`}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('salt', results.totalSalt, volumeUnits)
+                : formatWeight(results.totalSalt, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.salt')}
           />
           <ResultRow
             icon={<OilIcon />}
-            label={`Oil (${config.oil.toFixed(1)}%)`}
-            value={`${formatValue(results.totalOil, { g: 2, oz: 3 })} ${unit}`}
-            note="Adds flavor and softness. Omitted in traditional Neapolitan."
+            label={`${t('results.oil')} (${config.oil.toFixed(1)}%)`}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('oil', results.totalOil, volumeUnits)
+                : formatWeight(results.totalOil, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.oil')}
           />
           <ResultRow
             icon={<YeastIcon />}
-            label="Yeast"
-            value={`${formatValue(results.totalYeast, { g: 2, oz: 3 })} ${unit}`}
-            note="ADY may need activation. IDY can be mixed in directly."
+            label={t('results.yeast')}
+            value={
+              unit === 'cups'
+                ? gramsToVolume('yeast', results.totalYeast, volumeUnits)
+                : formatWeight(results.totalYeast, { g: 2, oz: 3 })
+            }
+            note={t('results.notes.yeast')}
           />
         </div>
       )}
 
       <ResultRow
         icon={<WeightIcon />}
-        label="Total Dough"
-        value={`${formatValue(results.totalDough, { g: 0, oz: 1 })} ${unit}`}
+        label={t('results.total_dough')}
+        value={
+          unit === 'cups'
+            ? `${results.totalDough.toFixed(0)} ${t('units.g')}`
+            : formatWeight(results.totalDough, { g: 0, oz: 1 })
+        }
         isTotal={true}
       />
 
       <div className="mt-6 rounded-lg bg-slate-100 p-4 text-center dark:bg-slate-700/50">
-        <p className="font-semibold text-slate-800 dark:text-slate-100">
-          <span className="font-bold text-lime-600 dark:text-lime-400">
-            {config.numPizzas}
-          </span>{' '}
-          dough ball{config.numPizzas > 1 ? 's' : ''} at{' '}
-          <span className="font-bold text-lime-600 dark:text-lime-400">
-            {config.doughBallWeight}g
-          </span>{' '}
-          each
-        </p>
+        <p
+          className="font-semibold text-slate-800 dark:text-slate-100"
+          dangerouslySetInnerHTML={{
+            __html: t('results.summary', {
+              count: `<span class="font-bold text-lime-600 dark:text-lime-400">${config.numPizzas}</span>`,
+              weight: `<span class="font-bold text-lime-600 dark:text-lime-400">${config.doughBallWeight}</span>`,
+            }),
+          }}
+        />
       </div>
     </div>
   );

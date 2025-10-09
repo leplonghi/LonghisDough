@@ -1,45 +1,96 @@
-import React, {
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   DoughConfig,
   DoughResult,
   Unit,
   RecipeStyle,
   FermentationTechnique,
-  YeastType,
 } from './types';
 import {
   DEFAULT_CONFIG,
-  YEAST_OPTIONS,
   RECIPE_STYLE_PRESETS,
+  YEAST_OPTIONS,
 } from './constants';
 import CalculatorForm from './components/CalculatorForm';
 import ResultsDisplay from './components/ResultsDisplay';
-import { PizzaIcon } from './components/IconComponents';
-import MobileSummaryBar from './components/MobileSummaryBar';
 import ThemeToggle from './components/ThemeToggle';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import { LanguageProvider, useTranslation } from './i18n';
+import MobileSummaryBar from './components/MobileSummaryBar';
+import { PizzaIcon } from './components/IconComponents';
 
 type Theme = 'light' | 'dark';
 
-const App: React.FC = () => {
+const calculateDough = (config: DoughConfig): DoughResult => {
+  const totalDoughWeight = config.numPizzas * config.doughBallWeight;
+  const totalPercentage =
+    100 +
+    config.hydration +
+    config.salt +
+    config.oil +
+    config.yeastPercentage;
+
+  const totalFlour = (totalDoughWeight * 100) / totalPercentage;
+  const totalWater = totalFlour * (config.hydration / 100);
+  const totalSalt = totalFlour * (config.salt / 100);
+  const totalOil = totalFlour * (config.oil / 100);
+  const totalYeast = totalFlour * (config.yeastPercentage / 100);
+
+  const result: DoughResult = {
+    totalFlour,
+    totalWater,
+    totalSalt,
+    totalOil,
+    totalYeast,
+    totalDough: totalDoughWeight,
+  };
+
+  if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
+    const prefermentFlour =
+      totalFlour * (config.prefermentFlourPercentage / 100);
+    let prefermentWater = 0;
+    // Poolish is 100% hydration, Biga is typically 45-60%. We'll use 50%.
+    if (config.fermentationTechnique === FermentationTechnique.POOLISH) {
+      prefermentWater = prefermentFlour;
+    } else if (config.fermentationTechnique === FermentationTechnique.BIGA) {
+      prefermentWater = prefermentFlour * 0.5;
+    }
+    // A tiny amount of yeast for the preferment, e.g., 0.1% of preferment flour weight
+    const prefermentYeast = prefermentFlour * 0.001;
+
+    result.preferment = {
+      flour: prefermentFlour,
+      water: prefermentWater,
+      yeast: prefermentYeast,
+    };
+
+    result.finalDough = {
+      flour: totalFlour - prefermentFlour,
+      water: Math.max(0, totalWater - prefermentWater),
+      salt: totalSalt,
+      oil: totalOil,
+      // Ensure yeast in final dough is not negative
+      yeast: Math.max(0, totalYeast - prefermentYeast),
+    };
+  }
+
+  return result;
+};
+
+const AppContent: React.FC = () => {
+  const { t } = useTranslation();
   const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
   const [unit, setUnit] = useState<Unit>('g');
   const [theme, setTheme] = useState<Theme>('light');
-  const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    const userPrefersDark =
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    const prefersDark =
       window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedTheme) {
       setTheme(savedTheme);
-    } else if (userPrefersDark) {
+    } else if (prefersDark) {
       setTheme('dark');
     }
   }, []);
@@ -53,111 +104,34 @@ const App: React.FC = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  }, []);
-
-  const results = useMemo<DoughResult>(() => {
-    // Step 1: Calculate total ingredient weights based on baker's percentages
-    const totalDoughWeight = config.numPizzas * config.doughBallWeight;
-    const totalPercentage =
-      1 +
-      config.hydration / 100 +
-      config.salt / 100 +
-      config.oil / 100 +
-      config.yeastPercentage / 100;
-
-    const totalFlour = totalDoughWeight / totalPercentage;
-    const totalWater = totalFlour * (config.hydration / 100);
-    const totalSalt = totalFlour * (config.salt / 100);
-    const totalOil = totalFlour * (config.oil / 100);
-    const totalYeast = totalFlour * (config.yeastPercentage / 100);
-
-    const baseResult = {
-      totalFlour,
-      totalWater,
-      totalSalt,
-      totalOil,
-      totalYeast,
-      totalDough: totalDoughWeight,
-    };
-
-    // Step 2: If using a preferment, calculate its composition and adjust the final dough
-    if (config.fermentationTechnique === FermentationTechnique.DIRECT) {
-      return baseResult;
-    } else {
-      // Step 2a: Calculate flour for the preferment
-      const prefermentFlour =
-        totalFlour * (config.prefermentFlourPercentage / 100);
-
-      // Step 2b: Calculate water for the preferment based on its type.
-      // Poolish is a liquid starter at 100% hydration (equal weights flour and water).
-      // Biga is a stiff starter, typically 45-60% hydration. We use a standard 50%.
-      const prefermentHydrationRatio =
-        config.fermentationTechnique === FermentationTechnique.POOLISH
-          ? 1.0
-          : 0.5;
-      const prefermentWater = prefermentFlour * prefermentHydrationRatio;
-
-      // Step 2c: Calculate yeast for the preferment based on established formulas
-      let prefermentYeast: number;
-      if (config.fermentationTechnique === FermentationTechnique.POOLISH) {
-        // Poolish yeast is ~0.3% of its flour weight for IDY. This is adjusted for other yeast types.
-        let yeastMultiplier = 1.0;
-        if (config.yeastType === YeastType.ADY) yeastMultiplier = 1.4;
-        else if (config.yeastType === YeastType.FRESH) yeastMultiplier = 3.0;
-        prefermentYeast = prefermentFlour * 0.003 * yeastMultiplier;
-      } else {
-        // Biga
-        // Biga uses a very small amount of yeast for a slow, cold fermentation, typically ~0.1% of its flour.
-        prefermentYeast = prefermentFlour * 0.001;
-      }
-
-      // Step 3: Define the final recipe with preferment and final dough ingredients
-      return {
-        ...baseResult,
-        preferment: {
-          flour: prefermentFlour,
-          water: prefermentWater,
-          yeast: prefermentYeast,
-        },
-        finalDough: {
-          flour: totalFlour - prefermentFlour,
-          water: Math.max(0, totalWater - prefermentWater),
-          salt: totalSalt,
-          oil: totalOil,
-          // The remaining yeast is added to the final dough.
-          yeast: Math.max(0, totalYeast - prefermentYeast),
-        },
-      };
-    }
-  }, [config]);
+  };
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
-    setConfig((prevConfig) => {
-      const updatedConfig = { ...prevConfig, ...newConfig };
-
-      if (
-        'yeastType' in newConfig &&
-        newConfig.yeastType !== prevConfig.yeastType
-      ) {
-        const selectedYeast = YEAST_OPTIONS.find(
-          (y) => y.value === newConfig.yeastType,
-        );
-        if (selectedYeast) {
-          updatedConfig.yeastPercentage = selectedYeast.defaultPercentage;
-        }
+    // If yeast type is changed, also update the yeast percentage to its default
+    if (newConfig.yeastType) {
+      const yeastDefaults = YEAST_OPTIONS.find(
+        (y) => y.value === newConfig.yeastType,
+      );
+      if (yeastDefaults) {
+        setConfig((prev) => ({
+          ...prev,
+          ...newConfig,
+          yeastPercentage: yeastDefaults.defaultPercentage,
+        }));
+        return;
       }
-
-      return updatedConfig;
-    });
+    }
+    setConfig((prev) => ({ ...prev, ...newConfig }));
   }, []);
 
   const handleStyleChange = useCallback((style: RecipeStyle) => {
-    setConfig((prevConfig) => ({
-      ...prevConfig,
+    const preset = RECIPE_STYLE_PRESETS[style];
+    setConfig((prev) => ({
+      ...prev,
       recipeStyle: style,
-      ...RECIPE_STYLE_PRESETS[style],
+      ...preset,
     }));
   }, []);
 
@@ -165,61 +139,77 @@ const App: React.FC = () => {
     setConfig(DEFAULT_CONFIG);
   }, []);
 
-  const handleUnitChange = useCallback((newUnit: Unit) => {
-    setUnit(newUnit);
-  }, []);
+  const results = useMemo(() => calculateDough(config), [config]);
 
-  const handleShowResults = useCallback(() => {
-    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
+  const showResultsOnMobile = () => {
+    const resultsElement = document.getElementById('results-section');
+    resultsElement?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <>
-      <div className="flex min-h-screen flex-col items-center bg-slate-50 p-4 text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100 sm:p-6 lg:p-8">
-        <div className="mx-auto w-full max-w-6xl pb-24 lg:pb-0">
-          <header className="relative mb-6 flex items-center justify-center text-center">
-            <div className="flex items-center">
-              <PizzaIcon className="mr-3 h-10 w-10 text-lime-500" />
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
-                Longhi's Pizza Dough Calculator
-              </h1>
-            </div>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2">
-              <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-            </div>
-          </header>
-
-          <main className="grid grid-cols-1 gap-y-6 lg:grid-cols-5 lg:gap-8">
-            <div className="lg:col-span-3">
-              <CalculatorForm
-                config={config}
-                onConfigChange={handleConfigChange}
-                onStyleChange={handleStyleChange}
-                onReset={handleReset}
-              />
-            </div>
-            <div ref={resultsRef} className="lg:col-span-2">
-              <ResultsDisplay
-                results={results}
-                config={config}
-                unit={unit}
-                onUnitChange={handleUnitChange}
-              />
-            </div>
-          </main>
-
-          <footer className="mt-8 text-center text-sm text-slate-500 dark:text-slate-200">
-            <p>Happy pizza making!</p>
-          </footer>
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900/80">
+        <div className="mx-auto flex max-w-6xl items-center p-3 sm:p-4">
+          {/* Left side: This column will balance the right side */}
+          <div className="flex w-20 justify-start sm:w-24">
+            {/* Empty for balance */}
+          </div>
+          {/* Center: Takes up remaining space */}
+          <div className="flex flex-1 min-w-0 items-center justify-center gap-2">
+            <PizzaIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
+            <h1 className="truncate text-center text-base font-bold text-slate-900 dark:text-white sm:text-xl">
+              {t('appName')}
+            </h1>
+          </div>
+          {/* Right side: Controls */}
+          <div className="flex w-20 items-center justify-end space-x-1 sm:w-24 sm:space-x-2">
+            <LanguageSwitcher />
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+          </div>
         </div>
-      </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
+          <div className="lg:sticky lg:top-24">
+            <CalculatorForm
+              config={config}
+              onConfigChange={handleConfigChange}
+              onStyleChange={handleStyleChange}
+              onReset={handleReset}
+            />
+          </div>
+          <div id="results-section">
+            <ResultsDisplay
+              results={results}
+              config={config}
+              unit={unit}
+              onUnitChange={setUnit}
+            />
+          </div>
+        </div>
+      </main>
+
       <MobileSummaryBar
         totalDough={results.totalDough}
         unit={unit}
-        onShowResults={handleShowResults}
+        onShowResults={showResultsOnMobile}
       />
-    </>
+
+      <footer className="mt-8 py-8 text-center text-sm text-slate-500 dark:text-slate-400 sm:mt-12">
+        <p>
+          &copy; {new Date().getFullYear()} DoughLabPro.{' '}
+          {t('footer.pizza_making')}
+        </p>
+      </footer>
+    </div>
   );
 };
+
+const App: React.FC = () => (
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
+);
 
 export default App;

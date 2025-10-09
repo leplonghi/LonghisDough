@@ -1,5 +1,5 @@
 {
-  "name": "Longhi's Pizza Dough Calculator",
+  "name": "DoughLabPro",
   "description": "A modern, responsive pizza dough calculator to help you craft the perfect pizza. Easily adjust ingredients based on the number of pizzas, hydration, salt, and yeast type using an intuitive interface with interactive sliders.",
   "requestFramePermissions": []
 }
