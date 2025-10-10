@@ -5,24 +5,29 @@ import {
   Unit,
   RecipeStyle,
   FermentationTechnique,
+  SavedDoughConfig,
+  BakeType,
 } from './types';
 import {
   DEFAULT_CONFIG,
   RECIPE_STYLE_PRESETS,
   YEAST_OPTIONS,
+  BREAD_STYLES,
 } from './constants';
 import CalculatorForm from './components/CalculatorForm';
 import ResultsDisplay from './components/ResultsDisplay';
 import ThemeToggle from './components/ThemeToggle';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { LanguageProvider, useTranslation } from './i18n';
-import MobileSummaryBar from './components/MobileSummaryBar';
-import { PizzaIcon } from './components/IconComponents';
+import FixedFooter from './components/MobileSummaryBar';
+import { PizzaIcon, UserIcon } from './components/IconComponents';
+import LoadConfigModal from './components/LoadConfigModal';
 
 type Theme = 'light' | 'dark';
 
 const calculateDough = (config: DoughConfig): DoughResult => {
-  const totalDoughWeight = config.numPizzas * config.doughBallWeight;
+  const totalDoughWeight =
+    config.numPizzas * config.doughBallWeight * config.scale;
   const totalPercentage =
     100 +
     config.hydration +
@@ -82,6 +87,31 @@ const AppContent: React.FC = () => {
   const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
   const [unit, setUnit] = useState<Unit>('g');
   const [theme, setTheme] = useState<Theme>('light');
+  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
+  const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
+
+  const STORAGE_KEY = 'doughlabpro_configs';
+
+  useEffect(() => {
+    // Load config from URL first
+    const urlParams = new URLSearchParams(window.location.search);
+    const recipeData = urlParams.get('recipe');
+    if (recipeData) {
+      try {
+        const decodedConfig = atob(recipeData);
+        const parsedConfig: DoughConfig = JSON.parse(decodedConfig);
+        // Basic validation to ensure it's a valid config object
+        if (parsedConfig && typeof parsedConfig.numPizzas === 'number') {
+          setConfig(parsedConfig);
+          // Clean the URL to avoid reloading the same config on refresh
+          window.history.replaceState({}, '', window.location.pathname);
+          return; // Stop further execution to avoid overwriting with defaults
+        }
+      } catch (error) {
+        console.error('Failed to parse recipe from URL:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme;
@@ -126,12 +156,38 @@ const AppContent: React.FC = () => {
     setConfig((prev) => ({ ...prev, ...newConfig }));
   }, []);
 
+  const handleBakeTypeChange = useCallback(
+    (bakeType: BakeType) => {
+      if (bakeType === config.bakeType) return; // No change
+
+      // When switching bake type, select the default style for that type
+      const defaultStyle =
+        bakeType === BakeType.PIZZA
+          ? RecipeStyle.NAPOLETANA
+          : RecipeStyle.ARTISAN_LOAF;
+
+      const { description: _, ...preset } = RECIPE_STYLE_PRESETS[defaultStyle];
+
+      setConfig((prev) => ({
+        ...prev,
+        ...preset, // Apply the new preset values
+        bakeType,
+        recipeStyle: defaultStyle,
+      }));
+    },
+    [config.bakeType],
+  );
+
   const handleStyleChange = useCallback((style: RecipeStyle) => {
-    const preset = RECIPE_STYLE_PRESETS[style];
+    const { description: _, ...presetConfig } = RECIPE_STYLE_PRESETS[style];
+    const newBakeType = BREAD_STYLES.includes(style)
+      ? BakeType.BREAD
+      : BakeType.PIZZA;
     setConfig((prev) => ({
       ...prev,
+      bakeType: newBakeType,
       recipeStyle: style,
-      ...preset,
+      ...presetConfig,
     }));
   }, []);
 
@@ -141,17 +197,68 @@ const AppContent: React.FC = () => {
 
   const results = useMemo(() => calculateDough(config), [config]);
 
-  const showResultsOnMobile = () => {
-    const resultsElement = document.getElementById('results-section');
-    resultsElement?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const handleSaveConfig = useCallback(
+    (name: string) => {
+      try {
+        const rawData = localStorage.getItem(STORAGE_KEY);
+        const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
+        const existingIndex = configs.findIndex((c) => c.name === name);
+
+        if (existingIndex > -1) {
+          if (!confirm(t('form.config_exists_overwrite'))) {
+            return;
+          }
+          configs[existingIndex].config = config;
+        } else {
+          configs.push({ name, config });
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(configs));
+        alert(t('form.config_saved'));
+      } catch (error) {
+        console.error('Failed to save configuration:', error);
+        alert('Error saving configuration.');
+      }
+    },
+    [config, t],
+  );
+
+  const handleOpenLoadModal = useCallback(() => {
+    try {
+      const rawData = localStorage.getItem(STORAGE_KEY);
+      const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
+      setSavedConfigs(configs);
+      setIsLoadModalOpen(true);
+    } catch (error) {
+      console.error('Failed to load configurations:', error);
+      setSavedConfigs([]);
+      setIsLoadModalOpen(true);
+    }
+  }, []);
+
+  const handleLoadConfig = useCallback((newConfig: DoughConfig) => {
+    setConfig(newConfig);
+    setIsLoadModalOpen(false);
+  }, []);
+
+  const handleDeleteConfig = useCallback((name: string) => {
+    try {
+      const rawData = localStorage.getItem(STORAGE_KEY);
+      let configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
+      configs = configs.filter((c) => c.name !== name);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(configs));
+      setSavedConfigs(configs); // Update state to re-render modal
+    } catch (error) {
+      console.error('Failed to delete configuration:', error);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900/80">
         <div className="mx-auto flex max-w-6xl items-center p-3 sm:p-4">
           {/* Left side: This column will balance the right side */}
-          <div className="flex w-20 justify-start sm:w-24">
+          <div className="flex w-24 justify-start sm:w-32">
             {/* Empty for balance */}
           </div>
           {/* Center: Takes up remaining space */}
@@ -162,19 +269,26 @@ const AppContent: React.FC = () => {
             </h1>
           </div>
           {/* Right side: Controls */}
-          <div className="flex w-20 items-center justify-end space-x-1 sm:w-24 sm:space-x-2">
+          <div className="flex w-24 items-center justify-end space-x-1 sm:w-32 sm:space-x-2">
             <LanguageSwitcher />
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+            <button
+              className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
+              aria-label={t('header.user_profile')}
+            >
+              <UserIcon className="h-6 w-6" />
+            </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
+      <main className="mx-auto max-w-6xl p-4 pb-24 sm:p-6 sm:pb-20 lg:p-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <div className="lg:sticky lg:top-24">
             <CalculatorForm
               config={config}
               onConfigChange={handleConfigChange}
+              onBakeTypeChange={handleBakeTypeChange}
               onStyleChange={handleStyleChange}
               onReset={handleReset}
             />
@@ -190,18 +304,20 @@ const AppContent: React.FC = () => {
         </div>
       </main>
 
-      <MobileSummaryBar
+      <FixedFooter
         totalDough={results.totalDough}
         unit={unit}
-        onShowResults={showResultsOnMobile}
+        onSave={handleSaveConfig}
+        onLoad={handleOpenLoadModal}
       />
 
-      <footer className="mt-8 py-8 text-center text-sm text-slate-500 dark:text-slate-400 sm:mt-12">
-        <p>
-          &copy; {new Date().getFullYear()} DoughLabPro.{' '}
-          {t('footer.pizza_making')}
-        </p>
-      </footer>
+      <LoadConfigModal
+        isOpen={isLoadModalOpen}
+        onClose={() => setIsLoadModalOpen(false)}
+        configs={savedConfigs}
+        onLoad={handleLoadConfig}
+        onDelete={handleDeleteConfig}
+      />
     </div>
   );
 };

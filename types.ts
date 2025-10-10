@@ -1,14 +1,30 @@
-// FIX: Define and export enums and types. The previous content was incorrect, causing circular dependencies.
-export enum YeastType {
-  IDY = 'IDY',
-  ADY = 'ADY',
-  FRESH = 'FRESH',
+export enum BakeType {
+  PIZZA = 'PIZZA',
+  BREAD = 'BREAD',
 }
 
 export enum RecipeStyle {
+  // Pizza
   NAPOLETANA = 'NAPOLETANA',
   NY = 'NY',
   ROMANA = 'ROMANA',
+  SICILIAN = 'SICILIAN',
+  FOCACCIA = 'FOCACCIA',
+  DETROIT = 'DETROIT',
+  CHICAGO_DEEP_DISH = 'CHICAGO_DEEP_DISH',
+  // Bread
+  ARTISAN_LOAF = 'ARTISAN_LOAF',
+  BAGUETTE = 'BAGUETTE',
+  CIABATTA = 'CIABATTA',
+  PUMPERNICKEL = 'PUMPERNICKEL',
+  SOURDOUGH_BOULE = 'SOURDOUGH_BOULE',
+  RYE_BREAD = 'RYE_BREAD',
+}
+
+export enum YeastType {
+  IDY = 'IDY', // Instant Dry Yeast
+  ADY = 'ADY', // Active Dry Yeast
+  FRESH = 'FRESH',
 }
 
 export enum FermentationTechnique {
@@ -18,19 +34,23 @@ export enum FermentationTechnique {
 }
 
 export type Unit = 'g' | 'oz' | 'cups';
+
 export type Locale = 'en' | 'pt' | 'es';
 
 export interface DoughConfig {
   numPizzas: number;
   doughBallWeight: number;
+  scale: number;
   hydration: number;
   salt: number;
   oil: number;
   yeastPercentage: number;
-  yeastType: YeastType;
-  recipeStyle: RecipeStyle;
   fermentationTechnique: FermentationTechnique;
   prefermentFlourPercentage: number;
+  yeastType: YeastType;
+  bakeType: BakeType;
+  recipeStyle: RecipeStyle;
+  notes: string;
 }
 
 export interface DoughResult {
@@ -52,4 +72,9 @@ export interface DoughResult {
     oil: number;
     yeast: number;
   };
+}
+
+export interface SavedDoughConfig {
+  name: string;
+  config: DoughConfig;
 }
