@@ -54,11 +54,22 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggleTheme }) => {
       className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
       aria-label={label}
     >
-      {theme === 'light' ? (
-        <MoonIcon className="h-6 w-6" />
-      ) : (
-        <SunIcon className="h-6 w-6" />
-      )}
+      <span className="relative block h-6 w-6 overflow-hidden">
+        <MoonIcon
+          className={`absolute h-full w-full transform transition-all duration-300 ease-in-out ${
+            theme === 'light'
+              ? 'opacity-100 scale-100 rotate-0'
+              : 'opacity-0 scale-50 -rotate-90'
+          }`}
+        />
+        <SunIcon
+          className={`absolute h-full w-full transform transition-all duration-300 ease-in-out ${
+            theme === 'dark'
+              ? 'opacity-100 scale-100 rotate-0'
+              : 'opacity-0 scale-50 rotate-90'
+          }`}
+        />
+      </span>
     </button>
   );
 };
