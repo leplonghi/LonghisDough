@@ -1,93 +1,76 @@
 import React, {
-  createContext,
   useState,
+  createContext,
   useContext,
+  ReactNode,
+  FC,
   useCallback,
 } from 'react';
 
-const ENTITLEMENT_KEY = 'doughlabpro_entitlements';
+const PRO_ACCESS_KEY = 'dough-lab-pro-access';
 
-interface EntitlementState {
-  isPro: boolean;
-}
-
-interface EntitlementContextType extends EntitlementState {
+interface EntitlementContextType {
+  hasProAccess: boolean;
   grantProAccess: () => void;
   grantSessionProAccess: () => void;
-  hasProAccess: () => boolean;
+  revokeProAccess: () => void;
 }
 
-const EntitlementContext = createContext<EntitlementContextType | null>(null);
+const EntitlementContext = createContext<EntitlementContextType | undefined>(
+  undefined,
+);
 
-const getInitialState = (): EntitlementState => {
-  try {
-    const storedState = localStorage.getItem(ENTITLEMENT_KEY);
-    if (storedState) {
-      const parsed = JSON.parse(storedState);
-      return { isPro: !!parsed.isPro };
-    }
-  } catch (error) {
-    console.error('Could not parse entitlements from localStorage', error);
-  }
-  return { isPro: false };
-};
-
-export const EntitlementProvider: React.FC<{ children: React.ReactNode }> = ({
+export const EntitlementProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [entitlements, setEntitlements] =
-    useState<EntitlementState>(getInitialState);
+  const [isPro, setIsPro] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(PRO_ACCESS_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isSessionPro, setIsSessionPro] = useState<boolean>(false);
 
   const grantProAccess = useCallback(() => {
-    const newState = { isPro: true };
     try {
-      localStorage.setItem(ENTITLEMENT_KEY, JSON.stringify(newState));
-      setEntitlements(newState);
-      // Attempt to find and hide any existing ad elements
-      const adElements = document.querySelectorAll('.adsbygoogle');
-      adElements.forEach((ad) => {
-        (ad as HTMLElement).innerHTML = '';
-        (ad as HTMLElement).setAttribute('style', 'display: none;');
-      });
+      localStorage.setItem(PRO_ACCESS_KEY, 'true');
+      setIsPro(true);
     } catch (error) {
-      console.error('Could not save entitlements to localStorage', error);
+      console.error('Could not save to localStorage', error);
     }
   }, []);
 
   const grantSessionProAccess = useCallback(() => {
-    const newState = { isPro: true };
-    setEntitlements(newState);
-    // Attempt to find and hide any existing ad elements, same as permanent grant
-    const adElements = document.querySelectorAll('.adsbygoogle');
-    adElements.forEach((ad) => {
-      (ad as HTMLElement).innerHTML = '';
-      (ad as HTMLElement).setAttribute('style', 'display: none;');
-    });
+    setIsSessionPro(true);
   }, []);
 
-  const hasProAccess = useCallback(() => {
-    return entitlements.isPro;
-  }, [entitlements.isPro]);
+  const revokeProAccess = useCallback(() => {
+    try {
+      localStorage.removeItem(PRO_ACCESS_KEY);
+      setIsPro(false);
+      setIsSessionPro(false); // Also revoke session pro for consistency
+    } catch (error) {
+      console.error('Could not access localStorage', error);
+    }
+  }, []);
 
-  // FIX: Replace JSX with `React.createElement` to prevent parsing errors in a .ts file.
-  return React.createElement(
-    EntitlementContext.Provider,
-    {
-      value: {
-        ...entitlements,
-        grantProAccess,
-        grantSessionProAccess,
-        hasProAccess,
-      },
-    },
-    children,
-  );
+  const value = {
+    hasProAccess: isPro || isSessionPro,
+    grantProAccess,
+    grantSessionProAccess,
+    revokeProAccess,
+  };
+
+  return React.createElement(EntitlementContext.Provider, { value }, children);
 };
 
 export const useEntitlements = (): EntitlementContextType => {
   const context = useContext(EntitlementContext);
-  if (!context) {
-    throw new Error('useEntitlements must be used within an EntitlementProvider');
+  if (context === undefined) {
+    throw new Error(
+      'useEntitlements must be used within an EntitlementProvider',
+    );
   }
   return context;
 };

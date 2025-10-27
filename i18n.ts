@@ -1,225 +1,340 @@
+
 import React, {
   createContext,
   useState,
   useContext,
+  ReactNode,
+  FC,
   useCallback,
   useMemo,
 } from 'react';
 import { Locale } from './types';
 
-// Basic translations store
-const translations: Record<Locale, Record<string, string>> = {
-  en: {
-    'yeast.idy': 'Instant Dry Yeast (IDY)',
-    'yeast.ady': 'Active Dry Yeast (ADY)',
-    'yeast.fresh': 'Fresh Yeast',
-    'form.pizzas': 'Pizzas',
-    'form.breads': 'Breads',
-    'form.bake_type': 'Bake Type',
-    'form.recipe_style': 'Recipe Style',
-    'form.core_parameters': 'Core Parameters',
-    'form.fermentation': 'Fermentation & Yeast',
-    'form.settings': 'Settings & Units',
-    'form.recipe_notes': 'Recipe Notes',
-    'form.reset': 'Reset to Default',
-    'form.reset_aria': 'Reset form to default values',
-    'form.napoletana': 'Napoletana',
-    'form.ny': 'NY Style',
-    'form.romana': 'Romana',
-    'form.sicilian': 'Sicilian',
-    'form.focaccia': 'Focaccia',
-    'form.detroit': 'Detroit',
-    'form.chicago_deep_dish': 'Chicago Deep Dish',
-    'form.artisan_loaf': 'Artisan Loaf',
-    'form.baguette': 'Baguette',
-    'form.ciabatta': 'Ciabatta',
-    'form.pumpernickel': 'Pumpernickel',
-    'form.sourdough_boule': 'Sourdough Boule',
-    'form.rye_bread': 'Rye Bread',
-    'form.num_pizzas': 'Number of Dough Balls',
-    'form.num_loaves': 'Number of Loaves',
-    'form.num_units_note': 'e.g., 4 dough balls for 4 pizzas',
-    'form.weight_per_pizza': 'Weight per Dough Ball (g)',
-    'form.weight_per_loaf': 'Weight per Loaf (g)',
-    'form.weight_per_unit_note': '{style} style is typically {range}.',
-    'form.hydration': 'Hydration',
-    'form.hydration_tooltip':
-      "The amount of water relative to the amount of flour, expressed as a percentage. Higher hydration leads to a wetter, stickier dough.",
-    'form.scale': 'Scale Recipe',
-    'form.scale_tooltip': 'Scale all ingredient quantities up or down. For example, 2x doubles the recipe.',
-    'form.direct': 'Direct',
-    'form.poolish': 'Poolish',
-    'form.biga': 'Biga',
-    'form.preferment_flour': 'Preferment Flour',
-    'form.preferment_flour_tooltip':
-      'The percentage of the total flour that is used in the preferment (poolish or biga).',
-    'form.yeast_type': 'Yeast Type',
-    'form.yeast_type_tooltip':
-      'Different yeast types have different potencies. IDY is most common for home baking.',
-    'form.yeast': 'Yeast',
-    'form.yeast_tooltip':
-      'The amount of yeast relative to the total flour. This can be adjusted based on fermentation time and temperature.',
-    'form.unit_system': 'Measurement System',
-    'form.unit_system_tooltip': 'Select your preferred measurement system. This affects volume conversions.',
-    'form.us_customary': 'US Customary',
-    'form.metric': 'Metric',
-    'form.notes_placeholder': 'Add personal notes, fermentation times, temperatures, etc...',
-    'form.prompt_config_name': 'Enter a name for this recipe:',
-    'form.errors.num_pizzas_range': 'Please enter a value between 1 and 100.',
-    'form.errors.dough_ball_weight_range': 'Please enter a value between 100 and 2000.',
-    'results.title': 'Your Recipe',
-    'results.grams': 'Grams',
-    'results.ounces': 'Ounces',
-    'results.cups': 'Volume',
-    'results.flour': 'Flour',
-    'results.water': 'Water',
-    'results.salt': 'Salt',
-    'results.oil': 'Oil',
-    'results.yeast': 'Yeast',
-    'results.total_dough': 'Total Dough Weight',
-    'results.summary_pizza': 'Makes {count} dough balls at {weight}g each.',
-    'results.summary_bread': 'Makes {count} loaves at {weight}g each.',
-    'results.preferment_title': '{technique} Preferment',
-    'results.final_dough_title': 'Final Dough',
-    'results.preferment_label': '{technique}',
-    'results.notes_title': 'My Notes',
-    'results.share_recipe_aria': 'Share Recipe',
-    'results.export_pdf_aria': 'Export as PDF',
-    'results.unit_system_display': 'Volume conversions based on {system} system.',
-    'results.conversion_tooltip': '1 cup of {ingredient} ≈ {grams}g in the {system} system.',
-    'results.ingredients.flour': 'flour',
-    'results.ingredients.water': 'water',
-    'results.ingredients.salt': 'salt',
-    'results.ingredients.oil': 'oil',
-    'results.ingredients.yeast': 'yeast',
-    'results.notes.flour': '100% (Baseline)',
-    'results.notes.water': 'e.g. 65% Hydration',
-    'results.notes.salt': 'Adjust to taste',
-    'results.notes.oil': 'Optional, for softness/crispiness',
-    'results.notes.yeast': 'Adjust for fermentation time',
-    'results.notes.preferment': 'To be prepared in advance',
-    'results.steps.title': 'General Instructions',
-    'results.steps.direct.step1': '<strong>Combine:</strong> In a large bowl, whisk together the flour and salt. In a separate smaller bowl, dissolve the yeast in the warm water.',
-    'results.steps.direct.step2': '<strong>Mix:</strong> Pour the yeast/water mixture and any oil into the flour mixture. Mix until a shaggy dough forms and no dry flour remains.',
-    'results.steps.direct.step3': '<strong>Knead:</strong> Turn the dough out onto a lightly floured surface and knead for 8-10 minutes (or 5-7 minutes in a stand mixer with a dough hook) until smooth and elastic.',
-    'results.steps.direct.step4': '<strong>Bulk Ferment:</strong> Place the dough in a lightly oiled bowl, cover, and let it rise in a warm place for 1-2 hours, or until doubled in size.',
-    'results.steps.direct.step5': '<strong>Shape & Proof:</strong> Gently deflate the dough, divide it into portions, and shape into balls or loaves. Cover and let them proof for another 30-60 minutes.',
-    'results.steps.direct.step6': '<strong>Bake:</strong> Preheat your oven to the desired temperature. Bake according to your recipe style until golden brown.',
-    'results.steps.indirect.preferment.step1': '<strong>Mix Preferment:</strong> Combine all preferment ingredients ({technique}) in a bowl. Mix until well combined, cover, and let it ferment at room temperature for the time specified in your recipe (e.g., 8-12 hours for Poolish, 12-16 for Biga).',
-    'results.steps.indirect.preferment.step2': '<strong>Check for Readiness:</strong> The preferment is ready when it is bubbly, domed, and has a distinct fermented aroma.',
-    'results.steps.indirect.finalDough.step1': '<strong>Combine:</strong> In a large mixing bowl, combine the mature preferment with all the final dough ingredients.',
-    'results.steps.indirect.finalDough.step2': '<strong>Mix & Knead:</strong> Mix until a cohesive dough forms, then knead for 8-10 minutes until smooth and elastic. The dough may be sticky.',
-    'results.steps.indirect.finalDough.step3': '<strong>Bulk Ferment & Shape:</strong> Proceed with bulk fermentation (typically shorter, around 45-90 minutes), followed by dividing, shaping, and proofing.',
-    'results.steps.indirect.finalDough.step4': "<strong>Bake:</strong> Bake as you would with a direct dough, following your recipe's instructions.",
-    'results.steps.baguette.step1': 'Follow Poolish preferment instructions.',
-    'results.steps.baguette.step2': 'For the final dough, use a gentle mixing method (like stretch and folds) to develop gluten without overworking it.',
-    'results.steps.baguette.step3': 'After bulk fermentation (with 2-3 sets of folds), gently pre-shape the dough into logs.',
-    'results.steps.baguette.step4': 'Rest for 20-30 minutes, then perform the final shaping into the classic baguette form.',
-    'results.steps.baguette.step5': 'Proof seam-side up on a floured couche or linen towel for 45-60 minutes.',
-    'results.steps.baguette.step6': 'Score the top with a lame or sharp knife just before baking.',
-    'results.steps.baguette.step7': 'Bake in a hot, steamy oven (e.g., 240°C / 475°F) until deeply golden and crisp.',
-    'results.steps.ciabatta.step1': 'Follow Biga preferment instructions. The Biga will be quite stiff.',
-    'results.steps.ciabatta.step2': 'For the final dough, break the Biga into small pieces and combine with the final dough ingredients. Mix on low speed until combined, then increase speed to develop the gluten. This will be a very wet, slack dough.',
-    'results.steps.ciabatta.step3': 'Perform a long bulk fermentation (2-3 hours) with several sets of stretch and folds in an oiled container to build strength.',
-    'results.steps.ciabatta.step4': 'Gently pour the dough onto a well-floured surface, trying not to deflate it. Dust the top with flour.',
-    'results.steps.ciabatta.step5': 'Cut the dough into rectangular shapes. Gently stretch them into the classic slipper shape and transfer to parchment paper for a short final proof (20-30 mins).',
-    'results.steps.ciabatta.step6': 'Bake in a very hot oven (240°C / 475°F) with steam.',
-    'units.g': 'g',
-    'units.oz': 'oz',
-    'units.cups': 'cups',
-    'units.tbsp': 'tbsp',
-    'units.tsp': 'tsp',
-    'footer.total_dough': 'Total Dough',
-    'footer.save_recipe': 'Save',
-    'footer.saved_recipes': 'My Recipes',
-    'header.title': 'DoughLab',
-    'header.subtitle': 'Pro',
-    'header.switch_to_dark': 'Switch to dark mode',
-    'header.switch_to_light': 'Switch to light mode',
-    'load_modal.title': 'Load Saved Recipe',
-    'load_modal.close_aria': 'Close modal',
-    'load_modal.no_configs': 'You have no saved recipes.',
-    'load_modal.load': 'Load',
-    'load_modal.delete_aria': 'Delete recipe',
-    'pro.go_pro_header': 'Go Pro',
-    'pro.locked_tooltip': 'This is a Pro feature. Click to unlock!',
-    'pro.title': 'Unlock DoughLab Pro',
-    'pro.subtitle': 'Take your baking to the next level with these exclusive features.',
-    'pro.feature_ads': 'Ad-Free Experience',
-    'pro.feature_scale': 'Scale Recipes to Any Size',
-    'pro.feature_notes': 'Save Personal Recipe Notes',
-    'pro.feature_save_load': 'Save & Load Your Recipes',
-    'pro.feature_export': 'Export to PDF & Share Links',
-    'pro.feature_pro_recipes': 'Access Pro Recipes & Techniques',
-    'pro.buy_button': 'Go Pro for {price}',
-    'pro.buy_note': 'One-time purchase. Lifetime access.',
-    'pro_recipes.modal_title': 'Pro Recipes',
-    'pro_recipes.neapolitan.name': 'Classic Neapolitan',
-    'pro_recipes.neapolitan.description': 'A quick, classic recipe perfect for high-temp ovens.',
-    'pro_recipes.focaccia.name': 'High-Hydration Focaccia',
-    'pro_recipes.focaccia.description': 'Wet, airy dough. Ideal for a flavorful, dimpled crust.',
-    'pro_recipes.ny_style.name': 'NY Style Pizza',
-    'pro_recipes.ny_style.description': 'Great for a long cold ferment. Crispy and chewy results.',
-    'pro_recipes.sourdough.name': 'Simple "Faux" Sourdough Loaf',
-    'pro_recipes.sourdough.description': 'Simulates sourdough flavor with a long, cool fermentation.',
-    'ads.advertisement': 'Advertisement',
-  },
-  es: {},
-  pt: {},
-};
-
-// Fill in missing translations with English
-(Object.keys(translations) as Locale[]).forEach(lang => {
-    if (lang !== 'en') {
-        translations[lang] = { ...translations.en, ...translations[lang] };
-    }
-});
-
-
-interface I18nContextType {
+interface TranslationContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: (key: string, replacements?: { [key: string]: string | number }) => string;
 }
 
-const I18nContext = createContext<I18nContextType | null>(null);
+const TranslationContext = createContext<TranslationContextType | undefined>(
+  undefined,
+);
 
-export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
+const translations: Record<string, any> = {
+  en: {
+    nav: {
+      calculator: 'Calculator',
+      tips: 'Tips',
+      plans: 'Pro Plans',
+    },
+    header: {
+      title: 'Dough Lab Pro',
+      subtitle: 'The Ultimate Pizza & Bread Dough Calculator',
+      switch_to_dark: 'Switch to dark mode',
+      switch_to_light: 'Switch to light mode',
+    },
+    footer: {
+      total_dough: 'Total Dough',
+      save_recipe: 'Save recipe',
+      saved_recipes: 'Load saved recipes',
+      copyright: '© {year} Dough Lab Pro. All rights reserved.',
+    },
+    form: {
+      bake_type: 'Bake Type',
+      pizzas: 'Pizza',
+      breads: 'Bread',
+      recipe_style: 'Recipe Style',
+      napoletana: 'Napoletana',
+      ny: 'NY Style',
+      romana: 'Romana',
+      sicilian: 'Sicilian',
+      focaccia: 'Focaccia',
+      detroit: 'Detroit',
+      chicago_deep_dish: 'Chicago',
+      artisan_loaf: 'Artisan Loaf',
+      baguette: 'Baguette',
+      ciabatta: 'Ciabatta',
+      pumpernickel: 'Pumpernickel',
+      sourdough_boule: 'Sourdough',
+      rye_bread: 'Rye Bread',
+      style_tooltips: {
+        napoletana: 'Classic soft, thin-crust pizza with a puffy cornicione.',
+        ny: 'Large, foldable slices with a crispy yet chewy crust.',
+        romana: 'Thin, crispy, and rectangular pizza (pizza al taglio).',
+        sicilian: 'Thick, spongy, rectangular pizza with a crispy base.',
+        focaccia: 'Flat oven-baked bread, often dimpled and topped with herbs.',
+        detroit: 'Rectangular pizza with a thick, chewy crust and crispy, cheesy edges.',
+        chicago_deep_dish: 'Deep, thick-crust pizza baked in a pan, resembling a pie.',
+        artisan_loaf: 'Crusty, rustic bread with an open, airy crumb.',
+        baguette: 'Long, thin loaf of French bread with a crisp crust.',
+        ciabatta: 'Italian white bread with a light, open crumb.',
+        pumpernickel: 'Heavy, slightly sweet rye bread, traditionally dense and dark.',
+        sourdough_boule: 'Naturally leavened round loaf with a tangy flavor.',
+        rye_bread: 'Bread made with flour from rye grain, often dense and dark.',
+      },
+      core_parameters: 'Core Parameters',
+      num_pizzas: 'Number of Pizzas',
+      num_loaves: 'Number of Loaves',
+      num_units_note: 'How many dough balls to prepare.',
+      weight_per_pizza: 'Weight per Pizza (g)',
+      weight_per_loaf: 'Weight per Loaf (g)',
+      weight_per_unit_note: 'Typical for {style}: {range}',
+      hydration: 'Hydration',
+      hydration_tooltip: 'The amount of water relative to the amount of flour. Higher hydration results in a wetter, stickier dough and often a more open crumb.',
+      scale: 'Scale Recipe',
+      scale_tooltip: 'Adjust the overall size of your recipe. For example, a scale of 2x will double all ingredients.',
+      fermentation: 'Fermentation & Yeast',
+      direct: 'Direct',
+      poolish: 'Poolish',
+      biga: 'Biga',
+      preferment_flour: 'Preferment Flour',
+      preferment_flour_tooltip: 'The percentage of the total flour that will be used in the preferment (poolish or biga).',
+      yeast_type: 'Yeast Type',
+      yeast_type_tooltip: 'Different yeast types have different potencies. IDY is Instant Dry Yeast, ADY is Active Dry Yeast.',
+      yeast: 'Yeast',
+      yeast_tooltip: 'The amount of yeast relative to the amount of flour. Adjust based on fermentation time and temperature.',
+      settings: 'Settings & Notes',
+      unit_system: 'Unit System',
+      unit_system_tooltip: 'Choose between Metric and US Customary cups for volume conversions. All primary calculations are in grams.',
+      us_customary: 'US Customary',
+      metric: 'Metric',
+      recipe_notes: 'Recipe Notes',
+      notes_placeholder: 'Add your personal notes, fermentation schedule, or baking instructions here...',
+      reset: 'Reset to Default',
+      reset_aria: 'Reset form to default values',
+      prompt_config_name: 'Enter a name for your recipe:',
+      errors: {
+        num_pizzas_range: 'Please enter a number between 1 and 100.',
+        dough_ball_weight_range: 'Please enter a weight between 100g and 2000g.',
+      },
+    },
+    results: {
+      title: 'Your Recipe',
+      share_recipe_aria: 'Share recipe link',
+      export_pdf_aria: 'Export recipe as PDF',
+      grams: 'Grams',
+      ounces: 'Ounces',
+      cups: 'Volume',
+      unit_system_display: 'Volume conversions use {system} cups.',
+      preferment_title: '{technique} Preferment',
+      final_dough_title: 'Final Dough',
+      preferment_label: 'Add {technique}',
+      flour: 'Flour',
+      water: 'Water',
+      salt: 'Salt',
+      oil: 'Oil',
+      yeast: 'Yeast',
+      total_dough: 'Total Dough Weight',
+      summary_pizza: 'Makes {count} pizzas of {weight}g each.',
+      summary_bread: 'Makes {count} loaves of {weight}g each.',
+      conversion_tooltip: '1 US cup of {ingredient} is about {grams}g. This can vary. For accuracy, use a scale. Volume conversions use {system} standards.',
+      ingredients: {
+          flour: 'all-purpose flour',
+          water: 'water',
+          salt: 'fine sea salt',
+          oil: 'olive oil',
+          yeast: 'instant dry yeast',
+          wholeWheat: 'whole wheat flour',
+          rye: 'rye flour',
+      },
+      notes: {
+          flour: '100% (Baker\'s Percentage)',
+          water: 'Room temperature (approx. 20°C / 68°F)',
+          salt: 'Fine sea salt recommended',
+          oil: 'Extra virgin olive oil',
+          yeast: 'Based on yeast type selected',
+          preferment: 'Mix and let ferment before adding to final dough',
+      },
+      steps: {
+          title: 'Instructions',
+          direct: {
+              step1: '<b>Combine:</b> In a large bowl, whisk together the flour, salt, and yeast. Add the water and oil.',
+              step2: '<b>Mix & Knead:</b> Mix until a shaggy dough forms. Knead for 8-10 minutes on a lightly floured surface until smooth and elastic. The dough should pass the "windowpane test".',
+              step3: '<b>Bulk Fermentation:</b> Place the dough in a lightly oiled bowl, cover, and let it rise in a warm place for 1.5-2 hours, or until doubled in size.',
+              step4: '<b>Divide & Shape:</b> Gently deflate the dough, divide it into {count} equal pieces, and shape each piece into a tight ball.',
+              step5: '<b>Final Proof:</b> Place the dough balls on a floured tray, cover, and let them proof for another 30-60 minutes, or refrigerate for a cold ferment (1-3 days).',
+              step6: '<b>Bake:</b> Preheat your oven and baking surface. Stretch the dough, add your toppings, and bake until the crust is golden brown.',
+          },
+          indirect: {
+              preferment: {
+                  step1: '<b>Prepare Preferment:</b> In a small bowl, mix the preferment flour, water, and yeast. Cover and let it ferment at room temperature for 12-16 hours, or until bubbly and active.',
+                  step2: '<b>Check for Ripeness:</b> The preferment is ready when it has risen, is full of bubbles, and may have just started to collapse on itself.',
+              },
+              finalDough: {
+                  step1: '<b>Combine:</b> In a large bowl, combine the final dough flour and water. Add the fully ripened preferment and mix until incorporated.',
+                  step2: '<b>Add Remaining Ingredients:</b> Add the salt, oil, and any remaining yeast. Mix and knead for 8-10 minutes until smooth and elastic.',
+                  step3: '<b>Bulk & Proof:</b> Follow steps 3-5 from the Direct Method instructions for bulk fermentation, dividing, shaping, and final proofing.',
+                  step4: '<b>Bake:</b> Preheat your oven and baking surface. Stretch, top, and bake your creation.',
+              },
+          },
+          baguette: {
+              step1: 'Follow indirect method for preferment (poolish) and final dough mixing.',
+              step2: 'Bulk ferment for 1.5 hours with folds every 30 minutes.',
+              step3: 'Divide dough and preshape into logs. Rest for 20-30 minutes.',
+              step4: 'Shape into final baguette form.',
+              step5: 'Proof on a floured couche or linen for 45-60 minutes.',
+              step6: 'Score the loaves just before baking.',
+              step7: 'Bake in a steamy oven at high heat (240°C / 475°F) until golden brown.',
+          },
+          ciabatta: {
+              step1: 'Follow indirect method for preferment (biga) and final dough mixing. This will be a very wet dough.',
+              step2: 'Bulk ferment for 2-3 hours, performing several sets of stretch-and-folds in the bowl.',
+              step3: 'Gently pour the dough onto a well-floured surface. Do not degas it heavily.',
+              step4: 'Divide into desired portions using a bench scraper.',
+              step5: 'Gently stretch each piece into a rough rectangle and place on parchment paper.',
+              step6: 'Proof for 30-45 minutes, then bake at high heat (230°C / 450°F).',
+          }
+      },
+      notes_title: 'Your Notes',
+    },
+    units: {
+        g: 'g',
+        oz: 'oz',
+        cups: 'cups',
+        tbsp: 'tbsp',
+        tsp: 'tsp',
+    },
+    yeast: {
+        idy: 'Instant Dry Yeast (IDY)',
+        ady: 'Active Dry Yeast (ADY)',
+        fresh: 'Fresh Yeast',
+    },
+    pro: {
+        go_pro_header: 'Go Pro',
+        locked_tooltip: 'This is a Pro feature. Click to upgrade!',
+    },
+    load_modal: {
+        title: 'Load Saved Recipe',
+        load: 'Load',
+        delete_aria: 'Delete recipe',
+        no_configs: 'You have no saved recipes yet.',
+        close_aria: 'Close modal',
+    },
+    pro_recipes: {
+        modal_title: 'Pro Recipe Book',
+        neapolitan: {
+            name: 'Classic Neapolitan',
+            description: 'Authentic high-hydration dough for a classic soft, leopard-spotted crust.'
+        },
+        focaccia: {
+            name: 'High-Hydration Focaccia',
+            description: 'A wet, bubbly dough for a light and airy focaccia with a crispy crust.'
+        },
+        ny_style: {
+            name: 'NY Style Pizza',
+            description: 'Perfect for large, foldable slices with a satisfyingly chewy crust.'
+        },
+        sourdough: {
+            name: 'No-Knead "Sourdough" Loaf',
+            description: 'An easy, artisan-style loaf with a complex flavor from long fermentation.'
+        },
+    },
+    paywall: {
+        title: 'Unlock Dough Lab Pro',
+        subtitle: 'Take your baking to the next level with these powerful features.',
+        feature_save: 'Save & Load Recipes',
+        feature_save_desc: 'Never lose a great recipe. Save your configurations and load them anytime.',
+        feature_export: 'Export to PDF',
+        feature_export_desc: 'Get a clean, printable PDF of your recipe to use in the kitchen.',
+        feature_scale: 'Scale Recipes',
+        feature_scale_desc: 'Easily scale any recipe up or down to fit your needs.',
+        feature_ads: 'Ad-Free Experience',
+        feature_ads_desc: 'Enjoy a clean, focused interface without any interruptions.',
+        feature_pro_recipes: 'Pro Recipe Book',
+        feature_pro_recipes_desc: 'Access a curated collection of professionally developed recipes.',
+        cta_button: 'Upgrade to Pro Now',
+        disclaimer: 'This is a demo. Clicking this button will grant you Pro access for this session.',
+    },
+    plans_page: {
+        title: 'Choose Your Plan',
+        subtitle: 'Dough Lab Pro offers powerful features to perfect your baking.',
+        feature: 'Feature',
+        free_tier: 'Free',
+        pro_tier: 'Pro',
+        feature_calculator: 'Advanced Dough Calculator',
+        feature_styles: 'Multiple Pizza & Bread Styles',
+        feature_units: 'Gram, Ounce & Volume Units',
+        feature_ads: 'Ad-Supported',
+        feature_save_load: 'Save & Load Recipes',
+        feature_export: 'Export to PDF',
+        feature_scaling: 'Recipe Scaling',
+        feature_pro_recipes: 'Pro Recipe Book Access',
+        upgrade_button: 'Get Pro Access',
+    },
+    tips_page: {
+        title: 'Baking Tips & Techniques',
+        subtitle: 'Master the fundamentals to improve your dough-making skills.',
+        load_recipe_button: 'Load This Recipe',
+        pro_recipes_cta_title: 'Start with a Great Recipe',
+        pro_recipes_cta_description: 'These professionally developed recipes are a perfect starting point. Load one and start baking!',
+        bakers_percentage_title: 'Understanding Baker\'s Percentage',
+        bakers_percentage_content: 'All ingredients in a recipe are expressed as a percentage of the total flour weight, which is always 100%. For example, 65% hydration means the weight of the water is 65% of the weight of the flour. This makes it easy to scale recipes up or down!',
+        fermentation_title: 'The Magic of Fermentation',
+        fermentation_content: 'Fermentation is where yeast consumes sugars and produces CO2 and alcohol, developing flavor and leavening the dough. <strong>Bulk fermentation</strong> (the first rise) builds flavor and strength. <strong>Proofing</strong> (the final rise) happens after shaping and prepares the dough for baking.',
+        kneading_title: 'Kneading and Gluten Development',
+        kneading_content: 'Kneading develops the gluten network, which gives dough its structure and elasticity. A well-developed dough will be smooth and pass the "windowpane test" — you can stretch a small piece thin enough to see light through it without tearing.',
+    },
+    ads: {
+        advertisement: 'Advertisement',
+    },
+  },
+  pt: {},
+  es: {},
+};
+
+function resolve(path: string, obj: any): string | null {
+  const resolved = path
+    .split('.')
+    .reduce((prev, curr) => (prev ? prev[curr] : null), obj);
+  return typeof resolved === 'string' ? resolved : null;
+}
+
+export const TranslationProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [locale, setLocale] = useState<Locale>('en');
+  const [locale, setLocaleState] = useState<Locale>('en');
+
+  const setLocale = useCallback((newLocale: Locale) => {
+    setLocaleState(newLocale);
+  }, []);
 
   const t = useCallback(
-    (key: string, replacements?: { [key: string]: string | number }) => {
-      let translation = translations[locale][key] || key;
-      if (replacements) {
-        Object.entries(replacements).forEach(([key, value]) => {
-          translation = translation.replace(`{${key}}`, String(value));
-        });
+    (key: string, replacements?: { [key:string]: string | number }): string => {
+      let translation =
+        resolve(key, translations[locale]) || resolve(key, translations.en);
+
+      if (!translation) {
+        console.warn(`Translation not found for key: ${key}`);
+        return key;
       }
+      
+      if (replacements) {
+          Object.keys(replacements).forEach(rKey => {
+              translation = translation!.replace(`{${rKey}}`, String(replacements[rKey]));
+          })
+      }
+
       return translation;
     },
     [locale],
   );
-  
-  const value = useMemo(() => ({
-    locale,
-    setLocale,
-    t
-  }), [locale, t]);
 
-  // FIX: Replace JSX with `React.createElement` to prevent parsing errors in a .ts file.
-  return React.createElement(
-    I18nContext.Provider,
-    { value: value },
-    children,
+  const value = useMemo(
+    () => ({
+      locale,
+      setLocale,
+      t,
+    }),
+    [locale, setLocale, t],
   );
+
+  return React.createElement(TranslationContext.Provider, { value: value }, children);
 };
 
-export const useTranslation = (): I18nContextType => {
-  const context = useContext(I18nContext);
-  if (!context) {
-    throw new Error('useTranslation must be used within an I18nProvider');
+export const useTranslation = (): TranslationContextType => {
+  const context = useContext(TranslationContext);
+  if (context === undefined) {
+    throw new Error('useTranslation must be used within a TranslationProvider');
   }
   return context;
 };

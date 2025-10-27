@@ -1,38 +1,47 @@
+
 import React from 'react';
 import { useTranslation } from '../i18n';
 import {
   CloseIcon,
-  SparklesIcon,
+  StarIcon,
+  SaveIcon,
+  DownloadIcon,
+  FolderIcon,
   ShieldCheckIcon,
   ScaleIcon,
-  PencilIcon,
-  SaveIcon,
-  ShareIcon,
   BookOpenIcon,
 } from './IconComponents';
 
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onGrantAccess: () => void;
 }
 
-const Feature: React.FC<{ icon: React.ReactNode; text: string }> = ({
-  icon,
-  text,
-}) => (
-  <li className="flex items-center gap-3">
-    <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-lime-100 text-lime-600 dark:bg-lime-500/10 dark:text-lime-400">
+const Feature: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}> = ({ icon, title, description }) => (
+  <div className="flex items-start gap-4">
+    <div className="flex-shrink-0 rounded-full bg-lime-100 p-2 dark:bg-lime-500/10">
       {icon}
-    </span>
-    <span className="text-slate-700 dark:text-slate-300">{text}</span>
-  </li>
+    </div>
+    <div>
+      <h4 className="font-semibold text-slate-800 dark:text-slate-100">
+        {title}
+      </h4>
+      <p className="text-sm text-slate-600 dark:text-slate-400">
+        {description}
+      </p>
+    </div>
+  </div>
 );
 
 const PaywallModal: React.FC<PaywallModalProps> = ({
   isOpen,
   onClose,
-  onSuccess,
+  onGrantAccess,
 }) => {
   const { t } = useTranslation();
 
@@ -50,65 +59,65 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
         className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute top-4 right-4">
-          <button
-            onClick={onClose}
-            className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
-            aria-label={t('load_modal.close_aria')}
-          >
-            <CloseIcon className="h-6 w-6" />
-          </button>
-        </div>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+          aria-label={t('load_modal.close_aria')}
+        >
+          <CloseIcon className="h-6 w-6" />
+        </button>
 
         <div className="text-center">
-          <SparklesIcon className="mx-auto h-12 w-12 text-lime-500" />
+          <StarIcon className="mx-auto h-12 w-12 text-lime-500" />
           <h2
             id="paywall-title"
-            className="mt-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
+            className="mt-4 text-2xl font-bold text-slate-900 dark:text-white"
           >
-            {t('pro.title')}
+            {t('paywall.title')}
           </h2>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            {t('pro.subtitle')}
+          <p className="mt-2 text-slate-600 dark:text-slate-300">
+            {t('paywall.subtitle')}
           </p>
         </div>
 
-        <ul className="mt-8 space-y-4">
+        <div className="mt-8 space-y-6">
           <Feature
-            icon={<ShieldCheckIcon className="h-5 w-5" />}
-            text={t('pro.feature_ads')}
+            icon={<FolderIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />}
+            title={t('paywall.feature_save')}
+            description={t('paywall.feature_save_desc')}
           />
           <Feature
-            icon={<ScaleIcon className="h-5 w-5" />}
-            text={t('pro.feature_scale')}
+            icon={<DownloadIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />}
+            title={t('paywall.feature_export')}
+            description={t('paywall.feature_export_desc')}
           />
           <Feature
-            icon={<PencilIcon className="h-5 w-5" />}
-            text={t('pro.feature_notes')}
+            icon={<ScaleIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />}
+            title={t('paywall.feature_scale')}
+            description={t('paywall.feature_scale_desc')}
+          />
+           <Feature
+            icon={<BookOpenIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />}
+            title={t('paywall.feature_pro_recipes')}
+            description={t('paywall.feature_pro_recipes_desc')}
           />
           <Feature
-            icon={<SaveIcon className="h-5 w-5" />}
-            text={t('pro.feature_save_load')}
+            icon={<ShieldCheckIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />}
+            title={t('paywall.feature_ads')}
+            description={t('paywall.feature_ads_desc')}
           />
-          <Feature
-            icon={<ShareIcon className="h-5 w-5" />}
-            text={t('pro.feature_export')}
-          />
-          <Feature
-            icon={<BookOpenIcon className="h-5 w-5" />}
-            text={t('pro.feature_pro_recipes')}
-          />
-        </ul>
+        </div>
 
         <div className="mt-8">
           <button
-            onClick={onSuccess}
-            className="w-full rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+            onClick={onGrantAccess}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
           >
-            {t('pro.buy_button', { price: '$9.99' })}
+            <StarIcon className="h-5 w-5" />
+            <span>{t('paywall.cta_button')}</span>
           </button>
           <p className="mt-3 text-center text-xs text-slate-500 dark:text-slate-400">
-            {t('pro.buy_note')}
+            {t('paywall.disclaimer')}
           </p>
         </div>
       </div>
