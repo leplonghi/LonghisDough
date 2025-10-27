@@ -8,10 +8,10 @@ import ProRecipesModal from './components/ProRecipesModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import ThemeToggle from './components/ThemeToggle';
 import PlansPage from './components/PlansPage';
-import TipsAndTechniquesPage from './components/TipsAndTechniquesPage';
-import LoginPage from './src/pages/Login';
-import { SessionContextProvider, useSession } from './components/SessionContextProvider';
-import SignOutButton from './src/components/SignOutButton'; // Importando o novo componente
+import TipsAndTechniquesPage from "./components/TipsAndTechniquesPage";
+import LoginPage from "./src/pages/Login";
+import { SessionContextProvider, useSession } from "./src/components/SessionContextProvider"; // Caminho corrigido
+import SignOutButton from "./src/components/SignOutButton"; 
 import {
   DoughConfig,
   DoughResult,
