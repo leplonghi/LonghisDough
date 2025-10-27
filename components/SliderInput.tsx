@@ -1,4 +1,5 @@
 import React from 'react';
+import { InfoIcon } from './IconComponents';
 
 interface SliderInputProps {
   label: string;
@@ -10,6 +11,7 @@ interface SliderInputProps {
   step: number;
   unit: string;
   tooltip?: string;
+  disabled?: boolean;
 }
 
 const SliderInput: React.FC<SliderInputProps> = ({
@@ -22,9 +24,10 @@ const SliderInput: React.FC<SliderInputProps> = ({
   step,
   unit,
   tooltip,
+  disabled = false,
 }) => {
   return (
-    <div>
+    <div className={disabled ? 'opacity-50' : ''}>
       <div className="mb-1 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <label
@@ -35,20 +38,7 @@ const SliderInput: React.FC<SliderInputProps> = ({
           </label>
           {tooltip && (
             <div className="group relative flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 cursor-help text-slate-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
               <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700 dark:text-slate-200">
                 {tooltip}
                 <svg
@@ -68,7 +58,7 @@ const SliderInput: React.FC<SliderInputProps> = ({
           )}
         </div>
         <span className="rounded-md bg-lime-100 px-2 py-1 text-sm font-semibold text-lime-700 dark:bg-lime-500/10 dark:text-lime-300">
-          {value.toFixed(1)}
+          {value.toFixed(2).replace(/\.00$/, '')}
           {unit}
         </span>
       </div>
@@ -81,7 +71,10 @@ const SliderInput: React.FC<SliderInputProps> = ({
         min={min}
         max={max}
         step={step}
-        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
+        disabled={disabled}
+        className={`h-2 w-full appearance-none rounded-lg bg-gray-200 ${
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        }`}
       />
     </div>
   );

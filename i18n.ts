@@ -1,3 +1,4 @@
+
 // FIX: Import `useCallback` from react to resolve "Cannot find name 'useCallback'" error.
 import React, {
   createContext,
@@ -26,6 +27,47 @@ const translations = {
     },
     ads: {
       advertisement: 'Advertisement',
+    },
+    pro: {
+      title: 'Unlock DoughLabPro',
+      subtitle:
+        'Get lifetime access to all advanced features with a one-time purchase.',
+      buy_button: 'Go Pro - Unlock Everything',
+      continue_free: 'Continue with Basic Version',
+      restore_purchase: 'Already purchased? Restore here.',
+      restore_success: 'Your Pro purchase has been restored!',
+      feature_ads:
+        'Ad-Free Experience: Focus on your recipe without interruptions.',
+      feature_scale:
+        'Recipe Scaling: Easily scale your entire recipe up or down.',
+      feature_notes:
+        'Recipe Notes: Add personal notes and observations to your recipes.',
+      feature_export:
+        'PDF Export: Save your recipes as a clean, printable PDF.',
+      feature_share:
+        'Share Recipes: Share a unique link to your recipe with friends.',
+      feature_save: 'Save & Load: Save your favorite configurations for later.',
+      feature_recipes:
+        'Pro Recipes & Techniques: Access expert-tested recipes and tips.',
+      locked_tooltip: 'This is a Pro feature. Click to unlock.',
+      go_pro_header: 'Go Pro',
+      pro_member_header: 'Pro Member',
+      pro_member_tooltip: 'You have unlocked all Pro features!',
+    },
+    pro_recipes: {
+      modal_title: 'Pro Recipes & Techniques',
+      neapolitan: {
+        name: 'Classic Neapolitan',
+      },
+      focaccia: {
+        name: 'High Hydration Focaccia',
+      },
+      ny_style: {
+        name: 'NY Style Pizza',
+      },
+      sourdough: {
+        name: 'Artisan Sourdough Loaf',
+      },
     },
     form: {
       bake_type: 'Bake Type',
@@ -114,6 +156,10 @@ const translations = {
       config_saved: 'Configuration saved!',
       config_exists_overwrite:
         'A configuration with this name already exists. Overwrite it?',
+      errors: {
+        num_pizzas_range: 'Please enter a value between 1 and 100.',
+        dough_ball_weight_range: 'Please enter a value between 100g and 2000g.',
+      },
     },
     yeast: {
       idy: 'Instant Dry Yeast (IDY)',
@@ -128,6 +174,7 @@ const translations = {
       grams: 'Grams',
       ounces: 'Ounces',
       cups: 'Cups',
+      unit_system_display: 'Using {system} Units',
       preferment_title: 'Preferment ({technique})',
       final_dough_title: 'Final Dough',
       preferment_label: 'Preferment ({technique})',
@@ -261,6 +308,48 @@ const translations = {
     ads: {
       advertisement: 'Publicidade',
     },
+    pro: {
+      title: 'Desbloquear o DoughLabPro',
+      subtitle:
+        'Obtenha acesso vitalício a todos os recursos avançados com uma única compra.',
+      buy_button: 'Seja Pro - Desbloqueie Tudo',
+      continue_free: 'Continuar com a Versão Básica',
+      restore_purchase: 'Já comprou? Restaure aqui.',
+      restore_success: 'Sua compra Pro foi restaurada!',
+      feature_ads:
+        'Experiência Sem Anúncios: Foque na sua receita sem interrupções.',
+      feature_scale:
+        'Escala de Receita: Aumente ou diminua facilmente toda a sua receita.',
+      feature_notes:
+        'Notas de Receita: Adicione notas e observações pessoais às suas receitas.',
+      feature_export:
+        'Exportar para PDF: Salve suas receitas como um PDF limpo e para impressão.',
+      feature_share:
+        'Compartilhar Receitas: Compartilhe um link exclusivo da sua receita com amigos.',
+      feature_save:
+        'Salvar e Carregar: Salve suas configurações favoritas para mais tarde.',
+      feature_recipes:
+        'Receitas e Técnicas Pro: Acesse receitas e dicas testadas por especialistas.',
+      locked_tooltip: 'Este é um recurso Pro. Clique para desbloquear.',
+      go_pro_header: 'Seja Pro',
+      pro_member_header: 'Membro Pro',
+      pro_member_tooltip: 'Você desbloqueou todos os recursos Pro!',
+    },
+    pro_recipes: {
+      modal_title: 'Receitas e Técnicas Pro',
+      neapolitan: {
+        name: 'Napolitana Clássica',
+      },
+      focaccia: {
+        name: 'Focaccia de Alta Hidratação',
+      },
+      ny_style: {
+        name: 'Pizza Estilo NY',
+      },
+      sourdough: {
+        name: 'Pão de Fermentação Natural',
+      },
+    },
     form: {
       bake_type: 'Tipo de Massa',
       pizzas: 'Pizzas',
@@ -348,6 +437,10 @@ const translations = {
       config_saved: 'Configuração salva!',
       config_exists_overwrite:
         'Já existe uma configuração com este nome. Deseja substituí-la?',
+      errors: {
+        num_pizzas_range: 'Por favor, insira um valor entre 1 e 100.',
+        dough_ball_weight_range: 'Por favor, insira um valor entre 100g e 2000g.',
+      },
     },
     yeast: {
       idy: 'Fermento Biológico Seco Instantâneo (IDY)',
@@ -362,6 +455,7 @@ const translations = {
       grams: 'Gramas',
       ounces: 'Onças',
       cups: 'Xícaras',
+      unit_system_display: 'Usando Unidades {system}',
       preferment_title: 'Pré-fermento ({technique})',
       final_dough_title: 'Massa Final',
       preferment_label: 'Pré-fermento ({technique})',
@@ -495,6 +589,48 @@ const translations = {
     ads: {
       advertisement: 'Publicidad',
     },
+    pro: {
+      title: 'Desbloquear DoughLabPro',
+      subtitle:
+        'Obtén acceso de por vida a todas las funciones avanzadas con una sola compra.',
+      buy_button: 'Hazte Pro - Desbloquéalo Todo',
+      continue_free: 'Continuar con la Versión Básica',
+      restore_purchase: '¿Ya lo compraste? Restaura aquí.',
+      restore_success: '¡Tu compra Pro ha sido restaurada!',
+      feature_ads:
+        'Experiencia Sin Anuncios: Concéntrate en tu receta sin interrupciones.',
+      feature_scale:
+        'Escalado de Recetas: Aumenta o disminuye fácilmente toda tu receta.',
+      feature_notes:
+        'Notas de Receta: Añade notas y observaciones personales a tus recetas.',
+      feature_export:
+        'Exportar a PDF: Guarda tus recetas como un PDF limpio y listo para imprimir.',
+      feature_share:
+        'Compartir Recetas: Comparte un enlace único de tu receta con amigos.',
+      feature_save:
+        'Guardar y Cargar: Guarda tus configuraciones favoritas para más tarde.',
+      feature_recipes:
+        'Recetas y Técnicas Pro: Accede a recetas y consejos probados por expertos.',
+      locked_tooltip: 'Esta es una función Pro. Haz clic para desbloquear.',
+      go_pro_header: 'Hazte Pro',
+      pro_member_header: 'Miembro Pro',
+      pro_member_tooltip: '¡Has desbloqueado todas las funciones Pro!',
+    },
+    pro_recipes: {
+      modal_title: 'Recetas y Técnicas Pro',
+      neapolitan: {
+        name: 'Napolitana Clásica',
+      },
+      focaccia: {
+        name: 'Focaccia de Alta Hidratación',
+      },
+      ny_style: {
+        name: 'Pizza Estilo NY',
+      },
+      sourdough: {
+        name: 'Pan de Masa Madre Artesano',
+      },
+    },
     form: {
       bake_type: 'Tipo de Masa',
       pizzas: 'Pizzas',
@@ -583,6 +719,11 @@ const translations = {
       config_saved: '¡Configuración guardada!',
       config_exists_overwrite:
         'Ya existe una configuración con este nombre. ¿Desea sobrescribirla?',
+      errors: {
+        num_pizzas_range: 'Por favor, introduzca un valor entre 1 y 100.',
+        dough_ball_weight_range:
+          'Por favor, introduzca un valor entre 100g y 2000g.',
+      },
     },
     yeast: {
       idy: 'Levadura Seca Instantánea (IDY)',
@@ -597,6 +738,7 @@ const translations = {
       grams: 'Gramos',
       ounces: 'Onzas',
       cups: 'Tazas',
+      unit_system_display: 'Usando Unidades {system}',
       preferment_title: 'Prefermento ({technique})',
       final_dough_title: 'Masa Final',
       preferment_label: 'Prefermento ({technique})',

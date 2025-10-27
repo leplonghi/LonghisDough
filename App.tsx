@@ -21,8 +21,11 @@ import ThemeToggle from './components/ThemeToggle';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { LanguageProvider, useTranslation } from './i18n';
 import MobileSummaryBar from './components/MobileSummaryBar';
-import { PizzaIcon, UserIcon } from './components/IconComponents';
+import { PizzaIcon, SparklesIcon, BookOpenIcon } from './components/IconComponents';
 import LoadConfigModal from './components/LoadConfigModal';
+import { EntitlementProvider, useEntitlements } from './entitlements';
+import PaywallModal from './components/PaywallModal';
+import ProRecipesModal from './components/ProRecipesModal';
 
 type Theme = 'light' | 'dark';
 
@@ -85,6 +88,7 @@ const calculateDough = (config: DoughConfig): DoughResult => {
 
 const AppContent: React.FC = () => {
   const { t } = useTranslation();
+  const { hasProAccess, grantProAccess } = useEntitlements();
   const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
   const [unit, setUnit] = useState<Unit>('g');
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(
@@ -92,30 +96,48 @@ const AppContent: React.FC = () => {
   );
   const [theme, setTheme] = useState<Theme>('light');
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
+  const [isRecipesModalOpen, setIsRecipesModalOpen] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
 
   const STORAGE_KEY = 'doughlabpro_configs';
 
+  const openPaywall = useCallback(() => setIsPaywallOpen(true), []);
+
   useEffect(() => {
-    // Load config from URL first
     const urlParams = new URLSearchParams(window.location.search);
+    let urlWasModified = false;
+
+    // Master account: Activate Pro features for testing via URL param
+    if (urlParams.get('test_pro') === 'true') {
+      if (!hasProAccess()) {
+        grantProAccess();
+      }
+      urlWasModified = true;
+    }
+
+    // Load config from URL param
     const recipeData = urlParams.get('recipe');
     if (recipeData) {
       try {
         const decodedConfig = atob(recipeData);
         const parsedConfig: DoughConfig = JSON.parse(decodedConfig);
-        // Basic validation to ensure it's a valid config object
+        // Basic validation
         if (parsedConfig && typeof parsedConfig.numPizzas === 'number') {
           setConfig(parsedConfig);
-          // Clean the URL to avoid reloading the same config on refresh
-          window.history.replaceState({}, '', window.location.pathname);
-          return; // Stop further execution to avoid overwriting with defaults
         }
       } catch (error) {
         console.error('Failed to parse recipe from URL:', error);
       }
+      urlWasModified = true;
     }
-  }, []);
+
+    // Clean the URL to avoid reloading the same config on refresh
+    if (urlWasModified) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on initial mount to process URL params
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme;
@@ -203,6 +225,10 @@ const AppContent: React.FC = () => {
 
   const handleSaveConfig = useCallback(
     (name: string) => {
+      if (!hasProAccess()) {
+        openPaywall();
+        return;
+      }
       try {
         const rawData = localStorage.getItem(STORAGE_KEY);
         const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
@@ -224,10 +250,14 @@ const AppContent: React.FC = () => {
         alert('Error saving configuration.');
       }
     },
-    [config, t],
+    [config, t, hasProAccess, openPaywall],
   );
 
   const handleOpenLoadModal = useCallback(() => {
+    if (!hasProAccess()) {
+      openPaywall();
+      return;
+    }
     try {
       const rawData = localStorage.getItem(STORAGE_KEY);
       const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
@@ -238,7 +268,7 @@ const AppContent: React.FC = () => {
       setSavedConfigs([]);
       setIsLoadModalOpen(true);
     }
-  }, []);
+  }, [hasProAccess, openPaywall]);
 
   const handleLoadConfig = useCallback((newConfig: DoughConfig) => {
     setConfig(newConfig);
@@ -255,6 +285,22 @@ const AppContent: React.FC = () => {
     } catch (error) {
       console.error('Failed to delete configuration:', error);
     }
+  }, []);
+
+  const handleOpenRecipesModal = useCallback(() => {
+    if (!hasProAccess()) {
+      openPaywall();
+      return;
+    }
+    setIsRecipesModalOpen(true);
+  }, [hasProAccess, openPaywall]);
+
+  const handleLoadProRecipe = useCallback((proConfig: Partial<DoughConfig>) => {
+    setConfig((prev) => ({
+      ...prev,
+      ...proConfig,
+    }));
+    setIsRecipesModalOpen(false);
   }, []);
 
   return (
@@ -275,15 +321,33 @@ const AppContent: React.FC = () => {
           <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-3">
             <LanguageSwitcher />
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+             <button
+                onClick={handleOpenRecipesModal}
+                className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
+                aria-label={t('pro_recipes.modal_title')}
+              >
+                <BookOpenIcon className="h-6 w-6" />
+              </button>
             <div className="group relative">
               <button
-                className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
-                aria-label={t('header.user_profile')}
+                onClick={!hasProAccess() ? openPaywall : undefined}
+                className={`rounded-full p-2 font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
+                  hasProAccess()
+                    ? 'cursor-default text-lime-500'
+                    : 'text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100'
+                }`}
+                aria-label={
+                  hasProAccess()
+                    ? t('pro.pro_member_header')
+                    : t('pro.go_pro_header')
+                }
               >
-                <UserIcon className="h-6 w-6" />
+                <SparklesIcon className="h-6 w-6" />
               </button>
               <span className="pointer-events-none absolute top-full right-0 mt-2 w-max rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-slate-700">
-                {t('header.user_profile_tooltip')}
+                {hasProAccess()
+                  ? t('pro.pro_member_tooltip')
+                  : t('pro.go_pro_header')}
               </span>
             </div>
           </div>
@@ -301,6 +365,8 @@ const AppContent: React.FC = () => {
               onReset={handleReset}
               unitSystem={unitSystem}
               onUnitSystemChange={setUnitSystem}
+              hasProAccess={hasProAccess()}
+              onOpenPaywall={openPaywall}
             />
           </div>
           <div id="results-section">
@@ -310,6 +376,8 @@ const AppContent: React.FC = () => {
               unit={unit}
               onUnitChange={setUnit}
               unitSystem={unitSystem}
+              hasProAccess={hasProAccess()}
+              onOpenPaywall={openPaywall}
             />
           </div>
         </div>
@@ -329,13 +397,26 @@ const AppContent: React.FC = () => {
         onLoad={handleLoadConfig}
         onDelete={handleDeleteConfig}
       />
+
+      <ProRecipesModal
+        isOpen={isRecipesModalOpen}
+        onClose={() => setIsRecipesModalOpen(false)}
+        onLoadRecipe={handleLoadProRecipe}
+      />
+
+      <PaywallModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+      />
     </div>
   );
 };
 
 const App: React.FC = () => (
   <LanguageProvider>
-    <AppContent />
+    <EntitlementProvider>
+      <AppContent />
+    </EntitlementProvider>
   </LanguageProvider>
 );
 

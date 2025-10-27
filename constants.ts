@@ -4,6 +4,7 @@ import {
   RecipeStyle,
   FermentationTechnique,
   BakeType,
+  ProRecipe,
 } from './types';
 
 export const YEAST_OPTIONS = [
@@ -183,3 +184,71 @@ export const DEFAULT_CONFIG: DoughConfig = {
   notes: '',
   scale: 1,
 };
+
+// Pro Recipes based on ~1kg of flour
+export const PRO_RECIPES: ProRecipe[] = [
+  {
+    nameKey: 'pro_recipes.neapolitan.name',
+    config: {
+      bakeType: BakeType.PIZZA,
+      recipeStyle: RecipeStyle.NAPOLETANA,
+      numPizzas: 6,
+      doughBallWeight: 276,
+      hydration: 62,
+      salt: 2.8,
+      oil: 0,
+      yeastType: YeastType.IDY,
+      yeastPercentage: 0.5,
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      notes: 'Classic Neapolitan recipe. Best baked at very high temperatures (450-500°C) on a pizza stone or steel for 60-90 seconds.',
+    },
+  },
+  {
+    nameKey: 'pro_recipes.focaccia.name',
+    config: {
+      bakeType: BakeType.PIZZA,
+      recipeStyle: RecipeStyle.FOCACCIA,
+      numPizzas: 2,
+      doughBallWeight: 940,
+      hydration: 80,
+      salt: 2.2,
+      oil: 5,
+      yeastType: YeastType.IDY,
+      yeastPercentage: 0.7,
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      notes: 'A very wet and sticky dough. Use plenty of olive oil in the pan and on your hands. Dimple the dough gently before baking to create the classic texture.',
+    },
+  },
+  {
+    nameKey: 'pro_recipes.ny_style.name',
+    config: {
+      bakeType: BakeType.PIZZA,
+      recipeStyle: RecipeStyle.NY,
+      numPizzas: 4,
+      doughBallWeight: 414,
+      hydration: 60,
+      salt: 2.5,
+      oil: 2.5,
+      yeastType: YeastType.IDY,
+      yeastPercentage: 0.5,
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      notes: 'This dough is great for a long, cold fermentation (2-3 days). The oil and lower hydration make it crispy and chewy. Stretch it thin!',
+    },
+  },
+  {
+    nameKey: 'pro_recipes.sourdough.name',
+    config: {
+      bakeType: BakeType.BREAD,
+      recipeStyle: RecipeStyle.ARTISAN_LOAF,
+      numPizzas: 2,
+      doughBallWeight: 886,
+      hydration: 75,
+      salt: 2,
+      oil: 0,
+      yeastType: YeastType.IDY,
+      yeastPercentage: 0.2,
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      notes: 'This recipe uses a low amount of commercial yeast to simulate the long fermentation of sourdough. For best results, use stretch-and-fold techniques during bulk fermentation and bake in a Dutch oven.',
+    },
+  },
+];

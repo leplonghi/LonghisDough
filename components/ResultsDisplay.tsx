@@ -22,6 +22,7 @@ import {
   ShareIcon,
   CheckIcon,
   InfoIcon,
+  LockClosedIcon,
 } from './IconComponents';
 import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
@@ -40,6 +41,8 @@ interface ResultsDisplayProps {
   unit: Unit;
   unitSystem: UnitSystem;
   onUnitChange: (unit: Unit) => void;
+  hasProAccess: boolean;
+  onOpenPaywall: () => void;
 }
 
 const ResultRow: React.FC<{
@@ -216,6 +219,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   unit,
   onUnitChange,
   unitSystem,
+  hasProAccess,
+  onOpenPaywall,
 }) => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
@@ -233,7 +238,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     const density = INGREDIENT_DENSITIES[ingredient];
     const grams = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
     const ingredientName = t(
-      `results.ingredients.${ingredient}`
+      `results.ingredients.${ingredient}`,
     ) as string;
     const systemName =
       unitSystem === UnitSystem.METRIC
@@ -259,6 +264,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   };
 
   const handleShare = () => {
+    if (!hasProAccess) {
+      onOpenPaywall();
+      return;
+    }
     try {
       const configString = JSON.stringify(config);
       const encodedConfig = btoa(configString);
@@ -276,6 +285,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   };
 
   const handleExportPDF = () => {
+    if (!hasProAccess) {
+      onOpenPaywall();
+      return;
+    }
     const { jsPDF } = window.jspdf;
     const html2canvas = window.html2canvas;
 
@@ -460,27 +473,35 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           <button
             onClick={handleShare}
             aria-label={t('results.share_recipe_aria')}
+            title={!hasProAccess ? t('pro.locked_tooltip') : ''}
             className={`relative rounded-full p-2 text-slate-500 transition-all hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800 ${
               isCopied ? 'bg-lime-100 dark:bg-lime-500/10' : ''
             }`}
           >
             {isCopied ? (
               <CheckIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />
-            ) : (
+            ) : hasProAccess ? (
               <ShareIcon className="h-6 w-6" />
+            ) : (
+              <LockClosedIcon className="h-6 w-6" />
             )}
           </button>
           <button
             onClick={handleExportPDF}
             aria-label={t('results.export_pdf_aria')}
+            title={!hasProAccess ? t('pro.locked_tooltip') : ''}
             className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800"
           >
-            <DownloadIcon className="h-6 w-6" />
+            {hasProAccess ? (
+              <DownloadIcon className="h-6 w-6" />
+            ) : (
+              <LockClosedIcon className="h-6 w-6" />
+            )}
           </button>
         </div>
       </div>
 
-      <div className="my-8 mx-auto max-w-xs">
+      <div className="mx-auto mt-8 mb-6 max-w-xs text-center">
         <div
           className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700"
           role="group"
@@ -501,6 +522,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             </button>
           ))}
         </div>
+        <p className="mt-3 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          {t('results.unit_system_display', {
+            system: t(
+              unitSystem === UnitSystem.METRIC
+                ? 'form.metric'
+                : 'form.us_customary',
+            ),
+          })}
+        </p>
       </div>
 
       {config.fermentationTechnique !== FermentationTechnique.DIRECT &&

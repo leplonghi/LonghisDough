@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
 import { Locale } from '../types';
-import { LanguageIcon, CheckIcon } from './IconComponents';
+import { CheckIcon } from './IconComponents';
 
 const LanguageSwitcher: React.FC = () => {
   const { locale, setLocale } = useTranslation();
@@ -39,12 +39,12 @@ const LanguageSwitcher: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-900"
         aria-label="Change language"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <LanguageIcon className="h-6 w-6" />
+        {locale.toUpperCase()}
       </button>
 
       {isOpen && (

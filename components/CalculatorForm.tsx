@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DoughConfig,
   YeastType,
@@ -25,6 +25,7 @@ import {
   SettingsIcon,
   PencilIcon,
   InfoIcon,
+  LockClosedIcon,
 } from './IconComponents';
 
 interface CalculatorFormProps {
@@ -35,6 +36,8 @@ interface CalculatorFormProps {
   onReset: () => void;
   unitSystem: UnitSystem;
   onUnitSystemChange: (system: UnitSystem) => void;
+  hasProAccess: boolean;
+  onOpenPaywall: () => void;
 }
 
 const FormSection: React.FC<{
@@ -99,11 +102,33 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onReset,
   unitSystem,
   onUnitSystemChange,
+  hasProAccess,
+  onOpenPaywall,
 }) => {
   const { t } = useTranslation();
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+
+  useEffect(() => {
+    const newErrors: { [key: string]: string | null } = {};
+
+    if (config.numPizzas < 1 || config.numPizzas > 100) {
+      newErrors.numPizzas = t('form.errors.num_pizzas_range');
+    }
+
+    if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
+      newErrors.doughBallWeight = t('form.errors.dough_ball_weight_range');
+    }
+
+    setErrors(newErrors);
+  }, [config.numPizzas, config.doughBallWeight, t]);
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onConfigChange({ [e.target.name]: Number(e.target.value) });
+    const { name, value } = e.target;
+    // Allow empty input without setting to NaN
+    const numValue = value === '' ? 0 : Number(value);
+    if (!isNaN(numValue)) {
+      onConfigChange({ [name]: numValue });
+    }
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -136,8 +161,20 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const recipeStylesToShow =
     config.bakeType === BakeType.PIZZA ? PIZZA_STYLES : BREAD_STYLES;
 
+  const getInputClasses = (hasError: boolean) => {
+    const baseClasses =
+      'w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100';
+    const normalClasses =
+      'border-slate-300 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600';
+    const errorClasses =
+      'border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500';
+    return `${baseClasses} ${hasError ? errorClasses : normalClasses}`;
+  };
+
   return (
     <div className="space-y-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8">
+      {!hasProAccess && <AdSenseBlock />}
+
       <FormSection
         title={t('form.bake_type')}
         icon={<BakeTypeIcon className="h-5 w-5" />}
@@ -194,14 +231,21 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               type="number"
               id="numPizzas"
               name="numPizzas"
-              value={config.numPizzas}
+              value={config.numPizzas || ''}
               onChange={handleNumberChange}
               min="1"
-              className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+              max="100"
+              className={getInputClasses(!!errors.numPizzas)}
             />
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {t('form.num_units_note')}
-            </p>
+            {errors.numPizzas ? (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                {errors.numPizzas}
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                {t('form.num_units_note')}
+              </p>
+            )}
           </div>
           <div>
             <label
@@ -216,15 +260,22 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               type="number"
               id="doughBallWeight"
               name="doughBallWeight"
-              value={config.doughBallWeight}
+              value={config.doughBallWeight || ''}
               onChange={handleNumberChange}
               min="100"
+              max="2000"
               step="10"
-              className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+              className={getInputClasses(!!errors.doughBallWeight)}
             />
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {weightNote}
-            </p>
+            {errors.doughBallWeight ? (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                {errors.doughBallWeight}
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                {weightNote}
+              </p>
+            )}
           </div>
         </div>
         <SliderInput
@@ -238,17 +289,32 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           unit="%"
           tooltip={t('form.hydration_tooltip')}
         />
-        <SliderInput
-          label={t('form.scale')}
-          name="scale"
-          value={config.scale}
-          onChange={handleNumberChange}
-          min={0.25}
-          max={4}
-          step={0.05}
-          unit="x"
-          tooltip={t('form.scale_tooltip')}
-        />
+        <div className="relative">
+          <SliderInput
+            label={t('form.scale')}
+            name="scale"
+            value={config.scale}
+            onChange={handleNumberChange}
+            min={0.25}
+            max={4}
+            step={0.05}
+            unit="x"
+            tooltip={t('form.scale_tooltip')}
+            disabled={!hasProAccess}
+          />
+          {!hasProAccess && (
+            <div
+              className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
+              onClick={onOpenPaywall}
+              title={t('pro.locked_tooltip')}
+            >
+              <div className="flex items-center gap-2 rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
+                <LockClosedIcon className="h-4 w-4" />
+                {t('pro.go_pro_header')}
+              </div>
+            </div>
+          )}
+        </div>
       </FormSection>
 
       <FormSection
@@ -382,18 +448,35 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
         title={t('form.recipe_notes')}
         icon={<PencilIcon className="h-5 w-5" />}
       >
-        <textarea
-          id="notes"
-          name="notes"
-          rows={4}
-          value={config.notes || ''}
-          onChange={handleTextareaChange}
-          placeholder={t('form.notes_placeholder')}
-          className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-        />
+        <div className="relative">
+          <textarea
+            id="notes"
+            name="notes"
+            rows={4}
+            value={config.notes || ''}
+            onChange={handleTextareaChange}
+            placeholder={
+              hasProAccess
+                ? t('form.notes_placeholder')
+                : t('pro.locked_tooltip')
+            }
+            className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-700/50"
+            disabled={!hasProAccess}
+          />
+          {!hasProAccess && (
+            <div
+              className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
+              onClick={onOpenPaywall}
+              title={t('pro.locked_tooltip')}
+            >
+              <div className="flex items-center gap-2 rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
+                <LockClosedIcon className="h-4 w-4" />
+                {t('pro.go_pro_header')}
+              </div>
+            </div>
+          )}
+        </div>
       </FormSection>
-
-      <AdSenseBlock />
 
       <div>
         <button
