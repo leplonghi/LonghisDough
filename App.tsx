@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useReducer, useMemo, useCallback } from 'react';
 import CalculatorForm from './components/CalculatorForm';
 import ResultsDisplay from './components/ResultsDisplay';
@@ -8,10 +9,7 @@ import ProRecipesModal from './components/ProRecipesModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import ThemeToggle from './components/ThemeToggle';
 import PlansPage from './components/PlansPage';
-import TipsAndTechniquesPage from "./components/TipsAndTechniquesPage";
-import LoginPage from "./src/pages/Login";
-import { SessionContextProvider, useSession } from "./src/components/SessionContextProvider"; // Caminho corrigido
-import SignOutButton from "./src/components/SignOutButton"; 
+import TipsAndTechniquesPage from './components/TipsAndTechniquesPage';
 import {
   DoughConfig,
   DoughResult,
@@ -83,9 +81,8 @@ const doughConfigReducer = (
 };
 
 function AppInternal() {
-  const { t, isLoadingTranslations } = useTranslation();
+  const { t } = useTranslation();
   const { hasProAccess, grantSessionProAccess } = useEntitlements();
-  const { session, isLoading: isSessionLoading } = useSession();
 
   const [config, dispatch] = useReducer(doughConfigReducer, DEFAULT_CONFIG);
 
@@ -271,18 +268,6 @@ function AppInternal() {
       </button>
     );
 
-  if (isSessionLoading || isLoadingTranslations) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <p className="text-slate-700 dark:text-slate-300">{t('loading')}</p>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return <LoginPage />;
-  }
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
       <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
@@ -306,7 +291,6 @@ function AppInternal() {
              </div>
             <LanguageSwitcher />
             <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
-            <SignOutButton /> {/* Usando o novo componente */}
           </div>
         </div>
       </header>
@@ -397,9 +381,7 @@ function AppInternal() {
 const App: React.FC = () => (
     <TranslationProvider>
         <EntitlementProvider>
-            <SessionContextProvider> {/* Wrap with SessionContextProvider */}
-                <AppInternal />
-            </SessionContextProvider>
+            <AppInternal />
         </EntitlementProvider>
     </TranslationProvider>
 );
