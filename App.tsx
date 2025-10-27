@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useReducer, useMemo, useCallback } from 'react';
 import CalculatorForm from './components/CalculatorForm';
 import ResultsDisplay from './components/ResultsDisplay';
@@ -273,7 +272,8 @@ function AppInternal() {
       <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <PizzaIcon className="h-8 w-8 text-lime-500" />
+            {/* Replaced PizzaIcon with img tag for the logo */}
+            <img src="https://ibb.co/v6Q3VH7C" alt="Dough Lab Pro Logo" className="h-8 w-8" />
             <div>
               <h1 className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
                 {t('header.title')}
