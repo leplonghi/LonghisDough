@@ -1,50 +1,55 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import CalculatorForm from './components/CalculatorForm';
+import ResultsDisplay from './components/ResultsDisplay';
 import {
   DoughConfig,
   DoughResult,
   Unit,
-  RecipeStyle,
-  FermentationTechnique,
-  SavedDoughConfig,
-  BakeType,
   UnitSystem,
+  BakeType,
+  RecipeStyle,
+  YeastType,
+  SavedDoughConfig,
+  ProRecipe,
 } from './types';
-import {
-  DEFAULT_CONFIG,
-  RECIPE_STYLE_PRESETS,
-  YEAST_OPTIONS,
-  BREAD_STYLES,
-} from './constants';
-import CalculatorForm from './components/CalculatorForm';
-import ResultsDisplay from './components/ResultsDisplay';
+import { DEFAULT_CONFIG, RECIPE_STYLE_PRESETS, YEAST_OPTIONS } from './constants';
 import ThemeToggle from './components/ThemeToggle';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import { LanguageProvider, useTranslation } from './i18n';
+import { PizzaIcon, BookOpenIcon } from './components/IconComponents';
 import MobileSummaryBar from './components/MobileSummaryBar';
-import { PizzaIcon, SparklesIcon, BookOpenIcon } from './components/IconComponents';
 import LoadConfigModal from './components/LoadConfigModal';
-import { EntitlementProvider, useEntitlements } from './entitlements';
 import PaywallModal from './components/PaywallModal';
 import ProRecipesModal from './components/ProRecipesModal';
+import { I18nProvider, useTranslation } from './i18n';
+import { EntitlementProvider, useEntitlements } from './entitlements';
+import PlansPage from './components/PlansPage'; // To satisfy the build, though not used in this layout
 
-type Theme = 'light' | 'dark';
+const SAVED_CONFIGS_KEY = 'doughlab_saved_configs';
 
 const calculateDough = (config: DoughConfig): DoughResult => {
-  const totalDoughWeight =
-    config.numPizzas * config.doughBallWeight * config.scale;
+  const {
+    numPizzas,
+    doughBallWeight,
+    hydration,
+    salt,
+    oil,
+    yeastPercentage,
+    fermentationTechnique,
+    prefermentFlourPercentage,
+    scale,
+  } = config;
+
+  const totalDoughWeight = numPizzas * doughBallWeight * scale;
+
   const totalPercentage =
-    100 +
-    config.hydration +
-    config.salt +
-    config.oil +
-    config.yeastPercentage;
+    100 + hydration + salt + oil;
 
-  const totalFlour = (totalDoughWeight * 100) / totalPercentage;
-  const totalWater = totalFlour * (config.hydration / 100);
-  const totalSalt = totalFlour * (config.salt / 100);
-  const totalOil = totalFlour * (config.oil / 100);
-  const totalYeast = totalFlour * (config.yeastPercentage / 100);
-
+  const totalFlour = (totalDoughWeight / totalPercentage) * 100;
+  const totalWater = (totalFlour * hydration) / 100;
+  const totalSalt = (totalFlour * salt) / 100;
+  const totalOil = (totalFlour * oil) / 100;
+  const totalYeast = (totalFlour * yeastPercentage) / 100;
+  
   const result: DoughResult = {
     totalFlour,
     totalWater,
@@ -54,17 +59,14 @@ const calculateDough = (config: DoughConfig): DoughResult => {
     totalDough: totalDoughWeight,
   };
 
-  if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
-    const prefermentFlour =
-      totalFlour * (config.prefermentFlourPercentage / 100);
-    let prefermentWater = 0;
-    // Poolish is 100% hydration, Biga is typically 45-60%. We'll use 50%.
-    if (config.fermentationTechnique === FermentationTechnique.POOLISH) {
-      prefermentWater = prefermentFlour;
-    } else if (config.fermentationTechnique === FermentationTechnique.BIGA) {
-      prefermentWater = prefermentFlour * 0.5;
+  if (fermentationTechnique !== 'DIRECT') {
+    const prefermentFlour = (totalFlour * prefermentFlourPercentage) / 100;
+    let prefermentWater = prefermentFlour; // Poolish is 100% hydration
+    if (fermentationTechnique === 'BIGA') {
+      prefermentWater = prefermentFlour * 0.5; // Biga is often ~50%
     }
-    // A tiny amount of yeast for the preferment, e.g., 0.1% of preferment flour weight
+    
+    // Use a tiny amount of yeast for the preferment, e.g., 0.1% of preferment flour weight
     const prefermentYeast = prefermentFlour * 0.001;
 
     result.preferment = {
@@ -75,301 +77,182 @@ const calculateDough = (config: DoughConfig): DoughResult => {
 
     result.finalDough = {
       flour: totalFlour - prefermentFlour,
-      water: Math.max(0, totalWater - prefermentWater),
+      water: totalWater - prefermentWater,
       salt: totalSalt,
       oil: totalOil,
-      // Ensure yeast in final dough is not negative
-      yeast: Math.max(0, totalYeast - prefermentYeast),
+      yeast: totalYeast - prefermentYeast,
     };
   }
 
   return result;
 };
 
+
 const AppContent: React.FC = () => {
   const { t } = useTranslation();
-  const { hasProAccess, grantProAccess } = useEntitlements();
+  const { hasProAccess, grantProAccess, grantSessionProAccess } = useEntitlements();
   const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
+  const [results, setResults] = useState<DoughResult>(() => calculateDough(DEFAULT_CONFIG));
   const [unit, setUnit] = useState<Unit>('g');
-  const [unitSystem, setUnitSystem] = useState<UnitSystem>(
-    UnitSystem.US_CUSTOMARY,
-  );
-  const [theme, setTheme] = useState<Theme>('light');
-  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
-  const [isRecipesModalOpen, setIsRecipesModalOpen] = useState(false);
-  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>(UnitSystem.METRIC);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const storedTheme = window.localStorage.getItem('theme');
+      if (storedTheme === 'dark' || storedTheme === 'light') return storedTheme;
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    }
+    return 'light';
+  });
+  
   const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
-
-  const STORAGE_KEY = 'doughlabpro_configs';
-
-  const openPaywall = useCallback(() => setIsPaywallOpen(true), []);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    let urlWasModified = false;
-
-    // Master account: Activate Pro features for testing via URL param
-    if (urlParams.get('test_pro') === 'true') {
-      if (!hasProAccess()) {
-        grantProAccess();
-      }
-      urlWasModified = true;
-    }
-
-    // Load config from URL param
-    const recipeData = urlParams.get('recipe');
-    if (recipeData) {
-      try {
-        const decodedConfig = atob(recipeData);
-        const parsedConfig: DoughConfig = JSON.parse(decodedConfig);
-        // Basic validation
-        if (parsedConfig && typeof parsedConfig.numPizzas === 'number') {
-          setConfig(parsedConfig);
-        }
-      } catch (error) {
-        console.error('Failed to parse recipe from URL:', error);
-      }
-      urlWasModified = true;
-    }
-
-    // Clean the URL to avoid reloading the same config on refresh
-    if (urlWasModified) {
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on initial mount to process URL params
+  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
+  const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
+  const [isProRecipesModalOpen, setIsProRecipesModalOpen] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    const prefersDark =
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+  
+  // Effect for activating test mode via URL parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('test_pro') === 'true') {
+      grantSessionProAccess();
+      // Clean up URL to remove the parameter after activation
+      const newUrl = `${window.location.pathname}${window.location.hash}`;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, [grantSessionProAccess]);
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SAVED_CONFIGS_KEY);
+      if (stored) {
+        setSavedConfigs(JSON.parse(stored));
+      }
+    } catch (e) { console.error("Failed to load saved configs", e); }
+  }, []);
+
+  useEffect(() => {
+    const newResults = calculateDough(config);
+    setResults(newResults);
+  }, [config]);
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
-    // If yeast type is changed, also update the yeast percentage to its default
-    if (newConfig.yeastType) {
-      const yeastDefaults = YEAST_OPTIONS.find(
-        (y) => y.value === newConfig.yeastType,
-      );
-      if (yeastDefaults) {
-        setConfig((prev) => ({
-          ...prev,
-          ...newConfig,
-          yeastPercentage: yeastDefaults.defaultPercentage,
-        }));
-        return;
-      }
-    }
-    setConfig((prev) => ({ ...prev, ...newConfig }));
+    setConfig(prev => ({ ...prev, ...newConfig }));
   }, []);
 
-  const handleBakeTypeChange = useCallback(
-    (bakeType: BakeType) => {
-      if (bakeType === config.bakeType) return; // No change
-
-      // When switching bake type, select the default style for that type
-      const defaultStyle =
-        bakeType === BakeType.PIZZA
-          ? RecipeStyle.NAPOLETANA
-          : RecipeStyle.ARTISAN_LOAF;
-
-      const { description: _, ...preset } = RECIPE_STYLE_PRESETS[defaultStyle];
-
-      setConfig((prev) => ({
-        ...prev,
-        ...preset, // Apply the new preset values
-        bakeType,
-        recipeStyle: defaultStyle,
-      }));
-    },
-    [config.bakeType],
-  );
-
-  const handleStyleChange = useCallback((style: RecipeStyle) => {
-    const { description: _, ...presetConfig } = RECIPE_STYLE_PRESETS[style];
-    const newBakeType = BREAD_STYLES.includes(style)
-      ? BakeType.BREAD
-      : BakeType.PIZZA;
-    setConfig((prev) => ({
+  const handleYeastTypeChange = useCallback((newYeastType: YeastType) => {
+    const yeastOption = YEAST_OPTIONS.find(y => y.value === newYeastType);
+    setConfig(prev => ({
       ...prev,
-      bakeType: newBakeType,
+      yeastType: newYeastType,
+      yeastPercentage: yeastOption?.defaultPercentage || prev.yeastPercentage
+    }));
+  }, []);
+  
+  const handleBakeTypeChange = (bakeType: BakeType) => {
+    const isPizza = bakeType === BakeType.PIZZA;
+    const defaultStyle = isPizza ? RecipeStyle.NAPOLETANA : RecipeStyle.ARTISAN_LOAF;
+    const stylePreset = RECIPE_STYLE_PRESETS[defaultStyle];
+
+    setConfig(prev => ({
+      ...prev,
+      ...stylePreset,
+      bakeType,
+      recipeStyle: defaultStyle
+    }));
+  };
+
+  const handleStyleChange = (style: RecipeStyle) => {
+    const stylePreset = RECIPE_STYLE_PRESETS[style];
+    setConfig(prev => ({
+      ...prev,
+      ...stylePreset,
       recipeStyle: style,
-      ...presetConfig,
     }));
-  }, []);
-
-  const handleReset = useCallback(() => {
+  };
+  
+  const handleReset = () => {
     setConfig(DEFAULT_CONFIG);
-  }, []);
-
-  const results = useMemo(() => calculateDough(config), [config]);
-
-  const handleSaveConfig = useCallback(
-    (name: string) => {
-      if (!hasProAccess()) {
-        openPaywall();
-        return;
-      }
-      try {
-        const rawData = localStorage.getItem(STORAGE_KEY);
-        const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
-        const existingIndex = configs.findIndex((c) => c.name === name);
-
-        if (existingIndex > -1) {
-          if (!confirm(t('form.config_exists_overwrite'))) {
-            return;
-          }
-          configs[existingIndex].config = config;
-        } else {
-          configs.push({ name, config });
-        }
-
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(configs));
-        alert(t('form.config_saved'));
-      } catch (error) {
-        console.error('Failed to save configuration:', error);
-        alert('Error saving configuration.');
-      }
-    },
-    [config, t, hasProAccess, openPaywall],
-  );
-
-  const handleOpenLoadModal = useCallback(() => {
-    if (!hasProAccess()) {
-      openPaywall();
-      return;
-    }
-    try {
-      const rawData = localStorage.getItem(STORAGE_KEY);
-      const configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
-      setSavedConfigs(configs);
-      setIsLoadModalOpen(true);
-    } catch (error) {
-      console.error('Failed to load configurations:', error);
-      setSavedConfigs([]);
-      setIsLoadModalOpen(true);
-    }
-  }, [hasProAccess, openPaywall]);
-
-  const handleLoadConfig = useCallback((newConfig: DoughConfig) => {
-    setConfig(newConfig);
+  };
+  
+  const handleSaveConfig = (name: string) => {
+    const newSavedConfig = { name, config };
+    const newConfigs = [newSavedConfig, ...savedConfigs.filter(c => c.name !== name)];
+    setSavedConfigs(newConfigs);
+    localStorage.setItem(SAVED_CONFIGS_KEY, JSON.stringify(newConfigs));
+  };
+  
+  const handleLoadConfig = (loadedConfig: DoughConfig) => {
+    setConfig(loadedConfig);
     setIsLoadModalOpen(false);
-  }, []);
+  };
+  
+  const handleDeleteConfig = (name: string) => {
+    const newConfigs = savedConfigs.filter(c => c.name !== name);
+    setSavedConfigs(newConfigs);
+    localStorage.setItem(SAVED_CONFIGS_KEY, JSON.stringify(newConfigs));
+  };
 
-  const handleDeleteConfig = useCallback((name: string) => {
-    try {
-      const rawData = localStorage.getItem(STORAGE_KEY);
-      let configs: SavedDoughConfig[] = rawData ? JSON.parse(rawData) : [];
-      configs = configs.filter((c) => c.name !== name);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(configs));
-      setSavedConfigs(configs); // Update state to re-render modal
-    } catch (error) {
-      console.error('Failed to delete configuration:', error);
-    }
-  }, []);
+  const handleLoadProRecipe = (recipeConfig: ProRecipe['config']) => {
+    setConfig(prev => ({...prev, ...recipeConfig}));
+    setIsProRecipesModalOpen(false);
+  };
 
-  const handleOpenRecipesModal = useCallback(() => {
-    if (!hasProAccess()) {
-      openPaywall();
-      return;
-    }
-    setIsRecipesModalOpen(true);
-  }, [hasProAccess, openPaywall]);
-
-  const handleLoadProRecipe = useCallback((proConfig: Partial<DoughConfig>) => {
-    setConfig((prev) => ({
-      ...prev,
-      ...proConfig,
-    }));
-    setIsRecipesModalOpen(false);
-  }, []);
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/80">
-        <div className="mx-auto flex max-w-7xl items-center p-3 sm:p-4">
-          <div className="flex flex-1 justify-start">
-            {/* Can add a logo or other links here later */}
-          </div>
-
-          <div className="flex flex-shrink-0 items-center justify-center gap-2">
-            <PizzaIcon className="h-7 w-7 text-lime-500" />
-            <h1 className="truncate text-center text-lg font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-xl">
-              {t('appName')}
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
+      <header className="sticky top-0 z-20 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-700/80 dark:bg-slate-900/80">
+        <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
+          <div className="flex items-center gap-2">
+            <PizzaIcon className="h-8 w-8 text-lime-500" />
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {t('header.title')}
+              <span className="ml-2 rounded-md bg-lime-500 px-1.5 py-0.5 text-xs font-bold text-white">
+                {t('header.subtitle')}
+              </span>
             </h1>
           </div>
-
-          <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsProRecipesModalOpen(true)}
+              className="hidden sm:flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-100 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800"
+            >
+              <BookOpenIcon className="h-5 w-5"/>
+              Pro Recipes
+            </button>
             <LanguageSwitcher />
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-             <button
-                onClick={handleOpenRecipesModal}
-                className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
-                aria-label={t('pro_recipes.modal_title')}
-              >
-                <BookOpenIcon className="h-6 w-6" />
-              </button>
-            <div className="group relative">
-              <button
-                onClick={!hasProAccess() ? openPaywall : undefined}
-                className={`rounded-full p-2 font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${
-                  hasProAccess()
-                    ? 'cursor-default text-lime-500'
-                    : 'text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100'
-                }`}
-                aria-label={
-                  hasProAccess()
-                    ? t('pro.pro_member_header')
-                    : t('pro.go_pro_header')
-                }
-              >
-                <SparklesIcon className="h-6 w-6" />
-              </button>
-              <span className="pointer-events-none absolute top-full right-0 mt-2 w-max rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-slate-700">
-                {hasProAccess()
-                  ? t('pro.pro_member_tooltip')
-                  : t('pro.go_pro_header')}
-              </span>
-            </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl p-4 pb-32 sm:p-6 sm:pb-28 lg:p-8">
+      <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <div className="lg:sticky lg:top-24">
             <CalculatorForm
               config={config}
-              onConfigChange={handleConfigChange}
+              onConfigChange={(newConfig) => {
+                if ('yeastType' in newConfig && newConfig.yeastType) {
+                    handleYeastTypeChange(newConfig.yeastType as YeastType);
+                } else {
+                    handleConfigChange(newConfig);
+                }
+              }}
               onBakeTypeChange={handleBakeTypeChange}
               onStyleChange={handleStyleChange}
               onReset={handleReset}
               unitSystem={unitSystem}
               onUnitSystemChange={setUnitSystem}
               hasProAccess={hasProAccess()}
-              onOpenPaywall={openPaywall}
+              onOpenPaywall={() => setIsPaywallModalOpen(true)}
             />
           </div>
-          <div id="results-section">
+          <div className="pb-24 sm:pb-0">
             <ResultsDisplay
               results={results}
               config={config}
@@ -377,18 +260,20 @@ const AppContent: React.FC = () => {
               onUnitChange={setUnit}
               unitSystem={unitSystem}
               hasProAccess={hasProAccess()}
-              onOpenPaywall={openPaywall}
+              onOpenPaywall={() => setIsPaywallModalOpen(true)}
             />
           </div>
         </div>
       </main>
 
-      <MobileSummaryBar
-        totalDough={results.totalDough}
-        unit={unit}
-        onSave={handleSaveConfig}
-        onLoad={handleOpenLoadModal}
-      />
+      <div className="block sm:hidden">
+        <MobileSummaryBar 
+          totalDough={results.totalDough}
+          unit={unit}
+          onSave={handleSaveConfig}
+          onLoad={() => setIsLoadModalOpen(true)}
+        />
+      </div>
 
       <LoadConfigModal
         isOpen={isLoadModalOpen}
@@ -397,27 +282,32 @@ const AppContent: React.FC = () => {
         onLoad={handleLoadConfig}
         onDelete={handleDeleteConfig}
       />
-
+      <PaywallModal
+        isOpen={isPaywallModalOpen}
+        onClose={() => setIsPaywallModalOpen(false)}
+        onSuccess={() => {
+          grantProAccess();
+          setIsPaywallModalOpen(false);
+        }}
+      />
       <ProRecipesModal
-        isOpen={isRecipesModalOpen}
-        onClose={() => setIsRecipesModalOpen(false)}
+        isOpen={isProRecipesModalOpen}
+        onClose={() => setIsProRecipesModalOpen(false)}
         onLoadRecipe={handleLoadProRecipe}
       />
 
-      <PaywallModal
-        isOpen={isPaywallOpen}
-        onClose={() => setIsPaywallOpen(false)}
-      />
     </div>
   );
 };
 
-const App: React.FC = () => (
-  <LanguageProvider>
-    <EntitlementProvider>
-      <AppContent />
-    </EntitlementProvider>
-  </LanguageProvider>
-);
+const App: React.FC = () => {
+  return (
+    <I18nProvider>
+      <EntitlementProvider>
+        <AppContent />
+      </EntitlementProvider>
+    </I18nProvider>
+  );
+};
 
 export default App;

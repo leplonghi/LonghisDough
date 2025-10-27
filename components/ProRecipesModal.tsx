@@ -54,9 +54,14 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
             <button
               key={recipe.nameKey}
               onClick={() => onLoadRecipe(recipe.config)}
-              className="w-full rounded-lg bg-slate-50 p-3 text-left font-medium text-slate-800 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 dark:bg-slate-700/50 dark:text-slate-200 dark:hover:bg-slate-700"
+              className="w-full rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 dark:bg-slate-700/50 dark:hover:bg-slate-700"
             >
-              {t(recipe.nameKey)}
+              <span className="font-medium text-slate-800 dark:text-slate-200">
+                {t(recipe.nameKey)}
+              </span>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                {t(recipe.descriptionKey)}
+              </p>
             </button>
           ))}
         </div>

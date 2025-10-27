@@ -189,6 +189,7 @@ export const DEFAULT_CONFIG: DoughConfig = {
 export const PRO_RECIPES: ProRecipe[] = [
   {
     nameKey: 'pro_recipes.neapolitan.name',
+    descriptionKey: 'pro_recipes.neapolitan.description',
     config: {
       bakeType: BakeType.PIZZA,
       recipeStyle: RecipeStyle.NAPOLETANA,
@@ -205,6 +206,7 @@ export const PRO_RECIPES: ProRecipe[] = [
   },
   {
     nameKey: 'pro_recipes.focaccia.name',
+    descriptionKey: 'pro_recipes.focaccia.description',
     config: {
       bakeType: BakeType.PIZZA,
       recipeStyle: RecipeStyle.FOCACCIA,
@@ -221,6 +223,7 @@ export const PRO_RECIPES: ProRecipe[] = [
   },
   {
     nameKey: 'pro_recipes.ny_style.name',
+    descriptionKey: 'pro_recipes.ny_style.description',
     config: {
       bakeType: BakeType.PIZZA,
       recipeStyle: RecipeStyle.NY,
@@ -237,6 +240,7 @@ export const PRO_RECIPES: ProRecipe[] = [
   },
   {
     nameKey: 'pro_recipes.sourdough.name',
+    descriptionKey: 'pro_recipes.sourdough.description',
     config: {
       bakeType: BakeType.BREAD,
       recipeStyle: RecipeStyle.ARTISAN_LOAF,

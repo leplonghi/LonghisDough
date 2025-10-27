@@ -86,5 +86,6 @@ export interface SavedDoughConfig {
 
 export interface ProRecipe {
   nameKey: string;
+  descriptionKey: string;
   config: Partial<DoughConfig>;
 }

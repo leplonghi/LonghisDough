@@ -13,6 +13,7 @@ interface EntitlementState {
 
 interface EntitlementContextType extends EntitlementState {
   grantProAccess: () => void;
+  grantSessionProAccess: () => void;
   hasProAccess: () => boolean;
 }
 
@@ -53,6 +54,17 @@ export const EntitlementProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  const grantSessionProAccess = useCallback(() => {
+    const newState = { isPro: true };
+    setEntitlements(newState);
+    // Attempt to find and hide any existing ad elements, same as permanent grant
+    const adElements = document.querySelectorAll('.adsbygoogle');
+    adElements.forEach((ad) => {
+      (ad as HTMLElement).innerHTML = '';
+      (ad as HTMLElement).setAttribute('style', 'display: none;');
+    });
+  }, []);
+
   const hasProAccess = useCallback(() => {
     return entitlements.isPro;
   }, [entitlements.isPro]);
@@ -60,7 +72,14 @@ export const EntitlementProvider: React.FC<{ children: React.ReactNode }> = ({
   // FIX: Replace JSX with `React.createElement` to prevent parsing errors in a .ts file.
   return React.createElement(
     EntitlementContext.Provider,
-    { value: { ...entitlements, grantProAccess, hasProAccess } },
+    {
+      value: {
+        ...entitlements,
+        grantProAccess,
+        grantSessionProAccess,
+        hasProAccess,
+      },
+    },
     children,
   );
 };
