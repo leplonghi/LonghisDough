@@ -50,14 +50,13 @@ export const TranslationProvider: FC<{ children: ReactNode }> = ({
         return import('./locales/en.json');
       })
       .then((module) => {
-        if (!currentTranslations) { // Only set if not already set by the primary load
-          setCurrentTranslations(module.default);
-        }
+        // Always set translations here, whether it's the primary or fallback import
+        setCurrentTranslations(module.default);
       })
       .finally(() => {
         setIsLoadingTranslations(false);
       });
-  }, [locale, currentTranslations]); // Added currentTranslations to dependency array to re-evaluate if it's null
+  }, [locale]); // Only re-run when locale changes
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
@@ -65,20 +64,18 @@ export const TranslationProvider: FC<{ children: ReactNode }> = ({
 
   const t = useCallback(
     (key: string, replacements?: { [key: string]: string | number }): string => {
-      let translation =
-        resolve(key, currentTranslations) || resolve(key, null); // Fallback to null if currentTranslations is not loaded
+      if (!currentTranslations) {
+        // If translations haven't loaded yet, return the key directly.
+        // The loading state in App.tsx should prevent most UI from rendering
+        // before translations are ready, but this is a safe guard.
+        return key;
+      }
 
-      // If currentTranslations is not loaded or key not found, try English fallback
-      if (!translation) {
-        // This part will only run if currentTranslations is null or key is not found in it
-        // We need to ensure English translations are loaded if currentTranslations is null
-        // For simplicity, we'll assume English is always available or loaded first.
-        // In a real app, you might want a default `en.json` import at the top or a more robust fallback.
-        // For now, we'll just return the key if no translations are loaded.
-        if (!currentTranslations) {
-          return key; // Return key directly if no translations are loaded yet
-        }
-        console.warn(`Translation not found for key: ${key} in locale ${locale}. Falling back to key.`);
+      let translation = resolve(key, currentTranslations);
+
+      if (translation === null) {
+        // If translation not found in the current locale, log a warning and return the key.
+        console.warn(`Translation not found for key: ${key} in locale ${locale}. Returning key.`);
         return key;
       }
       
