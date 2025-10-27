@@ -104,7 +104,7 @@
     "total_dough": "Peso Total de la Masa",
     "summary_pizza": "Hace {count} pizzas de {weight}g cada una.",
     "summary_bread": "Hace {count} panes de {weight}g cada uno.",
-    "conversion_tooltip": "1 taza US de {ingredient} es aproximadamente {grams}g. Esto puede variar. Para mayor precisión, usa una báscula. Las conversiones de volumen usan estándares {system}.",
+    "conversion_tooltip": "1 taza US de {ingredient} es aproximadamente {grams}g. Esto puede variar. Para mayor precisión, usa una báscula. Las conversiones de volume usan estándares {system}.",
     "ingredients": {
         "flour": "harina de trigo todo uso",
         "water": "agua",
@@ -112,7 +112,7 @@
         "oil": "aceite de oliva",
         "yeast": "levadura seca instantánea",
         "wholeWheat": "harina de trigo integral",
-        "rye": "harina de centeno"
+        "rye": "harina de centeio"
     },
     "notes": {
         "flour": "100% (Porcentaje de Panadero)",
@@ -154,7 +154,7 @@
             "step7": "Hornea en un horno con vapor a alta temperatura (240°C / 475°F) hasta que estén dorados."
         },
         "ciabatta": {
-            "step1": "Sigue el método indirecto para el prefermento (biga) y la mezcla de la masa final. Esta será una masa muy húmeda.",
+            "step1": "Sigue el método indireto para el prefermento (biga) y la mezcla de la masa final. Esta será una masa muy húmeda.",
             "step2": "Fermentación en bloque durante 2-3 horas, realizando varias series de estiramientos y pliegues en el bol.",
             "step3": "Vierte suavemente la masa sobre una superficie bien enharinada. No la desgasifiques en exceso.",
             "step4": "Divide en las porciones deseadas usando un raspador de masa.",
