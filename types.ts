@@ -33,7 +33,12 @@ export enum FermentationTechnique {
   BIGA = 'BIGA',
 }
 
-export type Unit = 'g' | 'oz' | 'cups';
+export enum UnitSystem {
+  US_CUSTOMARY = 'US_CUSTOMARY',
+  METRIC = 'METRIC',
+}
+
+export type Unit = 'g' | 'oz' | 'volume';
 
 export type Locale = 'en' | 'pt' | 'es';
 

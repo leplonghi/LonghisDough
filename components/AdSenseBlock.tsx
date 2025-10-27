@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../i18n';
 
 declare global {
@@ -9,25 +9,53 @@ declare global {
 
 const AdSenseBlock: React.FC = () => {
   const { t } = useTranslation();
+  const adRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
+  // This effect sets up the IntersectionObserver to detect when the ad block
+  // is visible in the viewport.
   useEffect(() => {
-    // Delay the AdSense push to ensure the container has been rendered and has a width.
-    // This helps prevent the "no slot size for availableWidth=0" error.
-    const timeout = setTimeout(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // We only need to trigger this once, so we can unobserve.
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        // Add a small margin to start loading the ad just before it's fully visible.
+        rootMargin: '50px',
+      },
+    );
+
+    if (adRef.current) {
+      observer.observe(adRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // This effect triggers the AdSense push call only once the component becomes visible.
+  useEffect(() => {
+    if (isVisible) {
       try {
         if (typeof window !== 'undefined') {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
         }
       } catch (e) {
-        console.error('AdSense error:', e);
+        console.error('AdSense push error:', e);
       }
-    }, 150); // A small delay is usually sufficient.
-
-    return () => clearTimeout(timeout);
-  }, []);
+    }
+  }, [isVisible]);
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-700/50">
+    <div
+      ref={adRef}
+      className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-700/50"
+    >
       <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {t('ads.advertisement')}
       </span>
@@ -35,7 +63,6 @@ const AdSenseBlock: React.FC = () => {
         className="adsbygoogle"
         style={{ display: 'block', marginTop: '8px', minHeight: '100px' }}
         data-ad-client="ca-pub-8653595934786167"
-        // IMPORTANT: Replace this with your actual Ad Slot ID from AdSense
         data-ad-slot="2172740239"
         data-ad-format="auto"
         data-full-width-responsive="true"

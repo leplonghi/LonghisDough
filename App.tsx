@@ -7,6 +7,7 @@ import {
   FermentationTechnique,
   SavedDoughConfig,
   BakeType,
+  UnitSystem,
 } from './types';
 import {
   DEFAULT_CONFIG,
@@ -19,7 +20,7 @@ import ResultsDisplay from './components/ResultsDisplay';
 import ThemeToggle from './components/ThemeToggle';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { LanguageProvider, useTranslation } from './i18n';
-import FixedFooter from './components/MobileSummaryBar';
+import MobileSummaryBar from './components/MobileSummaryBar';
 import { PizzaIcon, UserIcon } from './components/IconComponents';
 import LoadConfigModal from './components/LoadConfigModal';
 
@@ -86,6 +87,9 @@ const AppContent: React.FC = () => {
   const { t } = useTranslation();
   const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
   const [unit, setUnit] = useState<Unit>('g');
+  const [unitSystem, setUnitSystem] = useState<UnitSystem>(
+    UnitSystem.US_CUSTOMARY,
+  );
   const [theme, setTheme] = useState<Theme>('light');
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
@@ -254,35 +258,39 @@ const AppContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-700 dark:bg-slate-900/80">
-        <div className="mx-auto flex max-w-6xl items-center p-3 sm:p-4">
-          {/* Left side: This column will balance the right side */}
-          <div className="flex w-24 justify-start sm:w-32">
-            {/* Empty for balance */}
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900/80">
+        <div className="mx-auto flex max-w-7xl items-center p-3 sm:p-4">
+          <div className="flex flex-1 justify-start">
+            {/* Can add a logo or other links here later */}
           </div>
-          {/* Center: Takes up remaining space */}
-          <div className="flex flex-1 min-w-0 items-center justify-center gap-2">
-            <PizzaIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
-            <h1 className="truncate text-center text-base font-bold text-slate-900 dark:text-white sm:text-xl">
+
+          <div className="flex flex-shrink-0 items-center justify-center gap-2">
+            <PizzaIcon className="h-7 w-7 text-lime-500" />
+            <h1 className="truncate text-center text-lg font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-xl">
               {t('appName')}
             </h1>
           </div>
-          {/* Right side: Controls */}
-          <div className="flex w-24 items-center justify-end space-x-1 sm:w-32 sm:space-x-2">
+
+          <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-3">
             <LanguageSwitcher />
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-            <button
-              className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
-              aria-label={t('header.user_profile')}
-            >
-              <UserIcon className="h-6 w-6" />
-            </button>
+            <div className="group relative">
+              <button
+                className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
+                aria-label={t('header.user_profile')}
+              >
+                <UserIcon className="h-6 w-6" />
+              </button>
+              <span className="pointer-events-none absolute top-full right-0 mt-2 w-max rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 dark:bg-slate-700">
+                {t('header.user_profile_tooltip')}
+              </span>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl p-4 pb-24 sm:p-6 sm:pb-20 lg:p-8">
+      <main className="mx-auto max-w-7xl p-4 pb-32 sm:p-6 sm:pb-28 lg:p-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <div className="lg:sticky lg:top-24">
             <CalculatorForm
@@ -291,6 +299,8 @@ const AppContent: React.FC = () => {
               onBakeTypeChange={handleBakeTypeChange}
               onStyleChange={handleStyleChange}
               onReset={handleReset}
+              unitSystem={unitSystem}
+              onUnitSystemChange={setUnitSystem}
             />
           </div>
           <div id="results-section">
@@ -299,12 +309,13 @@ const AppContent: React.FC = () => {
               config={config}
               unit={unit}
               onUnitChange={setUnit}
+              unitSystem={unitSystem}
             />
           </div>
         </div>
       </main>
 
-      <FixedFooter
+      <MobileSummaryBar
         totalDough={results.totalDough}
         unit={unit}
         onSave={handleSaveConfig}

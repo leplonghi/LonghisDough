@@ -16,6 +16,7 @@ const translations = {
       switch_to_dark: 'Switch to dark mode',
       switch_to_light: 'Switch to light mode',
       user_profile: 'User profile',
+      user_profile_tooltip: 'Profile & Settings (coming soon)',
     },
     footer: {
       pizza_making: 'Happy baking!',
@@ -97,6 +98,12 @@ const translations = {
       yeast: 'Yeast',
       yeast_tooltip:
         'Controls the speed of fermentation. Adjust based on your desired proofing time and ambient temperature.',
+      settings: 'Settings & Preferences',
+      unit_system: 'Unit System',
+      us_customary: 'US Customary',
+      metric: 'Metric',
+      unit_system_tooltip:
+        "Changes the volume for 'cup' measurements. US Customary cups are ~237ml, while Metric cups are 250ml. This affects ingredient density for volumetric conversions.",
       recipe_notes: 'Recipe Notes',
       notes_placeholder: 'Add your personal tips or observations here...',
       reset: 'Reset to Defaults',
@@ -135,6 +142,15 @@ const translations = {
       summary_bread:
         '{count} loaf at {weight}g each | {count} loaves at {weight}g each',
       notes_title: 'My Notes',
+      ingredients: {
+        flour: 'All-purpose flour',
+        water: 'Water',
+        salt: 'Fine sea salt',
+        oil: 'Olive oil',
+        yeast: 'Instant Dry Yeast',
+      },
+      conversion_tooltip:
+        'System: {system} | 1 cup ≈ {grams}g ({ingredient}). Source: Standard baking conversions.',
       notes: {
         flour:
           "The foundation of your dough. '00' flour is traditional for Neapolitan.",
@@ -234,6 +250,7 @@ const translations = {
       switch_to_dark: 'Mudar para modo escuro',
       switch_to_light: 'Mudar para modo claro',
       user_profile: 'Perfil do usuário',
+      user_profile_tooltip: 'Perfil e Configurações (em breve)',
     },
     footer: {
       pizza_making: 'Boas fornadas!',
@@ -315,6 +332,12 @@ const translations = {
       yeast: 'Fermento',
       yeast_tooltip:
         'Controla a velocidade da fermentação. Ajuste com base no tempo de fermentação desejado e na temperatura ambiente.',
+      settings: 'Configurações e Preferências',
+      unit_system: 'Sistema de Unidades',
+      us_customary: 'Americano (US)',
+      metric: 'Métrico',
+      unit_system_tooltip:
+        "Altera o volume para medições de 'xícara'. Xícaras americanas têm ~237ml, enquanto xícaras métricas têm 250ml. Isso afeta a densidade do ingrediente para conversões volumétricas.",
       recipe_notes: 'Notas da Receita',
       notes_placeholder: 'Adicione suas dicas ou observações pessoais aqui...',
       reset: 'Redefinir Padrões',
@@ -352,6 +375,15 @@ const translations = {
         '{count} massa de pizza de {weight}g | {count} massas de pizza de {weight}g',
       summary_bread: '{count} pão de {weight}g | {count} pães de {weight}g',
       notes_title: 'Minhas Notas',
+      ingredients: {
+        flour: 'Farinha de trigo',
+        water: 'Água',
+        salt: 'Sal marinho fino',
+        oil: 'Azeite',
+        yeast: 'Fermento Biológico Seco Instantâneo',
+      },
+      conversion_tooltip:
+        'Sistema: {system} | 1 xícara ≈ {grams}g ({ingredient}). Fonte: Conversões padrão de panificação.',
       notes: {
         flour:
           "A base da sua massa. Farinha '00' é tradicional para Napolitana.",
@@ -452,6 +484,7 @@ const translations = {
       switch_to_dark: 'Cambiar a modo oscuro',
       switch_to_light: 'Cambiar a modo claro',
       user_profile: 'Perfil de usuario',
+      user_profile_tooltip: 'Perfil y Ajustes (próximamente)',
     },
     footer: {
       pizza_making: '¡Feliz horneado!',
@@ -534,6 +567,12 @@ const translations = {
       yeast: 'Levadura',
       yeast_tooltip:
         'Controla la velocidad de la fermentación. Ajuste según el tiempo de levado deseado y la temperatura ambiente.',
+      settings: 'Ajustes y Preferencias',
+      unit_system: 'Sistema de Unidades',
+      us_customary: 'EE.UU. (US)',
+      metric: 'Métrico',
+      unit_system_tooltip:
+        "Cambia el volumen para las medidas de 'taza'. Las tazas de EE.UU. son ~237ml, mientras que las tazas métricas son 250ml. Esto afecta la densidad del ingrediente para las conversiones volumétricas.",
       recipe_notes: 'Notas de la Receta',
       notes_placeholder: 'Añade aquí tus consejos u observaciones personales...',
       reset: 'Restablecer Valores',
@@ -571,6 +610,15 @@ const translations = {
         '{count} bollo de pizza de {weight}g | {count} bollos de pizza de {weight}g',
       summary_bread: '{count} pan de {weight}g | {count} panes de {weight}g',
       notes_title: 'Mis Notas',
+      ingredients: {
+        flour: 'Harina de todo uso',
+        water: 'Agua',
+        salt: 'Sal marina fina',
+        oil: 'Aceite de oliva',
+        yeast: 'Levadura Seca Instantánea',
+      },
+      conversion_tooltip:
+        'Sistema: {system} | 1 taza ≈ {grams}g ({ingredient}). Fuente: Conversiones estándar de repostería.',
       notes: {
         flour:
           'La base de tu masa. La harina "00" es tradicional para la Napolitana.',

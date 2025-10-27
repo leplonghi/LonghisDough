@@ -6,6 +6,7 @@ import {
   FermentationTechnique,
   BakeType,
   RecipeStyle,
+  UnitSystem,
 } from '../types';
 import {
   FlourIcon,
@@ -20,8 +21,9 @@ import {
   PencilIcon,
   ShareIcon,
   CheckIcon,
+  InfoIcon,
 } from './IconComponents';
-import { gramsToVolume } from '../helpers';
+import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
 
 // Inform TypeScript that these libraries are available on the window object
@@ -36,6 +38,7 @@ interface ResultsDisplayProps {
   results: DoughResult;
   config: DoughConfig;
   unit: Unit;
+  unitSystem: UnitSystem;
   onUnitChange: (unit: Unit) => void;
 }
 
@@ -45,12 +48,13 @@ const ResultRow: React.FC<{
   value: string;
   note?: string;
   isTotal?: boolean;
-}> = ({ icon, label, value, note, isTotal = false }) => (
+  tooltip?: string;
+}> = ({ icon, label, value, note, isTotal = false, tooltip }) => (
   <div
     className={`flex items-center justify-between ${
       isTotal
         ? 'mt-4 rounded-lg bg-lime-50 p-4 dark:bg-lime-500/10'
-        : 'border-b border-slate-200 py-3 dark:border-slate-700'
+        : 'border-b border-slate-200 py-4 dark:border-slate-700'
     }`}
   >
     <div className="flex items-center pr-4">
@@ -58,15 +62,37 @@ const ResultRow: React.FC<{
         {icon}
       </span>
       <div>
-        <span
-          className={`font-medium ${
-            isTotal
-              ? 'font-bold text-slate-900 dark:text-white'
-              : 'text-slate-600 dark:text-slate-300'
-          }`}
-        >
-          {label}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`font-medium ${
+              isTotal
+                ? 'text-lg font-bold text-slate-900 dark:text-white'
+                : 'text-slate-700 dark:text-slate-300'
+            }`}
+          >
+            {label}
+          </span>
+          {tooltip && (
+            <div className="group relative flex items-center">
+              <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700">
+                {tooltip}
+                <svg
+                  className="absolute left-0 top-full h-2 w-full text-slate-800 dark:text-slate-700"
+                  x="0px"
+                  y="0px"
+                  viewBox="0 0 255 255"
+                  xmlSpace="preserve"
+                >
+                  <polygon
+                    className="fill-current"
+                    points="0,0 127.5,127.5 255,0"
+                  />
+                </svg>
+              </span>
+            </div>
+          )}
+        </div>
         {note && (
           <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
             {note}
@@ -77,8 +103,8 @@ const ResultRow: React.FC<{
     <span
       className={`flex-shrink-0 text-right font-semibold ${
         isTotal
-          ? 'text-xl font-bold text-slate-900 dark:text-white'
-          : 'text-slate-800 dark:text-slate-100'
+          ? 'text-2xl font-bold text-slate-900 dark:text-white'
+          : 'text-lg text-slate-800 dark:text-slate-100'
       }`}
     >
       {value}
@@ -91,9 +117,13 @@ const RecipeSteps: React.FC<{
   t: (key: string, replacements?: { [key: string]: string | number }) => string;
 }> = ({ config, t }) => {
   const renderSteps = (stepKeys: string[]) => (
-    <ol className="list-inside list-decimal space-y-3 text-slate-600 dark:text-slate-300">
+    <ol className="list-inside list-decimal space-y-3 pl-1 text-slate-600 dark:text-slate-300">
       {stepKeys.map((key, index) => (
-        <li key={index} dangerouslySetInnerHTML={{ __html: t(key) }} />
+        <li
+          key={index}
+          className="prose prose-sm dark:prose-invert"
+          dangerouslySetInnerHTML={{ __html: t(key) }}
+        />
       ))}
     </ol>
   );
@@ -137,7 +167,7 @@ const RecipeSteps: React.FC<{
         stepsContent = (
           <>
             <div>
-              <h4 className="mb-2 font-semibold text-slate-700 dark:text-slate-200">
+              <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
                 {t('results.preferment_title', {
                   technique: t(
                     `form.${config.fermentationTechnique.toLowerCase()}`,
@@ -149,8 +179,8 @@ const RecipeSteps: React.FC<{
                 'results.steps.indirect.preferment.step2',
               ])}
             </div>
-            <div className="mt-4">
-              <h4 className="mb-2 font-semibold text-slate-700 dark:text-slate-200">
+            <div className="mt-6">
+              <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
                 {t('results.final_dough_title')}
               </h4>
               {renderSteps([
@@ -166,12 +196,12 @@ const RecipeSteps: React.FC<{
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-10">
       <div className="mb-4 flex items-center gap-3">
         <span className="text-lime-500 dark:text-lime-400">
           <RecipeIcon className="h-6 w-6" />
         </span>
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
           {t('results.steps.title')}
         </h3>
       </div>
@@ -185,6 +215,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   config,
   unit,
   onUnitChange,
+  unitSystem,
 }) => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
@@ -194,6 +225,26 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     cups: t('units.cups'),
     tbsp: t('units.tbsp'),
     tsp: t('units.tsp'),
+  };
+
+  const getConversionTooltip = (
+    ingredient: keyof typeof INGREDIENT_DENSITIES,
+  ): string => {
+    const density = INGREDIENT_DENSITIES[ingredient];
+    const grams = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
+    const ingredientName = t(
+      `results.ingredients.${ingredient}`
+    ) as string;
+    const systemName =
+      unitSystem === UnitSystem.METRIC
+        ? t('form.metric')
+        : t('form.us_customary');
+
+    return t('results.conversion_tooltip', {
+      grams: grams.toFixed(0),
+      ingredient: ingredientName,
+      system: systemName,
+    });
   };
 
   const formatWeight = (
@@ -291,7 +342,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     },
   ) => (
     <div className="mb-6">
-      <h3 className="mb-2 border-b-2 border-lime-500 pb-1 text-lg font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
+      <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
         {title}
       </h3>
       <div className="space-y-1">
@@ -300,11 +351,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<FlourIcon />}
             label={t('results.flour')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('flour', ingredients.flour, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'flour',
+                    ingredients.flour,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(ingredients.flour, { g: 0, oz: 1 })
             }
             note={t('results.notes.flour')}
+            tooltip={getConversionTooltip('flour')}
           />
         )}
         {ingredients.water !== undefined && (
@@ -312,11 +369,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<WaterIcon />}
             label={t('results.water')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('water', ingredients.water, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'water',
+                    ingredients.water,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(ingredients.water, { g: 0, oz: 1 })
             }
             note={t('results.notes.water')}
+            tooltip={getConversionTooltip('water')}
           />
         )}
         {ingredients.salt !== undefined && (
@@ -324,11 +387,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<SaltIcon />}
             label={`${t('results.salt')} (${config.salt.toFixed(1)}%)`}
             value={
-              unit === 'cups'
-                ? gramsToVolume('salt', ingredients.salt, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume('salt', ingredients.salt, volumeUnits, unitSystem)
                 : formatWeight(ingredients.salt, { g: 2, oz: 3 })
             }
             note={t('results.notes.salt')}
+            tooltip={getConversionTooltip('salt')}
           />
         )}
         {ingredients.oil !== undefined && (
@@ -336,11 +400,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<OilIcon />}
             label={`${t('results.oil')} (${config.oil.toFixed(1)}%)`}
             value={
-              unit === 'cups'
-                ? gramsToVolume('oil', ingredients.oil, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume('oil', ingredients.oil, volumeUnits, unitSystem)
                 : formatWeight(ingredients.oil, { g: 2, oz: 3 })
             }
             note={t('results.notes.oil')}
+            tooltip={getConversionTooltip('oil')}
           />
         )}
         {ingredients.yeast !== undefined && (
@@ -348,11 +413,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<YeastIcon />}
             label={t('results.yeast')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('yeast', ingredients.yeast, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'yeast',
+                    ingredients.yeast,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(ingredients.yeast, { g: 2, oz: 3 })
             }
             note={t('results.notes.yeast')}
+            tooltip={getConversionTooltip('yeast')}
           />
         )}
       </div>
@@ -369,14 +440,20 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     },
   );
 
+  const units: { id: Unit; label: string }[] = [
+    { id: 'g', label: t('results.grams') },
+    { id: 'oz', label: t('results.ounces') },
+    { id: 'volume', label: t('results.cups') },
+  ];
+
   return (
     <div
       id="recipe-card"
-      className="h-full rounded-2xl bg-white p-4 shadow-lg transition-colors duration-300 dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-6 lg:p-8"
+      className="h-full rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1"></div> {/* Left Spacer */}
-        <h2 className="flex-shrink-0 text-center text-2xl font-bold text-slate-900 dark:text-white">
+        <h2 className="flex-shrink-0 text-center text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
           {t('results.title')}
         </h2>
         <div className="no-print flex flex-1 justify-end space-x-2">
@@ -403,44 +480,26 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </div>
       </div>
 
-      <div className="my-6 flex justify-center">
-        <div className="inline-flex rounded-lg shadow-sm" role="group">
-          <button
-            type="button"
-            onClick={() => onUnitChange('g')}
-            aria-pressed={unit === 'g'}
-            className={`rounded-l-lg px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 ${
-              unit === 'g'
-                ? 'bg-lime-500 text-white font-semibold shadow-md'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
-            }`}
-          >
-            {t('results.grams')}
-          </button>
-          <button
-            type="button"
-            onClick={() => onUnitChange('oz')}
-            aria-pressed={unit === 'oz'}
-            className={`border-x border-slate-300 px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 dark:border-slate-600 ${
-              unit === 'oz'
-                ? 'bg-lime-500 text-white font-semibold shadow-md'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
-            }`}
-          >
-            {t('results.ounces')}
-          </button>
-          <button
-            type="button"
-            onClick={() => onUnitChange('cups')}
-            aria-pressed={unit === 'cups'}
-            className={`rounded-r-lg px-4 py-2 text-sm font-medium transition-all focus:z-10 focus:ring-2 focus:ring-lime-500 ${
-              unit === 'cups'
-                ? 'bg-lime-500 text-white font-semibold shadow-md'
-                : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200'
-            }`}
-          >
-            {t('results.cups')}
-          </button>
+      <div className="my-8 mx-auto max-w-xs">
+        <div
+          className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700"
+          role="group"
+        >
+          {units.map((unitOption) => (
+            <button
+              key={unitOption.id}
+              type="button"
+              onClick={() => onUnitChange(unitOption.id)}
+              aria-pressed={unit === unitOption.id}
+              className={`w-1/3 rounded-full py-2 px-3 text-sm font-semibold transition-all duration-300 focus:z-10 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+                unit === unitOption.id
+                  ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
+                  : 'bg-transparent text-slate-600 hover:bg-slate-200/50 dark:text-slate-300 dark:hover:bg-slate-600/50'
+              }`}
+            >
+              {unitOption.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -461,7 +520,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       results.finalDough &&
       results.preferment ? (
         <div className="mb-6">
-          <h3 className="mb-2 border-b-2 border-lime-500 pb-1 text-lg font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
+          <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
             {t('results.final_dough_title')}
           </h3>
           <div className="space-y-1">
@@ -485,14 +544,16 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 icon={<FlourIcon />}
                 label={t('results.flour')}
                 value={
-                  unit === 'cups'
+                  unit === 'volume'
                     ? gramsToVolume(
                         'flour',
                         results.finalDough.flour,
                         volumeUnits,
+                        unitSystem,
                       )
                     : formatWeight(results.finalDough.flour, { g: 0, oz: 1 })
                 }
+                tooltip={getConversionTooltip('flour')}
               />
             )}
             {results.finalDough.water > 0.1 && (
@@ -500,36 +561,50 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 icon={<WaterIcon />}
                 label={t('results.water')}
                 value={
-                  unit === 'cups'
+                  unit === 'volume'
                     ? gramsToVolume(
                         'water',
                         results.finalDough.water,
                         volumeUnits,
+                        unitSystem,
                       )
                     : formatWeight(results.finalDough.water, { g: 0, oz: 1 })
                 }
+                tooltip={getConversionTooltip('water')}
               />
             )}
             <ResultRow
               icon={<SaltIcon />}
               label={`${t('results.salt')} (${config.salt.toFixed(1)}%)`}
               value={
-                unit === 'cups'
-                  ? gramsToVolume('salt', results.finalDough.salt, volumeUnits)
+                unit === 'volume'
+                  ? gramsToVolume(
+                      'salt',
+                      results.finalDough.salt,
+                      volumeUnits,
+                      unitSystem,
+                    )
                   : formatWeight(results.finalDough.salt, { g: 2, oz: 3 })
               }
               note={t('results.notes.salt')}
+              tooltip={getConversionTooltip('salt')}
             />
             {results.finalDough.oil > 0.1 && (
               <ResultRow
                 icon={<OilIcon />}
                 label={`${t('results.oil')} (${config.oil.toFixed(1)}%)`}
                 value={
-                  unit === 'cups'
-                    ? gramsToVolume('oil', results.finalDough.oil, volumeUnits)
+                  unit === 'volume'
+                    ? gramsToVolume(
+                        'oil',
+                        results.finalDough.oil,
+                        volumeUnits,
+                        unitSystem,
+                      )
                     : formatWeight(results.finalDough.oil, { g: 2, oz: 3 })
                 }
                 note={t('results.notes.oil')}
+                tooltip={getConversionTooltip('oil')}
               />
             )}
             {results.finalDough.yeast > 0.01 && (
@@ -537,14 +612,16 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 icon={<YeastIcon />}
                 label={t('results.yeast')}
                 value={
-                  unit === 'cups'
+                  unit === 'volume'
                     ? gramsToVolume(
                         'yeast',
                         results.finalDough.yeast,
                         volumeUnits,
+                        unitSystem,
                       )
                     : formatWeight(results.finalDough.yeast, { g: 2, oz: 3 })
                 }
+                tooltip={getConversionTooltip('yeast')}
               />
             )}
           </div>
@@ -555,51 +632,71 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             icon={<FlourIcon />}
             label={t('results.flour')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('flour', results.totalFlour, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'flour',
+                    results.totalFlour,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(results.totalFlour, { g: 0, oz: 1 })
             }
             note={t('results.notes.flour')}
+            tooltip={getConversionTooltip('flour')}
           />
           <ResultRow
             icon={<WaterIcon />}
             label={t('results.water')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('water', results.totalWater, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'water',
+                    results.totalWater,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(results.totalWater, { g: 0, oz: 1 })
             }
             note={t('results.notes.water')}
+            tooltip={getConversionTooltip('water')}
           />
           <ResultRow
             icon={<SaltIcon />}
             label={`${t('results.salt')} (${config.salt.toFixed(1)}%)`}
             value={
-              unit === 'cups'
-                ? gramsToVolume('salt', results.totalSalt, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume('salt', results.totalSalt, volumeUnits, unitSystem)
                 : formatWeight(results.totalSalt, { g: 2, oz: 3 })
             }
             note={t('results.notes.salt')}
+            tooltip={getConversionTooltip('salt')}
           />
           <ResultRow
             icon={<OilIcon />}
             label={`${t('results.oil')} (${config.oil.toFixed(1)}%)`}
             value={
-              unit === 'cups'
-                ? gramsToVolume('oil', results.totalOil, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume('oil', results.totalOil, volumeUnits, unitSystem)
                 : formatWeight(results.totalOil, { g: 2, oz: 3 })
             }
             note={t('results.notes.oil')}
+            tooltip={getConversionTooltip('oil')}
           />
           <ResultRow
             icon={<YeastIcon />}
             label={t('results.yeast')}
             value={
-              unit === 'cups'
-                ? gramsToVolume('yeast', results.totalYeast, volumeUnits)
+              unit === 'volume'
+                ? gramsToVolume(
+                    'yeast',
+                    results.totalYeast,
+                    volumeUnits,
+                    unitSystem,
+                  )
                 : formatWeight(results.totalYeast, { g: 2, oz: 3 })
             }
             note={t('results.notes.yeast')}
+            tooltip={getConversionTooltip('yeast')}
           />
         </div>
       )}
@@ -608,7 +705,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         icon={<WeightIcon />}
         label={t('results.total_dough')}
         value={
-          unit === 'cups'
+          unit === 'volume'
             ? `${results.totalDough.toFixed(0)} ${t('units.g')}`
             : formatWeight(results.totalDough, { g: 0, oz: 1 })
         }
@@ -618,22 +715,22 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       <RecipeSteps config={config} t={t} />
 
       {config.notes && config.notes.trim() !== '' && (
-        <div className="mt-8">
+        <div className="mt-10">
           <div className="mb-4 flex items-center gap-3">
             <span className="text-lime-500 dark:text-lime-400">
               <PencilIcon className="h-6 w-6" />
             </span>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
               {t('results.notes_title')}
             </h3>
           </div>
-          <div className="rounded-lg bg-slate-50 p-4 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
+          <div className="prose prose-sm dark:prose-invert max-w-none rounded-lg bg-slate-50 p-4 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
             <p className="whitespace-pre-wrap">{config.notes}</p>
           </div>
         </div>
       )}
 
-      <div className="mt-8 rounded-lg bg-slate-100 p-4 text-center dark:bg-slate-700/50">
+      <div className="mt-10 rounded-lg border-2 border-dashed border-lime-300 bg-lime-50 p-4 text-center dark:border-lime-500/50 dark:bg-lime-500/10">
         <p
           className="font-semibold text-slate-800 dark:text-slate-100"
           dangerouslySetInnerHTML={{

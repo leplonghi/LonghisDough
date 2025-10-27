@@ -1,10 +1,18 @@
-// Grams per cup for key ingredients. These are standard baking conversions.
-const GRAMS_PER_CUP: { [key: string]: number } = {
-  flour: 120, // All-purpose flour
-  water: 236.59,
-  salt: 292, // Fine sea salt
-  oil: 218,
-  yeast: 140, // Instant Dry Yeast
+import { UnitSystem } from './types';
+
+// Grams per cup for key ingredients.
+// US Customary cup is ~236.59mL. Metric cup is 250mL.
+// Sources: King Arthur Baking for flour densities, standard liquid conversions.
+export const INGREDIENT_DENSITIES: {
+  [key: string]: { us: number; metric: number };
+} = {
+  flour: { us: 120, metric: 125 }, // All-purpose flour
+  water: { us: 236.59, metric: 250 },
+  salt: { us: 292, metric: 300 }, // Fine sea salt
+  oil: { us: 218, metric: 224 },
+  yeast: { us: 140, metric: 140 }, // Instant Dry Yeast
+  wholeWheat: { us: 113, metric: 120 },
+  rye: { us: 102, metric: 110 },
 };
 
 // Standard volumetric conversions
@@ -56,19 +64,29 @@ function decimalToFraction(decimal: number): string {
 /**
  * Converts a gram value of a specific ingredient to a user-friendly
  * volumetric measurement (cups, tbsp, or tsp) with fractions.
- * @param ingredient The name of the ingredient (must exist in GRAMS_PER_CUP).
+ * @param ingredient The name of the ingredient (must exist in INGREDIENT_DENSITIES).
  * @param grams The weight of the ingredient in grams.
  * @param units An object with translated unit names.
+ * @param unitSystem The measurement system to use (US_CUSTOMARY or METRIC).
  * @returns A formatted string like "2 ½ cups" or "1.2 tbsp".
  */
 export function gramsToVolume(
-  ingredient: keyof typeof GRAMS_PER_CUP,
+  ingredient: keyof typeof INGREDIENT_DENSITIES,
   grams: number,
   units: { cups: string; tbsp: string; tsp: string },
+  unitSystem: UnitSystem,
 ): string {
   if (grams < 0.1) return `0 ${units.tsp}`;
 
-  const gramsPerCup = GRAMS_PER_CUP[ingredient];
+  const density = INGREDIENT_DENSITIES[ingredient];
+  if (!density) {
+    console.warn(`No density found for ingredient: ${ingredient}`);
+    return `~ ${grams.toFixed(0)}g`; // Fallback
+  }
+
+  const gramsPerCup =
+    unitSystem === UnitSystem.METRIC ? density.metric : density.us;
+
   const cups = grams / gramsPerCup;
 
   // Use teaspoons for very small amounts
