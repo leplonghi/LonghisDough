@@ -82,7 +82,7 @@ const doughConfigReducer = (
 };
 
 function AppInternal() {
-  const { t } = useTranslation();
+  const { t, isLoadingTranslations } = useTranslation(); // Get isLoadingTranslations
   const { hasProAccess, grantSessionProAccess } = useEntitlements();
   const { session, isLoading: isSessionLoading } = useSession(); // Use session and loading state
 
@@ -270,7 +270,7 @@ function AppInternal() {
       </button>
     );
 
-  if (isSessionLoading) {
+  if (isSessionLoading || isLoadingTranslations) { // Check for translation loading
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <p className="text-slate-700 dark:text-slate-300">{t('loading')}</p>
@@ -307,7 +307,7 @@ function AppInternal() {
             <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
             <button 
               onClick={() => supabase.auth.signOut()} 
-              className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-slate-900"
+              className="rounded-full p-2 text-slate-500 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:focus:ring-offset-900"
               aria-label={t('auth.sign_out')}
             >
               {/* You might want to use an actual icon here, e.g., LogOutIcon from lucide-react */}

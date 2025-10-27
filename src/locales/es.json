@@ -1,0 +1,264 @@
+{
+  "nav": {
+    "calculator": "Calculadora",
+    "tips": "Consejos",
+    "plans": "Planes Pro"
+  },
+  "header": {
+    "title": "Dough Lab Pro",
+    "subtitle": "La Calculadora Definitiva de Masa de Pizza y Pan",
+    "switch_to_dark": "Cambiar a modo oscuro",
+    "switch_to_light": "Cambiar a modo claro"
+  },
+  "footer": {
+    "total_dough": "Masa Total",
+    "save_recipe": "Guardar receta",
+    "saved_recipes": "Cargar recetas guardadas",
+    "copyright": "© {year} Dough Lab Pro. Todos los derechos reservados."
+  },
+  "form": {
+    "bake_type": "Tipo de Horneado",
+    "pizzas": "Pizza",
+    "breads": "Pan",
+    "recipe_style": "Estilo de Receta",
+    "napoletana": "Napoletana",
+    "ny": "Estilo NY",
+    "romana": "Romana",
+    "sicilian": "Siciliana",
+    "focaccia": "Focaccia",
+    "detroit": "Detroit",
+    "chicago_deep_dish": "Chicago",
+    "artisan_loaf": "Pan Artesanal",
+    "baguette": "Baguette",
+    "ciabatta": "Ciabatta",
+    "pumpernickel": "Pumpernickel",
+    "sourdough_boule": "Masa Madre",
+    "rye_bread": "Pan de Centeno",
+    "style_tooltips": {
+      "napoletana": "Masa clásica suave y de corteza fina con un cornicione hinchado.",
+      "ny": "Rebanadas grandes y plegables con una corteza crujiente pero masticable.",
+      "romana": "Pizza fina, crujiente y rectangular (pizza al taglio).",
+      "sicilian": "Pizza rectangular gruesa y esponjosa con una base crujiente.",
+      "focaccia": "Pan plano horneado, a menudo con hoyuelos y cubierto con hierbas.",
+      "detroit": "Pizza rectangular con una corteza gruesa y masticable y bordes crujientes y con queso.",
+      "chicago_deep_dish": "Pizza de masa profunda y gruesa horneada en un molde, parecida a un pastel.",
+      "artisan_loaf": "Pan rústico y crujiente con una miga abierta y aireada.",
+      "baguette": "Pan francés largo y delgado con una corteza crujiente.",
+      "ciabatta": "Pan blanco italiano con una miga ligera y abierta.",
+      "pumpernickel": "Pan de centeno pesado, ligeramente dulce, tradicionalmente denso y oscuro.",
+      "sourdough_boule": "Pan redondo de fermentación natural con un sabor ácido.",
+      "rye_bread": "Pan hecho con harina de centeno, a menudo denso y oscuro."
+    },
+    "core_parameters": "Parámetros Principales",
+    "num_pizzas": "Número de Pizzas",
+    "num_loaves": "Número de Panes",
+    "num_units_note": "Cuántas bolas de masa preparar.",
+    "weight_per_pizza": "Peso por Pizza (g)",
+    "weight_per_loaf": "Peso por Pan (g)",
+    "weight_per_unit_note": "Típico para {style}: {range}",
+    "hydration": "Hidratación",
+    "hydration_tooltip": "La cantidad de agua en relación con la cantidad de harina. Una mayor hidratación resulta en una masa más húmeda y pegajosa y, a menudo, una miga más abierta.",
+    "scale": "Escalar Receta",
+    "scale_tooltip": "Ajusta el tamaño general de tu receta. Por ejemplo, una escala de 2x duplicará todos los ingredientes.",
+    "fermentation": "Fermentación y Levadura",
+    "direct": "Directa",
+    "poolish": "Poolish",
+    "biga": "Biga",
+    "preferment_flour": "Harina de Prefermento",
+    "preferment_flour_tooltip": "El porcentaje de la harina total que se utilizará en el prefermento (poolish o biga).",
+    "yeast_type": "Tipo de Levadura",
+    "yeast_type_tooltip": "Diferentes tipos de levadura tienen diferentes potencias. IDY es Levadura Seca Instantánea, ADY es Levadura Seca Activa.",
+    "yeast": "Levadura",
+    "yeast_tooltip": "La cantidad de levadura en relación con la cantidad de harina. Ajusta según el tiempo y la temperatura de fermentación.",
+    "settings": "Configuración y Notas",
+    "unit_system": "Sistema de Unidades",
+    "unit_system_tooltip": "Elige entre tazas Métricas y US Customary para conversiones de volumen. Todos los cálculos primarios son en gramos.",
+    "us_customary": "US Customary",
+    "metric": "Métrico",
+    "recipe_notes": "Notas de la Receta",
+    "notes_placeholder": "Agrega tus notas personales, programa de fermentación o instrucciones de horneado aquí...",
+    "reset": "Restablecer a Valores Predeterminados",
+    "reset_aria": "Restablecer formulario a valores predeterminados",
+    "prompt_config_name": "Introduce un nombre para tu receta:",
+    "errors": {
+      "num_pizzas_range": "Por favor, introduce un número entre 1 y 100.",
+      "dough_ball_weight_range": "Por favor, introduce un peso entre 100g y 2000g."
+    }
+  },
+  "results": {
+    "title": "Tu Receta",
+    "share_recipe_aria": "Compartir enlace de la receta",
+    "export_pdf_aria": "Exportar receta como PDF",
+    "grams": "Gramos",
+    "ounces": "Onzas",
+    "cups": "Volumen",
+    "unit_system_display": "Las conversiones de volumen usan tazas {system}.",
+    "preferment_title": "Prefermento {technique}",
+    "final_dough_title": "Masa Final",
+    "preferment_label": "Añadir {technique}",
+    "flour": "Harina",
+    "water": "Agua",
+    "salt": "Sal",
+    "oil": "Aceite",
+    "yeast": "Levadura",
+    "total_dough": "Peso Total de la Masa",
+    "summary_pizza": "Hace {count} pizzas de {weight}g cada una.",
+    "summary_bread": "Hace {count} panes de {weight}g cada uno.",
+    "conversion_tooltip": "1 taza US de {ingredient} es aproximadamente {grams}g. Esto puede variar. Para mayor precisión, usa una báscula. Las conversiones de volumen usan estándares {system}.",
+    "ingredients": {
+        "flour": "harina de trigo todo uso",
+        "water": "agua",
+        "salt": "sal marina fina",
+        "oil": "aceite de oliva",
+        "yeast": "levadura seca instantánea",
+        "wholeWheat": "harina de trigo integral",
+        "rye": "harina de centeno"
+    },
+    "notes": {
+        "flour": "100% (Porcentaje de Panadero)",
+        "water": "Temperatura ambiente (aprox. 20°C / 68°F)",
+        "salt": "Sal marina fina recomendada",
+        "oil": "Aceite de oliva virgen extra",
+        "yeast": "Basado en el tipo de levadura seleccionado",
+        "preferment": "Mezclar y dejar fermentar antes de añadir a la masa final"
+    },
+    "steps": {
+        "title": "Instrucciones",
+        "direct": {
+            "step1": "<b>Combinar:</b> En un bol grande, mezcla la harina, la sal y la levadura. Añade el agua y el aceite.",
+            "step2": "<b>Mezclar y Amasar:</b> Mezcla hasta que se forme una masa irregular. Amasa durante 8-10 minutos sobre una superficie ligeramente enharinada hasta que esté suave y elástica. La masa debe pasar la \"prueba de la ventana\".",
+            "step3": "<b>Primera Fermentación:</b> Coloca la masa en un bol ligeramente aceitado, cubre y deja que suba en un lugar cálido durante 1.5-2 horas, o hasta que duplique su tamaño.",
+            "step4": "<b>Dividir y Formar:</b> Desinfla suavemente la masa, divídela en {count} trozos iguales y forma cada trozo en una bola apretada.",
+            "step5": "<b>Fermentación Final:</b> Coloca las bolas de masa en una bandeja enharinada, cubre y déjalas fermentar durante otros 30-60 minutos, o refrigera para una fermentación en frío (1-3 días).",
+            "step6": "<b>Hornear:</b> Precalienta tu horno y superficie de horneado. Estira la masa, añade tus ingredientes y hornea hasta que la corteza esté dorada."
+        },
+        "indirect": {
+            "preferment": {
+                "step1": "<b>Preparar Prefermento:</b> En un bol pequeño, mezcla la harina, el agua y la levadura del prefermento. Cubre y deja que fermente a temperatura ambiente durante 12-16 horas, o hasta que esté burbujeante y activo.",
+                "step2": "<b>Comprobar Madurez:</b> El prefermento está listo cuando ha subido, está lleno de burbujas y puede haber comenzado a colapsar sobre sí mismo."
+            },
+            "finalDough": {
+                "step1": "<b>Combinar:</b> En un bol grande, combina la harina y el agua de la masa final. Añade el prefermento completamente maduro y mezcla hasta que se incorpore.",
+                "step2": "<b>Añadir Ingredientes Restantes:</b> Añade la sal, el aceite y cualquier levadura restante. Mezcla y amasa durante 8-10 minutos hasta que esté suave y elástica.",
+                "step3": "<b>Primera y Fermentación Final:</b> Sigue los pasos 3-5 de las instrucciones del Método Directo para la primera fermentación, división, formación y fermentación final.",
+                "step4": "<b>Hornear:</b> Precalienta tu horno y superficie de horneado. Estira, cubre y hornea tu creación."
+            }
+        },
+        "baguette": {
+            "step1": "Sigue el método indirecto para el prefermento (poolish) y la mezcla de la masa final.",
+            "step2": "Fermentación en bloque durante 1.5 horas con pliegues cada 30 minutos.",
+            "step3": "Divide la masa y preforma en troncos. Deja reposar durante 20-30 minutos.",
+            "step4": "Forma la baguette final.",
+            "step5": "Fermenta en una tela enharinada o lino durante 45-60 minutos.",
+            "step6": "Haz cortes en los panes justo antes de hornear.",
+            "step7": "Hornea en un horno con vapor a alta temperatura (240°C / 475°F) hasta que estén dorados."
+        },
+        "ciabatta": {
+            "step1": "Sigue el método indirecto para el prefermento (biga) y la mezcla de la masa final. Esta será una masa muy húmeda.",
+            "step2": "Fermentación en bloque durante 2-3 horas, realizando varias series de estiramientos y pliegues en el bol.",
+            "step3": "Vierte suavemente la masa sobre una superficie bien enharinada. No la desgasifiques en exceso.",
+            "step4": "Divide en las porciones deseadas usando un raspador de masa.",
+            "step5": "Estira suavemente cada trozo en un rectángulo tosco y colócalo sobre papel de horno.",
+            "step6": "Fermenta durante 30-45 minutos y luego hornea a alta temperatura (230°C / 450°F)."
+        }
+    },
+    "notes_title": "Tus Notas"
+  },
+  "units": {
+    "g": "g",
+    "oz": "oz",
+    "cups": "tazas",
+    "tbsp": "cucharadas",
+    "tsp": "cucharaditas"
+  },
+  "yeast": {
+    "idy": "Levadura Seca Instantánea (IDY)",
+    "ady": "Levadura Seca Activa (ADY)",
+    "fresh": "Levadura Fresca"
+  },
+  "pro": {
+    "go_pro_header": "Hazte Pro",
+    "locked_tooltip": "Esta es una característica Pro. ¡Haz clic para actualizar!"
+  },
+  "load_modal": {
+    "title": "Cargar Receta Guardada",
+    "load": "Cargar",
+    "delete_aria": "Eliminar receta",
+    "no_configs": "Aún no tienes recetas guardadas.",
+    "close_aria": "Cerrar modal"
+  },
+  "pro_recipes": {
+    "modal_title": "Libro de Recetas Pro",
+    "neapolitan": {
+      "name": "Napolitana Clásica",
+      "description": "Auténtica masa de alta hidratación para una corteza clásica suave y con manchas de leopardo."
+    },
+    "focaccia": {
+      "name": "Focaccia de Alta Hidratación",
+      "description": "Una masa húmeda y burbujeante para una focaccia ligera y aireada con una corteza crujiente."
+    },
+    "ny_style": {
+      "name": "Pizza Estilo NY",
+      "description": "Perfecta para rebanadas grandes y plegables con una corteza masticable y satisfactoria."
+    },
+    "sourdough": {
+      "name": "Pan de Masa Madre \"Sin Amasar\"",
+      "description": "Un pan artesanal fácil con un sabor complejo de larga fermentación."
+    }
+  },
+  "paywall": {
+    "title": "Desbloquea Dough Lab Pro",
+    "subtitle": "Lleva tu horneado al siguiente nivel con estas potentes funciones.",
+    "feature_save": "Guardar y Cargar Recetas",
+    "feature_save_desc": "Nunca pierdas una gran receta. Guarda tus configuraciones y cárgalas en cualquier momento.",
+    "feature_export": "Exportar a PDF",
+    "feature_export_desc": "Obtén un PDF limpio e imprimible de tu receta para usar en la cocina.",
+    "feature_scale": "Escalar Recetas",
+    "feature_scale_desc": "Escala fácilmente cualquier receta hacia arriba o hacia abajo para adaptarla a tus necesidades.",
+    "feature_ads": "Experiencia Sin Anuncios",
+    "feature_ads_desc": "Disfruta de una interfaz limpia y enfocada sin interrupciones.",
+    "feature_pro_recipes": "Libro de Recetas Pro",
+    "feature_pro_recipes_desc": "Accede a una colección curada de recetas desarrolladas profesionalmente.",
+    "cta_button": "Actualizar a Pro Ahora",
+    "disclaimer": "Esto es una demostración. Al hacer clic en este botón, se te concederá acceso Pro para esta sesión."
+  },
+  "plans_page": {
+    "title": "Elige Tu Plan",
+    "subtitle": "Dough Lab Pro ofrece potentes funciones para perfeccionar tu horneado.",
+    "feature": "Característica",
+    "free_tier": "Gratis",
+    "pro_tier": "Pro",
+    "feature_calculator": "Calculadora Avanzada de Masa",
+    "feature_styles": "Múltiples Estilos de Pizza y Pan",
+    "feature_units": "Unidades de Gramo, Onza y Volumen",
+    "feature_ads": "Con Anuncios",
+    "feature_save_load": "Guardar y Cargar Recetas",
+    "feature_export": "Exportar a PDF",
+    "feature_scaling": "Escalado de Recetas",
+    "feature_pro_recipes": "Acceso al Libro de Recetas Pro",
+    "upgrade_button": "Obtener Acceso Pro"
+  },
+  "tips_page": {
+    "title": "Consejos y Técnicas de Horneado",
+    "subtitle": "Domina los fundamentos para mejorar tus habilidades de elaboración de masa.",
+    "load_recipe_button": "Cargar Esta Receta",
+    "pro_recipes_cta_title": "Empieza con una Gran Receta",
+    "pro_recipes_cta_description": "Estas recetas desarrolladas profesionalmente son un punto de partida perfecto. ¡Carga una y empieza a hornear!",
+    "bakers_percentage_title": "Entendiendo el Porcentaje de Panadero",
+    "bakers_percentage_content": "Todos los ingredientes de una receta se expresan como un porcentaje del peso total de la harina, que siempre es 100%. Por ejemplo, un 65% de hidratación significa que el peso del agua es el 65% del peso de la harina. ¡Esto facilita escalar las recetas hacia arriba o hacia abajo!",
+    "fermentation_title": "La Magia de la Fermentación",
+    "fermentation_content": "La fermentación es donde la levadura consume azúcares y produce CO2 y alcohol, desarrollando sabor y leudando la masa. La <strong>fermentación en bloque</strong> (la primera subida) desarrolla sabor y fuerza. La <strong>fermentación final</strong> (la subida final) ocurre después de dar forma y prepara la masa para el horneado.",
+    "kneading_title": "Amasado y Desarrollo del Gluten",
+    "kneading_content": "El amasado desarrolla la red de gluten, que le da a la masa su estructura y elasticidad. Una masa bien desarrollada será suave y pasará la \"prueba de la ventana\": puedes estirar un pequeño trozo lo suficientemente fino como para ver la luz a través de él sin que se rompa."
+  },
+  "ads": {
+    "advertisement": "Anuncio"
+  },
+  "login": {
+    "title": "Iniciar sesión en Dough Lab Pro"
+  },
+  "auth": {
+    "sign_out": "Cerrar sesión"
+  },
+  "loading": "Cargando..."
+}
