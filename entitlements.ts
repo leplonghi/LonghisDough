@@ -19,7 +19,6 @@ interface Entitlements {
 interface EntitlementContextType {
   hasProAccess: boolean;
   grantProAccess: () => void;
-  // FIX: Add missing grantSessionProAccess to the EntitlementContextType interface.
   grantSessionProAccess: () => void;
   grant24hPass: () => void;
   isPassOnCooldown: boolean;

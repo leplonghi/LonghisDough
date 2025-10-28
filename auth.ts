@@ -1,6 +1,6 @@
 import React, {
-  useState,
   createContext,
+  useState,
   useContext,
   ReactNode,
   FC,
@@ -9,13 +9,14 @@ import React, {
 } from 'react';
 import { User } from './types';
 
-const AUTH_USER_KEY = 'dough-lab-auth-user';
+const AUTH_KEY = 'dough-lab-auth';
 
 interface AuthContextType {
+  isAuthenticated: boolean;
   user: User | null;
   login: (user: User) => void;
   logout: () => void;
-  isAuthenticated: boolean;
+  updateUser: (updatedData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,38 +26,54 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem(AUTH_USER_KEY);
+      const storedUser = localStorage.getItem(AUTH_KEY);
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
-    } catch {
-      // Ignore errors, default state will be used
+    } catch (error) {
+      console.error('Failed to load user from localStorage', error);
     }
   }, []);
 
-  const login = useCallback((newUser: User) => {
-    setUser(newUser);
+  const login = useCallback((userData: User) => {
+    setUser(userData);
     try {
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
+      localStorage.setItem(AUTH_KEY, JSON.stringify(userData));
     } catch (error) {
-      console.error('Could not save user to localStorage', error);
+      console.error('Failed to save user to localStorage', error);
     }
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
     try {
-      localStorage.removeItem(AUTH_USER_KEY);
+      localStorage.removeItem(AUTH_KEY);
     } catch (error) {
-      console.error('Could not remove user from localStorage', error);
+      console.error('Failed to remove user from localStorage', error);
     }
   }, []);
 
+  const updateUser = useCallback(
+    (updatedData: Partial<User>) => {
+      if (user) {
+        const newUser = { ...user, ...updatedData };
+        setUser(newUser);
+        try {
+          localStorage.setItem(AUTH_KEY, JSON.stringify(newUser));
+        } catch (error) {
+          console.error('Failed to save updated user to localStorage', error);
+        }
+      }
+    },
+    [user],
+  );
+
   const value = {
+    isAuthenticated: !!user,
     user,
     login,
     logout,
-    isAuthenticated: !!user,
+    updateUser,
   };
 
   return React.createElement(AuthContext.Provider, { value }, children);

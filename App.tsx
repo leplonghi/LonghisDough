@@ -14,14 +14,13 @@ import {
   ProRecipe,
 } from './types';
 import { RECIPE_STYLE_PRESETS } from './constants';
-import { I18nProvider } from './i18n';
+import { I18nProvider, useTranslation } from './i18n';
 import { EntitlementProvider, useEntitlements } from './entitlements';
 import { AuthProvider, useAuth } from './auth';
 import ThemeToggle from './components/ThemeToggle';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import LoadConfigModal from './components/LoadConfigModal';
 import PaywallModal from './components/PaywallModal';
-import ProRecipesModal from './components/ProRecipesModal';
 import MobileSummaryBar from './components/MobileSummaryBar';
 import UserMenu from './components/UserMenu';
 import AuthModal from './components/AuthModal';
@@ -106,6 +105,7 @@ const DEFAULT_CONFIG: DoughConfig = {
 };
 
 function AppContent() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [currentPage, setCurrentPage] = useState<Page>('calculator');
   const { grantProAccess, grantSessionProAccess, hasProAccess } = useEntitlements();
@@ -116,7 +116,6 @@ function AppContent() {
 
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
-  const [isProRecipesModalOpen, setIsProRecipesModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const results = useMemo(() => calculateDough(config), [config]);
@@ -176,9 +175,9 @@ function AppContent() {
     setConfig((prev) => ({ ...prev, recipeStyle: style, ...preset }));
   }, []);
 
-  const handleLoadRecipe = (newConfig: ProRecipe['config']) => {
+  const handleLoadProRecipe = (newConfig: ProRecipe['config']) => {
     setConfig((prev) => ({ ...prev, ...newConfig }));
-    setIsProRecipesModalOpen(false);
+    setCurrentPage('calculator');
   };
   
   const handleGrantAccess = () => {
@@ -191,7 +190,7 @@ function AppContent() {
       case 'plans':
         return <PlansPage onGrantAccess={handleGrantAccess} onNavigateHome={() => setCurrentPage('calculator')} />;
       case 'tips':
-        return <TipsAndTechniquesPage />;
+        return <TipsAndTechniquesPage onLoadRecipe={handleLoadProRecipe} />;
       case 'profile':
         return <ProfilePage />;
       case 'calculator':
@@ -230,8 +229,9 @@ function AppContent() {
   const Header = () => (
     <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <button onClick={() => setCurrentPage('calculator')} aria-label="Home">
-          <DoughLabLogoIcon className="h-9 w-auto text-slate-900 dark:text-white" />
+        <button onClick={() => setCurrentPage('calculator')} aria-label="Home" className="flex items-center gap-2.5">
+          <DoughLabLogoIcon className="h-8 w-auto text-lime-500" />
+          <span className="hidden text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:block">DoughLabPro</span>
         </button>
         <div className="flex items-center gap-2">
            <button 
@@ -239,7 +239,7 @@ function AppContent() {
              className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-100 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800 sm:flex"
            >
               <BookOpenIcon className="h-4 w-4" />
-              <span>Tips</span>
+              <span>{t('header.tips')}</span>
            </button>
            
            {!hasProAccess && (
@@ -248,7 +248,7 @@ function AppContent() {
                className="flex items-center gap-1.5 rounded-full bg-lime-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
              >
                 <StarIcon className="h-4 w-4" />
-                <span>Go Pro</span>
+                <span>{t('header.go_pro')}</span>
              </button>
            )}
 
@@ -285,11 +285,6 @@ function AppContent() {
           setIsPaywallModalOpen(false);
           setCurrentPage('plans');
         }}
-      />
-      <ProRecipesModal
-        isOpen={isProRecipesModalOpen}
-        onClose={() => setIsProRecipesModalOpen(false)}
-        onLoadRecipe={handleLoadRecipe}
       />
       <AuthModal 
         isOpen={isAuthModalOpen}
