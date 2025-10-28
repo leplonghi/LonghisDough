@@ -1,114 +1,149 @@
-import React, { useState, useEffect, useReducer, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import CalculatorForm from './components/CalculatorForm';
 import ResultsDisplay from './components/ResultsDisplay';
-import MobileSummaryBar from './components/MobileSummaryBar';
-import LoadConfigModal from './components/LoadConfigModal';
-import PaywallModal from './components/PaywallModal';
-import ProRecipesModal from './components/ProRecipesModal';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import ThemeToggle from './components/ThemeToggle';
-import PlansPage from './components/PlansPage';
-import TipsAndTechniquesPage from './components/TipsAndTechniquesPage';
 import {
   DoughConfig,
   DoughResult,
-  Unit,
   BakeType,
   RecipeStyle,
-  SavedDoughConfig,
-  FermentationTechnique,
   YeastType,
+  FermentationTechnique,
+  Unit,
   UnitSystem,
+  SavedDoughConfig,
   ProRecipe,
 } from './types';
-import {
-  DEFAULT_CONFIG,
-  RECIPE_STYLE_PRESETS,
-  YEAST_OPTIONS,
-  PIZZA_STYLES,
-} from './constants';
+import { RECIPE_STYLE_PRESETS } from './constants';
+import { I18nProvider } from './i18n';
 import { EntitlementProvider, useEntitlements } from './entitlements';
-import { TranslationProvider, useTranslation } from './i18n';
-import { PizzaIcon, BookOpenIcon, StarIcon } from './components/IconComponents';
+import { AuthProvider, useAuth } from './auth';
+import ThemeToggle from './components/ThemeToggle';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import LoadConfigModal from './components/LoadConfigModal';
+import PaywallModal from './components/PaywallModal';
+import ProRecipesModal from './components/ProRecipesModal';
+import MobileSummaryBar from './components/MobileSummaryBar';
+import UserMenu from './components/UserMenu';
+import AuthModal from './components/AuthModal';
+import ProfilePage from './components/ProfilePage';
+import PlansPage from './components/PlansPage';
+import TipsAndTechniquesPage from './components/TipsAndTechniquesPage';
+import { DoughLabLogoIcon, BookOpenIcon, StarIcon } from './components/IconComponents';
 
-type Page = 'calculator' | 'tips' | 'plans';
+type Page = 'calculator' | 'plans' | 'tips' | 'profile';
 
-// Reducer for complex state management of the dough configuration
-const doughConfigReducer = (
-  state: DoughConfig,
-  action: { type: string; payload: any },
-): DoughConfig => {
-  switch (action.type) {
-    case 'SET_CONFIG':
-      return { ...state, ...action.payload };
-    case 'RESET':
-      return DEFAULT_CONFIG;
-    case 'CHANGE_BAKE_TYPE': {
-      const newBakeType = action.payload as BakeType;
-      const isPizza = newBakeType === BakeType.PIZZA;
-      const newRecipeStyle = isPizza ? RecipeStyle.NAPOLETANA : RecipeStyle.ARTISAN_LOAF;
-      const preset = RECIPE_STYLE_PRESETS[newRecipeStyle];
-      return {
-        ...DEFAULT_CONFIG,
-        ...preset,
-        bakeType: newBakeType,
-        recipeStyle: newRecipeStyle,
-        numPizzas: isPizza ? 4 : 2,
-      };
-    }
-    case 'CHANGE_STYLE': {
-      const newRecipeStyle = action.payload as RecipeStyle;
-      const preset = RECIPE_STYLE_PRESETS[newRecipeStyle];
-      return {
-        ...state,
-        ...preset,
-        recipeStyle: newRecipeStyle,
-      };
-    }
-    case 'CHANGE_YEAST_TYPE': {
-      const newYeastType = action.payload as YeastType;
-      const yeastOption = YEAST_OPTIONS.find((y) => y.value === newYeastType);
-      return {
-        ...state,
-        yeastType: newYeastType,
-        yeastPercentage: yeastOption?.defaultPercentage || state.yeastPercentage,
-      };
-    }
-    default:
-      return state;
+const calculateDough = (config: DoughConfig): DoughResult => {
+  const totalDoughWeight =
+    config.numPizzas * config.doughBallWeight * config.scale;
+
+  const totalPercentage = 100 + config.hydration + config.salt + config.oil;
+  const flourMultiplier = 100 / totalPercentage;
+
+  const totalFlour = totalDoughWeight * flourMultiplier;
+  const totalWater = totalFlour * (config.hydration / 100);
+  const totalSalt = totalFlour * (config.salt / 100);
+  const totalOil = totalFlour * (config.oil / 100);
+
+  let yeastPercentage = config.yeastPercentage;
+  if (config.yeastType === YeastType.SOURDOUGH) {
+    // Sourdough is treated as levain percentage
+  } else if (config.yeastType === YeastType.ADY) {
+    yeastPercentage /= 1.25; // convert to IDY equivalent for calculation consistency
+  } else if (config.yeastType === YeastType.FRESH) {
+    yeastPercentage /= 3; // convert to IDY equivalent
   }
+  const totalYeast = totalFlour * (yeastPercentage / 100);
+
+  const result: DoughResult = {
+    totalFlour,
+    totalWater,
+    totalSalt,
+    totalOil,
+    totalYeast,
+    totalDough: totalDoughWeight,
+  };
+
+  if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
+    const prefermentFlour =
+      totalFlour * (config.prefermentFlourPercentage / 100);
+    let prefermentWater = prefermentFlour; // Poolish: 100% hydration
+    if (config.fermentationTechnique === FermentationTechnique.BIGA) {
+      prefermentWater = prefermentFlour * 0.5; // Biga: ~50% hydration
+    }
+    const prefermentYeast = prefermentFlour * 0.002; // Tiny amount for preferment
+
+    result.preferment = {
+      flour: prefermentFlour,
+      water: prefermentWater,
+      yeast: prefermentYeast,
+    };
+    result.finalDough = {
+      flour: totalFlour - prefermentFlour,
+      water: totalWater - prefermentWater,
+      salt: totalSalt,
+      oil: totalOil,
+      yeast: totalYeast - prefermentYeast,
+    };
+  }
+
+  return result;
 };
 
-function AppInternal() {
-  const { t } = useTranslation();
-  const { hasProAccess, grantSessionProAccess } = useEntitlements();
+const DEFAULT_CONFIG: DoughConfig = {
+  bakeType: BakeType.PIZZA,
+  recipeStyle: RecipeStyle.NEAPOLITAN,
+  numPizzas: 4,
+  doughBallWeight: 250,
+  hydration: 62,
+  salt: 2.8,
+  oil: 0,
+  fermentationTechnique: FermentationTechnique.DIRECT,
+  yeastType: YeastType.IDY,
+  yeastPercentage: 0.2,
+  prefermentFlourPercentage: 30,
+  scale: 1,
+  notes: '',
+};
 
-  const [config, dispatch] = useReducer(doughConfigReducer, DEFAULT_CONFIG);
-
-  const [results, setResults] = useState<DoughResult | null>(null);
+function AppContent() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [currentPage, setCurrentPage] = useState<Page>('calculator');
+  const { grantProAccess, grantSessionProAccess, hasProAccess } = useEntitlements();
+  const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
   const [unit, setUnit] = useState<Unit>('g');
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(UnitSystem.METRIC);
   const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
+
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [isProRecipesModalOpen, setIsProRecipesModalOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [activePage, setActivePage] = useState<Page>('calculator');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
+  const results = useMemo(() => calculateDough(config), [config]);
 
-  // Load saved configs from local storage on mount
   useEffect(() => {
-    try {
-      const storedConfigs = localStorage.getItem('dough-lab-saved-configs');
-      if (storedConfigs) {
-        setSavedConfigs(JSON.parse(storedConfigs));
-      }
-    } catch (error) {
-      console.error('Failed to load saved configs:', error);
+    // Test Pro Mode via URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('test_pro') === 'true') {
+      grantSessionProAccess();
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
+  }, [grantSessionProAccess]);
+
+
+  useEffect(() => {
+    // Theme logic
+    const root = window.document.documentElement;
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    const initialTheme =
+      storedTheme ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light');
+    setTheme(initialTheme);
   }, []);
 
-  // Theme management
   useEffect(() => {
     const root = window.document.documentElement;
     if (theme === 'dark') {
@@ -116,274 +151,174 @@ function AppInternal() {
     } else {
       root.classList.remove('dark');
     }
-    try {
-      localStorage.setItem('dough-lab-theme', theme);
-    } catch (error) {
-      console.error('Failed to save theme:', error);
-    }
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('dough-lab-theme') as 'light' | 'dark' | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme('dark');
-    }
+  const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
+    setConfig((prev) => ({ ...prev, ...newConfig }));
   }, []);
 
-  // Dough calculation logic
-  useEffect(() => {
-    const totalDoughWeight = config.numPizzas * config.doughBallWeight * config.scale;
+  const handleBakeTypeChange = useCallback((bakeType: BakeType) => {
+    const isPizza = bakeType === BakeType.PIZZA;
+    const newStyle = isPizza ? RecipeStyle.NEAPOLITAN : RecipeStyle.SOURDOUGH;
+    const preset = RECIPE_STYLE_PRESETS[newStyle] || {};
+    setConfig((prev) => ({
+      ...DEFAULT_CONFIG,
+      ...prev,
+      bakeType,
+      recipeStyle: newStyle,
+      ...preset,
+    }));
+  }, []);
 
-    const totalPercentage =
-      100 + config.hydration + config.salt + config.oil;
+  const handleStyleChange = useCallback((style: RecipeStyle) => {
+    const preset = RECIPE_STYLE_PRESETS[style] || {};
+    setConfig((prev) => ({ ...prev, recipeStyle: style, ...preset }));
+  }, []);
 
-    const totalFlour = (totalDoughWeight / totalPercentage) * 100;
-    const totalWater = (totalFlour * config.hydration) / 100;
-    const totalSalt = (totalFlour * config.salt) / 100;
-    const totalOil = (totalFlour * config.oil) / 100;
-    const totalYeast = (totalFlour * config.yeastPercentage) / 100;
-
-    let newResults: DoughResult = {
-      totalFlour,
-      totalWater,
-      totalSalt,
-      totalOil,
-      totalYeast,
-      totalDough: totalDoughWeight,
-    };
-
-    if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
-      const prefermentFlour = totalFlour * (config.prefermentFlourPercentage / 100);
-      let prefermentWater: number;
-      
-      // Biga is ~60% hydration, Poolish is 100%
-      if (config.fermentationTechnique === FermentationTechnique.BIGA) {
-        prefermentWater = prefermentFlour * 0.6;
-      } else { // POOLISH
-        prefermentWater = prefermentFlour;
-      }
-
-      // A tiny amount of yeast for the preferment
-      const prefermentYeast = prefermentFlour * 0.002;
-
-      newResults = {
-        ...newResults,
-        preferment: {
-          flour: prefermentFlour,
-          water: prefermentWater,
-          yeast: prefermentYeast,
-        },
-        finalDough: {
-          flour: totalFlour - prefermentFlour,
-          water: totalWater - prefermentWater,
-          salt: totalSalt,
-          oil: totalOil,
-          yeast: totalYeast - prefermentYeast,
-        },
-      };
-    }
-
-    setResults(newResults);
-  }, [config]);
+  const handleLoadRecipe = (newConfig: ProRecipe['config']) => {
+    setConfig((prev) => ({ ...prev, ...newConfig }));
+    setIsProRecipesModalOpen(false);
+  };
   
-    const handleConfigChange = (newConfig: Partial<DoughConfig>) => {
-        dispatch({ type: 'SET_CONFIG', payload: newConfig });
-    };
-    
-    const handleBakeTypeChange = (bakeType: BakeType) => {
-        dispatch({ type: 'CHANGE_BAKE_TYPE', payload: bakeType });
-    };
+  const handleGrantAccess = () => {
+      grantProAccess();
+      setCurrentPage('calculator');
+  }
 
-    const handleStyleChange = (style: RecipeStyle) => {
-        dispatch({ type: 'CHANGE_STYLE', payload: style });
-    };
-    
-    const handleReset = () => {
-        dispatch({ type: 'RESET', payload: null });
-    };
-    
-    const handleSaveConfig = (name: string) => {
-        if (!hasProAccess) {
-            setIsPaywallModalOpen(true);
-            return;
-        }
-        const newSavedConfig = { name, config };
-        const updatedConfigs = [...savedConfigs.filter(c => c.name !== name), newSavedConfig];
-        setSavedConfigs(updatedConfigs);
-        try {
-            localStorage.setItem('dough-lab-saved-configs', JSON.stringify(updatedConfigs));
-        } catch (error) {
-            console.error("Failed to save config:", error);
-        }
-    };
-    
-    const handleLoadConfig = (configToLoad: DoughConfig) => {
-        dispatch({ type: 'SET_CONFIG', payload: configToLoad });
-        setIsLoadModalOpen(false);
-    };
-
-    const handleDeleteConfig = (name: string) => {
-        const updatedConfigs = savedConfigs.filter(c => c.name !== name);
-        setSavedConfigs(updatedConfigs);
-        try {
-            localStorage.setItem('dough-lab-saved-configs', JSON.stringify(updatedConfigs));
-        } catch (error) {
-            console.error("Failed to delete config:", error);
-        }
-    };
-    
-    const handleOpenLoadModal = () => {
-        if (!hasProAccess) {
-            setIsPaywallModalOpen(true);
-            return;
-        }
-        setIsLoadModalOpen(true);
-    };
-    
-    const handleLoadProRecipe = (recipeConfig: ProRecipe['config']) => {
-        dispatch({ type: 'SET_CONFIG', payload: recipeConfig });
-        setIsProRecipesModalOpen(false);
-        setActivePage('calculator');
-    };
-  
-    const NavItem: React.FC<{
-      page: Page;
-      icon: React.ReactNode;
-      label: string;
-    }> = ({ page, icon, label }) => (
-      <button
-        onClick={() => setActivePage(page)}
-        className={`flex flex-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:flex-row sm:gap-2 ${
-          activePage === page
-            ? 'bg-lime-100 text-lime-700 dark:bg-lime-500/10 dark:text-lime-300'
-            : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50'
-        }`}
-      >
-        {icon}
-        <span>{label}</span>
-      </button>
-    );
-
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
-        <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
-          <div className="flex items-center gap-3">
-            {/* Replaced PizzaIcon with img tag for the logo */}
-            <img src="https://ibb.co/v6Q3VH7C" alt="Dough Lab Pro Logo" className="h-8 w-8" />
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'plans':
+        return <PlansPage onGrantAccess={handleGrantAccess} onNavigateHome={() => setCurrentPage('calculator')} />;
+      case 'tips':
+        return <TipsAndTechniquesPage />;
+      case 'profile':
+        return <ProfilePage />;
+      case 'calculator':
+      default:
+        return (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
+            <div className="lg:sticky lg:top-24">
+              <CalculatorForm
+                config={config}
+                onConfigChange={handleConfigChange}
+                onBakeTypeChange={handleBakeTypeChange}
+                onStyleChange={handleStyleChange}
+                onReset={() => setConfig(DEFAULT_CONFIG)}
+                unitSystem={unitSystem}
+                onUnitSystemChange={setUnitSystem}
+                hasProAccess={hasProAccess}
+                onOpenPaywall={() => setIsPaywallModalOpen(true)}
+              />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
-                {t('header.title')}
-              </h1>
-              <p className="hidden text-xs text-slate-500 dark:text-slate-400 sm:block">
-                {t('header.subtitle')}
-              </p>
+              <ResultsDisplay
+                results={results}
+                config={config}
+                unit={unit}
+                onUnitChange={setUnit}
+                unitSystem={unitSystem}
+                hasProAccess={hasProAccess}
+                onOpenPaywall={() => setIsPaywallModalOpen(true)}
+              />
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-             <div className="hidden items-center gap-2 rounded-full bg-slate-100 p-1 dark:bg-slate-800 sm:flex">
-               <NavItem page="calculator" icon={<PizzaIcon className="h-5 w-5" />} label={t('nav.calculator')} />
-               <NavItem page="tips" icon={<BookOpenIcon className="h-5 w-5" />} label={t('nav.tips')} />
-               <NavItem page="plans" icon={<StarIcon className="h-5 w-5" />} label={t('nav.plans')} />
-             </div>
-            <LanguageSwitcher />
-            <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
-          </div>
-        </div>
-      </header>
+        );
+    }
+  };
 
-      <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-        {activePage === 'calculator' && (
-             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
-                <div className="lg:sticky lg:top-24">
-                  <CalculatorForm
-                    config={config}
-                    onConfigChange={handleConfigChange}
-                    onBakeTypeChange={handleBakeTypeChange}
-                    onStyleChange={handleStyleChange}
-                    onReset={handleReset}
-                    unitSystem={unitSystem}
-                    onUnitSystemChange={setUnitSystem}
-                    hasProAccess={hasProAccess}
-                    onOpenPaywall={() => setIsPaywallModalOpen(true)}
-                  />
-                </div>
-                {results && (
-                  <ResultsDisplay
-                    results={results}
-                    config={config}
-                    unit={unit}
-                    onUnitChange={setUnit}
-                    unitSystem={unitSystem}
-                    hasProAccess={hasProAccess}
-                    onOpenPaywall={() => setIsPaywallModalOpen(true)}
-                  />
-                )}
-              </div>
-        )}
-        {activePage === 'tips' && <TipsAndTechniquesPage onLoadRecipe={handleLoadProRecipe} />}
-        {activePage === 'plans' && <PlansPage onGrantAccess={() => { grantSessionProAccess(); setActivePage('calculator'); }} />}
+  const Header = () => (
+    <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <button onClick={() => setCurrentPage('calculator')} aria-label="Home">
+          <DoughLabLogoIcon className="h-9 w-auto text-slate-900 dark:text-white" />
+        </button>
+        <div className="flex items-center gap-2">
+           <button 
+             onClick={() => hasProAccess ? setCurrentPage('tips') : setCurrentPage('plans')}
+             className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-100 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800 sm:flex"
+           >
+              <BookOpenIcon className="h-4 w-4" />
+              <span>Tips</span>
+           </button>
+           
+           {!hasProAccess && (
+             <button
+               onClick={() => setCurrentPage('plans')}
+               className="flex items-center gap-1.5 rounded-full bg-lime-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
+             >
+                <StarIcon className="h-4 w-4" />
+                <span>Go Pro</span>
+             </button>
+           )}
+
+          <ThemeToggle
+            theme={theme}
+            toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          />
+          <LanguageSwitcher />
+          <UserMenu onNavigate={setCurrentPage} onOpenAuthModal={() => setIsAuthModalOpen(true)} />
+        </div>
+      </div>
+    </header>
+  );
+
+  return (
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
+      <Header />
+
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {renderPage()}
       </main>
-
-      {results && activePage === 'calculator' && (
-        <MobileSummaryBar
-          totalDough={results.totalDough}
-          unit={unit}
-          onSave={handleSaveConfig}
-          onLoad={handleOpenLoadModal}
-          hasProAccess={hasProAccess}
-        />
-      )}
-      
-      <footer className="mx-auto max-w-7xl p-4 text-center text-xs text-slate-500 dark:text-slate-400">
-        <p>
-            {t('footer.copyright', { year: new Date().getFullYear() })}
-        </p>
-        <div className="mt-4 flex justify-center space-x-2 sm:hidden">
-            <button onClick={() => setActivePage('calculator')} className="text-lime-600 dark:text-lime-400">{t('nav.calculator')}</button>
-            <span>&middot;</span>
-            <button onClick={() => setActivePage('tips')} className="text-lime-600 dark:text-lime-400">{t('nav.tips')}</button>
-             <span>&middot;</span>
-            <button onClick={() => setActivePage('plans')} className="text-lime-600 dark:text-lime-400">{t('nav.plans')}</button>
-        </div>
-      </footer>
 
       <LoadConfigModal
         isOpen={isLoadModalOpen}
         onClose={() => setIsLoadModalOpen(false)}
         configs={savedConfigs}
-        onLoad={handleLoadConfig}
-        onDelete={handleDeleteConfig}
+        onLoad={setConfig}
+        onDelete={() => {}}
       />
-      
-      <ProRecipesModal
-        isOpen={isProRecipesModalOpen}
-        onClose={() => setIsProRecipesModalOpen(false)}
-        onLoadRecipe={handleLoadProRecipe}
-      />
-      
       <PaywallModal
         isOpen={isPaywallModalOpen}
         onClose={() => setIsPaywallModalOpen(false)}
-        onGrantAccess={() => {
-            grantSessionProAccess();
-            setIsPaywallModalOpen(false);
+        onNavigateToPlans={() => {
+          setIsPaywallModalOpen(false);
+          setCurrentPage('plans');
         }}
       />
+      <ProRecipesModal
+        isOpen={isProRecipesModalOpen}
+        onClose={() => setIsProRecipesModalOpen(false)}
+        onLoadRecipe={handleLoadRecipe}
+      />
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+      
+      {currentPage === 'calculator' && (
+        <MobileSummaryBar
+          totalDough={results.totalDough}
+          unit={unit}
+          onSave={() => {}}
+          onLoad={() => setIsLoadModalOpen(true)}
+          onNavigateToPlans={() => setCurrentPage('plans')}
+        />
+      )}
     </div>
   );
 }
 
-// Wrapper component to provide contexts
-const App: React.FC = () => (
-    <TranslationProvider>
+function App() {
+  return (
+    <I18nProvider>
+      <AuthProvider>
         <EntitlementProvider>
-            <AppInternal />
+          <AppContent />
         </EntitlementProvider>
-    </TranslationProvider>
-);
+      </AuthProvider>
+    </I18nProvider>
+  );
+}
 
 export default App;

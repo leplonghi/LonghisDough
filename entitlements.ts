@@ -5,15 +5,25 @@ import React, {
   ReactNode,
   FC,
   useCallback,
+  useEffect,
 } from 'react';
 
-const PRO_ACCESS_KEY = 'dough-lab-pro-access';
+const ENTITLEMENTS_KEY = 'dough-lab-entitlements';
+
+interface Entitlements {
+  isPro: boolean;
+  passUntil: number | null;
+  lastPassGrantedAt: number | null;
+}
 
 interface EntitlementContextType {
   hasProAccess: boolean;
   grantProAccess: () => void;
+  // FIX: Add missing grantSessionProAccess to the EntitlementContextType interface.
   grantSessionProAccess: () => void;
-  revokeProAccess: () => void;
+  grant24hPass: () => void;
+  isPassOnCooldown: boolean;
+  cooldownHoursRemaining: number;
 }
 
 const EntitlementContext = createContext<EntitlementContextType | undefined>(
@@ -23,43 +33,99 @@ const EntitlementContext = createContext<EntitlementContextType | undefined>(
 export const EntitlementProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isPro, setIsPro] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem(PRO_ACCESS_KEY) === 'true';
-    } catch {
-      return false;
-    }
+  const [entitlements, setEntitlements] = useState<Entitlements>({
+    isPro: false,
+    passUntil: null,
+    lastPassGrantedAt: null,
   });
   const [isSessionPro, setIsSessionPro] = useState<boolean>(false);
+  const [cooldownHours, setCooldownHours] = useState(0);
 
-  const grantProAccess = useCallback(() => {
+  useEffect(() => {
     try {
-      localStorage.setItem(PRO_ACCESS_KEY, 'true');
-      setIsPro(true);
+      const stored = localStorage.getItem(ENTITLEMENTS_KEY);
+      if (stored) {
+        setEntitlements(JSON.parse(stored));
+      }
+    } catch {
+      // Ignore errors, default state will be used
+    }
+  }, []);
+  
+  // Effect to periodically check pass expiration and cooldown
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      
+      // Check if pass has expired
+      if (entitlements.passUntil && now > entitlements.passUntil) {
+         setEntitlements(prev => {
+            const newEntitlements = { ...prev, passUntil: null };
+            try {
+              localStorage.setItem(ENTITLEMENTS_KEY, JSON.stringify(newEntitlements));
+            } catch {}
+            return newEntitlements;
+         });
+      }
+      
+      // Check cooldown status
+      if (entitlements.lastPassGrantedAt) {
+          const hoursSinceLastPass = (now - entitlements.lastPassGrantedAt) / (1000 * 60 * 60);
+          if (hoursSinceLastPass < 24) {
+              setCooldownHours(24 - hoursSinceLastPass);
+          } else if (cooldownHours > 0) { // Cooldown just finished
+              setCooldownHours(0);
+          }
+      } else if (cooldownHours > 0) {
+          setCooldownHours(0);
+      }
+
+    }, 1000 * 60); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [entitlements, cooldownHours]);
+
+  const saveEntitlements = (newEntitlements: Entitlements) => {
+    try {
+      localStorage.setItem(ENTITLEMENTS_KEY, JSON.stringify(newEntitlements));
+      setEntitlements(newEntitlements);
     } catch (error) {
       console.error('Could not save to localStorage', error);
     }
-  }, []);
+  };
+
+  const grantProAccess = useCallback(() => {
+    saveEntitlements({ ...entitlements, isPro: true, passUntil: null });
+  }, [entitlements]);
 
   const grantSessionProAccess = useCallback(() => {
     setIsSessionPro(true);
   }, []);
-
-  const revokeProAccess = useCallback(() => {
-    try {
-      localStorage.removeItem(PRO_ACCESS_KEY);
-      setIsPro(false);
-      setIsSessionPro(false); // Also revoke session pro for consistency
-    } catch (error) {
-      console.error('Could not access localStorage', error);
+  
+  const grant24hPass = useCallback(() => {
+    const now = Date.now();
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+     if (entitlements.lastPassGrantedAt && now - entitlements.lastPassGrantedAt < twentyFourHours) {
+        console.warn("24h pass is on cooldown.");
+        return;
     }
-  }, []);
+    saveEntitlements({
+        ...entitlements,
+        passUntil: now + twentyFourHours,
+        lastPassGrantedAt: now,
+    });
+  }, [entitlements]);
+
+  const hasProAccess = entitlements.isPro || isSessionPro || (entitlements.passUntil !== null && Date.now() < entitlements.passUntil);
+  const isPassOnCooldown = entitlements.lastPassGrantedAt !== null && (Date.now() - entitlements.lastPassGrantedAt) < (24 * 60 * 60 * 1000);
 
   const value = {
-    hasProAccess: isPro || isSessionPro,
+    hasProAccess,
     grantProAccess,
     grantSessionProAccess,
-    revokeProAccess,
+    grant24hPass,
+    isPassOnCooldown,
+    cooldownHoursRemaining: Math.ceil(cooldownHours),
   };
 
   return React.createElement(EntitlementContext.Provider, { value }, children);

@@ -1,3 +1,5 @@
+// FIX: Removed self-import of 'DoughConfig' as it conflicts with the local declaration.
+
 export enum BakeType {
   PIZZA = 'PIZZA',
   BREAD = 'BREAD',
@@ -5,26 +7,26 @@ export enum BakeType {
 
 export enum RecipeStyle {
   // Pizza
-  NAPOLETANA = 'NAPOLETANA',
-  NY = 'NY',
-  ROMANA = 'ROMANA',
-  SICILIAN = 'SICILIAN',
-  FOCACCIA = 'FOCACCIA',
+  NEAPOLITAN = 'NEAPOLITAN',
+  NY_STYLE = 'NY_STYLE',
+  ROMAN = 'ROMAN',
   DETROIT = 'DETROIT',
-  CHICAGO_DEEP_DISH = 'CHICAGO_DEEP_DISH',
+  SICILIAN = 'SICILIAN',
+  CHICAGO = 'CHICAGO',
   // Bread
-  ARTISAN_LOAF = 'ARTISAN_LOAF',
+  SOURDOUGH = 'SOURDOUGH',
   BAGUETTE = 'BAGUETTE',
   CIABATTA = 'CIABATTA',
-  PUMPERNICKEL = 'PUMPERNICKEL',
-  SOURDOUGH_BOULE = 'SOURDOUGH_BOULE',
-  RYE_BREAD = 'RYE_BREAD',
+  FOCACCIA = 'FOCACCIA',
+  BRIOCHE = 'BRIOCHE',
+  RYE = 'RYE',
 }
 
 export enum YeastType {
   IDY = 'IDY', // Instant Dry Yeast
   ADY = 'ADY', // Active Dry Yeast
   FRESH = 'FRESH',
+  SOURDOUGH = 'SOURDOUGH', // Sourdough starter / levain
 }
 
 export enum FermentationTechnique {
@@ -33,29 +35,35 @@ export enum FermentationTechnique {
   BIGA = 'BIGA',
 }
 
-export enum UnitSystem {
-  US_CUSTOMARY = 'US_CUSTOMARY',
-  METRIC = 'METRIC',
-}
-
 export type Unit = 'g' | 'oz' | 'volume';
+
+export enum UnitSystem {
+  METRIC = 'METRIC',
+  US_CUSTOMARY = 'US_CUSTOMARY',
+}
 
 export type Locale = 'en' | 'pt' | 'es';
 
+export interface User {
+  name: string;
+  email: string;
+  avatar: string; // URL or initials
+}
+
 export interface DoughConfig {
-  numPizzas: number;
+  bakeType: BakeType;
+  recipeStyle: RecipeStyle;
+  numPizzas: number; // Also used for loaves
   doughBallWeight: number;
-  scale: number;
   hydration: number;
   salt: number;
   oil: number;
+  yeastType: YeastType;
   yeastPercentage: number;
   fermentationTechnique: FermentationTechnique;
   prefermentFlourPercentage: number;
-  yeastType: YeastType;
-  bakeType: BakeType;
-  recipeStyle: RecipeStyle;
-  notes: string;
+  scale: number;
+  notes?: string;
 }
 
 export interface DoughResult {
@@ -79,13 +87,13 @@ export interface DoughResult {
   };
 }
 
-export interface SavedDoughConfig {
-  name: string;
-  config: DoughConfig;
-}
-
 export interface ProRecipe {
   nameKey: string;
   descriptionKey: string;
   config: Partial<DoughConfig>;
+}
+
+export interface SavedDoughConfig {
+  name: string;
+  config: DoughConfig;
 }
