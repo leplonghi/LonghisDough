@@ -1,8 +1,7 @@
-
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { SavedDoughConfig, DoughConfig } from '../types';
 import { useTranslation } from '../i18n';
-import { TrashIcon, CloseIcon } from './IconComponents';
+import { TrashIcon, CloseIcon, StarIcon, SolidStarIcon } from './IconComponents';
 
 interface LoadConfigModalProps {
   isOpen: boolean;
@@ -10,6 +9,7 @@ interface LoadConfigModalProps {
   configs: SavedDoughConfig[];
   onLoad: (config: DoughConfig) => void;
   onDelete: (name: string) => void;
+  onToggleFavorite: (name: string) => void;
 }
 
 const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
@@ -18,8 +18,23 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
   configs,
   onLoad,
   onDelete,
+  onToggleFavorite,
 }) => {
   const { t } = useTranslation();
+  const [view, setView] = useState<'all' | 'favorites'>('all');
+
+  const filteredConfigs = useMemo(() => {
+    const sorted = [...configs].sort((a, b) => {
+      // Favorites first, then alphabetically
+      if (a.isFavorite && !b.isFavorite) return -1;
+      if (!a.isFavorite && b.isFavorite) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    if (view === 'favorites') {
+      return sorted.filter((c) => c.isFavorite);
+    }
+    return sorted;
+  }, [configs, view]);
 
   if (!isOpen) return null;
 
@@ -51,9 +66,32 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
           </button>
         </div>
 
-        <div className="mt-4 max-h-80 space-y-2 overflow-y-auto pr-2">
-          {configs.length > 0 ? (
-            configs.map(({ name, config }) => (
+        <div className="mt-4 flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700">
+          <button
+            onClick={() => setView('all')}
+            className={`w-1/2 rounded-full py-1.5 text-sm font-semibold transition-all duration-300 ${
+              view === 'all'
+                ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
+                : 'bg-transparent text-slate-600 dark:text-slate-300'
+            }`}
+          >
+            All Recipes
+          </button>
+          <button
+            onClick={() => setView('favorites')}
+            className={`w-1/2 rounded-full py-1.5 text-sm font-semibold transition-all duration-300 ${
+              view === 'favorites'
+                ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
+                : 'bg-transparent text-slate-600 dark:text-slate-300'
+            }`}
+          >
+            Favorites
+          </button>
+        </div>
+
+        <div className="mt-4 max-h-80 min-h-[10rem] space-y-2 overflow-y-auto pr-2">
+          {filteredConfigs.length > 0 ? (
+            filteredConfigs.map(({ name, config, isFavorite }) => (
               <div
                 key={name}
                 className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-700/50"
@@ -61,9 +99,25 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
                 <span className="font-medium text-slate-800 dark:text-slate-200">
                   {name}
                 </span>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1 sm:space-x-2">
                   <button
-                    onClick={() => onLoad(config)}
+                    onClick={() => onToggleFavorite(name)}
+                    className={`rounded-full p-2 transition-colors hover:bg-yellow-100 dark:hover:bg-yellow-500/10 ${
+                      isFavorite ? 'text-yellow-400' : 'text-slate-400'
+                    }`}
+                    aria-label={`Mark ${name} as favorite`}
+                  >
+                    {isFavorite ? (
+                      <SolidStarIcon className="h-5 w-5" />
+                    ) : (
+                      <StarIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      onLoad(config);
+                      onClose();
+                    }}
                     className="rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
                   >
                     {t('load_modal.load')}
@@ -80,7 +134,9 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
             ))
           ) : (
             <p className="py-8 text-center text-slate-500 dark:text-slate-400">
-              {t('load_modal.no_configs')}
+              {view === 'favorites'
+                ? 'You have no favorite recipes.'
+                : t('load_modal.no_configs')}
             </p>
           )}
         </div>

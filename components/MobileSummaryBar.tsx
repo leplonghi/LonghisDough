@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import {
   WeightIcon,
@@ -8,7 +9,7 @@ import {
 } from './IconComponents';
 import { Unit } from '../types';
 import { useTranslation } from '../i18n';
-import { useEntitlements } from '../entitlements';
+import { useUser } from '../App';
 
 interface MobileSummaryBarProps {
   totalDough: number;
@@ -26,7 +27,7 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   onNavigateToPlans,
 }) => {
   const { t } = useTranslation();
-  const { hasProAccess } = useEntitlements();
+  const { hasProAccess } = useUser();
   const GRAMS_TO_OUNCES = 0.035274;
 
   const displayValue =

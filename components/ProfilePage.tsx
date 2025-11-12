@@ -1,7 +1,8 @@
+
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../auth';
+import { useUser } from '../App';
 import { useTranslation } from '../i18n';
-import { useEntitlements } from '../entitlements';
 import {
   ArrowRightOnRectangleIcon,
   PencilIcon,
@@ -9,13 +10,39 @@ import {
 } from './IconComponents';
 import { User, Gender } from '../types';
 
+/**
+ * @component ProfilePage
+ * @description This component renders the user's profile page.
+ * It has two main states:
+ * 1. View Mode: Displays the current user's information (name, email, membership status, etc.).
+ * 2. Edit Mode: Provides a form to update the user's details.
+ *
+ * @dependencies
+ * - `useUser`: To get the current user's data, check Pro status, update it, and log out.
+ * - `useTranslation`: For internationalization of all displayed text.
+ *
+ * @flows
+ * 1. **Authentication Check**: The component first checks if a user is logged in. If not, it shows a "not logged in" message.
+ * 2. **Display Profile**: If logged in, it displays user details.
+ * 3. **Enter Edit Mode**: The user can click an "Edit Profile" button to switch to an editable form.
+ * 4. **Update Profile**: In edit mode, the user can change their details and click "Save Changes" to persist them via `updateUser` from the User context.
+ * 5. **Cancel Edit**: The user can click "Cancel" to discard changes and return to view mode.
+ * 6. **Logout**: A "Sign Out" button is always available to log the user out.
+ */
 const ProfilePage: React.FC = () => {
-  const { user, logout, updateUser } = useAuth();
-  const { hasProAccess } = useEntitlements();
+  // --- HOOKS ---
+  const { user, logout, updateUser, hasProAccess } = useUser();
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
+  // --- EFFECTS ---
+  /**
+   * @effect
+   * This effect synchronizes the `formData` state with the `user` object from the User context.
+   * It runs whenever the `user` object changes (e.g., on initial load or after an update).
+   * This ensures the form is always pre-populated with the latest user data when editing begins.
+   */
   useEffect(() => {
     if (user) {
       setFormData({
@@ -27,6 +54,7 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
+  // --- CONDITIONAL RENDERING: Logged-out state ---
   if (!user) {
     return (
       <div className="mx-auto max-w-4xl text-center">
@@ -35,6 +63,7 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  // --- EVENT HANDLERS ---
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -57,6 +86,7 @@ const ProfilePage: React.FC = () => {
     setIsEditing(false);
   };
 
+  // --- RENDER HELPER FUNCTIONS ---
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
       <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -100,19 +130,24 @@ const ProfilePage: React.FC = () => {
           name={name}
           value={(formData[name] as string) || ''}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
-          disabled={name === 'email'}
+          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
+          disabled={name === 'email'} // Email is typically not editable
         />
       )}
     </div>
   );
-  
-  // FIX: Cast enum value to string to resolve TypeScript type inference issue.
-  const genderOptions = Object.values(Gender).map(g => ({ value: g, label: t(`profile.genders.${(g as string).toLowerCase()}`) }));
 
+  // --- DATA PREPARATION ---
+  const genderOptions = Object.values(Gender).map((g) => ({
+    value: g,
+    label: t(`profile.genders.${(g as string).toLowerCase()}`),
+  }));
+
+  // --- MAIN RENDER ---
   return (
     <div className="mx-auto max-w-2xl animate-[fadeIn_0.5s_ease-in-out]">
       <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
+        {/* === SECTION: User Header === */}
         <div className="flex flex-col items-center text-center">
           {user.avatar ? (
             <img
@@ -133,6 +168,7 @@ const ProfilePage: React.FC = () => {
           </p>
         </div>
 
+        {/* === SECTION: Account Settings === */}
         <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -151,6 +187,7 @@ const ProfilePage: React.FC = () => {
 
           <div className="mt-6">
             {isEditing ? (
+              // --- EDIT MODE ---
               <div className="space-y-6">
                 {renderInputRow(t('profile.name'), 'name', 'text')}
                 {renderInputRow(t('profile.email'), 'email', 'email')}
@@ -161,7 +198,7 @@ const ProfilePage: React.FC = () => {
                   'select',
                   genderOptions,
                 )}
-                <div className="flex items-center justify-end gap-4">
+                <div className="flex items-center justify-end gap-4 border-t border-slate-200 pt-6 dark:border-slate-700">
                   <button
                     onClick={handleCancel}
                     className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
@@ -177,13 +214,16 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
             ) : (
+              // --- VIEW MODE ---
               <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                 {renderInfoRow(t('profile.name'), user.name)}
                 {renderInfoRow(t('profile.email'), user.email)}
                 {renderInfoRow(t('profile.birthDate'), user.birthDate)}
                 {renderInfoRow(
                   t('profile.gender'),
-                  user.gender ? t(`profile.genders.${user.gender.toLowerCase()}`) : undefined,
+                  user.gender
+                    ? t(`profile.genders.${user.gender.toLowerCase()}`)
+                    : undefined,
                 )}
                 <div>
                   <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -197,9 +237,7 @@ const ProfilePage: React.FC = () => {
                           : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
                       }`}
                     >
-                      {hasProAccess && (
-                        <StarIcon className="h-3.5 w-3.5" />
-                      )}
+                      {hasProAccess && <StarIcon className="h-3.5 w-3.5" />}
                       {hasProAccess
                         ? t('profile.pro_member')
                         : t('profile.free_member')}
@@ -211,6 +249,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
+        {/* === SECTION: Logout === */}
         <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
           <button
             onClick={logout}

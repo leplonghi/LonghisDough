@@ -27,6 +27,15 @@
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
             },
+            keyframes: {
+              slideInRight: {
+                from: { transform: 'translateX(100%)', opacity: '0' },
+                to: { transform: 'translateX(0)', opacity: '1' },
+              },
+            },
+            animation: {
+              'slide-in-right': 'slideInRight 0.4s ease-out forwards',
+            },
           },
         },
       };
@@ -104,14 +113,15 @@
 
     <!-- Import Map -->
     <script type="importmap">
-      {
-        "imports": {
-          "react": "https://aistudiocdn.com/react@^19.2.0",
-          "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-          "react/": "https://aistudiocdn.com/react@^19.2.0/"
-        }
-      }
-    </script>
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0"
+  }
+}
+</script>
   </head>
   <body>
     <!-- The root element for the React app -->

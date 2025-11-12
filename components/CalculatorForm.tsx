@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import {
   DoughConfig,
   YeastType,
@@ -7,6 +8,7 @@ import {
   FermentationTechnique,
   BakeType,
   UnitSystem,
+  FormErrors,
 } from '../types';
 import {
   YEAST_OPTIONS,
@@ -28,12 +30,15 @@ import {
   InfoIcon,
   LockClosedIcon,
 } from './IconComponents';
+import { useUser } from '../App';
 
 interface CalculatorFormProps {
   config: DoughConfig;
+  errors: FormErrors;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onBakeTypeChange: (bakeType: BakeType) => void;
   onStyleChange: (style: RecipeStyle) => void;
+  onYeastTypeChange: (yeastType: YeastType) => void;
   onReset: () => void;
   unitSystem: UnitSystem;
   onUnitSystemChange: (system: UnitSystem) => void;
@@ -47,7 +52,7 @@ const FormSection: React.FC<{
   icon: React.ReactNode;
   tooltip?: string;
 }> = ({ title, children, icon, tooltip }) => (
-  <div className="relative rounded-xl border border-slate-200 p-6 pt-8 dark:border-slate-700/50">
+  <div className="relative rounded-xl border border-slate-200 p-4 pt-6 dark:border-slate-700/50 sm:p-6 sm:pt-8">
     <h3 className="absolute -top-3.5 left-4 flex items-center gap-2 bg-white px-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
       <span className="text-lime-500">{icon}</span>
       <span>{title}</span>
@@ -97,9 +102,11 @@ const ChoiceButton: React.FC<{
 
 const CalculatorForm: React.FC<CalculatorFormProps> = ({
   config,
+  errors,
   onConfigChange,
   onBakeTypeChange,
   onStyleChange,
+  onYeastTypeChange,
   onReset,
   unitSystem,
   onUnitSystemChange,
@@ -107,21 +114,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onOpenPaywall,
 }) => {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
-
-  useEffect(() => {
-    const newErrors: { [key: string]: string | null } = {};
-
-    if (config.numPizzas < 1 || config.numPizzas > 100) {
-      newErrors.numPizzas = t('form.errors.num_pizzas_range');
-    }
-
-    if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
-      newErrors.doughBallWeight = t('form.errors.dough_ball_weight_range');
-    }
-
-    setErrors(newErrors);
-  }, [config.numPizzas, config.doughBallWeight, t]);
+  const isSourdough = config.yeastType === YeastType.SOURDOUGH;
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -137,7 +130,12 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onConfigChange({ [e.target.name]: e.target.value as YeastType });
+    const { name, value } = e.target;
+    if (name === 'yeastType') {
+      onYeastTypeChange(value as YeastType);
+    } else {
+      onConfigChange({ [name]: value as YeastType });
+    }
   };
 
   const handleTechniqueChange = (technique: FermentationTechnique) => {
@@ -164,7 +162,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
   const getInputClasses = (hasError: boolean) => {
     const baseClasses =
-      'w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100';
+      'w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100 border';
     const normalClasses =
       'border-slate-300 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600';
     const errorClasses =
@@ -173,7 +171,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   };
 
   return (
-    <div className="space-y-8 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8">
+    <div className="space-y-8 rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8">
       {!hasProAccess && <AdSenseBlock />}
 
       <FormSection
@@ -238,15 +236,9 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               max="100"
               className={getInputClasses(!!errors.numPizzas)}
             />
-            {errors.numPizzas ? (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                {errors.numPizzas}
-              </p>
-            ) : (
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {t('form.num_units_note')}
-              </p>
-            )}
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              {t('form.num_units_note')}
+            </p>
           </div>
           <div>
             <label
@@ -268,29 +260,26 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               step="10"
               className={getInputClasses(!!errors.doughBallWeight)}
             />
-            {errors.doughBallWeight ? (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                {errors.doughBallWeight}
-              </p>
-            ) : (
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {weightNote}
-              </p>
-            )}
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              {weightNote}
+            </p>
           </div>
         </div>
-        <SliderInput
-          label={t('form.hydration')}
-          name="hydration"
-          value={config.hydration}
-          onChange={handleNumberChange}
-          min={50}
-          max={100}
-          step={1}
-          unit="%"
-          tooltip={t('form.hydration_tooltip')}
-        />
-        <div className="relative">
+        <div>
+          <SliderInput
+            label={t('form.hydration')}
+            name="hydration"
+            value={config.hydration}
+            onChange={handleNumberChange}
+            min={50}
+            max={100}
+            step={1}
+            unit="%"
+            tooltip={t('form.hydration_tooltip')}
+            hasError={!!errors.hydration}
+          />
+        </div>
+        <div>
           <SliderInput
             label={t('form.scale')}
             name="scale"
@@ -301,20 +290,8 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
             step={0.05}
             unit="x"
             tooltip={t('form.scale_tooltip')}
-            disabled={!hasProAccess}
+            hasError={!!errors.scale}
           />
-          {!hasProAccess && (
-            <div
-              className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
-              onClick={onOpenPaywall}
-              title={t('pro.locked_tooltip')}
-            >
-              <div className="flex items-center gap-2 rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
-                <LockClosedIcon className="h-4 w-4" />
-                {t('pro.go_pro_header')}
-              </div>
-            </div>
-          )}
         </div>
       </FormSection>
 
@@ -322,41 +299,58 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
         title={t('form.fermentation')}
         icon={<FermentationIcon className="h-5 w-5" />}
       >
-        <div className="grid grid-cols-3 gap-3">
-          <ChoiceButton
-            active={config.fermentationTechnique === FermentationTechnique.DIRECT}
-            onClick={() => handleTechniqueChange(FermentationTechnique.DIRECT)}
-          >
-            {t('form.direct')}
-          </ChoiceButton>
-          <ChoiceButton
-            active={
-              config.fermentationTechnique === FermentationTechnique.POOLISH
-            }
-            onClick={() => handleTechniqueChange(FermentationTechnique.POOLISH)}
-          >
-            {t('form.poolish')}
-          </ChoiceButton>
-          <ChoiceButton
-            active={config.fermentationTechnique === FermentationTechnique.BIGA}
-            onClick={() => handleTechniqueChange(FermentationTechnique.BIGA)}
-          >
-            {t('form.biga')}
-          </ChoiceButton>
-        </div>
+        {isSourdough ? (
+          <p className="rounded-md bg-lime-50 p-3 text-center text-sm text-lime-800 dark:bg-lime-500/10 dark:text-lime-300">
+            {t('form.sourdough_as_preferment')}
+          </p>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 [&>:last-child]:col-span-2 sm:[&>:last-child]:col-span-1">
+              <ChoiceButton
+                active={
+                  config.fermentationTechnique === FermentationTechnique.DIRECT
+                }
+                onClick={() => handleTechniqueChange(FermentationTechnique.DIRECT)}
+              >
+                {t('form.direct')}
+              </ChoiceButton>
+              <ChoiceButton
+                active={
+                  config.fermentationTechnique === FermentationTechnique.POOLISH
+                }
+                onClick={() =>
+                  handleTechniqueChange(FermentationTechnique.POOLISH)
+                }
+              >
+                {t('form.poolish')}
+              </ChoiceButton>
+              <ChoiceButton
+                active={
+                  config.fermentationTechnique === FermentationTechnique.BIGA
+                }
+                onClick={() => handleTechniqueChange(FermentationTechnique.BIGA)}
+              >
+                {t('form.biga')}
+              </ChoiceButton>
+            </div>
 
-        {config.fermentationTechnique !== FermentationTechnique.DIRECT && (
-          <SliderInput
-            label={t('form.preferment_flour')}
-            name="prefermentFlourPercentage"
-            value={config.prefermentFlourPercentage}
-            onChange={handleNumberChange}
-            min={10}
-            max={100}
-            step={5}
-            unit="%"
-            tooltip={t('form.preferment_flour_tooltip')}
-          />
+            {config.fermentationTechnique !== FermentationTechnique.DIRECT && (
+              <div>
+                <SliderInput
+                  label={t('form.preferment_flour')}
+                  name="prefermentFlourPercentage"
+                  value={config.prefermentFlourPercentage}
+                  onChange={handleNumberChange}
+                  min={10}
+                  max={100}
+                  step={5}
+                  unit="%"
+                  tooltip={t('form.preferment_flour_tooltip')}
+                  hasError={!!errors.prefermentFlourPercentage}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className="grid grid-cols-1 items-end gap-6 sm:grid-cols-2">
@@ -408,10 +402,11 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               value={config.yeastPercentage}
               onChange={handleNumberChange}
               min={0}
-              max={3}
+              max={config.yeastType === YeastType.SOURDOUGH ? 50 : 5}
               step={0.1}
               unit="%"
               tooltip={t('form.yeast_tooltip')}
+              hasError={!!errors.yeastPercentage}
             />
           </div>
         </div>

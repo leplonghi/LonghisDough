@@ -1,5 +1,7 @@
+
+
 import React from 'react';
-import { useAuth } from '../auth';
+import { useUser } from '../App';
 import { useTranslation } from '../i18n';
 import { User } from '../types';
 import { CloseIcon, GoogleIcon } from './IconComponents';
@@ -10,7 +12,7 @@ interface AuthModalProps {
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const { login } = useAuth();
+  const { login } = useUser();
   const { t } = useTranslation();
 
   const handleGoogleLogin = () => {

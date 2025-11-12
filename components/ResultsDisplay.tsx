@@ -7,6 +7,7 @@ import {
   BakeType,
   RecipeStyle,
   UnitSystem,
+  YeastType,
 } from '../types';
 import {
   FlourIcon,
@@ -23,6 +24,7 @@ import {
   CheckIcon,
   InfoIcon,
   LockClosedIcon,
+  SpinnerIcon,
 } from './IconComponents';
 import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
@@ -36,7 +38,7 @@ declare global {
 }
 
 interface ResultsDisplayProps {
-  results: DoughResult;
+  results: DoughResult | null;
   config: DoughConfig;
   unit: Unit;
   unitSystem: UnitSystem;
@@ -56,12 +58,12 @@ const ResultRow: React.FC<{
   <div
     className={`flex items-center justify-between ${
       isTotal
-        ? 'mt-4 rounded-lg bg-lime-50 p-4 dark:bg-lime-500/10'
-        : 'border-b border-slate-200 py-4 dark:border-slate-700'
+        ? 'mt-4 rounded-lg bg-lime-50 p-3 dark:bg-lime-500/10 sm:p-4'
+        : 'border-b border-slate-200 py-3 dark:border-slate-700 sm:py-4'
     }`}
   >
     <div className="flex items-center pr-4">
-      <span className="mr-4 flex-shrink-0 text-lime-500 dark:text-lime-400">
+      <span className="mr-3 flex-shrink-0 text-lime-500 dark:text-lime-400 sm:mr-4">
         {icon}
       </span>
       <div>
@@ -106,8 +108,8 @@ const ResultRow: React.FC<{
     <span
       className={`flex-shrink-0 text-right font-semibold ${
         isTotal
-          ? 'text-2xl font-bold text-slate-900 dark:text-white'
-          : 'text-lg text-slate-800 dark:text-slate-100'
+          ? 'text-xl font-bold text-slate-900 dark:text-white sm:text-2xl'
+          : 'text-base text-slate-800 dark:text-slate-100 sm:text-lg'
       }`}
     >
       {value}
@@ -213,6 +215,22 @@ const RecipeSteps: React.FC<{
   );
 };
 
+const ErrorMessage: React.FC<{
+  t: (key: string) => string;
+}> = ({ t }) => (
+  <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-red-300 bg-red-50 p-8 text-center dark:border-red-500/50 dark:bg-red-500/10">
+    <div className="rounded-full bg-red-100 p-3 dark:bg-red-500/20">
+      <InfoIcon className="h-8 w-8 text-red-500" />
+    </div>
+    <h3 className="mt-4 text-xl font-bold text-red-700 dark:text-red-300">
+      {t('results.errors.title')}
+    </h3>
+    <p className="mt-2 text-red-600 dark:text-red-400">
+      {t('results.errors.message')}
+    </p>
+  </div>
+);
+
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   results,
   config,
@@ -224,7 +242,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const GRAMS_TO_OUNCES = 0.035274;
+  const isSourdough = config.yeastType === YeastType.SOURDOUGH;
 
   const volumeUnits = {
     cups: t('units.cups'),
@@ -289,59 +309,67 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       onOpenPaywall();
       return;
     }
-    const { jsPDF } = window.jspdf;
-    const html2canvas = window.html2canvas;
+    if (isExportingPDF) return;
 
-    const contentToExport = document.getElementById('recipe-card');
+    setIsExportingPDF(true);
 
-    if (!contentToExport || !jsPDF || !html2canvas) {
-      console.error(
-        'PDF generation failed: A required library or element is missing.',
-      );
-      alert(
-        'Sorry, there was an error exporting the PDF. Please try again later.',
-      );
-      return;
-    }
-
-    const elementBgColor =
-      window.getComputedStyle(contentToExport).backgroundColor;
-
-    html2canvas(contentToExport, {
-      scale: 2,
-      backgroundColor: elementBgColor,
-      ignoreElements: (element: Element) =>
-        element.classList.contains('no-print'),
-    }).then((canvas: any) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4',
-      });
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const canvasAspectRatio = canvas.width / canvas.height;
-      const margin = 40;
-
-      let imgFinalWidth = pdfWidth - margin * 2;
-      let imgFinalHeight = imgFinalWidth / canvasAspectRatio;
-
-      if (imgFinalHeight > pdfHeight - margin * 2) {
-        imgFinalHeight = pdfHeight - margin * 2;
-        imgFinalWidth = imgFinalHeight * canvasAspectRatio;
-      }
-
-      const xPos = (pdfWidth - imgFinalWidth) / 2;
-      const yPos = (pdfHeight - imgFinalHeight) / 2;
-
-      const today = new Date();
-      const dateString = today.toISOString().split('T')[0];
-      const fileName = `DoughLabPro-Recipe-${dateString}.pdf`;
-
-      pdf.addImage(imgData, 'PNG', xPos, yPos, imgFinalWidth, imgFinalHeight);
-      pdf.save(fileName);
-    });
+    // Use a short timeout to allow the UI to update to the loading state
+    // before the potentially blocking html2canvas operation starts.
+    setTimeout(() => {
+        const { jsPDF } = window.jspdf;
+        const html2canvas = window.html2canvas;
+    
+        const contentToExport = document.getElementById('recipe-card');
+    
+        if (!contentToExport || !jsPDF || !html2canvas) {
+          console.error('PDF generation failed: A required library or element is missing.');
+          alert('Sorry, there was an error exporting the PDF. Please try again later.');
+          setIsExportingPDF(false);
+          return;
+        }
+    
+        const elementBgColor = window.getComputedStyle(contentToExport).backgroundColor;
+    
+        html2canvas(contentToExport, {
+          scale: 2,
+          backgroundColor: elementBgColor,
+          ignoreElements: (element: Element) => element.classList.contains('no-print'),
+        }).then((canvas: HTMLCanvasElement) => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'pt',
+            format: 'a4',
+          });
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          const canvasAspectRatio = canvas.width / canvas.height;
+          const margin = 40;
+    
+          let imgFinalWidth = pdfWidth - margin * 2;
+          let imgFinalHeight = imgFinalWidth / canvasAspectRatio;
+    
+          if (imgFinalHeight > pdfHeight - margin * 2) {
+            imgFinalHeight = pdfHeight - margin * 2;
+            imgFinalWidth = imgFinalHeight * canvasAspectRatio;
+          }
+    
+          const xPos = (pdfWidth - imgFinalWidth) / 2;
+          const yPos = (pdfHeight - imgFinalHeight) / 2;
+    
+          const today = new Date();
+          const dateString = today.toISOString().split('T')[0];
+          const fileName = `DoughLabPro-Recipe-${dateString}.pdf`;
+    
+          pdf.addImage(imgData, 'PNG', xPos, yPos, imgFinalWidth, imgFinalHeight);
+          pdf.save(fileName);
+        }).catch((error) => {
+            console.error("PDF generation failed:", error);
+            alert("An error occurred while generating the PDF.");
+        }).finally(() => {
+            setIsExportingPDF(false);
+        });
+    }, 50);
   };
 
   const renderRecipeSection = (
@@ -421,7 +449,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             tooltip={getConversionTooltip('oil')}
           />
         )}
-        {ingredients.yeast !== undefined && (
+        {ingredients.yeast !== undefined && ingredients.yeast > 0.001 && (
           <ResultRow
             icon={<YeastIcon />}
             label={t('results.yeast')}
@@ -458,11 +486,21 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     { id: 'oz', label: t('results.ounces') },
     { id: 'volume', label: t('results.cups') },
   ];
+  
+  const containerClasses = "h-full rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8";
+
+  if (!results) {
+    return (
+       <div id="recipe-card" className={containerClasses}>
+         <ErrorMessage t={t} />
+       </div>
+    );
+  }
 
   return (
     <div
       id="recipe-card"
-      className="h-full rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8"
+      className={containerClasses}
     >
       <div className="flex items-center justify-between">
         <div className="flex-1"></div> {/* Left Spacer */}
@@ -488,12 +526,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           </button>
           <button
             onClick={handleExportPDF}
-            aria-label={t('results.export_pdf_aria')}
+            disabled={isExportingPDF}
+            aria-label={isExportingPDF ? t('results.exporting_pdf_aria') : t('results.export_pdf_aria')}
             title={!hasProAccess ? t('pro.locked_tooltip') : ''}
-            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800"
+            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800"
           >
             {hasProAccess ? (
-              <DownloadIcon className="h-6 w-6" />
+                isExportingPDF ? (
+                    <SpinnerIcon className="h-6 w-6 animate-spin" />
+                ) : (
+                    <DownloadIcon className="h-6 w-6" />
+                )
             ) : (
               <LockClosedIcon className="h-6 w-6" />
             )}
@@ -536,9 +579,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       {config.fermentationTechnique !== FermentationTechnique.DIRECT &&
         results.preferment &&
         renderRecipeSection(
-          t('results.preferment_title', {
-            technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
-          }),
+          isSourdough
+            ? t('results.sourdough_starter_title')
+            : t('results.preferment_title', {
+                technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
+              }),
           {
             flour: results.preferment.flour,
             water: results.preferment.water,
@@ -557,9 +602,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             <ResultRow
               icon={<PrefermentIcon />}
               label={t('results.preferment_label', {
-                technique: t(
-                  `form.${config.fermentationTechnique.toLowerCase()}`,
-                ),
+                technique: isSourdough
+                  ? t('form.yeast_sourdough')
+                  : t(`form.${config.fermentationTechnique.toLowerCase()}`),
               })}
               value={formatWeight(
                 results.preferment.flour +
@@ -567,7 +612,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   results.preferment.yeast,
                 { g: 0, oz: 1 },
               )}
-              note={t('results.notes.preferment')}
+              note={isSourdough ? t('results.notes.starter') : t('results.notes.preferment')}
             />
             {results.finalDough.flour > 0.1 && (
               <ResultRow
@@ -714,7 +759,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           />
           <ResultRow
             icon={<YeastIcon />}
-            label={t('results.yeast')}
+            label={isSourdough ? t('results.sourdough_starter_title') : t('results.yeast')}
             value={
               unit === 'volume'
                 ? gramsToVolume(
@@ -725,7 +770,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   )
                 : formatWeight(results.totalYeast, { g: 2, oz: 3 })
             }
-            note={t('results.notes.yeast')}
+            note={isSourdough ? t('results.notes.starter') : t('results.notes.yeast')}
             tooltip={getConversionTooltip('yeast')}
           />
         </div>

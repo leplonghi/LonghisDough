@@ -80,6 +80,7 @@ export interface DoughResult {
 export interface SavedDoughConfig {
   name: string;
   config: DoughConfig;
+  isFavorite?: boolean;
 }
 
 export interface ProRecipe {
@@ -104,3 +105,7 @@ export interface User {
 }
 
 export type Locale = 'en' | 'pt' | 'es';
+
+export type FormErrors = {
+  [key in keyof Partial<DoughConfig>]: string | null;
+};

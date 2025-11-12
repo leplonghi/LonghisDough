@@ -12,6 +12,7 @@ interface SliderInputProps {
   unit: string;
   tooltip?: string;
   disabled?: boolean;
+  hasError?: boolean;
 }
 
 const SliderInput: React.FC<SliderInputProps> = ({
@@ -25,6 +26,7 @@ const SliderInput: React.FC<SliderInputProps> = ({
   unit,
   tooltip,
   disabled = false,
+  hasError = false,
 }) => {
   return (
     <div className={disabled ? 'opacity-50' : ''}>
@@ -57,7 +59,13 @@ const SliderInput: React.FC<SliderInputProps> = ({
             </div>
           )}
         </div>
-        <span className="rounded-md bg-lime-100 px-2 py-1 text-sm font-semibold text-lime-700 dark:bg-lime-500/10 dark:text-lime-300">
+        <span
+          className={`rounded-md px-2 py-1 text-sm font-semibold transition-colors ${
+            hasError
+              ? 'bg-red-100 text-red-700 dark:bg-red-500/10 dark:text-red-400'
+              : 'bg-lime-100 text-lime-700 dark:bg-lime-500/10 dark:text-lime-300'
+          }`}
+        >
           {value.toFixed(2).replace(/\.00$/, '')}
           {unit}
         </span>

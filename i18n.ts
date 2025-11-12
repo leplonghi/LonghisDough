@@ -9,6 +9,30 @@ import React, {
 } from 'react';
 import { Locale } from './types';
 
+/**
+ * @file i18n.ts
+ * @description Internationalization (i18n) setup for the DoughLabPro application.
+ *
+ * @strategy
+ * This file implements a simple, yet powerful i18n system using React Context.
+ * 1.  **Translations Store**: All UI text strings (translations) for supported languages are stored here in nested objects. This makes them easy to manage and access.
+ * 2.  **Provider**: The `I18nProvider` component wraps the entire application, making the translation logic available everywhere.
+ * 3.  **Hook**: The `useTranslation` hook provides components with access to the current language (`locale`) and the translation function (`t`).
+ * 4.  **Language Detection**: It automatically detects the user's browser language on the first visit to set an appropriate default.
+ * 5.  **Dynamic Replacements**: The `t` function supports dynamic values in translation strings (e.g., "Hello, {name}!").
+ *
+ * @cloning_notes
+ * To clone this system, you only need to:
+ * - Add or modify the translation objects (`en`, `pt`, `es`) for your texts.
+ * - Ensure the `I18nProvider` wraps your root component (`App`).
+ * - Use the `useTranslation()` hook in any component that needs text.
+ */
+
+// --- TRANSLATION OBJECTS ---
+// Each language has its own object. The structure is hierarchical, mirroring the component
+// structure of the app (e.g., `form`, `results`, `header`). This keeps translations organized.
+// The `en` object serves as the primary and fallback language.
+
 // English Translations (Nested Structure)
 const en = {
   form: {
@@ -49,6 +73,7 @@ const en = {
     direct: 'Direct',
     poolish: 'Poolish',
     biga: 'Biga',
+    sourdough_as_preferment: 'Sourdough starter acts as the preferment.',
     preferment_flour: 'Preferment Flour',
     preferment_flour_tooltip:
       'The percentage of the total flour that will be used in the preferment (poolish or biga).',
@@ -71,9 +96,9 @@ const en = {
     reset: 'Reset to Defaults',
     prompt_config_name: 'Enter a name for this recipe:',
     errors: {
-      num_pizzas_range: 'Please enter a number between 1 and 100.',
-      dough_ball_weight_range:
-        'Please enter a weight between 100 and 2000.',
+      range: 'Value must be between {min} and {max}.',
+      range_percent: 'Value must be between {min}% and {max}%.',
+      range_multiplier: 'Value must be between {min}x and {max}x.',
     },
   },
   results: {
@@ -83,6 +108,7 @@ const en = {
     cups: 'Volume',
     unit_system_display: 'Using {system} Densities',
     preferment_title: '{technique} Preferment',
+    sourdough_starter_title: 'Sourdough Starter (Levain)',
     final_dough_title: 'Final Dough',
     flour: 'Flour',
     water: 'Water',
@@ -95,6 +121,7 @@ const en = {
     notes_title: 'Your Notes',
     share_recipe_aria: 'Share this recipe',
     export_pdf_aria: 'Export recipe as PDF',
+    exporting_pdf_aria: 'Generating PDF, please wait...',
     preferment_label: 'Add {technique}',
     conversion_tooltip:
       'Volume conversion assumes {grams}g per cup for {ingredient} ({system}).',
@@ -105,6 +132,7 @@ const en = {
       oil: 'Olive oil or neutral oil',
       yeast: 'Adjust based on temperature',
       preferment: 'Mix and ferment separately',
+      starter: '100% hydration starter',
     },
     ingredients: {
       flour: 'flour',
@@ -112,6 +140,10 @@ const en = {
       salt: 'salt',
       oil: 'oil',
       yeast: 'yeast',
+    },
+    errors: {
+      title: 'Invalid Parameters',
+      message: 'Please correct the errors in the form to see your recipe.',
     },
     steps: {
         title: 'Instructions',
@@ -274,6 +306,10 @@ const en = {
     salt_title: 'The Role of Salt',
     salt_p1:
       'Salt is more than just for flavor! It plays a crucial role in controlling yeast activity, preventing the dough from over-fermenting. It also strengthens the gluten network, making the dough less sticky and more elastic, which helps it hold its shape and trap gas during fermentation. Typically, salt is used at 2-3% of the flour weight.',
+    pronunciation_title: 'Pronunciation Guide',
+    pronunciation_subtitle:
+      'Hear the correct pronunciation for common baking terms.',
+    pronounce_button_aria: 'Pronounce {term}',
   },
   auth: {
     sign_in: 'Sign In',
@@ -347,6 +383,7 @@ const pt = {
     direct: 'Direta',
     poolish: 'Poolish',
     biga: 'Biga',
+    sourdough_as_preferment: 'O levain (massa madre) atua como o pré-fermento.',
     preferment_flour: 'Farinha no Pré-fermento',
     preferment_flour_tooltip:
       'A porcentagem da farinha total que será usada no pré-fermento (poolish ou biga).',
@@ -369,9 +406,9 @@ const pt = {
     reset: 'Redefinir para Padrão',
     prompt_config_name: 'Digite um nome para esta receita:',
     errors: {
-      num_pizzas_range: 'Por favor, insira um número entre 1 e 100.',
-      dough_ball_weight_range:
-        'Por favor, insira um peso entre 100 e 2000.',
+      range: 'O valor deve estar entre {min} e {max}.',
+      range_percent: 'O valor deve estar entre {min}% e {max}%.',
+      range_multiplier: 'O valor deve estar entre {min}x e {max}x.',
     },
   },
   results: {
@@ -381,6 +418,7 @@ const pt = {
     cups: 'Volume',
     unit_system_display: 'Usando Densidades {system}',
     preferment_title: 'Pré-fermento ({technique})',
+    sourdough_starter_title: 'Levain (Massa Madre)',
     final_dough_title: 'Massa Final',
     flour: 'Farinha',
     water: 'Água',
@@ -393,6 +431,7 @@ const pt = {
     notes_title: 'Suas Anotações',
     share_recipe_aria: 'Compartilhar esta receita',
     export_pdf_aria: 'Exportar receita como PDF',
+    exporting_pdf_aria: 'Gerando PDF, por favor aguarde...',
     preferment_label: 'Adicionar {technique}',
     conversion_tooltip:
       'A conversão de volume assume {grams}g por xícara para {ingredient} ({system}).',
@@ -403,6 +442,7 @@ const pt = {
       oil: 'Azeite de oliva ou óleo neutro',
       yeast: 'Ajuste com base na temperatura',
       preferment: 'Misturar e fermentar separadamente',
+      starter: 'Fermento com 100% de hidratação',
     },
     ingredients: {
       flour: 'farinha',
@@ -410,6 +450,10 @@ const pt = {
       salt: 'sal',
       oil: 'azeite/óleo',
       yeast: 'fermento',
+    },
+    errors: {
+      title: 'Parâmetros Inválidos',
+      message: 'Por favor, corrija os erros no formulário para ver sua receita.',
     },
     steps: {
         title: 'Instruções',
@@ -572,6 +616,10 @@ const pt = {
     salt_title: 'O Papel do Sal',
     salt_p1:
       'O sal é mais do que apenas para dar sabor! Ele desempenha um papel crucial no controle da atividade do fermento, evitando que a massa fermente demais. Ele também fortalece a rede de glúten, tornando a massa menos pegajosa e mais elástica, o que a ajuda a manter sua forma e a reter o gás durante a fermentação. Normalmente, o sal é usado a 2-3% do peso da farinha.',
+    pronunciation_title: 'Guia de Pronúncia',
+    pronunciation_subtitle:
+      'Ouça a pronúncia correta de termos comuns de panificação.',
+    pronounce_button_aria: 'Pronunciar {term}',
   },
   auth: {
     sign_in: 'Entrar',
@@ -645,6 +693,7 @@ const es = {
     direct: 'Directa',
     poolish: 'Poolish',
     biga: 'Biga',
+    sourdough_as_preferment: 'La masa madre actúa como el prefermento.',
     preferment_flour: 'Harina en Prefermento',
     preferment_flour_tooltip:
       'El porcentaje de la harina total que se utilizará en el prefermento (poolish o biga).',
@@ -667,9 +716,9 @@ const es = {
     reset: 'Restablecer a Predeterminados',
     prompt_config_name: 'Introduce un nombre para esta receta:',
     errors: {
-      num_pizzas_range: 'Por favor, introduce un número entre 1 y 100.',
-      dough_ball_weight_range:
-        'Por favor, introduce un peso entre 100 y 2000.',
+      range: 'El valor debe estar entre {min} y {max}.',
+      range_percent: 'El valor debe estar entre {min}% y {max}%.',
+      range_multiplier: 'El valor debe estar entre {min}x y {max}x.',
     },
   },
   results: {
@@ -679,6 +728,7 @@ const es = {
     cups: 'Volumen',
     unit_system_display: 'Usando Densidades {system}',
     preferment_title: 'Prefermento ({technique})',
+    sourdough_starter_title: 'Masa Madre (Levain)',
     final_dough_title: 'Masa Final',
     flour: 'Harina',
     water: 'Agua',
@@ -691,6 +741,7 @@ const es = {
     notes_title: 'Tus Notas',
     share_recipe_aria: 'Compartir esta receta',
     export_pdf_aria: 'Exportar receta como PDF',
+    exporting_pdf_aria: 'Generando PDF, por favor espere...',
     preferment_label: 'Añadir {technique}',
     conversion_tooltip:
       'La conversión de volumen asume {grams}g por taza para {ingredient} ({system}).',
@@ -701,6 +752,7 @@ const es = {
       oil: 'Aceite de oliva o aceite neutro',
       yeast: 'Ajustar según la temperatura',
       preferment: 'Mezclar y fermentar por separado',
+      starter: 'Masa madre con 100% de hidratación',
     },
     ingredients: {
       flour: 'harina',
@@ -708,6 +760,10 @@ const es = {
       salt: 'sal',
       oil: 'aceite',
       yeast: 'levadura',
+    },
+    errors: {
+      title: 'Parámetros Inválidos',
+      message: 'Por favor, corrige los errores en el formulario para ver tu receta.',
     },
     steps: {
         title: 'Instrucciones',
@@ -870,6 +926,10 @@ const es = {
     salt_title: 'El Papel de la Sal',
     salt_p1:
       '¡La sal es más que solo para dar sabor! Juega un papel crucial en el control de la actividad de la levadura, evitando que la masa fermente en exceso. También fortalece la red de gluten, haciendo la masa menos pegajosa y más elástica, lo que le ayuda a mantener su forma y atrapar el gas durante la fermentación. Típicamente, la sal se usa al 2-3% del peso de la harina.',
+    pronunciation_title: 'Guía de Pronunciación',
+    pronunciation_subtitle:
+      'Escucha la pronunciación correcta de términos comunes de panadería.',
+    pronounce_button_aria: 'Pronunciar {term}',
   },
   auth: {
     sign_in: 'Iniciar Sesión',
@@ -909,6 +969,7 @@ const translations: Record<Locale, Record<string, any>> = {
   es,
 };
 
+// --- REACT CONTEXT ---
 interface I18nContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
@@ -923,9 +984,21 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
+/**
+ * @component I18nProvider
+ * @description A React Context Provider that supplies the i18n functionality to its children.
+ * It manages the current `locale` state and provides the `t` function.
+ */
 export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  // State for the current active language. Defaults to 'en'.
   const [locale, setLocaleState] = useState<Locale>('en');
 
+  /**
+   * @effect
+   * On initial mount, this effect attempts to detect the user's browser language.
+   * If the browser language is one of the supported locales ('en', 'pt', 'es'),
+   * it sets it as the active locale. Otherwise, it defaults to 'en'.
+   */
   useEffect(() => {
     try {
       const browserLang = navigator.language.split('-')[0] as Locale;
@@ -937,10 +1010,28 @@ export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
+  /**
+   * @function setLocale
+   * @description A callback to change the application's language.
+   * This is passed down through the context to components like the LanguageSwitcher.
+   */
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
   }, []);
 
+  /**
+   * @function t
+   * @description The core translation function.
+   * It takes a key (e.g., 'form.hydration_tooltip') and returns the corresponding string
+   * for the currently active `locale`.
+   *
+   * @param key - A dot-separated string that navigates the nested translation object.
+   * @param options - An optional object for providing a default value or dynamic replacements.
+   *   - `defaultValue`: A fallback string if the key is not found.
+   *   - `[other]`: Any other key-value pair will be used to replace placeholders in the
+   *     translation string (e.g., `{name}`).
+   * @returns The translated (and interpolated) string.
+   */
   const t = useCallback(
     (
       key: string,
@@ -949,19 +1040,22 @@ export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
         [key: string]: string | number | undefined;
       },
     ) => {
+      // 1. Navigate the nested object using the dot-separated key.
       const keys = key.split('.');
       let result = translations[locale] || translations.en;
       for (const k of keys) {
         if (result && typeof result === 'object' && k in result) {
           result = result[k];
         } else {
-          result = undefined;
+          result = undefined; // Key not found
           break;
         }
       }
 
+      // 2. Determine the final string, falling back to defaultValue or the key itself.
       let translation = result || options?.defaultValue || key;
 
+      // 3. Perform dynamic replacements if options are provided.
       if (typeof translation === 'string' && options) {
         Object.keys(options).forEach((replacementKey) => {
           if (replacementKey === 'defaultValue') return;
@@ -982,6 +1076,12 @@ export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return React.createElement(I18nContext.Provider, { value }, children);
 };
 
+/**
+ * @hook useTranslation
+ * @description A custom hook for easy access to the I18nContext.
+ * It provides components with the `locale`, `setLocale`, and `t` function.
+ * Throws an error if used outside of an `I18nProvider`.
+ */
 export const useTranslation = (): I18nContextType => {
   const context = useContext(I18nContext);
   if (context === undefined) {

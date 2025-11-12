@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import {
@@ -10,7 +12,7 @@ import {
   BookOpenIcon,
   CheckCircleIcon,
 } from './IconComponents';
-import { useEntitlements } from '../entitlements';
+import { useUser } from '../App';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -49,7 +51,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
     grant24hPass,
     isPassOnCooldown,
     cooldownHoursRemaining,
-  } = useEntitlements();
+  } = useUser();
   const [showSuccess, setShowSuccess] = useState<string | null>(null);
 
   const handleGrant = (type: 'pro' | 'pass') => {

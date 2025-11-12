@@ -1,5 +1,7 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../auth';
+import { useUser } from '../App';
 import { useTranslation } from '../i18n';
 import { UserCircleIcon, ArrowRightOnRectangleIcon } from './IconComponents';
 
@@ -11,7 +13,7 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ onNavigate, onOpenAuthModal }) => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useUser();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);

@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const DoughLabLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
@@ -213,6 +214,13 @@ export const CheckCircleIcon = createIcon(
     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
   />,
 );
+export const ExclamationCircleIcon = createIcon(
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M12 8.25v.01M12 12v3.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+  />,
+);
 export const LightBulbIcon = createIcon(
   <path
     strokeLinecap="round"
@@ -262,4 +270,54 @@ export const ArrowRightOnRectangleIcon = createIcon(
     strokeLinejoin="round"
     d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
   />
+);
+
+export const SpinnerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      d="M12 21a9 9 0 100-18 9 9 0 000 18z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="opacity-25"
+    />
+    <path
+      d="M12 3a9 9 0 019 9"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const SolidStarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
+  props,
+) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    {...props}
+  >
+    <path
+      fillRule="evenodd"
+      d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354l-4.757 2.822c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+export const SpeakerWaveIcon = createIcon(
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+  />,
 );
