@@ -1,92 +1,68 @@
 
 
-import React from 'react';
+
+
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
   YeastType,
   RecipeStyle,
   FermentationTechnique,
   BakeType,
-  UnitSystem,
   FormErrors,
+  AmbientTemperature,
+  CalculationMode,
+  Levain,
 } from '../types';
 import {
   YEAST_OPTIONS,
-  DOUGH_WEIGHT_RANGES,
-  PIZZA_STYLES,
-  BREAD_STYLES,
-  RECIPE_STYLE_PRESETS,
+  DOUGH_STYLE_PRESETS,
+  AMBIENT_TEMPERATURE_OPTIONS,
 } from '../constants';
+import * as customPresets from '../logic/customPresets';
+import { FLOURS } from '../flours-constants';
 import SliderInput from './SliderInput';
 import { useTranslation } from '../i18n';
-import AdSenseBlock from './AdSenseBlock';
 import {
-  BakeTypeIcon,
   RecipeIcon,
   ParametersIcon,
   FermentationIcon,
-  SettingsIcon,
   PencilIcon,
-  InfoIcon,
+  FlourIcon,
+  FireIcon,
+  BookmarkSquareIcon,
   LockClosedIcon,
+  TrashIcon,
 } from './IconComponents';
-import { useUser } from '../App';
+import FormSection from './calculator/AccordionSection';
+import { useToast } from './ToastProvider';
+import { hoursBetween } from '../helpers';
 
 interface CalculatorFormProps {
   config: DoughConfig;
   errors: FormErrors;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onBakeTypeChange: (bakeType: BakeType) => void;
-  onStyleChange: (style: RecipeStyle) => void;
+  onStyleChange: (presetId: string) => void;
   onYeastTypeChange: (yeastType: YeastType) => void;
   onReset: () => void;
-  unitSystem: UnitSystem;
-  onUnitSystemChange: (system: UnitSystem) => void;
+  calculatorMode: 'basic' | 'advanced';
+  calculationMode: CalculationMode;
+  onCalculationModeChange: (mode: CalculationMode) => void;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
+  levains: Levain[];
+  selectedLevain: Levain | null;
+  inputRefs: {
+    numPizzas: React.Ref<HTMLInputElement>;
+  };
 }
-
-const FormSection: React.FC<{
-  title: string;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-  tooltip?: string;
-}> = ({ title, children, icon, tooltip }) => (
-  <div className="relative rounded-xl border border-slate-200 p-4 pt-6 dark:border-slate-700/50 sm:p-6 sm:pt-8">
-    <h3 className="absolute -top-3.5 left-4 flex items-center gap-2 bg-white px-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-      <span className="text-lime-500">{icon}</span>
-      <span>{title}</span>
-      {tooltip && (
-        <div className="group relative flex items-center">
-          <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
-          <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700">
-            {tooltip}
-            <svg
-              className="absolute left-0 top-full h-2 w-full text-slate-800 dark:text-slate-700"
-              x="0px"
-              y="0px"
-              viewBox="0 0 255 255"
-              xmlSpace="preserve"
-            >
-              <polygon
-                className="fill-current"
-                points="0,0 127.5,127.5 255,0"
-              />
-            </svg>
-          </span>
-        </div>
-      )}
-    </h3>
-    <div className="space-y-6">{children}</div>
-  </div>
-);
 
 const ChoiceButton: React.FC<{
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
-  className?: string;
-}> = ({ active, onClick, children, className = '' }) => (
+}> = ({ active, onClick, children }) => (
   <button
     type="button"
     onClick={onClick}
@@ -94,7 +70,7 @@ const ChoiceButton: React.FC<{
       active
         ? 'bg-lime-500 text-white font-semibold shadow-md'
         : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600'
-    } ${className}`}
+    }`}
   >
     {children}
   </button>
@@ -108,23 +84,78 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onStyleChange,
   onYeastTypeChange,
   onReset,
-  unitSystem,
-  onUnitSystemChange,
+  calculatorMode,
+  calculationMode,
+  onCalculationModeChange,
   hasProAccess,
   onOpenPaywall,
+  levains,
+  selectedLevain,
+  inputRefs,
 }) => {
   const { t } = useTranslation();
-  const isSourdough = config.yeastType === YeastType.SOURDOUGH;
+  const { addToast } = useToast();
+  const isBasic = calculatorMode === 'basic';
+  
+  // State for presets
+  const [presets, setPresets] = useState<{ name: string }[]>([]);
+  const [selectedPreset, setSelectedPreset] = useState<string>('');
+
+  const refreshPresets = () => {
+    const presetList = customPresets.listCustomPresets();
+    setPresets(presetList);
+    if (presetList.length > 0) {
+        if (!presetList.some(p => p.name === selectedPreset)) {
+            setSelectedPreset(presetList[0].name);
+        }
+    } else {
+        setSelectedPreset('');
+    }
+  };
+  
+  useEffect(() => {
+    refreshPresets();
+  }, []);
+
+  const handleSavePreset = () => {
+    const name = prompt(t('prompts.preset_name_title'));
+    if (name && name.trim()) {
+      customPresets.saveCustomPreset(name, config);
+      addToast(t('info.preset_saved', { name }), 'success');
+      refreshPresets();
+      setSelectedPreset(name);
+    }
+  };
+
+  const handleLoadPreset = () => {
+    if (!selectedPreset) return;
+    const loadedConfig = customPresets.loadCustomPreset(selectedPreset);
+    if (loadedConfig) {
+      onConfigChange(loadedConfig);
+      addToast(t('info.preset_loaded', { name: selectedPreset }), 'info');
+    }
+  };
+
+  const handleDeletePreset = () => {
+    if (!selectedPreset) return;
+    if (window.confirm(t('confirmations.delete_preset', { name: selectedPreset }))) {
+      customPresets.deleteCustomPreset(selectedPreset);
+      addToast(t('info.preset_deleted', { name: selectedPreset }), 'info');
+      const newList = customPresets.listCustomPresets();
+      setPresets(newList);
+      setSelectedPreset(newList[0]?.name || '');
+    }
+  };
+
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Allow empty input without setting to NaN
     const numValue = value === '' ? 0 : Number(value);
     if (!isNaN(numValue)) {
       onConfigChange({ [name]: numValue });
     }
   };
-
+  
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onConfigChange({ [e.target.name]: e.target.value });
   };
@@ -134,353 +165,254 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
     if (name === 'yeastType') {
       onYeastTypeChange(value as YeastType);
     } else {
-      onConfigChange({ [name]: value as YeastType });
+      onConfigChange({ [name]: value });
+    }
+  };
+  
+  const handleResetPreset = () => {
+    if (config.stylePresetId) {
+      onStyleChange(config.stylePresetId);
     }
   };
 
-  const handleTechniqueChange = (technique: FermentationTechnique) => {
-    onConfigChange({ fermentationTechnique: technique });
-  };
+  const recipeStylesToShow = DOUGH_STYLE_PRESETS.filter((p) => {
+    if (config.bakeType === BakeType.PIZZA) return p.type === 'pizza';
+    return ['bread', 'focaccia', 'other'].includes(p.type);
+  });
+  
+  const currentPreset = useMemo(() => 
+    DOUGH_STYLE_PRESETS.find(p => p.id === config.stylePresetId),
+  [config.stylePresetId]);
 
-  const weightNote = React.useMemo(() => {
-    const styleKey = `form.${config.recipeStyle.toLowerCase()}`;
-    const styleName = t(styleKey);
-    const range = DOUGH_WEIGHT_RANGES[config.recipeStyle];
-    return t('form.weight_per_unit_note', { style: styleName, range });
-  }, [config.recipeStyle, t]);
+  const getInputClasses = (hasError: boolean) => `w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100 border ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500' : 'border-slate-300 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600'}`;
+  const getSelectClasses = () => "w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100";
 
-  const styleTooltip = React.useMemo(() => {
-    const preset = RECIPE_STYLE_PRESETS[config.recipeStyle];
-    if (preset?.description) {
-      return t(preset.description);
-    }
-    return undefined;
-  }, [config.recipeStyle, t]);
-
-  const recipeStylesToShow =
-    config.bakeType === BakeType.PIZZA ? PIZZA_STYLES : BREAD_STYLES;
-
-  const getInputClasses = (hasError: boolean) => {
-    const baseClasses =
-      'w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100 border';
-    const normalClasses =
-      'border-slate-300 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600';
-    const errorClasses =
-      'border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500';
-    return `${baseClasses} ${hasError ? errorClasses : normalClasses}`;
-  };
+  const isAnySourdough = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType);
 
   return (
-    <div className="space-y-8 rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8">
-      {!hasProAccess && <AdSenseBlock />}
-
-      <FormSection
-        title={t('form.bake_type')}
-        icon={<BakeTypeIcon className="h-5 w-5" />}
-      >
-        <div className="grid grid-cols-2 gap-3">
-          <ChoiceButton
-            active={config.bakeType === BakeType.PIZZA}
-            onClick={() => onBakeTypeChange(BakeType.PIZZA)}
-          >
-            {t('form.pizzas')}
-          </ChoiceButton>
-          <ChoiceButton
-            active={config.bakeType === BakeType.BREAD}
-            onClick={() => onBakeTypeChange(BakeType.BREAD)}
-          >
-            {t('form.breads')}
-          </ChoiceButton>
+    <div className="space-y-6">
+        <div className="text-center">
+            <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${isBasic ? 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300' : 'bg-lime-100 text-lime-800 dark:bg-lime-900/50 dark:text-lime-300'}`}>
+            {isBasic ? t('mode_toggle.basic_tag') : t('mode_toggle.advanced_tag')}
+            </span>
         </div>
-      </FormSection>
-
-      <FormSection
-        title={t('form.recipe_style')}
-        icon={<RecipeIcon className="h-5 w-5" />}
-        tooltip={styleTooltip}
-      >
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {recipeStylesToShow.map((style) => (
-            <ChoiceButton
-              key={style}
-              active={config.recipeStyle === style}
-              onClick={() => onStyleChange(style)}
-            >
-              {t(`form.${style.toLowerCase()}`)}
-            </ChoiceButton>
-          ))}
-        </div>
-      </FormSection>
-
-      <FormSection
-        title={t('form.core_parameters')}
-        icon={<ParametersIcon className="h-5 w-5" />}
-      >
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="numPizzas"
-              className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-            >
-              {config.bakeType === BakeType.PIZZA
-                ? t('form.num_pizzas')
-                : t('form.num_loaves')}
-            </label>
-            <input
-              type="number"
-              id="numPizzas"
-              name="numPizzas"
-              value={config.numPizzas || ''}
-              onChange={handleNumberChange}
-              min="1"
-              max="100"
-              className={getInputClasses(!!errors.numPizzas)}
-            />
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {t('form.num_units_note')}
-            </p>
-          </div>
-          <div>
-            <label
-              htmlFor="doughBallWeight"
-              className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-            >
-              {config.bakeType === BakeType.PIZZA
-                ? t('form.weight_per_pizza')
-                : t('form.weight_per_loaf')}
-            </label>
-            <input
-              type="number"
-              id="doughBallWeight"
-              name="doughBallWeight"
-              value={config.doughBallWeight || ''}
-              onChange={handleNumberChange}
-              min="100"
-              max="2000"
-              step="10"
-              className={getInputClasses(!!errors.doughBallWeight)}
-            />
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {weightNote}
-            </p>
-          </div>
-        </div>
-        <div>
-          <SliderInput
-            label={t('form.hydration')}
-            name="hydration"
-            value={config.hydration}
-            onChange={handleNumberChange}
-            min={50}
-            max={100}
-            step={1}
-            unit="%"
-            tooltip={t('form.hydration_tooltip')}
-            hasError={!!errors.hydration}
-          />
-        </div>
-        <div>
-          <SliderInput
-            label={t('form.scale')}
-            name="scale"
-            value={config.scale}
-            onChange={handleNumberChange}
-            min={0.25}
-            max={4}
-            step={0.05}
-            unit="x"
-            tooltip={t('form.scale_tooltip')}
-            hasError={!!errors.scale}
-          />
-        </div>
-      </FormSection>
-
-      <FormSection
-        title={t('form.fermentation')}
-        icon={<FermentationIcon className="h-5 w-5" />}
-      >
-        {isSourdough ? (
-          <p className="rounded-md bg-lime-50 p-3 text-center text-sm text-lime-800 dark:bg-lime-500/10 dark:text-lime-300">
-            {t('form.sourdough_as_preferment')}
-          </p>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 [&>:last-child]:col-span-2 sm:[&>:last-child]:col-span-1">
-              <ChoiceButton
-                active={
-                  config.fermentationTechnique === FermentationTechnique.DIRECT
-                }
-                onClick={() => handleTechniqueChange(FermentationTechnique.DIRECT)}
-              >
-                {t('form.direct')}
-              </ChoiceButton>
-              <ChoiceButton
-                active={
-                  config.fermentationTechnique === FermentationTechnique.POOLISH
-                }
-                onClick={() =>
-                  handleTechniqueChange(FermentationTechnique.POOLISH)
-                }
-              >
-                {t('form.poolish')}
-              </ChoiceButton>
-              <ChoiceButton
-                active={
-                  config.fermentationTechnique === FermentationTechnique.BIGA
-                }
-                onClick={() => handleTechniqueChange(FermentationTechnique.BIGA)}
-              >
-                {t('form.biga')}
-              </ChoiceButton>
+      
+      {!isBasic && (
+        <FormSection title={t('form.sections.tools.title')} description={t('form.sections.tools.description')} icon={<BookmarkSquareIcon className="h-6 w-6" />}>
+           <div className="space-y-4">
+                <div className="flex gap-2">
+                    <select
+                        value={selectedPreset}
+                        onChange={(e) => setSelectedPreset(e.target.value)}
+                        disabled={presets.length === 0}
+                        className={getSelectClasses()}
+                        aria-label={t('form.select_preset_aria')}
+                    >
+                        {presets.length === 0 ? (
+                            <option>{t('form.no_presets')}</option>
+                        ) : (
+                            presets.map(p => <option key={p.name} value={p.name}>{p.name}</option>)
+                        )}
+                    </select>
+                    <button
+                        onClick={handleDeletePreset}
+                        disabled={!selectedPreset}
+                        className="flex-shrink-0 rounded-lg p-2 text-red-500 transition-colors hover:bg-red-100 dark:hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                        title={t('form.delete_preset')}
+                    >
+                        <TrashIcon className="h-5 w-5" />
+                    </button>
+                </div>
+                <button
+                    onClick={handleLoadPreset}
+                    disabled={!selectedPreset}
+                    className="w-full rounded-md bg-slate-200 py-2 px-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300 dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    {t('form.load_preset')}
+                </button>
             </div>
+        </FormSection>
+      )}
 
-            {config.fermentationTechnique !== FermentationTechnique.DIRECT && (
-              <div>
-                <SliderInput
-                  label={t('form.preferment_flour')}
-                  name="prefermentFlourPercentage"
-                  value={config.prefermentFlourPercentage}
-                  onChange={handleNumberChange}
-                  min={10}
-                  max={100}
-                  step={5}
-                  unit="%"
-                  tooltip={t('form.preferment_flour_tooltip')}
-                  hasError={!!errors.prefermentFlourPercentage}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="grid grid-cols-1 items-end gap-6 sm:grid-cols-2">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <label
-                htmlFor="yeastType"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
-                {t('form.yeast_type')}
-              </label>
-              <div className="group relative flex items-center">
-                <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
-                <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-64 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700">
-                  {t('form.yeast_type_tooltip')}
-                  <svg
-                    className="absolute left-0 top-full h-2 w-full text-slate-800 dark:text-slate-700"
-                    x="0px"
-                    y="0px"
-                    viewBox="0 0 255 255"
-                    xmlSpace="preserve"
-                  >
-                    <polygon
-                      className="fill-current"
-                      points="0,0 127.5,127.5 255,0"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </div>
-            <select
-              id="yeastType"
-              name="yeastType"
-              value={config.yeastType}
-              onChange={handleSelectChange}
-              className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
-            >
-              {YEAST_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {t(opt.labelKey)}
-                </option>
+      <FormSection title={t('form.sections.style.title')} description={t('form.sections.style.description')} icon={<RecipeIcon className="h-6 w-6" />}>
+          <div className="grid grid-cols-2 gap-3">
+              <ChoiceButton active={config.bakeType === BakeType.PIZZA} onClick={() => onBakeTypeChange(BakeType.PIZZA)}>{t('form.pizzas')}</ChoiceButton>
+              <ChoiceButton active={config.bakeType === BakeType.BREAD} onClick={() => onBakeTypeChange(BakeType.BREAD)}>{t('form.breads')}</ChoiceButton>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {recipeStylesToShow.map((preset) => (
+                  <ChoiceButton key={preset.id} active={config.stylePresetId === preset.id} onClick={() => onStyleChange(preset.id)}>{preset.name}</ChoiceButton>
               ))}
-            </select>
           </div>
-          <div>
-            <SliderInput
-              label={t('form.yeast')}
-              name="yeastPercentage"
-              value={config.yeastPercentage}
-              onChange={handleNumberChange}
-              min={0}
-              max={config.yeastType === YeastType.SOURDOUGH ? 50 : 5}
-              step={0.1}
-              unit="%"
-              tooltip={t('form.yeast_tooltip')}
-              hasError={!!errors.yeastPercentage}
-            />
-          </div>
-        </div>
+           {isBasic && currentPreset && (
+             <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+                <button
+                    onClick={handleResetPreset}
+                    className="w-full text-sm font-semibold text-lime-600 hover:underline dark:text-lime-400"
+                >
+                    {t('form.reset_preset_button', { name: currentPreset.name })}
+                </button>
+             </div>
+           )}
       </FormSection>
 
-      <FormSection
-        title={t('form.settings')}
-        icon={<SettingsIcon className="h-5 w-5" />}
-        tooltip={t('form.unit_system_tooltip')}
-      >
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-              {t('form.unit_system')}
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <ChoiceButton
-                active={unitSystem === UnitSystem.US_CUSTOMARY}
-                onClick={() => onUnitSystemChange(UnitSystem.US_CUSTOMARY)}
-              >
-                {t('form.us_customary')}
-              </ChoiceButton>
-              <ChoiceButton
-                active={unitSystem === UnitSystem.METRIC}
-                onClick={() => onUnitSystemChange(UnitSystem.METRIC)}
-              >
-                {t('form.metric')}
-              </ChoiceButton>
+      <FormSection title={t('form.sections.fermentation.title')} description={t('form.sections.fermentation.description')} icon={<FermentationIcon className="h-6 w-6" />}>
+           {isAnySourdough ? (
+             <p className="text-center text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg">{t('form.sourdough_as_preferment')}</p>
+           ) : (
+            <>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <ChoiceButton active={config.fermentationTechnique === FermentationTechnique.DIRECT} onClick={() => onConfigChange({ fermentationTechnique: FermentationTechnique.DIRECT })}>{t('form.direct')}</ChoiceButton>
+                  <ChoiceButton active={config.fermentationTechnique === FermentationTechnique.POOLISH} onClick={() => onConfigChange({ fermentationTechnique: FermentationTechnique.POOLISH })}>{t('form.poolish')}</ChoiceButton>
+                  <ChoiceButton active={config.fermentationTechnique === FermentationTechnique.BIGA} onClick={() => onConfigChange({ fermentationTechnique: FermentationTechnique.BIGA })}>{t('form.biga')}</ChoiceButton>
+                </div>
+                {(config.fermentationTechnique !== FermentationTechnique.DIRECT) && (
+                 <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
+                     <SliderInput label={t('form.preferment_flour')} name="prefermentFlourPercentage" value={config.prefermentFlourPercentage} onChange={handleNumberChange} min={isBasic ? (config.fermentationTechnique === FermentationTechnique.BIGA ? 30 : 20) : 0} max={isBasic ? (config.fermentationTechnique === FermentationTechnique.BIGA ? 60 : 50) : 100} step={5} unit="%" tooltip={t('form.preferment_flour_tooltip')} hasError={!!errors.prefermentFlourPercentage} />
+                 </div>
+               )}
+            </>
+           )}
+       </FormSection>
+
+      <FormSection title={t('form.sections.production.title')} description={t('form.sections.production.description')} icon={<ParametersIcon className="h-6 w-6" />}>
+          <div className="grid grid-cols-2 gap-3">
+              <ChoiceButton active={calculationMode === 'mass'} onClick={() => onCalculationModeChange('mass')}>{t('form.calc_mode_mass')}</ChoiceButton>
+              <ChoiceButton active={calculationMode === 'flour'} onClick={() => onCalculationModeChange('flour')}>{t('form.calc_mode_flour')}</ChoiceButton>
+          </div>
+          {calculationMode === 'mass' ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                    <label htmlFor="numPizzas" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZA ? t('form.num_pizzas') : t('form.num_loaves')}</label>
+                    <input type="number" id="numPizzas" name="numPizzas" value={config.numPizzas || ''} onChange={handleNumberChange} min="1" max="100" className={getInputClasses(!!errors.numPizzas)} ref={inputRefs.numPizzas} />
+                </div>
+                <div>
+                    <label htmlFor="doughBallWeight" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZA ? t('form.weight_per_pizza') : t('form.weight_per_loaf')}</label>
+                    <input type="number" id="doughBallWeight" name="doughBallWeight" value={config.doughBallWeight || ''} onChange={handleNumberChange} min="100" max="2000" step="10" className={getInputClasses(!!errors.doughBallWeight)} />
+                </div>
             </div>
-          </div>
-        </div>
-      </FormSection>
-
-      <FormSection
-        title={t('form.recipe_notes')}
-        icon={<PencilIcon className="h-5 w-5" />}
-      >
-        <div className="relative">
-          <textarea
-            id="notes"
-            name="notes"
-            rows={4}
-            value={config.notes || ''}
-            onChange={handleTextareaChange}
-            placeholder={
-              hasProAccess
-                ? t('form.notes_placeholder')
-                : t('pro.locked_tooltip')
-            }
-            className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-700/50"
-            disabled={!hasProAccess}
-          />
-          {!hasProAccess && (
-            <div
-              className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
-              onClick={onOpenPaywall}
-              title={t('pro.locked_tooltip')}
-            >
-              <div className="flex items-center gap-2 rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
-                <LockClosedIcon className="h-4 w-4" />
-                {t('pro.go_pro_header')}
-              </div>
+          ) : (
+            <div>
+                <label htmlFor="totalFlour" className="mb-1 block text-sm font-medium">{t('form.total_flour')}</label>
+                <input type="number" id="totalFlour" name="totalFlour" value={config.totalFlour || ''} onChange={handleNumberChange} min="100" max="10000" step="50" className={getInputClasses(!!errors.totalFlour)} />
             </div>
           )}
-        </div>
       </FormSection>
 
+      <FormSection title={t('form.sections.ingredients.title')} description={t('form.sections.ingredients.description')} icon={<FlourIcon className="h-6 w-6" />}>
+          <SliderInput label={t('form.hydration')} name="hydration" value={config.hydration} onChange={handleNumberChange} min={isBasic ? 50 : 0} max={100} step={1} unit="%" tooltip={t('form.hydration_tooltip')} hasError={!!errors.hydration} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultHydration} />
+          <SliderInput label={t('results.salt')} name="salt" value={config.salt} onChange={handleNumberChange} min={0} max={isBasic ? 4 : 5} step={0.1} unit="%" tooltip={t('form.salt_tooltip')} hasError={!!errors.salt} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultSalt} />
+          <SliderInput label={t('results.oil')} name="oil" value={config.oil} onChange={handleNumberChange} min={0} max={isBasic ? 10 : 20} step={0.5} unit="%" tooltip={t('form.oil_tooltip')} hasError={!!errors.oil} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultOil} />
+          <SliderInput label={t('form.sugar')} name="sugar" value={config.sugar || 0} onChange={handleNumberChange} min={0} max={isBasic ? 10 : 20} step={0.5} unit="%" tooltip={t('form.sugar_tooltip')} hasError={!!errors.sugar} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultSugar} />
+           <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
+             <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2">
+                <div>
+                    <label htmlFor="yeastType" className="mb-1 block text-sm font-medium">{t('form.yeast_type')}</label>
+                    <select id="yeastType" name="yeastType" value={config.yeastType} onChange={handleSelectChange} className={getSelectClasses()}>
+                        {YEAST_OPTIONS.map((opt) => (<option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>))}
+                    </select>
+                </div>
+                <SliderInput label={isAnySourdough ? t('form.levain') : t('form.yeast')} name="yeastPercentage" value={config.yeastPercentage} onChange={handleNumberChange} min={0} max={isAnySourdough ? (isBasic ? 30 : 200) : (isBasic ? 2 : 5)} step={isAnySourdough ? 1 : 0.1} unit="%" tooltip={t('form.yeast_tooltip')} hasError={!!errors.yeastPercentage} />
+            </div>
+             {config.yeastType === YeastType.USER_LEVAIN && (
+                <div className="mt-4">
+                  {levains.length > 0 ? (
+                    <>
+                      <label htmlFor="levainId" className="mb-1 block text-sm font-medium">{t('form.select_levain')}</label>
+                      <select id="levainId" name="levainId" value={config.levainId || ''} onChange={handleSelectChange} className={getSelectClasses()}>
+                          {levains.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                      </select>
+                      {selectedLevain && (
+                        <div className="mt-2 rounded-lg bg-slate-100 dark:bg-slate-700/50 p-3 text-sm">
+                          <p><span className="font-semibold">{t('form.using_levain')}:</span> {selectedLevain.name}</p>
+                          <p><span className="font-semibold">{t('form.levain_hydration')}:</span> {selectedLevain.hydration}%</p>
+                          <p><span className="font-semibold">{t('form.levain_fed')}:</span> {hoursBetween(new Date().toISOString(), selectedLevain.lastFeeding).toFixed(1)} {t('form.levain_hours_ago')}</p>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg">
+                      <p>{t('form.no_levain_found')} <a href="#/mylab/levain" className="font-semibold text-lime-600 hover:underline dark:text-lime-400">{t('form.create_one_link')}</a></p>
+                    </div>
+                  )}
+                </div>
+             )}
+           </div>
+      </FormSection>
+
+      {!isBasic && (
+        <FormSection title={t('form.sections.conditionals.title')} description={t('form.sections.conditionals.description')} icon={<FireIcon className="h-6 w-6" />}>
+            <div className="space-y-6">
+              <div>
+                  <label htmlFor="flourId" className="mb-1 block text-sm font-medium">{t('form.flour_type')}</label>
+                  <select id="flourId" name="flourId" value={config.flourId} onChange={handleSelectChange} className={getSelectClasses()}>
+                      {FLOURS.map((opt) => (<option key={opt.id} value={opt.id}>{opt.name}</option>))}
+                  </select>
+              </div>
+              <div>
+                  <label htmlFor="ambientTemperature" className="mb-1 block text-sm font-medium">{t('form.ambient_temperature')}</label>
+                  <select id="ambientTemperature" name="ambientTemperature" value={config.ambientTemperature} onChange={handleSelectChange} className={getSelectClasses()}>
+                      {AMBIENT_TEMPERATURE_OPTIONS.map((opt) => (<option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>))}
+                  </select>
+              </div>
+              <SliderInput
+                label={t('form.baking_temp')}
+                name="bakingTempC"
+                value={config.bakingTempC}
+                onChange={handleNumberChange}
+                min={150}
+                max={500}
+                step={5}
+                unit="°C"
+                tooltip={t('form.baking_temp_tooltip')}
+                hasError={!!errors.bakingTempC}
+              />
+            </div>
+        </FormSection>
+      )}
+
+      {!isBasic && (
+        <>
+            <FormSection title={t('form.sections.notes.title')} description={t('form.sections.notes.description')} icon={<PencilIcon className="h-6 w-6" />}>
+                <div className="relative">
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows={4}
+                    value={config.notes || ''}
+                    onChange={handleTextareaChange}
+                    placeholder={hasProAccess ? t('batch_detail.notes_placeholder') : t('pro.locked_tooltip')}
+                    className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-700/50"
+                    disabled={!hasProAccess}
+                />
+                {!hasProAccess && (
+                    <div
+                    className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
+                    onClick={onOpenPaywall}
+                    title={t('pro.locked_tooltip')}
+                    >
+                    <div className="flex items-center gap-2 rounded-full bg-lime-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
+                        <LockClosedIcon className="h-4 w-4" />
+                        {t('pro.go_pro_header')}
+                    </div>
+                    </div>
+                )}
+                </div>
+            </FormSection>
+
+            <FormSection title={t('form.sections.save_preset.title')} description={t('form.sections.save_preset.description')} icon={<BookmarkSquareIcon className="h-6 w-6" />}>
+                 <button
+                    onClick={handleSavePreset}
+                    className="w-full flex items-center justify-center gap-2 rounded-md bg-lime-500 py-2 px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
+                >
+                    {t('form.save_preset')}
+                </button>
+            </FormSection>
+        </>
+      )}
+
       <div>
-        <button
-          type="button"
-          onClick={onReset}
-          className="w-full rounded-lg bg-slate-200 py-3 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-800"
-          aria-label={t('form.reset_aria')}
-        >
+        <button type="button" onClick={onReset} className="w-full rounded-lg bg-slate-200 py-3 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-800">
           {t('form.reset')}
         </button>
       </div>

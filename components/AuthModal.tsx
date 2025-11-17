@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { useUser } from '../App';
+import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import { User } from '../types';
 import { CloseIcon, GoogleIcon } from './IconComponents';
@@ -52,7 +52,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
-            aria-label={t('load_modal.close_aria')}
+            aria-label={t('modals.close')}
           >
             <CloseIcon className="h-6 w-6" />
           </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import {
   DoughConfig,
   DoughResult,
@@ -8,6 +8,12 @@ import {
   RecipeStyle,
   UnitSystem,
   YeastType,
+  SmartAdjustmentResult,
+  SmartAdjustmentSuggestion,
+  FlourDefinition,
+  Oven,
+  AutoStyleInsightsResult,
+  CalculationMode,
 } from '../types';
 import {
   FlourIcon,
@@ -25,9 +31,17 @@ import {
   InfoIcon,
   LockClosedIcon,
   SpinnerIcon,
+  LightBulbIcon,
+  ExclamationCircleIcon,
+  PizzaSliceIcon,
+  BatchesIcon,
 } from './IconComponents';
 import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
+import { EnvironmentAdjustments as EnvAdjustmentsType } from '../logic/environmentAdjustments';
+import EnvironmentAdjustments from './calculator/EnvironmentAdjustments';
+import AutoStyleInsights from './calculator/AutoStyleInsights';
+
 
 // Inform TypeScript that these libraries are available on the window object
 declare global {
@@ -45,6 +59,17 @@ interface ResultsDisplayProps {
   onUnitChange: (unit: Unit) => void;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
+  smartAdjustments: SmartAdjustmentResult;
+  environmentAdjustments: EnvAdjustmentsType;
+  autoStyleInsights: AutoStyleInsightsResult;
+  onConfigChange: (newConfig: Partial<DoughConfig>) => void;
+  onStartBatch: () => void;
+  selectedFlour?: FlourDefinition;
+  calculatorMode: 'basic' | 'advanced';
+  onApplyAdjustments: () => void;
+  calculationMode: CalculationMode;
+  saveButtonRef?: React.Ref<HTMLButtonElement>;
+  onboardingStep?: number;
 }
 
 const ResultRow: React.FC<{
@@ -121,84 +146,25 @@ const RecipeSteps: React.FC<{
   config: DoughConfig;
   t: (key: string, replacements?: { [key: string]: string | number }) => string;
 }> = ({ config, t }) => {
-  const renderSteps = (stepKeys: string[]) => (
+  const stepKeys = [1, 2, 3, 4, 5, 6, 7]; // Max steps
+  
+  const getStepKey = (step: number) => {
+    let base = 'results.steps.direct';
+    if(config.fermentationTechnique !== FermentationTechnique.DIRECT) {
+      base = 'results.steps.indirect.finalDough';
+    }
+    return `${base}.step${step}`;
+  }
+
+  const renderSteps = () => (
     <ol className="list-inside list-decimal space-y-3 pl-1 text-slate-600 dark:text-slate-300">
-      {stepKeys.map((key, index) => (
-        <li
-          key={index}
-          className="prose prose-sm dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: t(key) }}
-        />
-      ))}
+      {stepKeys.map(i => {
+          const key = getStepKey(i);
+          const text = t(key, {defaultValue: ''});
+          return text ? <li key={key} dangerouslySetInnerHTML={{ __html: text }}/> : null;
+      })}
     </ol>
   );
-
-  let stepsContent;
-
-  switch (config.recipeStyle) {
-    case RecipeStyle.BAGUETTE:
-      stepsContent = renderSteps([
-        'results.steps.baguette.step1',
-        'results.steps.baguette.step2',
-        'results.steps.baguette.step3',
-        'results.steps.baguette.step4',
-        'results.steps.baguette.step5',
-        'results.steps.baguette.step6',
-        'results.steps.baguette.step7',
-      ]);
-      break;
-    case RecipeStyle.CIABATTA:
-      stepsContent = renderSteps([
-        'results.steps.ciabatta.step1',
-        'results.steps.ciabatta.step2',
-        'results.steps.ciabatta.step3',
-        'results.steps.ciabatta.step4',
-        'results.steps.ciabatta.step5',
-        'results.steps.ciabatta.step6',
-      ]);
-      break;
-    default:
-      // Fallback to generic direct/indirect methods
-      if (config.fermentationTechnique === FermentationTechnique.DIRECT) {
-        stepsContent = renderSteps([
-          'results.steps.direct.step1',
-          'results.steps.direct.step2',
-          'results.steps.direct.step3',
-          'results.steps.direct.step4',
-          'results.steps.direct.step5',
-          'results.steps.direct.step6',
-        ]);
-      } else {
-        stepsContent = (
-          <>
-            <div>
-              <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
-                {t('results.preferment_title', {
-                  technique: t(
-                    `form.${config.fermentationTechnique.toLowerCase()}`,
-                  ),
-                })}
-              </h4>
-              {renderSteps([
-                'results.steps.indirect.preferment.step1',
-                'results.steps.indirect.preferment.step2',
-              ])}
-            </div>
-            <div className="mt-6">
-              <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
-                {t('results.final_dough_title')}
-              </h4>
-              {renderSteps([
-                'results.steps.indirect.finalDough.step1',
-                'results.steps.indirect.finalDough.step2',
-                'results.steps.indirect.finalDough.step3',
-                'results.steps.indirect.finalDough.step4',
-              ])}
-            </div>
-          </>
-        );
-      }
-  }
 
   return (
     <div className="mt-10">
@@ -210,7 +176,87 @@ const RecipeSteps: React.FC<{
           {t('results.steps.title')}
         </h3>
       </div>
-      <div className="space-y-6">{stepsContent}</div>
+      <div className="space-y-6">
+        {config.fermentationTechnique !== FermentationTechnique.DIRECT ? (
+             <>
+                <div>
+                  <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
+                    {t('results.preferment_title', {
+                      technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
+                    })}
+                  </h4>
+                   <ol className="list-inside list-decimal space-y-3 pl-1 text-slate-600 dark:text-slate-300">
+                       <li dangerouslySetInnerHTML={{ __html: t('results.steps.indirect.preferment.step1') }}/>
+                       <li dangerouslySetInnerHTML={{ __html: t('results.steps.indirect.preferment.step2') }}/>
+                   </ol>
+                </div>
+                <div className="mt-6">
+                  <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
+                    {t('results.final_dough_title')}
+                  </h4>
+                  {renderSteps()}
+                </div>
+             </>
+        ) : (
+            renderSteps()
+        )}
+      </div>
+    </div>
+  );
+};
+
+const IntelligentAdjustments: React.FC<{
+  adjustments: SmartAdjustmentResult;
+  onApplySuggestion: (suggestion: SmartAdjustmentSuggestion) => void;
+}> = ({ adjustments, onApplySuggestion }) => {
+  const { t } = useTranslation();
+  const hasAdjustments =
+    adjustments.messages.length > 0 ||
+    adjustments.riskWarnings.length > 0 ||
+    adjustments.suggestions.length > 0;
+
+  if (!hasAdjustments) {
+    return null;
+  }
+
+  return (
+    <div className="mt-10">
+      <div className="mb-4 flex items-center gap-3">
+        <span className="text-lime-500 dark:text-lime-400">
+          <LightBulbIcon className="h-6 w-6" />
+        </span>
+        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+          {t('results.adjustments.intelligent')}
+        </h3>
+      </div>
+      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-6">
+        {adjustments.riskWarnings.map((warning, index) => (
+          <div key={`warn-${index}`} className="flex items-start gap-3 rounded-md bg-yellow-50 p-3 text-yellow-900 ring-1 ring-inset ring-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-200 dark:ring-yellow-500/20">
+            <ExclamationCircleIcon className="h-5 w-5 flex-shrink-0 text-yellow-500" />
+            <p className="text-sm font-medium">{warning}</p>
+          </div>
+        ))}
+        
+        {adjustments.messages.map((message, index) => (
+          <p key={`msg-${index}`} className="text-sm text-slate-600 dark:text-slate-300">
+            {message}
+          </p>
+        ))}
+
+        {adjustments.suggestions.map((suggestion, index) => (
+          <div key={`sug-${index}`} className="flex flex-col items-start gap-2 rounded-md bg-lime-50 p-3 ring-1 ring-inset ring-lime-200 dark:bg-lime-500/10 dark:ring-lime-500/20 sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex-grow text-sm font-medium text-lime-800 dark:text-lime-200">
+              {suggestion.message}
+            </p>
+            <button
+              onClick={() => onApplySuggestion(suggestion)}
+              className="flex-shrink-0 rounded-md bg-lime-500 py-1.5 px-3 text-xs font-semibold text-white shadow-sm hover:bg-lime-600"
+            >
+              {t('modals.adjustments.apply')}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -231,7 +277,7 @@ const ErrorMessage: React.FC<{
   </div>
 );
 
-const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
+const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
   results,
   config,
   unit,
@@ -239,12 +285,22 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   unitSystem,
   hasProAccess,
   onOpenPaywall,
-}) => {
+  smartAdjustments,
+  environmentAdjustments,
+  autoStyleInsights,
+  onConfigChange,
+  onStartBatch,
+  calculatorMode,
+  onApplyAdjustments,
+  calculationMode,
+  saveButtonRef,
+  onboardingStep,
+}, ref) => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const GRAMS_TO_OUNCES = 0.035274;
-  const isSourdough = config.yeastType === YeastType.SOURDOUGH;
+  const isSourdough = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType);
 
   const volumeUnits = {
     cups: t('units.cups'),
@@ -300,7 +356,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       });
     } catch (error) {
       console.error('Failed to share recipe:', error);
-      alert('Could not copy recipe link to clipboard.');
+      alert(t('results.share_error'));
     }
   };
 
@@ -313,8 +369,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
     setIsExportingPDF(true);
 
-    // Use a short timeout to allow the UI to update to the loading state
-    // before the potentially blocking html2canvas operation starts.
     setTimeout(() => {
         const { jsPDF } = window.jspdf;
         const html2canvas = window.html2canvas;
@@ -322,8 +376,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         const contentToExport = document.getElementById('recipe-card');
     
         if (!contentToExport || !jsPDF || !html2canvas) {
-          console.error('PDF generation failed: A required library or element is missing.');
-          alert('Sorry, there was an error exporting the PDF. Please try again later.');
+          console.error(t('results.pdf_error_console'));
+          alert(t('results.pdf_error_alert'));
           setIsExportingPDF(false);
           return;
         }
@@ -364,12 +418,16 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           pdf.addImage(imgData, 'PNG', xPos, yPos, imgFinalWidth, imgFinalHeight);
           pdf.save(fileName);
         }).catch((error) => {
-            console.error("PDF generation failed:", error);
-            alert("An error occurred while generating the PDF.");
+            console.error(t('results.pdf_error_console'), error);
+            alert(t('results.pdf_error_alert'));
         }).finally(() => {
             setIsExportingPDF(false);
         });
     }, 50);
+  };
+  
+  const handleApplySuggestion = (suggestion: SmartAdjustmentSuggestion) => {
+    onConfigChange({ [suggestion.key]: suggestion.value });
   };
 
   const renderRecipeSection = (
@@ -402,7 +460,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(ingredients.flour, { g: 0, oz: 1 })
             }
             note={t('results.notes.flour')}
-            tooltip={getConversionTooltip('flour')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('flour') : undefined}
           />
         )}
         {ingredients.water !== undefined && (
@@ -420,7 +478,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(ingredients.water, { g: 0, oz: 1 })
             }
             note={t('results.notes.water')}
-            tooltip={getConversionTooltip('water')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('water') : undefined}
           />
         )}
         {ingredients.salt !== undefined && (
@@ -433,7 +491,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(ingredients.salt, { g: 2, oz: 3 })
             }
             note={t('results.notes.salt')}
-            tooltip={getConversionTooltip('salt')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('salt') : undefined}
           />
         )}
         {ingredients.oil !== undefined && (
@@ -446,7 +504,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(ingredients.oil, { g: 2, oz: 3 })
             }
             note={t('results.notes.oil')}
-            tooltip={getConversionTooltip('oil')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('oil') : undefined}
           />
         )}
         {ingredients.yeast !== undefined && ingredients.yeast > 0.001 && (
@@ -464,7 +522,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(ingredients.yeast, { g: 2, oz: 3 })
             }
             note={t('results.notes.yeast')}
-            tooltip={getConversionTooltip('yeast')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('yeast') : undefined}
           />
         )}
       </div>
@@ -491,16 +549,25 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   if (!results) {
     return (
-       <div id="recipe-card" className={containerClasses}>
+       <div id="recipe-card" className={containerClasses} ref={ref}>
          <ErrorMessage t={t} />
        </div>
     );
   }
 
+  const estimatedUnits = Math.round(results.totalDough / config.doughBallWeight);
+  
+  const prefermentTitle = isSourdough
+    ? t('results.levain_details')
+    : t('results.preferment_title', {
+        technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
+      });
+
   return (
     <div
       id="recipe-card"
       className={containerClasses}
+      ref={ref}
     >
       <div className="flex items-center justify-between">
         <div className="flex-1"></div> {/* Left Spacer */}
@@ -544,46 +611,46 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </div>
       </div>
 
-      <div className="mx-auto mt-8 mb-6 max-w-xs text-center">
-        <div
-          className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700"
-          role="group"
-        >
-          {units.map((unitOption) => (
-            <button
-              key={unitOption.id}
-              type="button"
-              onClick={() => onUnitChange(unitOption.id)}
-              aria-pressed={unit === unitOption.id}
-              className={`w-1/3 rounded-full py-2 px-3 text-sm font-semibold transition-all duration-300 focus:z-10 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
-                unit === unitOption.id
-                  ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
-                  : 'bg-transparent text-slate-600 hover:bg-slate-200/50 dark:text-slate-300 dark:hover:bg-slate-600/50'
-              }`}
+      {calculatorMode === 'advanced' && (
+        <div className="mx-auto mt-8 mb-6 max-w-xs text-center">
+          <div className="flex items-center justify-center gap-2">
+            <div
+            className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700"
+            role="group"
             >
-              {unitOption.label}
-            </button>
-          ))}
+            {units.map((unitOption) => (
+                <button
+                key={unitOption.id}
+                type="button"
+                onClick={() => onUnitChange(unitOption.id)}
+                aria-pressed={unit === unitOption.id}
+                className={`w-1/3 rounded-full py-2 px-3 text-sm font-semibold transition-all duration-300 focus:z-10 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+                    unit === unitOption.id
+                    ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
+                    : 'bg-transparent text-slate-600 hover:bg-slate-200/50 dark:text-slate-300 dark:hover:bg-slate-600/50'
+                }`}
+                >
+                {unitOption.label}
+                </button>
+            ))}
+            </div>
+            <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
+          </div>
+            <p className="mt-3 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {t('results.unit_system_display', {
+                system: t(
+                unitSystem === UnitSystem.METRIC
+                    ? 'form.metric'
+                    : 'form.us_customary',
+                ),
+            })}
+            </p>
         </div>
-        <p className="mt-3 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          {t('results.unit_system_display', {
-            system: t(
-              unitSystem === UnitSystem.METRIC
-                ? 'form.metric'
-                : 'form.us_customary',
-            ),
-          })}
-        </p>
-      </div>
+      )}
 
-      {config.fermentationTechnique !== FermentationTechnique.DIRECT &&
-        results.preferment &&
+      {calculatorMode === 'advanced' && (results.preferment || isSourdough) && results.preferment &&
         renderRecipeSection(
-          isSourdough
-            ? t('results.sourdough_starter_title')
-            : t('results.preferment_title', {
-                technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
-              }),
+          prefermentTitle,
           {
             flour: results.preferment.flour,
             water: results.preferment.water,
@@ -591,7 +658,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           },
         )}
 
-      {config.fermentationTechnique !== FermentationTechnique.DIRECT &&
+      {calculatorMode === 'advanced' && (results.preferment || isSourdough) &&
       results.finalDough &&
       results.preferment ? (
         <div className="mb-6">
@@ -601,11 +668,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           <div className="space-y-1">
             <ResultRow
               icon={<PrefermentIcon />}
-              label={t('results.preferment_label', {
-                technique: isSourdough
-                  ? t('form.yeast_sourdough')
-                  : t(`form.${config.fermentationTechnique.toLowerCase()}`),
-              })}
+              label={prefermentTitle}
               value={formatWeight(
                 results.preferment.flour +
                   results.preferment.water +
@@ -717,7 +780,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(results.totalFlour, { g: 0, oz: 1 })
             }
             note={t('results.notes.flour')}
-            tooltip={getConversionTooltip('flour')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('flour') : undefined}
           />
           <ResultRow
             icon={<WaterIcon />}
@@ -732,8 +795,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   )
                 : formatWeight(results.totalWater, { g: 0, oz: 1 })
             }
-            note={t('results.notes.water')}
-            tooltip={getConversionTooltip('water')}
+            note={t('results.notes.water', {hydration: config.hydration})}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('water') : undefined}
           />
           <ResultRow
             icon={<SaltIcon />}
@@ -743,8 +806,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 ? gramsToVolume('salt', results.totalSalt, volumeUnits, unitSystem)
                 : formatWeight(results.totalSalt, { g: 2, oz: 3 })
             }
-            note={t('results.notes.salt')}
-            tooltip={getConversionTooltip('salt')}
+            note={t('results.notes.salt', {salt: config.salt.toFixed(1)})}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('salt') : undefined}
           />
           <ResultRow
             icon={<OilIcon />}
@@ -754,12 +817,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 ? gramsToVolume('oil', results.totalOil, volumeUnits, unitSystem)
                 : formatWeight(results.totalOil, { g: 2, oz: 3 })
             }
-            note={t('results.notes.oil')}
-            tooltip={getConversionTooltip('oil')}
+            note={t('results.notes.oil', {oil: config.oil.toFixed(1)})}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('oil') : undefined}
           />
           <ResultRow
             icon={<YeastIcon />}
-            label={isSourdough ? t('results.sourdough_starter_title') : t('results.yeast')}
+            label={isSourdough ? t('results.total_levain') : t('results.yeast')}
             value={
               unit === 'volume'
                 ? gramsToVolume(
@@ -771,7 +834,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 : formatWeight(results.totalYeast, { g: 2, oz: 3 })
             }
             note={isSourdough ? t('results.notes.starter') : t('results.notes.yeast')}
-            tooltip={getConversionTooltip('yeast')}
+            tooltip={calculatorMode === 'advanced' ? getConversionTooltip('yeast') : undefined}
           />
         </div>
       )}
@@ -785,36 +848,82 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             : formatWeight(results.totalDough, { g: 0, oz: 1 })
         }
         isTotal={true}
+        tooltip={t('form.tooltips.start_batch')}
       />
-
-      <RecipeSteps config={config} t={t} />
-
-      {config.notes && config.notes.trim() !== '' && (
-        <div className="mt-10">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="text-lime-500 dark:text-lime-400">
-              <PencilIcon className="h-6 w-6" />
-            </span>
-            <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-              {t('results.notes_title')}
-            </h3>
-          </div>
-          <div className="prose prose-sm dark:prose-invert max-w-none rounded-lg bg-slate-50 p-4 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
-            <p className="whitespace-pre-wrap">{config.notes}</p>
+      
+      {calculationMode === 'flour' && results && (
+        <div className="mt-4 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-4 dark:border-slate-600 dark:bg-slate-700/50">
+          <h4 className="font-semibold text-center text-slate-800 dark:text-slate-100">
+            {t('results.yield.title')}
+          </h4>
+          <div className="mt-2 grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-xl font-bold text-lime-600 dark:text-lime-400">
+                {estimatedUnits}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {config.bakeType === 'PIZZA' ? t('results.yield.units') : t('results.yield.loaves')}
+              </p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-lime-600 dark:text-lime-400">
+                ~{Math.round(results.totalDough / estimatedUnits)}g
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {t('results.yield.weight_per_unit')}
+              </p>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="mt-10 rounded-lg border-2 border-dashed border-lime-300 bg-lime-50 p-4 text-center dark:border-lime-500/50 dark:bg-lime-500/10">
-        <p
-          className="font-semibold text-slate-800 dark:text-slate-100"
-          dangerouslySetInnerHTML={{
-            __html: summaryText,
-          }}
-        />
+      {calculatorMode === 'advanced' && (
+        <>
+            <IntelligentAdjustments adjustments={smartAdjustments} onApplySuggestion={handleApplySuggestion} />
+            <EnvironmentAdjustments adjustments={environmentAdjustments} />
+            <AutoStyleInsights insights={autoStyleInsights} onApply={onApplyAdjustments} />
+            <RecipeSteps config={config} t={t} />
+            {config.notes && config.notes.trim() !== '' && (
+                <div className="mt-10">
+                <div className="mb-4 flex items-center gap-3">
+                    <span className="text-lime-500 dark:text-lime-400">
+                    <PencilIcon className="h-6 w-6" />
+                    </span>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    {t('results.notes_title')}
+                    </h3>
+                </div>
+                <div className="prose prose-sm dark:prose-invert max-w-none rounded-lg bg-slate-50 p-4 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
+                    <p className="whitespace-pre-wrap">{config.notes}</p>
+                </div>
+                </div>
+            )}
+        </>
+      )}
+
+      {calculationMode === 'mass' && (
+          <div className="mt-10 rounded-lg border-2 border-dashed border-lime-300 bg-lime-50 p-4 text-center dark:border-lime-500/50 dark:bg-lime-500/10">
+            <p
+              className="font-semibold text-slate-800 dark:text-slate-100"
+              dangerouslySetInnerHTML={{
+                __html: summaryText,
+              }}
+            />
+          </div>
+      )}
+
+      <div className="mt-8 no-print">
+        <button
+          onClick={onStartBatch}
+          ref={saveButtonRef}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+        >
+          <BatchesIcon className="h-5 w-5" />
+          <span>{t('footer.start_batch')}</span>
+        </button>
       </div>
     </div>
   );
-};
+});
 
 export default ResultsDisplay;

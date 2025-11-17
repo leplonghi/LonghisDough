@@ -1,48 +1,51 @@
-
-
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../App';
+import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import {
   ArrowRightOnRectangleIcon,
   PencilIcon,
   StarIcon,
+  TrashIcon,
+  SolidStarIcon,
+  BookmarkSquareIcon,
+  BeakerIcon,
+  FlourIcon,
 } from './IconComponents';
-import { User, Gender } from '../types';
+import { User, Gender, Oven, Page, Levain } from '../types';
+import OvenModal from './OvenModal';
+import LevainModal from './LevainModal';
 
-/**
- * @component ProfilePage
- * @description This component renders the user's profile page.
- * It has two main states:
- * 1. View Mode: Displays the current user's information (name, email, membership status, etc.).
- * 2. Edit Mode: Provides a form to update the user's details.
- *
- * @dependencies
- * - `useUser`: To get the current user's data, check Pro status, update it, and log out.
- * - `useTranslation`: For internationalization of all displayed text.
- *
- * @flows
- * 1. **Authentication Check**: The component first checks if a user is logged in. If not, it shows a "not logged in" message.
- * 2. **Display Profile**: If logged in, it displays user details.
- * 3. **Enter Edit Mode**: The user can click an "Edit Profile" button to switch to an editable form.
- * 4. **Update Profile**: In edit mode, the user can change their details and click "Save Changes" to persist them via `updateUser` from the User context.
- * 5. **Cancel Edit**: The user can click "Cancel" to discard changes and return to view mode.
- * 6. **Logout**: A "Sign Out" button is always available to log the user out.
- */
-const ProfilePage: React.FC = () => {
-  // --- HOOKS ---
-  const { user, logout, updateUser, hasProAccess } = useUser();
+interface ProfilePageProps {
+  onNavigate: (page: Page, params?: string) => void;
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
+  const {
+    user,
+    logout,
+    updateUser,
+    hasProAccess,
+    ovens,
+    addOven,
+    updateOven,
+    deleteOven,
+    setDefaultOven,
+    levains,
+    addLevain,
+    updateLevain,
+    deleteLevain,
+    setDefaultLevain,
+  } = useUser();
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
-  // --- EFFECTS ---
-  /**
-   * @effect
-   * This effect synchronizes the `formData` state with the `user` object from the User context.
-   * It runs whenever the `user` object changes (e.g., on initial load or after an update).
-   * This ensures the form is always pre-populated with the latest user data when editing begins.
-   */
+  const [isOvenModalOpen, setIsOvenModalOpen] = useState(false);
+  const [editingOven, setEditingOven] = useState<Oven | null>(null);
+
+  const [isLevainModalOpen, setIsLevainModalOpen] = useState(false);
+  const [editingLevain, setEditingLevain] = useState<Levain | null>(null);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -54,7 +57,6 @@ const ProfilePage: React.FC = () => {
     }
   }, [user]);
 
-  // --- CONDITIONAL RENDERING: Logged-out state ---
   if (!user) {
     return (
       <div className="mx-auto max-w-4xl text-center">
@@ -63,7 +65,6 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  // --- EVENT HANDLERS ---
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -86,7 +87,41 @@ const ProfilePage: React.FC = () => {
     setIsEditing(false);
   };
 
-  // --- RENDER HELPER FUNCTIONS ---
+  const handleSaveOven = (ovenData: Omit<Oven, 'id' | 'isDefault'> | Oven) => {
+    if ('id' in ovenData) {
+      updateOven(ovenData);
+    } else {
+      addOven(ovenData);
+    }
+    setIsOvenModalOpen(false);
+    setEditingOven(null);
+  };
+
+  const handleDeleteOven = (id: string) => {
+    const ovenToDelete = ovens.find(o => o.id === id);
+    if(ovenToDelete && window.confirm(t('confirmations.delete_oven', {name: ovenToDelete.name}))) {
+        deleteOven(id);
+    }
+  }
+  
+  const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | Levain) => {
+    if ('id' in levainData) {
+      // @ts-ignore
+      updateLevain(levainData);
+    } else {
+      addLevain(levainData);
+    }
+    setIsLevainModalOpen(false);
+    setEditingLevain(null);
+  };
+  
+  const handleDeleteLevain = (id: string) => {
+      const levainToDelete = levains.find(l => l.id === id);
+      if(levainToDelete && window.confirm(t('confirmations.delete_levain', { name: levainToDelete.name }))) {
+          deleteLevain(id);
+      }
+  }
+
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
       <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -131,23 +166,21 @@ const ProfilePage: React.FC = () => {
           value={(formData[name] as string) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
-          disabled={name === 'email'} // Email is typically not editable
+          disabled={name === 'email'}
         />
       )}
     </div>
   );
 
-  // --- DATA PREPARATION ---
   const genderOptions = Object.values(Gender).map((g) => ({
     value: g,
     label: t(`profile.genders.${(g as string).toLowerCase()}`),
   }));
 
-  // --- MAIN RENDER ---
   return (
+    <>
     <div className="mx-auto max-w-2xl animate-[fadeIn_0.5s_ease-in-out]">
       <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
-        {/* === SECTION: User Header === */}
         <div className="flex flex-col items-center text-center">
           {user.avatar ? (
             <img
@@ -168,7 +201,6 @@ const ProfilePage: React.FC = () => {
           </p>
         </div>
 
-        {/* === SECTION: Account Settings === */}
         <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -187,7 +219,6 @@ const ProfilePage: React.FC = () => {
 
           <div className="mt-6">
             {isEditing ? (
-              // --- EDIT MODE ---
               <div className="space-y-6">
                 {renderInputRow(t('profile.name'), 'name', 'text')}
                 {renderInputRow(t('profile.email'), 'email', 'email')}
@@ -214,7 +245,6 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              // --- VIEW MODE ---
               <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                 {renderInfoRow(t('profile.name'), user.name)}
                 {renderInfoRow(t('profile.email'), user.email)}
@@ -248,8 +278,120 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
         </div>
+        
+        {/* === SECTION: My Ovens === */}
+        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+             <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                {t('profile.ovens.title')}
+                </h2>
+                <button
+                    onClick={() => { setEditingOven(null); setIsOvenModalOpen(true); }}
+                    className="rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
+                >
+                    {t('profile.ovens.add_oven')}
+                </button>
+             </div>
+             <div className="mt-6 space-y-4">
+                {ovens.length === 0 ? (
+                    <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('profile.ovens.empty_state')}</p>
+                ) : (
+                    ovens.map(oven => (
+                        <div key={oven.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
+                            <div>
+                                <p className="font-semibold text-slate-800 dark:text-slate-100">{oven.name} {oven.isDefault && <span className="ml-2 text-xs font-bold text-lime-600 dark:text-lime-400">({t('profile.ovens.default_oven')})</span>}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">{t(`profile.ovens.types.${oven.type.toLowerCase()}`)} - {oven.maxTemperature}°C</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => setDefaultOven(oven.id)} title={t('profile.ovens.set_as_default')} className={`p-2 rounded-full ${oven.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
+                                    {oven.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
+                                </button>
+                                <button onClick={() => { setEditingOven(oven); setIsOvenModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600">
+                                    <PencilIcon className="h-5 w-5"/>
+                                </button>
+                                <button onClick={() => handleDeleteOven(oven.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10">
+                                    <TrashIcon className="h-5 w-5"/>
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+             </div>
+        </div>
+        
+        {/* === SECTION: My Levains === */}
+        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+             <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <BeakerIcon className="h-6 w-6 text-lime-500" />
+                  {t('profile.levains.title')}
+                </h2>
+                <button
+                    onClick={() => { setEditingLevain(null); setIsLevainModalOpen(true); }}
+                    className="rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
+                >
+                    {t('profile.levains.add_levain')}
+                </button>
+             </div>
+             <div className="mt-6 space-y-4">
+                {levains.length === 0 ? (
+                    <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('profile.levains.empty_state')}</p>
+                ) : (
+                    levains.map(levain => (
+                        <div key={levain.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
+                            <div>
+                                <p className="font-semibold text-slate-800 dark:text-slate-100">{levain.name} {levain.isDefault && <span className="ml-2 text-xs font-bold text-lime-600 dark:text-lime-400">({t('profile.levains.default')})</span>}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">{levain.hydration}% {t('profile.levains.hydration')}</p>
+                            </div>
+                            <div className="flex items-center gap-1 sm:gap-2">
+                                <button onClick={() => onNavigate('mylab/levain')} title={t('profile.levains.manage')} className="p-2 rounded-md text-sm font-semibold text-lime-600 hover:bg-lime-100 dark:text-lime-400 dark:hover:bg-lime-900/50">
+                                    {t('profile.levains.manage')}
+                                </button>
+                                <button onClick={() => setDefaultLevain(levain.id)} title={t('profile.levains.set_as_default')} className={`p-2 rounded-full ${levain.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
+                                    {levain.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
+                                </button>
+                                <button onClick={() => { setEditingLevain(levain); setIsLevainModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600">
+                                    <PencilIcon className="h-5 w-5"/>
+                                </button>
+                                <button onClick={() => handleDeleteLevain(levain.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10">
+                                    <TrashIcon className="h-5 w-5"/>
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+             </div>
+        </div>
 
-        {/* === SECTION: Logout === */}
+        {/* === SECTION: Resources === */}
+        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+              {t('profile.resources.title')}
+            </h2>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <button
+                    onClick={() => onNavigate('references')}
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700"
+                >
+                    <BookmarkSquareIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-slate-100">{t('profile.resources.tech_references')}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('profile.resources.tech_references_desc')}</p>
+                    </div>
+                </button>
+                <button
+                    onClick={() => onNavigate('flours')}
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700"
+                >
+                    <FlourIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-slate-100">{t('profile.resources.flours_library')}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('profile.resources.flours_library_desc')}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
         <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
           <button
             onClick={logout}
@@ -261,6 +403,19 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
     </div>
+    <OvenModal
+        isOpen={isOvenModalOpen}
+        onClose={() => { setIsOvenModalOpen(false); setEditingOven(null); }}
+        onSave={handleSaveOven}
+        ovenToEdit={editingOven}
+    />
+    <LevainModal
+        isOpen={isLevainModalOpen}
+        onClose={() => { setIsLevainModalOpen(false); setEditingLevain(null); }}
+        onSave={handleSaveLevain}
+        levainToEdit={editingLevain}
+    />
+    </>
   );
 };
 

@@ -1,18 +1,24 @@
 
 
 
+
+
+
 import React, {
   useState,
   useEffect,
   useCallback,
   useMemo,
-  createContext,
-  useContext,
   ReactNode,
   useRef,
 } from 'react';
-import CalculatorForm from './components/CalculatorForm';
-import ResultsDisplay from './components/ResultsDisplay';
+import CalculatorPage from './pages/CalculatorPage';
+import CommunityPage from './pages/CommunityPage';
+// FIX: Module '"file:///components/Navigation"' has no default export.
+// Added a default export to components/Navigation.tsx.
+import Navigation from './components/Navigation';
+import BatchDetailPage from './pages/BatchDetailPage';
+
 import {
   DoughConfig,
   DoughResult,
@@ -22,368 +28,185 @@ import {
   FermentationTechnique,
   Unit,
   UnitSystem,
-  SavedDoughConfig,
+  Batch,
+  BatchStatus,
   ProRecipe,
   FormErrors,
   User,
+  Oven,
+  Page,
+  PrimaryPage,
+  AmbientTemperature,
+  FlourDefinition,
+  CalculationMode,
+  Levain,
+  FeedingEvent,
 } from './types';
-import { RECIPE_STYLE_PRESETS } from './constants';
+import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
+// FIX: Module '"./i18n"' has no exported member 'I18nProvider' or 'useTranslation'.
+// Added exports for I18nProvider and useTranslation in i18n.ts.
 import { I18nProvider, useTranslation } from './i18n';
-import ThemeToggle from './components/ThemeToggle';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import LoadConfigModal from './components/LoadConfigModal';
-import PaywallModal from './components/PaywallModal';
-import MobileSummaryBar from './components/MobileSummaryBar';
-import UserMenu from './components/UserMenu';
+import { PaywallModal } from './components/PaywallModal';
 import AuthModal from './components/AuthModal';
-import ProfilePage from './components/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 import PlansPage from './components/PlansPage';
-import TipsAndTechniquesPage from './components/TipsAndTechniquesPage';
-import {
-  DoughLabLogoIcon,
-  BookOpenIcon,
-  StarIcon,
-  ExclamationCircleIcon,
-  CheckCircleIcon,
-  InfoIcon,
-  CloseIcon,
-} from './components/IconComponents';
+import LearnPage from './pages/learn/LearnPage';
+import MobileSummaryBar from './components/MobileSummaryBar';
+import ReferencesPage from './components/ReferencesPage';
+import { FLOURS } from './flours-constants';
+import CommunityBatchDetailPage from './pages/CommunityBatchDetailPage';
+import MyLabPage from './pages/MyLabPage';
+import LevainManagerPage from './pages/LevainManagerPage';
+import { ToastProvider, useToast } from './components/ToastProvider';
+import { UserProvider, useUser } from './contexts/UserProvider';
+// FIX: Module '"file:///components/AssistantPage"' has no default export.
+// Added a default export to components/AssistantPage.tsx.
+import AssistantPage from './components/AssistantPage';
+import FloatingActionButton from './components/FloatingActionButton';
+import OvenAnalysisPage from './pages/OvenAnalysisPage';
+import ToppingsIndexPage from './pages/toppings/ToppingsIndexPage';
+import DoughbotPage from './pages/DoughbotPage';
+import PantryPizzaPage from './pages/PantryPizzaPage';
+import SettingsPage from './pages/SettingsPage';
+import ThemePage from './pages/settings/ThemePage';
+import LanguagePage from './pages/settings/LanguagePage';
+import TermsPage from './pages/legal/TermsPage';
+import PrivacyPage from './pages/legal/PrivacyPage';
+import CookiesPage from './pages/legal/CookiesPage';
+import EulaPage from './pages/legal/EulaPage';
+import IpPage from './pages/legal/IpPage';
+import ContactPage from './pages/legal/ContactPage';
+import LegalIndexPage from './pages/legal/LegalIndexPage';
+import TechniquesPage from './pages/learn/TechniquesPage';
+import FermentationPage from './pages/learn/FermentationPage';
+import DoughSciencePage from './pages/learn/DoughSciencePage';
+import TroubleshootingPage from './pages/learn/TroubleshootingPage';
+import IngredientsPage from './pages/learn/IngredientsPage';
+import ChemistryLibraryPage from './pages/learn/ChemistryLibraryPage';
+import StyleGuidePage from './pages/learn/StyleGuidePage';
+import GlossaryPage from './pages/learn/GlossaryPage';
+import CheesesPage from './pages/learn/ingredients/CheesesPage';
+import MeatsPage from './pages/learn/ingredients/MeatsPage';
+import VegetablesPage from './pages/learn/ingredients/VegetablesPage';
+import SaucesPage from './pages/learn/ingredients/SaucesPage';
+import OilsSpicesPage from './pages/learn/ingredients/OilsSpicesPage';
+import OilsPage from './pages/learn/ingredients/OilsPage';
+import ClassicCombosPage from './pages/learn/ingredients/ClassicCombosPage';
+import BoldCombosPage from './pages/learn/ingredients/BoldCombosPage';
+import SensoryGuidePage from './pages/learn/SensoryGuidePage';
+import PairingToolPage from './pages/learn/ingredients/PairingToolPage';
+import ReadyToppingsPage from './pages/learn/ingredients/ReadyToppingsPage';
+import MeuLabReceitasPage from './pages/mylab/MeuLabReceitasPage';
+import MeuLabLevainPetPage from './pages/mylab/MeuLabLevainPetPage';
+import ErrorBoundary from './components/ErrorBoundary';
+import OvenSciencePage from './pages/learn/OvenSciencePage';
+import IngredientsFloursPage from './pages/learn/ingredients/FloursPage';
+import YeastsPage from './pages/learn/ingredients/YeastsPage';
+import PrefermentsPage from './pages/learn/PrefermentsPage';
+import TemperatureControlPage from './pages/learn/TemperatureControlPage';
+import StoragePage from './pages/learn/StoragePage';
+import HygieneSafetyPage from './pages/learn/HygieneSafetyPage';
+import EquipmentPage from './pages/learn/EquipmentPage';
+import OvenSpringPage from './pages/learn/OvenSpringPage';
+import FermentationBiochemistryPage from './pages/learn/FermentationBiochemistryPage';
+import CrumbStructurePage from './pages/learn/CrumbStructurePage';
+import DoughAgingPage from './pages/learn/DoughAgingPage';
+import AmbientVsColdFermentationPage from './pages/learn/AmbientVsColdFermentationPage';
+import MixingTechniquesPage from './pages/learn/MixingTechniquesPage';
+import BallingTechniquePage from './pages/learn/BallingTechniquePage';
+import SensoryMaturationPage from './pages/learn/SensoryMaturationPage';
+import ParbakingPage from './pages/learn/ParbakingPage';
+import WaterPage from './pages/learn/WaterPage';
+import SaltPage from './pages/learn/SaltPage';
+import SugarsPage from './pages/learn/SugarsPage';
+import FatsPage from './pages/learn/FatsPage';
+import TomatoPreservationPage from './pages/learn/TomatoPreservationPage';
+import WhiteSaucesPage from './pages/learn/WhiteSaucesPage';
+import SpecialSaucesPage from './pages/learn/SpecialSaucesPage';
+import LowMoistureCheesesPage from './pages/learn/LowMoistureCheesesPage';
+import SmokedCheesesPage from './pages/learn/SmokedCheesesPage';
+import CuredMeatsPage from './pages/learn/CuredMeatsPage';
+import SmokedAromaticsPage from './pages/learn/SmokedAromaticsPage';
+import WaterRichVegetablesPage from './pages/learn/WaterRichVegetablesPage';
+import CaramelizableVegetablesPage from './pages/learn/CaramelizableVegetablesPage';
+import RegionalCombosPage from './pages/learn/RegionalCombosPage';
+import SensoryProfilesPage from './pages/learn/SensoryProfilesPage';
+import MeuLabFornadasPage from './pages/mylab/MeuLabFornadasPage';
+import MeuLabFarinhasPage from './pages/mylab/MeuLabFarinhasPage';
+import MeuLabMassasPage from './pages/mylab/MeuLabMassasPage';
+import MeuLabDiarioSensorialPage from './pages/mylab/MeuLabDiarioSensorialPage';
+import MeuLabComparacoesPage from './pages/mylab/MeuLabComparacoesPage';
+import MeuLabInsightsPage from './pages/mylab/MeuLabInsightsPage';
+import TimelinePage from './pages/mylab/TimelinePage';
+import ObjectivesPage from './pages/mylab/ObjectivesPage';
+import FundamentalsPage from './pages/learn/FundamentalsPage';
+import MethodsPage from './pages/learn/MethodsPage';
+import CriticalIngredientsPage from './pages/learn/CriticalIngredientsPage';
+import OvensHeatPage from './pages/learn/OvensHeatPage';
+import TroubleshootingGuidePage from './pages/learn/TroubleshootingGuidePage';
+import { FirebaseAuthProvider } from './contexts/FirebaseAuthProvider';
+import LevainListPage from './pages/mylab/levain/LevainListPage';
+import LevainDetailPage from './pages/mylab/levain/LevainDetailPage';
+import LevainOnboardingModal from './components/onboarding/LevainOnboardingModal';
+import { logEvent } from './services/analytics';
+import CompareReceitasPage from './pages/mylab/CompareReceitasPage';
+import ConsistencyListPage from './pages/mylab/ConsistencyListPage';
+import ConsistencyDetailPage from './pages/mylab/ConsistencyDetailPage';
 
-type Page = 'calculator' | 'plans' | 'tips' | 'profile';
 
-// --- Toast Functionality ---
-type ToastType = 'success' | 'error' | 'info';
-
-interface ToastMessage {
-  id: number;
-  message: string;
-  type: ToastType;
+// --- Placeholder Pages ---
+function HelpPage() {
+  const { t } = useTranslation();
+  return <div className="p-8 text-center">{t('help_page.title')}</div>;
 }
-
-interface ToastContextType {
-  addToast: (message: string, type: ToastType) => void;
+function LandingPage() {
+  const { t } = useTranslation();
+  return <div className="p-8 text-center">{t('landing_page.title')}</div>;
 }
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-let toastId = 0;
-
-const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastMessage[]>([]);
-
-  const addToast = useCallback((message: string, type: ToastType) => {
-    setToasts((prevToasts) => [...prevToasts, { id: toastId++, message, type }]);
-  }, []);
-
-  const removeToast = useCallback((id: number) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
-  }, []);
-
-  return (
-    <ToastContext.Provider value={{ addToast }}>
-      {children}
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </ToastContext.Provider>
-  );
-};
-
-const useToast = (): ToastContextType => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-};
-
-interface ToastContainerProps {
-  toasts: ToastMessage[];
-  removeToast: (id: number) => void;
-}
-
-const ToastContainer: React.FC<ToastContainerProps> = ({
-  toasts,
-  removeToast,
-}) => {
-  return (
-    <div className="fixed top-4 right-4 z-50 w-full max-w-xs space-y-3">
-      {toasts.map((toast) => (
-        <Toast key={toast.id} toast={toast} onDismiss={removeToast} />
-      ))}
-    </div>
-  );
-};
-
-interface ToastProps {
-  toast: ToastMessage;
-  onDismiss: (id: number) => void;
-}
-
-const ICONS: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircleIcon className="h-6 w-6 text-green-500" />,
-  error: <ExclamationCircleIcon className="h-6 w-6 text-red-500" />,
-  info: <InfoIcon className="h-6 w-6 text-blue-500" />,
-};
-
-const BG_COLORS: Record<ToastType, string> = {
-  success:
-    'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
-  error: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
-  info: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',
-};
-
-const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onDismiss(toast.id);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [toast.id, onDismiss]);
-
-  return (
-    <div
-      className={`relative flex w-full items-start gap-3 overflow-hidden rounded-lg border p-4 shadow-lg ring-1 ring-black ring-opacity-5 animate-slide-in-right ${
-        BG_COLORS[toast.type]
-      }`}
-      role="alert"
-    >
-      <div className="flex-shrink-0">{ICONS[toast.type]}</div>
-      <div className="flex-1 text-sm font-medium text-slate-800 dark:text-slate-200">
-        {toast.message}
-      </div>
-      <div className="flex-shrink-0">
-        <button
-          onClick={() => onDismiss(toast.id)}
-          className="-m-1.5 rounded-full p-1.5 text-slate-500 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:bg-slate-700/50"
-          aria-label="Dismiss"
-        >
-          <CloseIcon className="h-5 w-5" />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// --- Combined User (Auth + Entitlements) Context ---
-const AUTH_KEY = 'dough-lab-auth';
-const ENTITLEMENTS_KEY = 'dough-lab-entitlements';
-
-interface Entitlements {
-  isPro: boolean;
-  passUntil: number | null;
-  lastPassGrantedAt: number | null;
-}
-
-interface UserContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
-  updateUser: (updatedData: Partial<User>) => void;
-  hasProAccess: boolean;
-  grantProAccess: () => void;
-  grantSessionProAccess: () => void;
-  grant24hPass: () => void;
-  isPassOnCooldown: boolean;
-  cooldownHoursRemaining: number;
-}
-
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // --- Auth State ---
-  const [user, setUser] = useState<User | null>(null);
-
-  // --- Entitlements State ---
-  const [entitlements, setEntitlements] = useState<Entitlements>({
-    isPro: false,
-    passUntil: null,
-    lastPassGrantedAt: null,
-  });
-  const [isSessionPro, setIsSessionPro] = useState<boolean>(false);
-  const [cooldownHours, setCooldownHours] = useState(0);
-
-  // --- Auth Effects & Callbacks ---
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem(AUTH_KEY);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error('Failed to load user from localStorage', error);
-    }
-  }, []);
-
-  const login = useCallback((userData: User) => {
-    setUser(userData);
-    try {
-      localStorage.setItem(AUTH_KEY, JSON.stringify(userData));
-    } catch (error) {
-      console.error('Failed to save user to localStorage', error);
-    }
-  }, []);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    try {
-      localStorage.removeItem(AUTH_KEY);
-    } catch (error) {
-      console.error('Failed to remove user from localStorage', error);
-    }
-  }, []);
-
-  const updateUser = useCallback(
-    (updatedData: Partial<User>) => {
-      if (user) {
-        const newUser = { ...user, ...updatedData };
-        setUser(newUser);
-        try {
-          localStorage.setItem(AUTH_KEY, JSON.stringify(newUser));
-        } catch (error) {
-          console.error('Failed to save updated user to localStorage', error);
-        }
-      }
-    },
-    [user],
-  );
-
-  // --- Entitlements Effects & Callbacks ---
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(ENTITLEMENTS_KEY);
-      if (stored) {
-        setEntitlements(JSON.parse(stored));
-      }
-    } catch {
-      // Ignore errors
-    }
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      if (entitlements.passUntil && now > entitlements.passUntil) {
-        setEntitlements((prev) => {
-          const newEntitlements = { ...prev, passUntil: null };
-          try {
-            localStorage.setItem(
-              ENTITLEMENTS_KEY,
-              JSON.stringify(newEntitlements),
-            );
-          } catch {}
-          return newEntitlements;
-        });
-      }
-      if (entitlements.lastPassGrantedAt) {
-        const hoursSince = (now - entitlements.lastPassGrantedAt) / 3600000;
-        if (hoursSince < 24) {
-          setCooldownHours(24 - hoursSince);
-        } else if (cooldownHours > 0) {
-          setCooldownHours(0);
-        }
-      } else if (cooldownHours > 0) {
-        setCooldownHours(0);
-      }
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [entitlements, cooldownHours]);
-
-  const saveEntitlements = (newEntitlements: Entitlements) => {
-    try {
-      localStorage.setItem(ENTITLEMENTS_KEY, JSON.stringify(newEntitlements));
-      setEntitlements(newEntitlements);
-    } catch (error) {
-      console.error('Could not save entitlements', error);
-    }
-  };
-
-  const grantProAccess = useCallback(() => {
-    saveEntitlements({ ...entitlements, isPro: true, passUntil: null });
-  }, [entitlements]);
-
-  const grantSessionProAccess = useCallback(() => {
-    setIsSessionPro(true);
-  }, []);
-
-  const grant24hPass = useCallback(() => {
-    const now = Date.now();
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-    if (
-      entitlements.lastPassGrantedAt &&
-      now - entitlements.lastPassGrantedAt < twentyFourHours
-    ) {
-      return;
-    }
-    saveEntitlements({
-      ...entitlements,
-      passUntil: now + twentyFourHours,
-      lastPassGrantedAt: now,
-    });
-  }, [entitlements]);
-
-  const hasProAccess =
-    entitlements.isPro ||
-    isSessionPro ||
-    (entitlements.passUntil !== null && Date.now() < entitlements.passUntil);
-  const isPassOnCooldown =
-    entitlements.lastPassGrantedAt !== null &&
-    Date.now() - entitlements.lastPassGrantedAt < 24 * 60 * 60 * 1000;
-
-  const value = {
-    isAuthenticated: !!user,
-    user,
-    login,
-    logout,
-    updateUser,
-    hasProAccess,
-    grantProAccess,
-    grantSessionProAccess,
-    grant24hPass,
-    isPassOnCooldown,
-    cooldownHoursRemaining: Math.ceil(cooldownHours),
-  };
-
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
-};
-
-export const useUser = (): UserContextType => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
 
 // --- Calculator Logic ---
+const calculateDough = (
+  config: DoughConfig,
+  calculatorMode: 'basic' | 'advanced',
+  userLevain?: Levain | null
+): DoughResult => {
+  let effectiveConfig = { ...config };
 
-const SAVED_CONFIGS_KEY = 'dough-lab-saved-configs';
-
-const calculateDough = (config: DoughConfig): DoughResult => {
+  // In Basic (Pro) mode, always enforce the preset values for core percentages.
+  if (calculatorMode === 'basic' && effectiveConfig.stylePresetId) {
+    const preset = DOUGH_STYLE_PRESETS.find(p => p.id === effectiveConfig.stylePresetId);
+    if (preset) {
+      effectiveConfig.hydration = preset.defaultHydration;
+      effectiveConfig.salt = preset.defaultSalt;
+      effectiveConfig.oil = preset.defaultOil;
+      effectiveConfig.sugar = preset.defaultSugar || 0;
+    }
+  }
+  
   const totalDoughWeight =
-    config.numPizzas * config.doughBallWeight * config.scale;
+    effectiveConfig.numPizzas * effectiveConfig.doughBallWeight * effectiveConfig.scale;
 
-  const totalPercentage = 100 + config.hydration + config.salt + config.oil;
+  const totalPercentage = 100 + effectiveConfig.hydration + effectiveConfig.salt + effectiveConfig.oil + (effectiveConfig.sugar || 0);
   const flourMultiplier = 100 / totalPercentage;
 
   const totalFlour = totalDoughWeight * flourMultiplier;
-  const totalWater = totalFlour * (config.hydration / 100);
-  const totalSalt = totalFlour * (config.salt / 100);
-  const totalOil = totalFlour * (config.oil / 100);
+  const totalWater = totalFlour * (effectiveConfig.hydration / 100);
+  const totalSalt = totalFlour * (effectiveConfig.salt / 100);
+  const totalOil = totalFlour * (effectiveConfig.oil / 100);
+  const totalSugar = totalFlour * ((effectiveConfig.sugar || 0) / 100);
 
   const result: DoughResult = {
     totalFlour,
     totalWater,
     totalSalt,
     totalOil,
+    totalSugar,
     totalYeast: 0, // Will be set based on type
     totalDough: totalDoughWeight,
   };
 
-  if (config.yeastType === YeastType.SOURDOUGH) {
-    const totalStarter = totalFlour * (config.yeastPercentage / 100);
+  if (effectiveConfig.yeastType === YeastType.SOURDOUGH_STARTER) {
+    const totalStarter = totalFlour * (effectiveConfig.yeastPercentage / 100);
     // Assume 100% hydration starter (equal parts flour and water by weight)
     const starterFlour = totalStarter / 2;
     const starterWater = totalStarter / 2;
@@ -401,24 +224,48 @@ const calculateDough = (config: DoughConfig): DoughResult => {
       water: totalWater - starterWater,
       salt: totalSalt,
       oil: totalOil,
+      sugar: totalSugar,
       yeast: 0, // No additional commercial yeast
     };
+  } else if (effectiveConfig.yeastType === YeastType.USER_LEVAIN && userLevain) {
+    const totalStarter = totalFlour * (effectiveConfig.yeastPercentage / 100);
+    const levainHydrationRatio = userLevain.hydration / 100;
+    const starterFlour = totalStarter / (1 + levainHydrationRatio);
+    const starterWater = totalStarter - starterFlour;
+
+    result.totalYeast = totalStarter;
+
+    result.preferment = {
+      flour: starterFlour,
+      water: starterWater,
+      yeast: 0,
+    };
+
+    result.finalDough = {
+      flour: totalFlour - starterFlour,
+      water: totalWater - starterWater,
+      salt: totalSalt,
+      oil: totalOil,
+      sugar: totalSugar,
+      yeast: 0,
+    };
+
   } else {
     // Commercial yeast logic
-    let yeastPercentage = config.yeastPercentage;
-    if (config.yeastType === YeastType.ADY) {
+    let yeastPercentage = effectiveConfig.yeastPercentage;
+    if (effectiveConfig.yeastType === YeastType.ADY) {
       yeastPercentage /= 1.25;
-    } else if (config.yeastType === YeastType.FRESH) {
+    } else if (effectiveConfig.yeastType === YeastType.FRESH) {
       yeastPercentage /= 3;
     }
     const totalYeast = totalFlour * (yeastPercentage / 100);
     result.totalYeast = totalYeast;
 
-    if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
+    if (effectiveConfig.fermentationTechnique !== FermentationTechnique.DIRECT) {
       const prefermentFlour =
-        totalFlour * (config.prefermentFlourPercentage / 100);
+        totalFlour * (effectiveConfig.prefermentFlourPercentage / 100);
       let prefermentWater = prefermentFlour; // Poolish
-      if (config.fermentationTechnique === FermentationTechnique.BIGA) {
+      if (effectiveConfig.fermentationTechnique === FermentationTechnique.BIGA) {
         prefermentWater = prefermentFlour * 0.5; // Biga
       }
       const prefermentYeast = prefermentFlour * 0.002;
@@ -433,6 +280,7 @@ const calculateDough = (config: DoughConfig): DoughResult => {
         water: totalWater - prefermentWater,
         salt: totalSalt,
         oil: totalOil,
+        sugar: totalSugar,
         yeast: Math.max(0, totalYeast - prefermentYeast), // Prevent negative yeast
       };
     }
@@ -441,21 +289,6 @@ const calculateDough = (config: DoughConfig): DoughResult => {
   return result;
 };
 
-const DEFAULT_CONFIG: DoughConfig = {
-  bakeType: BakeType.PIZZA,
-  recipeStyle: RecipeStyle.NEAPOLITAN,
-  numPizzas: 4,
-  doughBallWeight: 250,
-  hydration: 62,
-  salt: 2.8,
-  oil: 0,
-  fermentationTechnique: FermentationTechnique.DIRECT,
-  yeastType: YeastType.IDY,
-  yeastPercentage: 0.2,
-  prefermentFlourPercentage: 30,
-  scale: 1,
-  notes: '',
-};
 
 // --- Validation Logic ---
 const validateConfig = (
@@ -476,7 +309,10 @@ const validateConfig = (
   if (config.scale < 0.25 || config.scale > 4) {
     errors.scale = t('form.errors.range_multiplier', { min: 0.25, max: 4 });
   }
-  const maxYeast = config.yeastType === YeastType.SOURDOUGH ? 50 : 5;
+  if (config.bakingTempC < 150 || config.bakingTempC > 500) {
+    errors.bakingTempC = t('form.errors.range_tempC', { min: 150, max: 500 });
+  }
+  const maxYeast = isAnySourdough(config.yeastType) ? 50 : 5;
   if (config.yeastPercentage < 0 || config.yeastPercentage > maxYeast) {
     errors.yeastPercentage = t('form.errors.range_percent', {
       min: 0,
@@ -498,37 +334,169 @@ const validateConfig = (
   return errors;
 };
 
+const isAnySourdough = (yeastType: YeastType) => 
+    [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(yeastType);
+
+
+
 function AppContent() {
   const { t } = useTranslation();
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [currentPage, setCurrentPage] = useState<Page>('calculator');
-  const { grantProAccess, grantSessionProAccess, hasProAccess } = useUser();
-  const [config, setConfig] = useState<DoughConfig>(DEFAULT_CONFIG);
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
+    try {
+      const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
+      return storedTheme || 'system';
+    } catch {
+      return 'system';
+    }
+  });
+  const [route, setRoute] = useState<Page>('mylab');
+  const [routeParams, setRouteParams] = useState<string | null>(null);
+
+  const { user, grantSessionProAccess, hasProAccess, preferredFlourId, ovens, batches, addBatch, createDraftBatch, levains } = useUser();
+  
+  
+  // Last batch calculation
+  const lastBatch = useMemo(() => {
+    if (batches.length === 0) return undefined;
+    return [...batches]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+  }, [batches]);
+
+  const [calculatorMode, setCalculatorMode] = useState<'basic' | 'advanced'>(() => {
+    try {
+      const storedMode = localStorage.getItem('doughlab_mode');
+      return storedMode === 'advanced' ? 'advanced' : 'basic';
+    } catch {
+      return 'basic';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('doughlab_mode', calculatorMode);
+    } catch (error) {
+      console.error('Failed to save mode to localStorage', error);
+    }
+  }, [calculatorMode]);
+  
+  const initialConfig = useMemo(() => {
+    let config = {...DEFAULT_CONFIG, stylePresetId: undefined };
+    const preset = DOUGH_STYLE_PRESETS.find(p => p.id === DEFAULT_CONFIG.stylePresetId);
+    if (preset?.preferredFlourProfileId) {
+        config.flourId = preset.preferredFlourProfileId;
+    } else if (preferredFlourId) {
+        config.flourId = preferredFlourId;
+    }
+    return config;
+  }, [preferredFlourId]);
+
+  const [config, setConfig] = useState<DoughConfig>(initialConfig);
+  const [calculationMode, setCalculationMode] = useState<CalculationMode>('mass');
   const [unit, setUnit] = useState<Unit>('g');
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(UnitSystem.METRIC);
-  const [savedConfigs, setSavedConfigs] = useState<SavedDoughConfig[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
   const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+
+  const [showLevainOnboarding, setShowLevainOnboarding] = useState(false);
+
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('levain_pet_onboarding_seen_v1');
+    if (!hasSeenOnboarding && route.startsWith('mylab/levain')) {
+        setShowLevainOnboarding(true);
+    }
+  }, [route]);
+
+  const handleOnboardingComplete = () => {
+    try {
+      localStorage.setItem('levain_pet_onboarding_seen_v1', 'true');
+    } catch (error) {
+        console.error("Failed to save onboarding status to localStorage", error);
+    }
+    setShowLevainOnboarding(false);
+  };
+
 
   const { addToast } = useToast();
   const previousErrorsRef = useRef<FormErrors>({});
 
-  // Perform validation whenever config changes
+  const navigate = useCallback((page: Page, params?: string) => {
+    const newHash = params ? `#/${page}/${params}` : `#/${page}`;
+    if (window.location.hash !== newHash) {
+        window.location.hash = newHash;
+    } else {
+        const hash = (page as string) + (params ? `/${params}` : '');
+        const parts = hash.split('/');
+        if ((parts[0] === 'batch' || parts[0] === 'community') && parts.length > 1) {
+            setRoute(parts[0] as Page);
+            setRouteParams(parts[1]);
+        } else if (hash.startsWith('mylab/levain/') && parts.length > 2) {
+            setRoute('mylab/levain/detail');
+            setRouteParams(parts[2]);
+        } else if (hash.startsWith('mylab/consistency/') && parts.length > 2) {
+            setRoute('mylab/consistency/detail');
+            setRouteParams(parts[2]);
+        } else if (parts.length > 1) { 
+            setRoute(hash as Page);
+            setRouteParams(null);
+        }
+        else {
+            setRoute(hash as Page);
+            setRouteParams(null);
+        }
+    }
+  }, []);
+
+  // --- Routing ---
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(2);
+      if (!hash) {
+        navigate('mylab');
+        return;
+      }
+      
+      const parts = hash.split('?')[0].split('/');
+      if ((parts[0] === 'batch' || parts[0] === 'community') && parts.length > 1) {
+          setRoute(parts[0] as Page);
+          setRouteParams(parts[1]);
+      } else if (hash.startsWith('mylab/levain/') && parts.length > 2) {
+          setRoute('mylab/levain/detail');
+          setRouteParams(parts[2]);
+      } else if (hash.startsWith('mylab/consistency/') && parts.length > 2) {
+          setRoute('mylab/consistency/detail');
+          setRouteParams(parts[2]);
+      } else if (parts.length > 1) {
+          setRoute(hash.split('?')[0] as Page);
+          setRouteParams(null);
+      }
+      else {
+          setRoute(hash.split('?')[0] as Page);
+          setRouteParams(null);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [navigate]);
+
   useEffect(() => {
     const validationErrors = validateConfig(config, t);
     setErrors(validationErrors);
   }, [config, t]);
 
-  // Show toasts for new or changed errors
   useEffect(() => {
     const currentErrors = errors;
     const previousErrors = previousErrorsRef.current;
 
     Object.entries(currentErrors).forEach(([key, message]) => {
-      if (message && previousErrors[key as keyof FormErrors] !== message) {
+      if (typeof message === 'string' && previousErrors[key as keyof FormErrors] !== message) {
         addToast(message, 'error');
       }
     });
@@ -536,294 +504,505 @@ function AppContent() {
     previousErrorsRef.current = currentErrors;
   }, [errors, addToast]);
 
+
   const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
 
   const results = useMemo(() => {
     if (hasErrors) return null;
-    return calculateDough(config);
-  }, [config, hasErrors]);
+    const userLevain = config.yeastType === YeastType.USER_LEVAIN
+      ? levains.find(l => l.id === config.levainId)
+      : null;
+    return calculateDough(config, calculatorMode, userLevain);
+  }, [config, hasErrors, levains, calculatorMode]);
 
-  // Load saved configs from localStorage on mount
-  useEffect(() => {
-    try {
-      const storedConfigs = localStorage.getItem(SAVED_CONFIGS_KEY);
-      if (storedConfigs) {
-        setSavedConfigs(JSON.parse(storedConfigs));
-      }
-    } catch (error) {
-      // FIX: Use multiple arguments for console.error for better error formatting and to avoid potential TypeScript type issues with concatenation.
-      console.error(
-        'Failed to load saved configs from localStorage:',
-        error,
-      );
-    }
-  }, []);
-
-  // Persist saved configs to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem(SAVED_CONFIGS_KEY, JSON.stringify(savedConfigs));
-    } catch (error) {
-      // FIX: Use multiple arguments for console.error for better error formatting and to avoid potential TypeScript type issues with concatenation.
-      console.error(
-        'Failed to save configs to localStorage:',
-        error,
-      );
-    }
-  }, [savedConfigs]);
+  const isSummaryBarVisible = route === 'calculator' && !!results;
 
   useEffect(() => {
-    // Test Pro Mode via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('test_pro') === 'true') {
       grantSessionProAccess();
-      // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [grantSessionProAccess]);
 
-  useEffect(() => {
-    // Theme logic
+ useEffect(() => {
     const root = window.document.documentElement;
-    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-    const initialTheme =
-      storedTheme ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light');
-    setTheme(initialTheme);
-  }, []);
+    
+    const applyTheme = () => {
+        let effectiveTheme: 'light' | 'dark';
+        if (theme === 'system') {
+            effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        } else {
+            effectiveTheme = theme;
+        }
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+        if (effectiveTheme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+    };
+
+    applyTheme();
+
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {
+        console.error("Failed to save theme to localStorage", error);
     }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', applyTheme);
+
+    return () => mediaQuery.removeEventListener('change', applyTheme);
+}, [theme]);
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
-    setConfig((prev) => ({ ...prev, ...newConfig }));
-  }, []);
+    const updatedConfig = { ...config, ...newConfig, stylePresetId: calculatorMode === 'basic' ? config.stylePresetId : undefined };
+    setConfig(updatedConfig);
+  }, [calculatorMode, config]);
 
-  const handleBakeTypeChange = useCallback((bakeType: BakeType) => {
-    const isPizza = bakeType === BakeType.PIZZA;
-    const newStyle = isPizza ? RecipeStyle.NEAPOLITAN : RecipeStyle.SOURDOUGH;
-    const preset = RECIPE_STYLE_PRESETS[newStyle] || {};
-    setConfig((prev) => ({
-      ...DEFAULT_CONFIG,
-      ...prev,
-      bakeType,
-      recipeStyle: newStyle,
-      ...preset,
-    }));
-  }, []);
+  const onCalculatorModeChange = useCallback((newMode: 'basic' | 'advanced') => {
+    setCalculatorMode(newMode);
+    if (newMode === 'basic') {
+      const preset = DOUGH_STYLE_PRESETS.find(p => p.recipeStyle === config.recipeStyle);
+      if (preset) {
+        const { defaultHydration, defaultSalt, defaultOil, defaultSugar } = preset;
+        setConfig(prev => ({
+          ...prev,
+          hydration: defaultHydration,
+          salt: defaultSalt,
+          oil: defaultOil,
+          sugar: defaultSugar || 0,
+          stylePresetId: preset.id,
+        }));
+      }
+    }
+  }, [config.recipeStyle]);
 
-  const handleStyleChange = useCallback((style: RecipeStyle) => {
-    const preset = RECIPE_STYLE_PRESETS[style] || {};
-    setConfig((prev) => ({ ...prev, recipeStyle: style, ...preset }));
-  }, []);
+  const handleBakeTypeChange = useCallback(
+    (bakeType: BakeType) => {
+      const isPizza = bakeType === BakeType.PIZZA;
+      const targetType = isPizza ? 'pizza' : 'bread';
+      const firstMatchingPreset = DOUGH_STYLE_PRESETS.find(
+        (p) => p.type === targetType,
+      );
+
+      if (firstMatchingPreset) {
+        const newStyle = firstMatchingPreset.recipeStyle;
+        const { defaultHydration, defaultSalt, defaultOil, defaultYeastPct, defaultSugar, preferredFlourProfileId } =
+          firstMatchingPreset;
+        const presetValues: Partial<DoughConfig> = {
+          hydration: defaultHydration,
+          salt: defaultSalt,
+          oil: defaultOil,
+          sugar: defaultSugar || 0,
+        };
+        
+        if (defaultYeastPct !== undefined && !isAnySourdough(config.yeastType)) {
+            presetValues.yeastPercentage = defaultYeastPct;
+        }
+        if (preferredFlourProfileId) {
+            presetValues.flourId = preferredFlourProfileId;
+        }
+
+        setConfig((prev) => ({
+          ...initialConfig,
+          ...prev,
+          bakeType,
+          recipeStyle: newStyle,
+          ...presetValues,
+          stylePresetId: firstMatchingPreset.id,
+        }));
+      } else {
+        const newStyle = isPizza ? RecipeStyle.NEAPOLITAN : RecipeStyle.COUNTRY_LOAF;
+        setConfig((prev) => ({ ...prev, bakeType, newStyle, stylePresetId: undefined }));
+      }
+    },
+    [initialConfig, config.yeastType],
+  );
+
+  const handleStyleChange = useCallback((presetId: string) => {
+    const preset = DOUGH_STYLE_PRESETS.find((p) => p.id === presetId);
+    if (preset) {
+      const { defaultHydration, defaultSalt, defaultOil, defaultYeastPct, defaultSugar, preferredFlourProfileId, recipeStyle } = preset;
+      const presetValues: Partial<DoughConfig> = {
+        hydration: defaultHydration,
+        salt: defaultSalt,
+        oil: defaultOil,
+        sugar: defaultSugar || 0,
+      };
+      if (defaultYeastPct !== undefined && !isAnySourdough(config.yeastType)) {
+          presetValues.yeastPercentage = defaultYeastPct;
+      }
+      if (preferredFlourProfileId) {
+          presetValues.flourId = preferredFlourProfileId;
+      }
+      setConfig((prev) => ({ ...prev, recipeStyle, ...presetValues, stylePresetId: preset.id }));
+    }
+  }, [config.yeastType]);
 
   const handleYeastTypeChange = useCallback((yeastType: YeastType) => {
     setConfig((prev) => {
-      const newConfig = { ...prev, yeastType };
-      if (yeastType === YeastType.SOURDOUGH) {
-        // Sourdough acts as its own preferment. We set technique to POOLISH
-        // to trigger the indirect UI, and set a default 20% starter.
-        newConfig.fermentationTechnique = FermentationTechnique.POOLISH;
-        newConfig.yeastPercentage = 20;
-      } else if (prev.yeastType === YeastType.SOURDOUGH) {
-        // If switching away from sourdough, revert to a sane default.
+      const newConfig: Partial<DoughConfig> = { ...prev, yeastType, stylePresetId: undefined };
+      if (isAnySourdough(yeastType)) {
+        newConfig.fermentationTechnique = FermentationTechnique.DIRECT;
+        if(!isAnySourdough(prev.yeastType)) {
+            newConfig.yeastPercentage = 20;
+        }
+        if(yeastType === YeastType.USER_LEVAIN && levains.length > 0) {
+            const defaultLevain = levains.find(l => l.isDefault) || levains[0];
+            newConfig.levainId = defaultLevain.id;
+            if (user) {
+                logEvent('levain_pet_used_in_recipe', { userId: user.email, levainId: defaultLevain.id, recipeId: prev.stylePresetId || 'custom' });
+            }
+        }
+      } else if (isAnySourdough(prev.yeastType)) {
         newConfig.fermentationTechnique = FermentationTechnique.DIRECT;
         newConfig.yeastPercentage = 0.4;
       }
-      return newConfig;
+      return newConfig as DoughConfig;
     });
-  }, []);
+  }, [levains, user]);
 
   const handleLoadProRecipe = (newConfig: ProRecipe['config']) => {
-    setConfig((prev) => ({ ...prev, ...newConfig }));
-    setCurrentPage('calculator');
+    setConfig((prev) => ({ ...prev, ...newConfig, stylePresetId: undefined }));
+    navigate('calculator');
   };
+  
+  const handleStartBatch = useCallback(() => {
+    if (!results) return;
 
-  const handleGrantAccess = () => {
-    grantProAccess();
-    setCurrentPage('calculator');
-  };
-
-  const handleSaveConfig = useCallback(
-    (name: string) => {
-      setSavedConfigs((prev) => {
-        const existingIndex = prev.findIndex((c) => c.name === name);
-        // Create new config, default favorite to false
-        const newConfig: SavedDoughConfig = {
-          name,
-          config,
-          isFavorite: false,
-        };
-
-        if (existingIndex > -1) {
-          // If recipe name exists, overwrite it but preserve its favorite status
-          newConfig.isFavorite = prev[existingIndex].isFavorite;
-          const updatedConfigs = [...prev];
-          updatedConfigs[existingIndex] = newConfig;
-          alert(`Recipe "${name}" updated.`);
-          return updatedConfigs;
-        }
-        return [...prev, newConfig];
-      });
-    },
-    [config],
-  );
-
-  const handleDeleteConfig = useCallback((name: string) => {
-    if (confirm(`Are you sure you want to delete the recipe "${name}"?`)) {
-      setSavedConfigs((prev) => prev.filter((c) => c.name !== name));
+    const batchName = prompt(t('prompts.batch_name_title'), t('prompts.batch_name_default', {style: config.recipeStyle}));
+    if (batchName) {
+        const newBatch = addBatch({
+            name: batchName,
+            doughConfig: config,
+            doughResult: results,
+            status: BatchStatus.PLANNED,
+            isFavorite: false,
+        });
+        addToast(t('info.batch_started', { name: newBatch.name }), 'success');
+        navigate('mylab/fornadas');
     }
-  }, []);
+  }, [config, results, addBatch, navigate, t]);
 
-  const handleToggleFavorite = useCallback((name: string) => {
-    setSavedConfigs((prev) =>
-      prev.map((c) =>
-        c.name === name ? { ...c, isFavorite: !c.isFavorite } : c,
-      ),
-    );
-  }, []);
+
+  const handleLoadAndNavigate = useCallback((configToLoad: DoughConfig) => {
+    setConfig(configToLoad);
+    navigate('calculator');
+  }, [navigate]);
+
+  const handleCreateDraftAndNavigate = useCallback(() => {
+    const draft = createDraftBatch();
+    navigate(`batch/${draft.id}`);
+  }, [createDraftBatch, navigate]);
 
   const renderPage = () => {
-    switch (currentPage) {
+    const defaultOven = ovens.find(o => o.isDefault) || (ovens.length > 0 ? ovens[0] : undefined);
+    const selectedFlour = FLOURS.find(f => f.id === config.flourId);
+    
+    if (route === 'batch') {
+        return <BatchDetailPage batchId={routeParams} onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+    }
+    if (route === 'community' && routeParams) {
+        return <CommunityBatchDetailPage batchId={routeParams} onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} />;
+    }
+    if (route === 'mylab/levain/detail' && routeParams) {
+        return <LevainDetailPage levainId={routeParams} onNavigate={navigate} />;
+    }
+    if (route === 'mylab/consistency/detail' && routeParams) {
+        return <ConsistencyDetailPage seriesId={routeParams} onNavigate={navigate} />;
+    }
+
+    switch (route) {
+      case 'mylab':
+        return <MyLabPage onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+      case 'mylab/receitas':
+        return <MeuLabReceitasPage onNavigate={navigate} />;
+      case 'mylab/receitas/comparar':
+        return <CompareReceitasPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+      case 'mylab/massas':
+        return <MeuLabMassasPage onNavigate={navigate} />;
+      case 'mylab/farinhas':
+        return <MeuLabFarinhasPage onNavigate={navigate} />;
+      case 'mylab/fornadas':
+        return <MeuLabFornadasPage onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} />;
+      case 'mylab/diario-sensorial':
+        return <MeuLabDiarioSensorialPage onNavigate={navigate} />;
+      case 'mylab/comparacoes':
+        return <MeuLabComparacoesPage onNavigate={navigate} />;
+      case 'mylab/insights':
+        return <MeuLabInsightsPage onNavigate={navigate} />;
+      case 'mylab/timeline':
+        return <TimelinePage onNavigate={navigate} />;
+      case 'mylab/objetivos':
+        return <ObjectivesPage onNavigate={navigate} />;
+      case 'mylab/consistency':
+        return <ConsistencyListPage onNavigate={navigate} />;
+      case 'mylab/levain-pet':
+        return <MeuLabLevainPetPage />;
+      case 'mylab/levain':
+        return <LevainListPage onNavigate={navigate} />;
       case 'plans':
         return (
           <PlansPage
-            onGrantAccess={handleGrantAccess}
-            onNavigateHome={() => setCurrentPage('calculator')}
+            onGrantAccess={() => {}}
+            onNavigateHome={() => navigate('mylab')}
           />
         );
-      case 'tips':
-        return <TipsAndTechniquesPage onLoadRecipe={handleLoadProRecipe} />;
+      case 'learn':
+        return <LearnPage onNavigate={navigate} />;
+      case 'learn/fundamentals':
+        return <FundamentalsPage onNavigate={navigate} />;
+      case 'learn/methods':
+        return <MethodsPage onNavigate={navigate} />;
+      case 'learn/critical-ingredients':
+        return <CriticalIngredientsPage onNavigate={navigate} />;
+      case 'learn/ovens-heat':
+        return <OvensHeatPage onNavigate={navigate} />;
+      case 'learn/troubleshooting-guide':
+        return <TroubleshootingGuidePage onNavigate={navigate} />;
+      case 'learn/techniques':
+        return <TechniquesPage />;
+      case 'learn/fermentation':
+        return <FermentationPage />;
+      case 'learn/preferments':
+        return <PrefermentsPage />;
+      case 'learn/dough-science':
+        return <DoughSciencePage />;
+      case 'learn/oven-science':
+        return <OvenSciencePage />;
+      case 'learn/temperature-control':
+        return <TemperatureControlPage />;
+      case 'learn/storage':
+        return <StoragePage />;
+      case 'learn/hygiene-safety':
+        return <HygieneSafetyPage />;
+      case 'learn/equipment':
+        return <EquipmentPage />;
+      case 'learn/troubleshooting':
+        return <TroubleshootingPage />;
+      case 'learn/ingredients':
+        return <IngredientsPage onNavigate={navigate} />;
+      case 'learn/ingredients/flours':
+        return <IngredientsFloursPage />;
+      case 'learn/ingredients/yeasts':
+        return <YeastsPage />;
+      case 'learn/ingredients/cheeses':
+        return <CheesesPage />;
+      case 'learn/ingredients/meats':
+        return <MeatsPage />;
+      case 'learn/ingredients/vegetables':
+        return <VegetablesPage />;
+      case 'learn/ingredients/sauces':
+        return <SaucesPage />;
+      case 'learn/ingredients/oils-spices':
+        return <OilsSpicesPage />;
+       case 'learn/ingredients/oils':
+        return <OilsPage />;
+      case 'learn/ingredients/classic-combos':
+        return <ClassicCombosPage />;
+      case 'learn/ingredients/bold-combos':
+        return <BoldCombosPage />;
+      case 'learn/sensory-guide':
+        return <SensoryGuidePage />;
+      case 'learn/ingredients/pairing-tool':
+        return <PairingToolPage />;
+      case 'learn/ingredients/ready-toppings':
+        return <ReadyToppingsPage />;
+      case 'learn/chemistry-library':
+        return <ChemistryLibraryPage />;
+      case 'learn/style-guide':
+        return <StyleGuidePage />;
+      case 'learn/glossary':
+        return <GlossaryPage />;
+      case 'learn/oven-spring':
+        return <OvenSpringPage />;
+      case 'learn/fermentation-biochemistry':
+        return <FermentationBiochemistryPage />;
+      case 'learn/crumb-structure':
+        return <CrumbStructurePage />;
+      case 'learn/dough-aging':
+        return <DoughAgingPage />;
+      case 'learn/ambient-vs-cold-fermentation':
+        return <AmbientVsColdFermentationPage />;
+      case 'learn/mixing-techniques':
+        return <MixingTechniquesPage />;
+      case 'learn/balling-technique':
+        return <BallingTechniquePage />;
+      case 'learn/sensory-maturation':
+        return <SensoryMaturationPage />;
+      case 'learn/parbaking':
+        return <ParbakingPage />;
+      case 'learn/water':
+        return <WaterPage />;
+      case 'learn/salt':
+        return <SaltPage />;
+      case 'learn/sugars-malts-enzymes':
+        return <SugarsPage />;
+      case 'learn/fats':
+        return <FatsPage />;
+      case 'learn/tomato-preservation':
+        return <TomatoPreservationPage />;
+      case 'learn/white-sauces':
+        return <WhiteSaucesPage />;
+      case 'learn/special-sauces':
+        return <SpecialSaucesPage />;
+      case 'learn/low-moisture-cheeses':
+        return <LowMoistureCheesesPage />;
+      case 'learn/smoked-cheeses':
+        return <SmokedCheesesPage />;
+      case 'learn/cured-meats':
+        return <CuredMeatsPage />;
+      case 'learn/smoked-aromatics':
+        return <SmokedAromaticsPage />;
+      case 'learn/water-rich-vegetables':
+        return <WaterRichVegetablesPage />;
+      case 'learn/caramelizable-vegetables':
+        return <CaramelizableVegetablesPage />;
+      case 'learn/regional-combos':
+        return <RegionalCombosPage />;
+      case 'learn/sensory-profiles':
+        return <SensoryProfilesPage />;
       case 'profile':
-        return <ProfilePage />;
+        return <ProfilePage onNavigate={navigate} />;
+      case 'references':
+        return <ReferencesPage />;
+      case 'help':
+        return <HelpPage />;
+      case 'settings':
+        return <SettingsPage />;
+      case 'settings/theme':
+        return <ThemePage theme={theme} setTheme={setTheme} />;
+      case 'settings/language':
+        return <LanguagePage />;
+      case 'legal':
+        return <LegalIndexPage onNavigate={navigate} />;
+      case 'legal/terms':
+        return <TermsPage />;
+      case 'legal/privacy':
+        return <PrivacyPage />;
+      case 'legal/cookies':
+        return <CookiesPage />;
+      case 'legal/eula':
+        return <EulaPage />;
+      case 'legal/ip':
+        return <IpPage />;
+      case 'legal/contact':
+        return <ContactPage />;
+      case 'landing':
+        return <LandingPage />;
+      case 'toppings':
+        return <ToppingsIndexPage onLoadInspiration={handleLoadAndNavigate} />;
+      case 'tools-oven-analysis':
+        return <OvenAnalysisPage />;
+      case 'tools-doughbot':
+        return <DoughbotPage />;
+      case 'tools-pantry-pizza':
+        return <PantryPizzaPage />;
       case 'calculator':
+        return (
+          <CalculatorPage
+            config={config}
+            errors={errors}
+            onConfigChange={handleConfigChange}
+            onBakeTypeChange={handleBakeTypeChange}
+            onStyleChange={handleStyleChange}
+            onYeastTypeChange={handleYeastTypeChange}
+            onReset={() => setConfig({...initialConfig, stylePresetId: undefined })}
+            results={results}
+            unit={unit}
+            onUnitChange={setUnit}
+            unitSystem={unitSystem}
+            onStartBatch={handleStartBatch}
+            defaultOven={defaultOven}
+            selectedFlour={selectedFlour}
+            calculationMode={calculationMode}
+            onCalculationModeChange={setCalculationMode}
+            calculatorMode={calculatorMode}
+            onCalculatorModeChange={onCalculatorModeChange}
+            hasProAccess={hasProAccess}
+            onOpenPaywall={() => setIsPaywallModalOpen(true)}
+          />
+        );
+      case 'community':
+        return <CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />;
+      case 'flours':
+        return <MeuLabFarinhasPage onNavigate={navigate} />;
+      case 'lab':
       default:
         return (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
-            <div className="lg:sticky lg:top-24">
-              <CalculatorForm
-                config={config}
-                errors={errors}
-                onConfigChange={handleConfigChange}
-                onBakeTypeChange={handleBakeTypeChange}
-                onStyleChange={handleStyleChange}
-                onYeastTypeChange={handleYeastTypeChange}
-                onReset={() => setConfig(DEFAULT_CONFIG)}
-                unitSystem={unitSystem}
-                onUnitSystemChange={setUnitSystem}
-                hasProAccess={hasProAccess}
-                onOpenPaywall={() => setIsPaywallModalOpen(true)}
-              />
-            </div>
-            <div>
-              <ResultsDisplay
-                results={results}
-                config={config}
-                unit={unit}
-                onUnitChange={setUnit}
-                unitSystem={unitSystem}
-                hasProAccess={hasProAccess}
-                onOpenPaywall={() => setIsPaywallModalOpen(true)}
-              />
-            </div>
-          </div>
+          <MyLabPage
+            onNavigate={navigate}
+            onCreateDraftBatch={handleCreateDraftAndNavigate}
+            onLoadAndNavigate={handleLoadAndNavigate}
+          />
         );
     }
   };
 
-  const Header = () => (
-    <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <button
-          onClick={() => setCurrentPage('calculator')}
-          aria-label="Home"
-          className="flex items-center gap-2.5"
-        >
-          <DoughLabLogoIcon className="h-8 w-auto text-lime-500" />
-          <span className="hidden text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:block">
-            DoughLabPro
-          </span>
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() =>
-              hasProAccess ? setCurrentPage('tips') : setCurrentPage('plans')
-            }
-            className="hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-100 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800 sm:flex"
-          >
-            <BookOpenIcon className="h-4 w-4" />
-            <span>{t('header.tips')}</span>
-          </button>
-
-          {!hasProAccess && (
-            <button
-              onClick={() => setCurrentPage('plans')}
-              className="flex items-center gap-1.5 rounded-full bg-lime-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
-            >
-              <StarIcon className="h-4 w-4" />
-              <span>{t('header.go_pro')}</span>
-            </button>
-          )}
-
-          <ThemeToggle
-            theme={theme}
-            toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          />
-          <LanguageSwitcher />
-          <UserMenu
-            onNavigate={setCurrentPage}
-            onOpenAuthModal={() => setIsAuthModalOpen(true)}
-          />
-        </div>
-      </div>
-    </header>
-  );
-
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200">
-      <Header />
-
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {renderPage()}
-      </main>
-
-      <LoadConfigModal
-        isOpen={isLoadModalOpen}
-        onClose={() => setIsLoadModalOpen(false)}
-        configs={savedConfigs}
-        onLoad={setConfig}
-        onDelete={handleDeleteConfig}
-        onToggleFavorite={handleToggleFavorite}
+    <div className="min-h-screen bg-white font-sans text-neutral-900 transition-colors duration-300 dark:bg-neutral-900 dark:text-neutral-200">
+      <Navigation
+        activePage={route as PrimaryPage}
+        onNavigate={navigate}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
+        theme={theme}
+        setTheme={setTheme}
       />
+
+      <main className="container mx-auto px-4 py-8 md:py-10 pb-24 sm:pb-10">
+        {isAssistantOpen ? (
+          <AssistantPage 
+            config={config} 
+            results={results} 
+            defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
+            selectedFlour={FLOURS.find(f => f.id === config.flourId)}
+            lastBatch={lastBatch}
+            t={t}
+          />
+        ) : (
+          // FIX: Corrected ErrorBoundary usage by wrapping the rendered page.
+          // This resolves the "Property 'children' is missing" error.
+          <ErrorBoundary>{renderPage()}</ErrorBoundary>
+        )}
+      </main>
+      
+      {!isAssistantOpen && (
+         <FloatingActionButton 
+            onClick={() => setIsAssistantOpen(true)} 
+            label={t('assistant_page.title_short')}
+            isShifted={isSummaryBarVisible}
+         />
+      )}
+
+      {showLevainOnboarding && (
+        <LevainOnboardingModal
+            onComplete={handleOnboardingComplete}
+            onNavigate={navigate}
+        />
+      )}
+
+
       <PaywallModal
         isOpen={isPaywallModalOpen}
         onClose={() => setIsPaywallModalOpen(false)}
         onNavigateToPlans={() => {
           setIsPaywallModalOpen(false);
-          setCurrentPage('plans');
+          navigate('plans');
         }}
       />
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />
-
-      {currentPage === 'calculator' && results && (
+      
+      {isSummaryBarVisible && !isAssistantOpen && results && (
         <MobileSummaryBar
           totalDough={results.totalDough}
           unit={unit}
-          onSave={handleSaveConfig}
-          onLoad={() => setIsLoadModalOpen(true)}
-          onNavigateToPlans={() => setCurrentPage('plans')}
+          onStartBatch={handleStartBatch}
         />
       )}
     </div>
@@ -833,11 +1012,13 @@ function AppContent() {
 function App() {
   return (
     <I18nProvider>
-      <UserProvider>
+      <FirebaseAuthProvider>
         <ToastProvider>
+         <UserProvider>
           <AppContent />
+          </UserProvider>
         </ToastProvider>
-      </UserProvider>
+      </FirebaseAuthProvider>
     </I18nProvider>
   );
 }

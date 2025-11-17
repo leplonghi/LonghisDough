@@ -8,8 +8,8 @@ interface LoadConfigModalProps {
   onClose: () => void;
   configs: SavedDoughConfig[];
   onLoad: (config: DoughConfig) => void;
-  onDelete: (name: string) => void;
-  onToggleFavorite: (name: string) => void;
+  onDelete: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
@@ -55,12 +55,12 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
             id="load-config-title"
             className="text-xl font-bold text-slate-900 dark:text-white"
           >
-            {t('load_modal.title')}
+            {t('modals.load.title')}
           </h2>
           <button
             onClick={onClose}
             className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
-            aria-label={t('load_modal.close_aria')}
+            aria-label={t('modals.close')}
           >
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -75,7 +75,7 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
                 : 'bg-transparent text-slate-600 dark:text-slate-300'
             }`}
           >
-            All Recipes
+            {t('modals.load.all')}
           </button>
           <button
             onClick={() => setView('favorites')}
@@ -85,29 +85,29 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
                 : 'bg-transparent text-slate-600 dark:text-slate-300'
             }`}
           >
-            Favorites
+            {t('modals.load.favorites')}
           </button>
         </div>
 
         <div className="mt-4 max-h-80 min-h-[10rem] space-y-2 overflow-y-auto pr-2">
           {filteredConfigs.length > 0 ? (
-            filteredConfigs.map(({ name, config, isFavorite }) => (
+            filteredConfigs.map((savedConfig) => (
               <div
-                key={name}
+                key={savedConfig.id}
                 className="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-700/50"
               >
                 <span className="font-medium text-slate-800 dark:text-slate-200">
-                  {name}
+                  {savedConfig.name}
                 </span>
                 <div className="flex items-center space-x-1 sm:space-x-2">
                   <button
-                    onClick={() => onToggleFavorite(name)}
+                    onClick={() => onToggleFavorite(savedConfig.id)}
                     className={`rounded-full p-2 transition-colors hover:bg-yellow-100 dark:hover:bg-yellow-500/10 ${
-                      isFavorite ? 'text-yellow-400' : 'text-slate-400'
+                      savedConfig.isFavorite ? 'text-yellow-400' : 'text-slate-400'
                     }`}
-                    aria-label={`Mark ${name} as favorite`}
+                    aria-label={`Mark ${savedConfig.name} as favorite`}
                   >
-                    {isFavorite ? (
+                    {savedConfig.isFavorite ? (
                       <SolidStarIcon className="h-5 w-5" />
                     ) : (
                       <StarIcon className="h-5 w-5" />
@@ -115,17 +115,17 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      onLoad(config);
+                      onLoad(savedConfig.doughConfig);
                       onClose();
                     }}
                     className="rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
                   >
-                    {t('load_modal.load')}
+                    {t('modals.presets.load')}
                   </button>
                   <button
-                    onClick={() => onDelete(name)}
+                    onClick={() => onDelete(savedConfig.id)}
                     className="rounded-full p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10"
-                    aria-label={`${t('load_modal.delete_aria')} ${name}`}
+                    aria-label={`${t('modals.load.delete_aria')} ${savedConfig.name}`}
                   >
                     <TrashIcon className="h-5 w-5" />
                   </button>
@@ -135,8 +135,8 @@ const LoadConfigModal: React.FC<LoadConfigModalProps> = ({
           ) : (
             <p className="py-8 text-center text-slate-500 dark:text-slate-400">
               {view === 'favorites'
-                ? 'You have no favorite recipes.'
-                : t('load_modal.no_configs')}
+                ? t('modals.load.empty_favorites')
+                : t('modals.load.empty')}
             </p>
           )}
         </div>

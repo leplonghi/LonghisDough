@@ -1,30 +1,24 @@
-
-
 import React from 'react';
 import {
   WeightIcon,
   SaveIcon,
-  FolderIcon,
+  BatchesIcon,
   StarIcon,
 } from './IconComponents';
 import { Unit } from '../types';
 import { useTranslation } from '../i18n';
-import { useUser } from '../App';
+import { useUser } from '../contexts/UserProvider';
 
 interface MobileSummaryBarProps {
   totalDough: number;
   unit: Unit;
-  onSave: (name: string) => void;
-  onLoad: () => void;
-  onNavigateToPlans: () => void;
+  onStartBatch: () => void;
 }
 
 const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   totalDough,
   unit,
-  onSave,
-  onLoad,
-  onNavigateToPlans,
+  onStartBatch,
 }) => {
   const { t } = useTranslation();
   const { hasProAccess } = useUser();
@@ -35,16 +29,7 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   const displayUnit = t(`units.${unit === 'volume' ? 'g' : unit}`);
 
   const handleSaveClick = () => {
-    // This check is slightly redundant since the button is only shown to pros,
-    // but it's good practice for robustness.
-    if (!hasProAccess) {
-      onNavigateToPlans();
-      return;
-    }
-    const name = prompt(t('form.prompt_config_name'));
-    if (name && name.trim()) {
-      onSave(name.trim());
-    }
+    onStartBatch();
   };
 
   return (
@@ -63,34 +48,18 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
           </div>
         </div>
 
-        {hasProAccess ? (
+        
           <div className="flex items-center space-x-2">
             <button
-              onClick={onLoad}
-              aria-label={t('footer.saved_recipes')}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 font-semibold text-slate-700 transition-colors hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
-            >
-              <FolderIcon className="h-6 w-6" />
-            </button>
-            <button
               onClick={handleSaveClick}
-              aria-label={t('footer.save_recipe')}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500 font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
+              aria-label={t('footer.start_batch')}
+              className="flex h-10 items-center justify-center rounded-lg bg-lime-500 px-4 font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
             >
-              <SaveIcon className="h-6 w-6" />
+              <BatchesIcon className="h-5 w-5 mr-2" />
+              {t('footer.start_batch')}
             </button>
           </div>
-        ) : (
-          <div>
-            <button
-              onClick={onNavigateToPlans}
-              className="flex items-center gap-1.5 rounded-full bg-lime-500 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
-            >
-              <StarIcon className="h-4 w-4" />
-              <span>{t('footer.upgrade_to_pro')}</span>
-            </button>
-          </div>
-        )}
+        
       </div>
     </div>
   );

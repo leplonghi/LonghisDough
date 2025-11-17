@@ -1,5 +1,7 @@
 
 
+
+
 import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import {
@@ -8,11 +10,10 @@ import {
   SaveIcon,
   DownloadIcon,
   ShieldCheckIcon,
-  ScaleIcon,
   BookOpenIcon,
   CheckCircleIcon,
 } from './IconComponents';
-import { useUser } from '../App';
+import { useUser } from '../contexts/UserProvider';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -40,7 +41,7 @@ const Feature: React.FC<{
   </div>
 );
 
-const PaywallModal: React.FC<PaywallModalProps> = ({
+export const PaywallModal: React.FC<PaywallModalProps> = ({
   isOpen,
   onClose,
   onNavigateToPlans,
@@ -92,7 +93,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 z-10 rounded-full p-1 text-slate-500 hover:bg-slate-200 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-700"
-          aria-label={t('load_modal.close_aria')}
+          aria-label={t('modals.close')}
           disabled={!!showSuccess}
         >
           <CloseIcon className="h-6 w-6" />
@@ -132,13 +133,6 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
                 title={t('paywall.feature_pro_recipes')}
                 description={t('paywall.feature_pro_recipes_desc')}
               />
-              <Feature
-                icon={
-                  <ShieldCheckIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />
-                }
-                title={t('paywall.feature_ads')}
-                description={t('paywall.feature_ads_desc')}
-              />
             </div>
 
             <div className="mt-8">
@@ -153,7 +147,7 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
               <div className="my-4 flex items-center">
                 <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
                 <span className="mx-4 flex-shrink text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
-                  OR
+                  {t('paywall.or_divider')}
                 </span>
                 <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
               </div>
@@ -161,37 +155,27 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
               <button
                 onClick={() => handleGrant('pass')}
                 disabled={isPassOnCooldown}
-                className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-800 dark:disabled:bg-slate-700/50 dark:disabled:text-slate-500"
+                className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300/50 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:disabled:bg-slate-700/50"
               >
                 {isPassOnCooldown
-                  ? t('paywall.pass_cooldown_message', {
+                  ? t('paywall.cooldown_button', {
                       hours: cooldownHoursRemaining,
                     })
-                  : t('paywall.cta_pass_button')}
+                  : t('paywall.pass_button')}
               </button>
-
-              {onNavigateToPlans && (
-                <div className="mt-4 text-center">
-                  <button
-                    onClick={onNavigateToPlans}
-                    className="text-sm font-medium text-lime-600 hover:underline dark:text-lime-400"
-                  >
-                    {t('paywall.restore_purchase')}
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
+        {/* Success State Overlay */}
         {showSuccess && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center dark:bg-slate-800 animate-[fadeIn_0.3s_ease-out]">
-            <CheckCircleIcon className="mx-auto h-16 w-16 text-lime-500" />
-            <h2 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
+            <CheckCircleIcon className="h-16 w-16 text-lime-500" />
+            <h3 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
               {showSuccess}
-            </h2>
+            </h3>
             <p className="mt-2 text-slate-600 dark:text-slate-300">
-              {t('paywall.success_message')}
+              {t('paywall.success_subtitle')}
             </p>
           </div>
         )}
@@ -199,5 +183,3 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
     </div>
   );
 };
-
-export default PaywallModal;

@@ -1,0 +1,58 @@
+import { ReferenceItem } from './types';
+
+export const REFERENCES: ReferenceItem[] = [
+  {
+    id: 'avpn',
+    source: 'Associazione Verace Pizza Napoletana',
+    title: 'Regulamento Internacional da AVPN',
+    type: 'Regulamento Oficial',
+    link: 'https://www.pizzanapoletana.org/it/ricetta_pizza_napoletana',
+    summary: 'Define as regras estritas para a autêntica pizza napolitana, incluindo ingredientes (farinha 00 W 250-310, água, sal, fermento), proibindo gorduras e açúcares. Detalha o processo de fermentação e cozimento em forno a lenha a 430-480°C.',
+    tags: ['pizza', 'napolitana', 'regulamento', 'farinha'],
+  },
+  {
+    id: 'serious_eats_ny',
+    source: 'Serious Eats',
+    title: 'New York-Style Pizza Recipe',
+    type: 'Site',
+    link: 'https://www.seriouseats.com/new-york-style-pizza-recipes',
+    summary: 'Um guia detalhado para a pizza estilo NY, destacando o uso de farinha de alta proteína, a adição de óleo e açúcar para cor e textura, e a importância de uma longa fermentação a frio. Recomenda o uso de um "baking steel" para melhores resultados em fornos domésticos.',
+    tags: ['pizza', 'ny-style', 'forno', 'fermentação'],
+  },
+  {
+    id: 'king_arthur_ddt',
+    source: 'King Arthur Baking',
+    title: 'Desired Dough Temperature (DDT)',
+    type: 'Guia Técnico',
+    link: 'https://www.kingarthurbaking.com/pro/reference/desired-dough-temperature',
+    summary: 'Explica a importância de controlar a temperatura final da massa para uma fermentação previsível. Apresenta a fórmula para calcular a temperatura da água necessária, levando em conta a temperatura ambiente, da farinha e o fator de fricção da amassadeira.',
+    tags: ['técnica', 'fermentação', 'temperatura', 'ddt'],
+  },
+  {
+    id: 'chainbaker_cold',
+    source: 'ChainBaker',
+    title: 'Cold Fermentation',
+    type: 'Site',
+    link: 'https://www.chainbaker.com/cold-bulk-fermentation/',
+    summary: 'Analisa os benefícios da fermentação a frio (retardo na geladeira), que desacelera a produção de gás do fermento enquanto a atividade enzimática continua, resultando em sabores mais complexos e uma massa mais digerível e extensível.',
+    tags: ['técnica', 'fermentação', 'sabor'],
+  },
+  {
+    id: 'pizzablab_gluten',
+    source: 'PizzaBlab',
+    title: 'Gluten Development',
+    type: 'Guia Técnico',
+    link: 'https://pizzablab.com/gluten-development-for-pizza-dough/',
+    summary: 'Detalha a formação da rede de glúten a partir das proteínas gliadina e glutenina. Explica como a hidratação, a sova e o tempo (autólise) contribuem para criar uma massa com a elasticidade e extensibilidade ideais para a pizza.',
+    tags: ['técnica', 'glúten', 'farinha', 'amassamento'],
+  },
+  {
+    id: 'pizza_today_detroit',
+    source: 'Pizza Today',
+    title: 'The Detroiter: A Slice of the Motor City',
+    type: 'Site',
+    link: 'https://www.pizzatoday.com/departments/in-the-kitchen/the-detroiter-a-slice-of-the-motor-city/',
+    summary: 'Descreve as características da pizza estilo Detroit, incluindo a massa de alta hidratação (historicamente 70%+), o uso de "brick cheese" e o cozimento em formas de aço retangulares que criam a icônica crosta de queijo caramelizado (frico).',
+    tags: ['pizza', 'detroit', 'pan-pizza'],
+  },
+];
