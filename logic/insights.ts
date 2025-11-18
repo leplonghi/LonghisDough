@@ -1,3 +1,4 @@
+
 import { Batch, UserInsights, RecipeStyle } from '../types';
 
 export function calculateUserInsights(batches: Batch[]): UserInsights {

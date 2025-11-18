@@ -38,15 +38,15 @@ export const DOUGH_WEIGHT_RANGES: { [key in RecipeStyle]?: string } = {
 };
 
 export const DEFAULT_CONFIG: DoughConfig = {
-  bakeType: BakeType.PIZZA,
+  bakeType: BakeType.PIZZAS,
   recipeStyle: RecipeStyle.NEAPOLITAN,
-  stylePresetId: 'pizza_napoletana_avpn',
+  stylePresetId: 'pizza_napolitana',
   numPizzas: 4,
   doughBallWeight: 250,
   hydration: 62,
-  salt: 2.8,
+  salt: 2.5,
   oil: 0,
-  sugar: 0,
+  sugar: 1,
   fermentationTechnique: FermentationTechnique.DIRECT,
   yeastType: YeastType.IDY,
   yeastPercentage: 0.2,
@@ -59,147 +59,40 @@ export const DEFAULT_CONFIG: DoughConfig = {
 };
 
 export const DOUGH_STYLE_PRESETS: DoughStylePreset[] = [
-    {
-      id: 'pizza_napoletana_avpn',
-      name: 'Pizza Napoletana AVPN',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.NEAPOLITAN,
-      defaultHydration: 60,
-      defaultSalt: 2.8,
-      defaultOil: 0,
-      notes: `• Farinha: Tipo 00 de moagem fina com força adequada para extensibilidade.\n• Textura: Massa macia, elástica, com cornicione inflado e interior leve.\n• Comportamento Térmico: Assamento extremamente rápido em piso de baixa condutividade (biscotto), com predominância de radiação.\n• Sabor: Notas lácticas suaves, leve acidez da fermentação, com foco no equilíbrio dos ingredientes.\n• Pré-fermentos: Opcional, mas tradicionalmente método direto.\n• Molho: Cru, brilhante, fresco.\n• Queijo: Fior di latte ou mozzarella de búfala.\n• Compatibilidade: Ideal para fornos de altíssima radiação.\n• Referências: AVPN, Modernist Pizza.`
-    },
-    {
-      id: 'pizza_new_york',
-      name: 'New York Style',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.NEW_YORK,
-      defaultHydration: 63,
-      defaultSalt: 2.5,
-      defaultOil: 2.0,
-      notes: `• Farinha: Farinha com força média a alta para suportar fatias grandes e dobráveis.\n• Textura: Base firme e levemente crocante, interior macio. Fatia dobrável sem quebrar.\n• Comportamento Térmico: Assamento moderado, com maior influência de condução e convecção.\n• Sabor: Molho cozido com notas profundas, toque de óleo opcional na massa.\n• Pré-fermentos: Opcional, muitos usam fermentação fria longa.\n• Molho: Cozido, mais encorpado e aromático.\n• Queijo: Mozzarella low-moisture (baixa umidade).\n• Compatibilidade: Excelente para fornos domésticos.\n• Referências: Modernist Pizza, Serious Eats.`
-    },
-    {
-      id: 'pizza_romana_pala_teglia',
-      name: 'Romana – Pala / Teglia',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.ROMAN,
-      defaultHydration: 78,
-      defaultSalt: 2.2,
-      defaultOil: 3.0,
-      notes: `• Farinha: Farinhas fortes com alta tolerância a fermentações longas.\n• Textura: Extremamente leve, alvéolos grandes, crocância pronunciada, interior aerado.\n• Comportamento Térmico: Assamento prolongado, ênfase em condução (formas de ferro/aço).\n• Sabor: Notas complexas de fermentação longa, aroma de trigo intenso.\n• Pré-fermentos: Comum o uso de Biga ou Poolish.\n• Molho: Pode ser cru ou cozido.\n• Queijo: Variado, conforme tradição local.\n• Compatibilidade: Ideal para fornos elétricos de deck.\n• Referências: Modernist Pizza, Bonci/Pizzarium.`
-    },
-    {
-      id: 'pizza_detroit',
-      name: 'Detroit Style',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.DETROIT,
-      defaultHydration: 70,
-      defaultSalt: 2.0,
-      defaultOil: 2.0,
-      notes: `• Farinha: Farinha de força para suportar alta hidratação e estrutura aerada.\n• Textura: Base espessa, macia e aerada, quase como uma focaccia, com bordas de queijo crocantes ("frico").\n• Comportamento Térmico: Assada em formas de aço retangulares que promovem uma base frita e crocante.\n• Sabor: Rico, com ênfase na borda de queijo caramelizado.\n• Pré-fermentos: Opcionais, mas a fermentação fria longa é comum.\n• Molho: Tradicionalmente aplicado em faixas sobre o queijo.\n• Queijo: Brick cheese ou mistura de mozzarella low-moisture.\n• Compatibilidade: Perfeita para fornos domésticos.\n• Referências: Pizza Today, Modernist Pizza.`
-    },
-    {
-      id: 'pizza_teglia_pan_alta',
-      name: 'Teglia / Pan Pizza Alta',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.PAN_PIZZA,
-      defaultHydration: 75,
-      defaultSalt: 2.2,
-      defaultOil: 4.0,
-      notes: `• Farinha: Farinha de força para desenvolver um miolo aberto e aerado.\n• Textura: Miolo muito leve, macio e cheio de alvéolos, com uma base dourada e crocante devido ao óleo na forma.\n• Comportamento Térmico: Assamento mais lento em temperatura moderada para cozinhar o interior espesso.\n• Sabor: Foco na textura da massa e no sabor do azeite.\n• Pré-fermentos: Biga ou Poolish são frequentemente usados.\n• Molho/Queijo: Versátil, suporta coberturas mais generosas.\n• Compatibilidade: Excelente para fornos domésticos.\n• Referências: Panificação italiana moderna.`
-    },
-    {
-      id: 'pizza_focaccia_americana',
-      name: 'Focaccia / Pan Pizza Americana',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.FOCACCIA,
-      defaultHydration: 65,
-      defaultSalt: 1.8,
-      defaultOil: 5.0,
-      notes: `• Farinha: Farinha de força média.\n• Textura: Massa rica e macia, com uma base distintamente frita e crocante, resultado do cozimento em uma forma bem untada com óleo.\n• Comportamento Térmico: Cozimento em temperatura moderada.\n• Sabor: Rico e amanteigado, com a massa sendo uma parte central da experiência.\n• Pré-fermentos: Geralmente método direto.\n• Molho/Queijo: Tradicionalmente com coberturas generosas que vão até a borda.\n• Compatibilidade: Estilo clássico de redes de pizzaria americanas, adaptado para fornos domésticos.\n• Referências: Pizza Hut pan pizza (histórico), Serious Eats.`
-    },
-    {
-      id: 'massa_direta_universal',
-      name: 'Massa Direta Universal',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.THIN_CRUST,
-      defaultHydration: 62,
-      defaultSalt: 2.0,
-      defaultOil: 2.0,
-      notes: `• Farinha: Farinha de uso geral ou tipo 1, flexível.\n• Textura: Equilibrada, nem muito crocante, nem muito macia. Um ponto de partida.\n• Comportamento Térmico: Projetada para ser versátil em fornos domésticos.\n• Sabor: Perfil de sabor neutro, focado nos ingredientes da cobertura.\n• Pré-fermentos: Nenhum, método direto para simplicidade e rapidez.\n• Lógica: Um preset base para iniciantes, para ser modificado e explorado no Modo Avançado.\n• Referências: Princípios básicos de panificação.`
-    },
-    {
-      id: 'fermentacao_natural_levain',
-      name: 'Fermentação Natural — Levain',
-      type: 'bread',
-      recipeStyle: RecipeStyle.SOURDOUGH,
-      defaultHydration: 75,
-      defaultSalt: 2.0,
-      defaultOil: 0,
-      notes: `• Farinha: Requer farinhas com boa estrutura para suportar a acidez e a fermentação longa.\n• Textura: Miolo mais úmido e mastigável, com alvéolos irregulares.\n• Comportamento Térmico: A acidez pode promover um douramento mais rápido.\n• Sabor: Complexo, com notas ácidas (láticas e acéticas) que variam conforme a cultura do levain.\n• Pré-fermentos: O próprio levain é o pré-fermento.\n• Lógica: Este preset explica o impacto do levain em qualquer massa, mais do que um estilo próprio.\n• Referências: King Arthur Baking, Modernist Bread.`
-    },
-    {
-      id: 'forno_domestico_otimizacao',
-      name: 'Otimização para Forno Doméstico',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.NY_STYLE,
-      defaultHydration: 63,
-      defaultSalt: 2.2,
-      defaultOil: 2.0,
-      notes: `• Farinha: Farinha de força média a alta.\n• Textura: Busca maximizar a crocância da base e a maciez interna em temperaturas limitadas.\n• Comportamento Térmico: Otimizada para assamento mais longo em temperaturas mais baixas. O uso de óleo e/ou açúcar ajuda na maciez e no douramento.\n• Lógica: Um preset conceitual que aplica os princípios para obter o melhor resultado possível em um forno doméstico, geralmente se aproximando de um NY Style.\n• Compatibilidade: Ideal com uma superfície de alta condução, como uma chapa de aço.\n• Referências: Serious Eats - The Pizza Lab.`
-    },
-    {
-      id: 'pizza_fina_crocante',
-      name: 'Pizza Fina Crocante (Cracker)',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.THIN_CRUST,
-      defaultHydration: 55,
-      defaultSalt: 1.8,
-      defaultOil: 4.0,
-      notes: `• Farinha: Farinha de baixa a média força.\n• Textura: Extremamente fina, crocante e quebradiça, como uma bolacha. Sem borda inflada.\n• Comportamento Térmico: A massa é aberta com rolo para expelir o gás e garantir a finura. Assa rapidamente.\n• Sabor: Foco na crocância e nos ingredientes da cobertura.\n• Pré-fermentos: Nenhum, método direto.\n• Lógica: Baixa hidratação e um percentual de óleo mais alto são chaves para a textura crocante.\n• Referências: Panificação de massa laminada.`
-    },
-    {
-      id: 'chicago_tavern_style',
-      name: 'Chicago Tavern Style',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.CHICAGO,
-      defaultHydration: 58,
-      defaultSalt: 1.5,
-      defaultOil: 3.0,
-      notes: `• Farinha: Farinha de força média.\n• Textura: Fina e muito crocante, quase como uma bolacha, mas firme o suficiente para suportar as coberturas. Sem borda.\n• Comportamento Térmico: Coberturas espalhadas até a borda. Cortada em quadrados ("party cut" ou "tavern cut").\n• Sabor: Foco na combinação de massa crocante e coberturas.\n• Lógica: É o estilo de pizza mais antigo e popular de Chicago, não o deep-dish.\n• Compatibilidade: Excelente para fornos domésticos.\n• Referências: Pizza a la Grande, Chicago food history.`
-    },
-    {
-      id: 'siciliana_quadrada',
-      name: 'Siciliana Quadrada',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.SICILIAN,
-      defaultHydration: 68,
-      defaultSalt: 2.0,
-      defaultOil: 4.0,
-      notes: `• Farinha: Farinha de força média a alta.\n• Textura: Miolo espesso, muito macio e esponjoso, semelhante a uma focaccia. Base dourada e crocante devido ao óleo na forma.\n• Comportamento Térmico: Assada em forma retangular untada.\n• Sabor: Massa rica em sabor, com um molho de tomate simples e queijo.\n• Lógica: O estilo original siciliano, levado aos EUA por imigrantes.\n• Compatibilidade: Perfeita para fornos domésticos.\n• Referências: Tradição ítalo-americana.`
-    },
-    {
-      id: 'grandma_style',
-      name: 'Grandma Style',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.PAN_PIZZA,
-      defaultHydration: 65,
-      defaultSalt: 2.0,
-      defaultOil: 3.0,
-      notes: `• Farinha: Farinha de uso geral ou de força média.\n• Textura: Massa mais fina que a Siciliana, com uma base distintamente crocante e frita. O miolo é mais denso que o de uma focaccia, mas ainda macio.\n• Comportamento Térmico: Fermentada diretamente na forma untada, resultando em uma textura única.\n• Sabor: Pizza caseira, com molho por cima do queijo.\n• Lógica: Originada das cozinhas de avós ítalo-americanas em Long Island, NY.\n• Compatibilidade: Perfeita para fornos domésticos.\n• Referências: História da pizza de Long Island, Bon Appétit.`
-    },
-    {
-      id: 'pizza_classica_brasileira',
-      name: 'Pizza "Clássica Brasileira"',
-      type: 'pizza',
-      recipeStyle: RecipeStyle.PAN_PIZZA,
-      defaultHydration: 60,
-      defaultSalt: 1.8,
-      defaultOil: 3.0,
-      notes: `• Farinha: Farinha de trigo tipo 1, de uso geral.\n• Textura: Massa de espessura média, macia e com uma base levemente crocante. Borda presente, mas não muito inflada.\n• Comportamento Térmico: Adaptada para fornos a gás ou elétricos de pizzarias, com assamento moderado.\n• Sabor: Foco na abundância de cobertura. A massa serve como uma base neutra e macia.\n• Molho/Queijo: Molho de tomate cozido e mozzarella em quantidade generosa são a base.\n• Lógica: Representa o estilo popularizado nas pizzarias de São Paulo e do Brasil desde meados do século XX.\n• Referências: História da gastronomia de São Paulo.`
-    }
+  // --- PIZZAS ---
+  { id: 'pizza_napolitana', name: 'Napolitana', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.NEAPOLITAN, defaultHydration: 62, defaultSalt: 2.5, defaultOil: 0, defaultSugar: 1 },
+  { id: 'pizza_new_york', name: 'New York', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.NEW_YORK, defaultHydration: 58.5, defaultSalt: 2.25, defaultOil: 1.5, defaultSugar: 1 },
+  { id: 'pizza_pan', name: 'Pan Pizza', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.PAN_PIZZA, defaultHydration: 68.5, defaultSalt: 2.25, defaultOil: 5, defaultSugar: 3 },
+  { id: 'pizza_chicago', name: 'Chicago Deep Dish', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.CHICAGO_DEEP_DISH, defaultHydration: 50, defaultSalt: 1.75, defaultOil: 7, defaultSugar: 1.5 },
+  { id: 'pizza_romana_tonda', name: 'Romana Tonda', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.ROMANA_TONDA, defaultHydration: 56.5, defaultSalt: 2.5, defaultOil: 2, defaultSugar: 0 },
+  { id: 'pizza_siciliana', name: 'Siciliana', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.SICILIANA, defaultHydration: 70, defaultSalt: 2.25, defaultOil: 4, defaultSugar: 2 },
+  { id: 'pizza_grandma', name: 'Grandma/Retangular', type: BakeType.PIZZAS, recipeStyle: RecipeStyle.GRANDMA_STYLE, defaultHydration: 72.5, defaultSalt: 2, defaultOil: 3, defaultSugar: 2 },
+
+  // --- BREADS & SAVORY ---
+  { id: 'bread_pao_frances', name: 'Pão Francês', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.PAO_FRANCES, defaultHydration: 62.5, defaultSalt: 2, defaultOil: 0, defaultSugar: 1 },
+  { id: 'bread_baguette', name: 'Baguette', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.BAGUETTE, defaultHydration: 70, defaultSalt: 2, defaultOil: 0, defaultSugar: 0 },
+  { id: 'bread_ciabatta', name: 'Ciabatta', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.CIABATTA, defaultHydration: 80, defaultSalt: 2, defaultOil: 1.5, defaultSugar: 1 },
+  { id: 'bread_pumpernickel', name: 'Pumpernickel', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.PUMPERNICKEL, defaultHydration: 75, defaultSalt: 1.5, defaultOil: 0, defaultSugar: 4 },
+  { id: 'bread_rye', name: 'Rye (Centeio)', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.RYE, defaultHydration: 72.5, defaultSalt: 2, defaultOil: 0.5, defaultSugar: 1.5 },
+  { id: 'bread_pao_de_batata', name: 'Pão de batata', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.PAO_DE_BATATA, defaultHydration: 62.5, defaultSalt: 2, defaultOil: 4, defaultSugar: 9 },
+  { id: 'bread_focaccia', name: 'Focaccia', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.FOCACCIA, defaultHydration: 75, defaultSalt: 2.5, defaultOil: 7.5, defaultSugar: 0 },
+  { id: 'bread_challah', name: 'Challah', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.CHALLAH, defaultHydration: 62.5, defaultSalt: 1.75, defaultOil: 8.5, defaultSugar: 13.5 },
+  { id: 'bread_bagel', name: 'Bagel', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.BAGEL, defaultHydration: 57.5, defaultSalt: 2, defaultOil: 2.5, defaultSugar: 4 },
+  { id: 'bread_english_muffin', name: 'English Muffin', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.ENGLISH_MUFFIN, defaultHydration: 69.5, defaultSalt: 2, defaultOil: 2.5, defaultSugar: 3 },
+  { id: 'bread_pita', name: 'Pita', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.PITA, defaultHydration: 62.5, defaultSalt: 2, defaultOil: 2, defaultSugar: 1 },
+  { id: 'savory_massa_podre', name: 'Massa Podre Salgada', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.MASSA_PODRE, defaultHydration: 42.5, defaultSalt: 1.5, defaultOil: 45, defaultSugar: 0 },
+  { id: 'savory_massa_esfiha', name: 'Massa Esfiha/Quibe', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.MASSA_ESFIHA, defaultHydration: 62.5, defaultSalt: 2, defaultOil: 2.5, defaultSugar: 4 },
+  { id: 'savory_massa_torta', name: 'Massa básica torta salgada', type: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.MASSA_TORTA, defaultHydration: 50, defaultSalt: 2, defaultOil: 35, defaultSugar: 0 },
+
+  // --- SWEETS & PASTRY ---
+  { id: 'pastry_pate_sucree', name: 'Pâte Sucrée', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.PATE_SUCREE, defaultHydration: 5, defaultSalt: 0.5, defaultOil: 45, defaultSugar: 45 },
+  { id: 'pastry_sablee', name: 'Sablée', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.SABLEE, defaultHydration: 0, defaultSalt: 0.5, defaultOil: 52.5, defaultSugar: 52.5 },
+  { id: 'pastry_pound_cake', name: 'Pound Cake', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.POUND_CAKE, defaultHydration: 20, defaultSalt: 0.5, defaultOil: 100, defaultSugar: 100 },
+  { id: 'pastry_cookies', name: 'Cookies', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.COOKIES, defaultHydration: 10, defaultSalt: 1, defaultOil: 55, defaultSugar: 50 },
+  { id: 'pastry_pie_dough', name: 'Pie dough', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.PIE_DOUGH, defaultHydration: 20, defaultSalt: 1, defaultOil: 40, defaultSugar: 2 },
+  { id: 'pastry_bolo_simples', name: 'Bolo simples', type: BakeType.SWEETS_PASTRY, recipeStyle: RecipeStyle.BOLO_SIMPLES, defaultHydration: 40, defaultSalt: 1, defaultOil: 60, defaultSugar: 60 },
 ];
+
 
 export const YEAST_EQUIVALENCIES = {
   // Base is Instant Dry Yeast (IDY)
@@ -229,7 +122,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.neapolitan_title',
     descriptionKey: 'pro_recipes.neapolitan_desc',
     config: {
-      bakeType: BakeType.PIZZA,
+      bakeType: BakeType.PIZZAS,
       recipeStyle: RecipeStyle.NEAPOLITAN,
       numPizzas: 4,
       doughBallWeight: 250,
@@ -245,7 +138,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.ny_style_title',
     descriptionKey: 'pro_recipes.ny_style_desc',
     config: {
-        bakeType: BakeType.PIZZA,
+        bakeType: BakeType.PIZZAS,
         recipeStyle: RecipeStyle.NEW_YORK,
         numPizzas: 3,
         doughBallWeight: 350,
@@ -261,7 +154,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.sourdough_title',
     descriptionKey: 'pro_recipes.sourdough_desc',
     config: {
-      bakeType: BakeType.BREAD,
+      bakeType: BakeType.BREADS_SAVORY,
       recipeStyle: RecipeStyle.COUNTRY_LOAF,
       numPizzas: 2,
       doughBallWeight: 750,
@@ -277,7 +170,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.sourdough_baguette_title',
     descriptionKey: 'pro_recipes.sourdough_baguette_desc',
     config: {
-        bakeType: BakeType.BREAD,
+        bakeType: BakeType.BREADS_SAVORY,
         recipeStyle: RecipeStyle.BAGUETTE,
         numPizzas: 3, // loaves
         doughBallWeight: 300,
@@ -293,7 +186,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.focaccia_title',
     descriptionKey: 'pro_recipes.focaccia_desc',
     config: {
-      bakeType: BakeType.BREAD,
+      bakeType: BakeType.BREADS_SAVORY,
       recipeStyle: RecipeStyle.FOCACCIA,
       numPizzas: 1,
       doughBallWeight: 1000,
@@ -310,7 +203,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.roman_title',
     descriptionKey: 'pro_recipes.roman_desc',
     config: {
-      bakeType: BakeType.PIZZA,
+      bakeType: BakeType.PIZZAS,
       recipeStyle: RecipeStyle.ROMAN,
       numPizzas: 1,
       doughBallWeight: 1200,
@@ -327,7 +220,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.detroit_title',
     descriptionKey: 'pro_recipes.detroit_desc',
     config: {
-      bakeType: BakeType.PIZZA,
+      bakeType: BakeType.PIZZAS,
       recipeStyle: RecipeStyle.DETROIT,
       numPizzas: 1,
       doughBallWeight: 500,
@@ -343,7 +236,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.ciabatta_title',
     descriptionKey: 'pro_recipes.ciabatta_desc',
     config: {
-      bakeType: BakeType.BREAD,
+      bakeType: BakeType.BREADS_SAVORY,
       recipeStyle: RecipeStyle.CIABATTA,
       numPizzas: 2, // loaves
       doughBallWeight: 500,
@@ -360,7 +253,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.thin_crust_title',
     descriptionKey: 'pro_recipes.thin_crust_desc',
     config: {
-      bakeType: BakeType.PIZZA,
+      bakeType: BakeType.PIZZAS,
       recipeStyle: RecipeStyle.THIN_CRUST,
       numPizzas: 4,
       doughBallWeight: 220,
@@ -376,7 +269,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.sandwich_loaf_title',
     descriptionKey: 'pro_recipes.sandwich_loaf_desc',
     config: {
-      bakeType: BakeType.BREAD,
+      bakeType: BakeType.BREADS_SAVORY,
       recipeStyle: RecipeStyle.SANDWICH_LOAF,
       numPizzas: 1,
       doughBallWeight: 900,
@@ -392,7 +285,7 @@ export const PRO_RECIPES: ProRecipe[] = [
     nameKey: 'pro_recipes.chicago_title',
     descriptionKey: 'pro_recipes.chicago_desc',
     config: {
-      bakeType: BakeType.PIZZA,
+      bakeType: BakeType.PIZZAS,
       recipeStyle: RecipeStyle.CHICAGO,
       numPizzas: 1,
       doughBallWeight: 600,
@@ -453,11 +346,11 @@ export const INSPIRATION_BATCHES: InspirationBatch[] = [
     {
         id: 'insp-sourdough',
         name: 'Pão Rústico (Sourdough)',
-        config: { bakeType: BakeType.BREAD, recipeStyle: RecipeStyle.COUNTRY_LOAF, hydration: 78, salt: 2.0, yeastType: YeastType.SOURDOUGH_STARTER, yeastPercentage: 20 }
+        config: { bakeType: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.COUNTRY_LOAF, hydration: 78, salt: 2.0, yeastType: YeastType.SOURDOUGH_STARTER, yeastPercentage: 20 }
     },
     {
         id: 'insp-focaccia',
         name: 'Focaccia de Alta Hidratação',
-        config: { bakeType: BakeType.BREAD, recipeStyle: RecipeStyle.FOCACCIA, hydration: 80, salt: 2.5, oil: 5 }
+        config: { bakeType: BakeType.BREADS_SAVORY, recipeStyle: RecipeStyle.FOCACCIA, hydration: 80, salt: 2.5, oil: 5 }
     },
 ];

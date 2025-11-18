@@ -1,9 +1,4 @@
 
-
-
-
-
-
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { ExclamationCircleIcon } from './IconComponents';
 
@@ -15,16 +10,9 @@ interface State {
   hasError: boolean;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  // FIX: Switched to a constructor for state initialization.
-  // The class property syntax was causing TypeScript errors where `this.state`,
-  // `this.setState`, and `this.props` were not found on the component instance in this environment.
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-    // FIX: Manually bind `this` for the event handler because arrow function class properties are not correctly configured in the build setup.
-    this.handleTryAgain = this.handleTryAgain.bind(this);
-  }
+class ErrorBoundary extends React.Component<Props, State> {
+  // FIX: Use class property for state initialization.
+  state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {
     return { hasError: true };
@@ -34,10 +22,10 @@ class ErrorBoundary extends Component<Props, State> {
     console.error("DoughLabPro ErrorBoundary caught an error:", error, errorInfo);
   }
 
-  // FIX: Converted from an arrow function class property to a regular method to avoid issues with unsupported class property syntax.
-  handleTryAgain() {
+  // FIX: Use arrow function to automatically bind 'this'.
+  handleTryAgain = () => {
     this.setState({ hasError: false });
-  }
+  };
 
   render() {
     if (this.state.hasError) {

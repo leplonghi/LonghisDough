@@ -2,34 +2,57 @@ import React from 'react';
 import { Timestamp } from "firebase/firestore";
 
 export enum BakeType {
-  PIZZA = 'PIZZA',
-  BREAD = 'BREAD',
+  PIZZAS = 'PIZZAS',
+  BREADS_SAVORY = 'BREADS_SAVORY',
+  SWEETS_PASTRY = 'SWEETS_PASTRY',
 }
 
 export enum RecipeStyle {
-  // Classic Styles (some may be replaced by more specific ones but kept for compatibility)
+  // --- PIZZAS ---
   NEAPOLITAN = 'NEAPOLITAN',
-  NEW_YORK = 'NEW_YORK', // Replaces NY_STYLE
-  ROMAN = 'ROMAN',
-  FOCACCIA = 'FOCACCIA',
-  BAGUETTE = 'BAGUETTE',
-  
-  // New granular styles
+  NEW_YORK = 'NEW_YORK',
   PAN_PIZZA = 'PAN_PIZZA',
+  CHICAGO_DEEP_DISH = 'CHICAGO_DEEP_DISH',
+  ROMANA_TONDA = 'ROMANA_TONDA',
+  SICILIANA = 'SICILIANA',
+  GRANDMA_STYLE = 'GRANDMA_STYLE',
+
+  // --- BREADS & SAVORY ---
+  PAO_FRANCES = 'PAO_FRANCES',
+  BAGUETTE = 'BAGUETTE',
+  CIABATTA = 'CIABATTA',
+  PUMPERNICKEL = 'PUMPERNICKEL',
+  RYE = 'RYE',
+  PAO_DE_BATATA = 'PAO_DE_BATATA',
+  FOCACCIA = 'FOCACCIA',
+  CHALLAH = 'CHALLAH',
+  BAGEL = 'BAGEL',
+  ENGLISH_MUFFIN = 'ENGLISH_MUFFIN',
+  PITA = 'PITA',
+  MASSA_PODRE = 'MASSA_PODRE',
+  MASSA_ESFIHA = 'MASSA_ESFIHA',
+  MASSA_TORTA = 'MASSA_TORTA',
+
+  // --- SWEETS & PASTRY ---
+  PATE_SUCREE = 'PATE_SUCREE',
+  SABLEE = 'SABLEE',
+  POUND_CAKE = 'POUND_CAKE',
+  COOKIES = 'COOKIES',
+  PIE_DOUGH = 'PIE_DOUGH',
+  BOLO_SIMPLES = 'BOLO_SIMPLES',
+  
+  // Kept for potential compatibility with old saved data
+  ROMAN = 'ROMAN', // Replaced by more specific Romana Tonda
   THIN_CRUST = 'THIN_CRUST',
   COUNTRY_LOAF = 'COUNTRY_LOAF',
   SANDWICH_LOAF = 'SANDWICH_LOAF',
   FLATBREAD = 'FLATBREAD',
   DETROIT = 'DETROIT',
-
-  // Kept for potential compatibility with old saved data
   NY_STYLE = 'NY_STYLE',
   SICILIAN = 'SICILIAN',
   CHICAGO = 'CHICAGO',
   SOURDOUGH = 'SOURDOUGH',
-  CIABATTA = 'CIABATTA',
   BRIOCHE = 'BRIOCHE',
-  RYE = 'RYE',
 }
 
 export enum FermentationTechnique {
@@ -343,7 +366,9 @@ export type Page =
   | `mylab/consistency/${string}` // Actual URL pattern
   | 'mylab/levain-pet'
   | 'usermenu'
-  | 'toppings'
+  | 'pizzas'
+  | 'breads-and-savory'
+  | 'sweets-and-pastry'
   | 'tools-oven-analysis'
   | 'tools-doughbot'
   | 'tools-pantry-pizza'
@@ -430,7 +455,7 @@ export interface NavLinkItem {
 export interface DoughStylePreset {
   id: string;
   name: string;
-  type: 'pizza' | 'bread' | 'focaccia' | 'other';
+  type: BakeType;
   recipeStyle: RecipeStyle;
   defaultHydration: number;
   defaultSalt: number;
@@ -755,4 +780,29 @@ export interface LevainFeedingLog {
 export interface OnboardingState {
   isActive: boolean;
   step: number;
+}
+
+export interface PizzaRecipe {
+  id: string;
+  name: string;
+  // FIX: Add missing properties to align with usage in `ToppingsIndexPage`.
+  image?: string;
+  origin?: string;
+  dough: {
+    ballWeightG: number;
+    hydration: number;
+    styleId: string; // Corresponds to DoughStylePreset id
+  };
+  oven: {
+    tempC: number;
+  };
+  sauce: {
+    type: 'Tomate' | 'Branco' | 'Pesto' | 'Nenhum' | 'Outro';
+    grams: number;
+  };
+  toppings: {
+    main: string[];
+    grams: number;
+  };
+  techniqueNotes?: string;
 }

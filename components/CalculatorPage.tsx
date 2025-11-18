@@ -1,6 +1,3 @@
-
-
-
 import React, { useMemo, useState, useRef } from 'react';
 import CalculatorForm from '../components/CalculatorForm';
 import ResultsDisplay from '../components/ResultsDisplay';
@@ -21,9 +18,12 @@ import {
   CalculationMode,
   Levain,
   OnboardingState,
+  EnvironmentAdvice,
+  AdviceOvenType,
+  SurfaceType,
 } from '../types';
 import { getSmartAdjustments } from '../smartAdjustments';
-import { getEnvironmentAdjustments, EnvironmentAdjustments } from '../logic/environmentAdjustments';
+import { getEnvironmentAdjustments } from '../logic/environmentAdjustments';
 import { getAutoStyleInsights } from '../logic/autoStyleAdvisor';
 import UiModeToggle from '../components/calculator/UiModeToggle';
 import { applySmartAdjustments, AdjustmentChange } from '../logic/applySmartAdjustments';
@@ -98,10 +98,6 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
   const tempC = environmentTempMapping[props.config.ambientTemperature];
   const flourW = props.selectedFlour?.strengthW;
 
-  const environmentAdjustments = useMemo<EnvironmentAdjustments>(() => {
-    return getEnvironmentAdjustments(props.config, props.defaultOven, tempC, flourW);
-  }, [props.config, props.defaultOven, tempC, flourW]);
-
   const autoStyleInsights = useMemo<AutoStyleInsightsResult>(() => {
     return getAutoStyleInsights(props.config, tempC, flourW, props.defaultOven);
   }, [props.config, tempC, flourW, props.defaultOven]);
@@ -173,20 +169,17 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
           />
         </div>
         <div ref={resultsRef}>
+          {/* FIX: Removed unused props that were causing a type error. */}
           <ResultsDisplay
             results={props.results}
             config={props.config}
             unit={props.unit}
             onUnitChange={props.onUnitChange}
             unitSystem={props.unitSystem}
-            smartAdjustments={smartAdjustments}
-            environmentAdjustments={environmentAdjustments}
-            autoStyleInsights={autoStyleInsights}
             onConfigChange={props.onConfigChange}
             onStartBatch={props.onStartBatch}
             selectedFlour={props.selectedFlour}
             calculatorMode={props.calculatorMode}
-            onApplyAdjustments={handleApplyAdjustments}
             calculationMode={props.calculationMode} 
             hasProAccess={props.hasProAccess} 
             onOpenPaywall={props.onOpenPaywall}

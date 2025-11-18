@@ -3,7 +3,6 @@ import { Page } from '../types';
 import { useTranslation } from '../i18n';
 import UserMenu from './UserMenu';
 import {
-  DoughLabLogoIcon,
   CalculatorIcon,
   FeedIcon,
   AcademicCapIcon,
@@ -50,7 +49,6 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
     
     const toolItems = [
       { page: 'tools-oven-analysis' as Page, label: 'FormulaLab', icon: <FireIcon className="h-5 w-5" /> },
-      { page: 'toppings' as Page, label: 'Coberturas & Recheios', icon: <PizzaSliceIcon className="h-5 w-5" /> },
       { page: 'tools-doughbot' as Page, label: 'Massabo', icon: <SparklesIcon className="h-5 w-5" /> },
       { page: 'tools-pantry-pizza' as Page, label: 'Pizza de Despensa', icon: <ListBulletIcon className="h-5 w-5" /> },
       { page: 'references' as Page, label: 'Referências Técnicas', icon: <BookOpenIcon className="h-5 w-5" /> },
@@ -105,9 +103,11 @@ const Navigation: React.FC<NavigationProps> = ({
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left Section: Logo & main links */}
         <div className="flex items-center gap-6">
-          <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center gap-2.5">
-            <DoughLabLogoIcon className="h-8 w-auto text-lime-500" />
-            <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DoughLabPro</span>
+          <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center">
+            {/* Light theme logo */}
+            <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fescuro%20FINAL%20COMLETA.png?alt=media&token=abf76ee2-4052-45c8-bd06-1ebeba2c7487" alt="DoughLabPro Logo" className="h-8 w-auto block dark:hidden" />
+            {/* Dark theme logo */}
+            <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fbranco%20FINAL%20COMLETA.png?alt=media&token=0f160dc9-2e99-4f59-9eaa-9640e3437161" alt="DoughLabPro Logo" className="h-8 w-auto hidden dark:block" />
           </button>
           <nav className="flex items-center gap-1">
               <button
@@ -131,6 +131,17 @@ const Navigation: React.FC<NavigationProps> = ({
                 }`}
               >
                 {t('nav.calculator')}
+              </button>
+              <button
+                key="pizzas"
+                onClick={() => handleNavigate('pizzas')}
+                className={`rounded-md px-3 py-2 text-sm font-semibold transition-colors ${
+                  activePage === 'pizzas'
+                    ? 'text-lime-600 dark:text-lime-400'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100'
+                }`}
+              >
+                Pizzas
               </button>
               <button
                 key="learn"
@@ -169,9 +180,11 @@ const Navigation: React.FC<NavigationProps> = ({
   const MobileHeader = () => (
     <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm dark:border-slate-700/80 dark:bg-slate-900/80 sm:hidden">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-            <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center gap-2">
-                <DoughLabLogoIcon className="h-8 w-auto text-lime-500" />
-                <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">DoughLabPro</span>
+            <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center">
+                {/* Light theme logo */}
+                <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fescuro%20FINAL%20COMLETA.png?alt=media&token=abf76ee2-4052-45c8-bd06-1ebeba2c7487" alt="DoughLabPro Logo" className="h-8 w-auto block dark:hidden" />
+                {/* Dark theme logo */}
+                <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fbranco%20FINAL%20COMLETA.png?alt=media&token=0f160dc9-2e99-4f59-9eaa-9640e3437161" alt="DoughLabPro Logo" className="h-8 w-auto hidden dark:block" />
             </button>
             <div className="flex items-center gap-2">
                 <UserMenu onNavigate={onNavigate} onOpenAuthModal={onOpenAuth} theme={theme} setTheme={setTheme} />
@@ -193,6 +206,12 @@ const Navigation: React.FC<NavigationProps> = ({
                     className="flex w-full items-center gap-3 rounded-lg p-3 text-base font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                     <CalculatorIcon className="h-6 w-6 text-slate-500 dark:text-slate-400" /> {t('nav.calculator')}
+                </button>
+                 <button
+                    onClick={() => handleNavigate('pizzas')}
+                    className="flex w-full items-center gap-3 rounded-lg p-3 text-base font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                    <PizzaSliceIcon className="h-6 w-6 text-slate-500 dark:text-slate-400" /> Pizzas
                 </button>
                  <button
                     onClick={() => handleNavigate('learn')}

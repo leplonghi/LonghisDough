@@ -1,5 +1,4 @@
 
-
 import {
   DoughConfig,
   Oven,
@@ -9,9 +8,10 @@ import {
   AmbientTemperature,
   YeastType,
   Levain,
+  BakeType,
 } from './types';
 import { ENVIRONMENT_TEMPERATURE_GUIDELINES } from './constants';
-import { hoursBetween } from '../helpers';
+import { hoursBetween } from './helpers';
 
 // Default result structure
 const createDefaultResult = (): SmartAdjustmentResult => ({
@@ -133,7 +133,8 @@ export const getSmartAdjustments = (
   }
   
   // --- Rule 5: Baking Surface ---
-  if(oven && config.bakeType === 'PIZZA') {
+// FIX: This comparison appears to be unintentional because the types 'BakeType' and '"PIZZA"' have no overlap. Changed to use BakeType.PIZZAS enum member.
+  if(oven && config.bakeType === BakeType.PIZZAS) {
       if(oven.maxTemperature <= 300 && !oven.hasSteel) {
           result.messages.push("Para fornos domésticos (até 300°C), um 'baking steel' (chapa de aço) é superior a uma pedra, pois transfere calor mais rápido, resultando em uma base mais crocante.");
       }

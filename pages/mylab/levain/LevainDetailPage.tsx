@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { Page, Levain } from '../../../types';
 import { useUser } from '../../../contexts/UserProvider';
 import LevainLayout from './LevainLayout';
-// FIX: Add missing import
 import { PlusCircleIcon } from '../../../components/IconComponents';
 import LevainFeedingForm from './components/LevainFeedingForm';
 import LevainProfile from './components/LevainProfile';

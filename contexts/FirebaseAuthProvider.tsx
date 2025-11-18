@@ -1,16 +1,6 @@
-
-
-
-
-
-
-
-
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-// FIX: Using named imports from the 'firebase/auth' package to resolve the module resolution conflict
-// with the local `firebase/auth.ts` file.
-import { User, onAuthStateChanged } from 'firebase/auth';
+// FIX: Use named imports for modular Firebase SDK.
+import { onAuthStateChanged, User } from 'firebase/auth';
 import auth from '../firebase/auth';
 
 interface FirebaseUserContextType {

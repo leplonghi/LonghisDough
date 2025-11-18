@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from '../../i18n';
-import { DoughLabLogoIcon, SparklesIcon } from '../IconComponents';
+// FIX: Add missing icon import
+import { BeakerIcon, SparklesIcon } from '../IconComponents';
 
 interface OnboardingModalProps {
   onStart: () => void;
@@ -18,7 +19,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ onStart, onSkip }) =>
       aria-labelledby="onboarding-title"
     >
       <div className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-8 text-center shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-12">
-        <DoughLabLogoIcon className="mx-auto h-16 w-auto text-lime-500" />
+        <BeakerIcon className="mx-auto h-16 w-auto text-lime-500" />
         <h1
           id="onboarding-title"
           className="mt-6 text-3xl font-bold tracking-tight text-slate-900 dark:text-white"

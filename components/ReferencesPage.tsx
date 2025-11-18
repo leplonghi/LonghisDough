@@ -1,6 +1,5 @@
 
 
-
 import React from 'react';
 // FIX: Add missing imports for BookOpenIcon and ArrowTopRightOnSquareIcon
 import { BookOpenIcon, ArrowTopRightOnSquareIcon } from './IconComponents';

@@ -1,7 +1,8 @@
+
 import React from 'react';
-import { Page, RecipeStyle, Batch, Levain, LevainStatus } from '../../types';
-import { useUser } from '../../contexts/UserProvider';
-import { useTranslation } from '../../i18n';
+import { Page, RecipeStyle, Batch, Levain, LevainStatus } from '../types';
+import { useUser } from '../contexts/UserProvider';
+import { useTranslation } from '../i18n';
 import { calculateUserInsights } from '../logic/insights';
 import { timeSince } from '../helpers';
 import { 

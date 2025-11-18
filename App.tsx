@@ -1,9 +1,4 @@
 
-
-
-
-
-
 import React, {
   useState,
   useEffect,
@@ -14,8 +9,6 @@ import React, {
 } from 'react';
 import CalculatorPage from './pages/CalculatorPage';
 import CommunityPage from './pages/CommunityPage';
-// FIX: Module '"file:///components/Navigation"' has no default export.
-// Added a default export to components/Navigation.tsx.
 import Navigation from './components/Navigation';
 import BatchDetailPage from './pages/BatchDetailPage';
 
@@ -43,15 +36,12 @@ import {
   FeedingEvent,
 } from './types';
 import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
-// FIX: Module '"./i18n"' has no exported member 'I18nProvider' or 'useTranslation'.
-// Added exports for I18nProvider and useTranslation in i18n.ts.
 import { I18nProvider, useTranslation } from './i18n';
 import { PaywallModal } from './components/PaywallModal';
 import AuthModal from './components/AuthModal';
 import ProfilePage from './pages/ProfilePage';
 import PlansPage from './components/PlansPage';
 import LearnPage from './pages/learn/LearnPage';
-import MobileSummaryBar from './components/MobileSummaryBar';
 import ReferencesPage from './components/ReferencesPage';
 import { FLOURS } from './flours-constants';
 import CommunityBatchDetailPage from './pages/CommunityBatchDetailPage';
@@ -59,12 +49,10 @@ import MyLabPage from './pages/MyLabPage';
 import LevainManagerPage from './pages/LevainManagerPage';
 import { ToastProvider, useToast } from './components/ToastProvider';
 import { UserProvider, useUser } from './contexts/UserProvider';
-// FIX: Module '"file:///components/AssistantPage"' has no default export.
-// Added a default export to components/AssistantPage.tsx.
 import AssistantPage from './components/AssistantPage';
 import FloatingActionButton from './components/FloatingActionButton';
 import OvenAnalysisPage from './pages/OvenAnalysisPage';
-import ToppingsIndexPage from './pages/toppings/ToppingsIndexPage';
+import PizzasPage from './pages/toppings/ToppingsIndexPage';
 import DoughbotPage from './pages/DoughbotPage';
 import PantryPizzaPage from './pages/PantryPizzaPage';
 import SettingsPage from './pages/SettingsPage';
@@ -303,8 +291,8 @@ const validateConfig = (
   if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
     errors.doughBallWeight = t('form.errors.range', { min: 100, max: 2000 });
   }
-  if (config.hydration < 50 || config.hydration > 100) {
-    errors.hydration = t('form.errors.range_percent', { min: 50, max: 100 });
+  if (config.hydration < 0 || config.hydration > 120) {
+    errors.hydration = t('form.errors.range_percent', { min: 0, max: 120 });
   }
   if (config.scale < 0.25 || config.scale > 4) {
     errors.scale = t('form.errors.range_multiplier', { min: 0.25, max: 4 });
@@ -428,7 +416,7 @@ function AppContent() {
         window.location.hash = newHash;
     } else {
         const hash = (page as string) + (params ? `/${params}` : '');
-        const parts = hash.split('/');
+        const parts = hash.split('?')[0].split('/');
         if ((parts[0] === 'batch' || parts[0] === 'community') && parts.length > 1) {
             setRoute(parts[0] as Page);
             setRouteParams(parts[1]);
@@ -582,15 +570,12 @@ function AppContent() {
 
   const handleBakeTypeChange = useCallback(
     (bakeType: BakeType) => {
-      const isPizza = bakeType === BakeType.PIZZA;
-      const targetType = isPizza ? 'pizza' : 'bread';
       const firstMatchingPreset = DOUGH_STYLE_PRESETS.find(
-        (p) => p.type === targetType,
+        (p) => p.type === bakeType,
       );
 
       if (firstMatchingPreset) {
-        const newStyle = firstMatchingPreset.recipeStyle;
-        const { defaultHydration, defaultSalt, defaultOil, defaultYeastPct, defaultSugar, preferredFlourProfileId } =
+        const { recipeStyle, defaultHydration, defaultSalt, defaultOil, defaultYeastPct, defaultSugar, preferredFlourProfileId } =
           firstMatchingPreset;
         const presetValues: Partial<DoughConfig> = {
           hydration: defaultHydration,
@@ -610,13 +595,12 @@ function AppContent() {
           ...initialConfig,
           ...prev,
           bakeType,
-          recipeStyle: newStyle,
+          recipeStyle: recipeStyle,
           ...presetValues,
           stylePresetId: firstMatchingPreset.id,
         }));
       } else {
-        const newStyle = isPizza ? RecipeStyle.NEAPOLITAN : RecipeStyle.COUNTRY_LOAF;
-        setConfig((prev) => ({ ...prev, bakeType, newStyle, stylePresetId: undefined }));
+        setConfig((prev) => ({ ...prev, bakeType, stylePresetId: undefined }));
       }
     },
     [initialConfig, config.yeastType],
@@ -893,8 +877,8 @@ function AppContent() {
         return <ContactPage />;
       case 'landing':
         return <LandingPage />;
-      case 'toppings':
-        return <ToppingsIndexPage onLoadInspiration={handleLoadAndNavigate} />;
+      case 'pizzas':
+        return <PizzasPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
       case 'tools-oven-analysis':
         return <OvenAnalysisPage />;
       case 'tools-doughbot':
@@ -963,9 +947,9 @@ function AppContent() {
             t={t}
           />
         ) : (
-          // FIX: Corrected ErrorBoundary usage by wrapping the rendered page.
-          // This resolves the "Property 'children' is missing" error.
-          <ErrorBoundary>{renderPage()}</ErrorBoundary>
+          <ErrorBoundary>
+            {renderPage()}
+          </ErrorBoundary>
         )}
       </main>
       
@@ -998,13 +982,7 @@ function AppContent() {
         onClose={() => setIsAuthModalOpen(false)}
       />
       
-      {isSummaryBarVisible && !isAssistantOpen && results && (
-        <MobileSummaryBar
-          totalDough={results.totalDough}
-          unit={unit}
-          onStartBatch={handleStartBatch}
-        />
-      )}
+      
     </div>
   );
 }

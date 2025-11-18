@@ -400,29 +400,64 @@ const en = {
     levain_details: 'Levain Details',
     total_levain: 'Total Levain',
     steps: {
-      title: 'Suggested Steps',
-      direct: {
-          step1: "In a large bowl, dissolve the salt in the water.",
-          step2: "Add about 10% of the flour and all the yeast, mixing to create a slurry. This helps hydrate the yeast.",
-          step3: "Gradually add the remaining flour, mixing until just combined. Add the oil (if using).",
-          step4: "Knead the dough for 10-15 minutes on a lightly floured surface until smooth and elastic.",
-          step5: "Let the dough rest for the bulk fermentation period according to your recipe.",
-          step6: "Divide and shape into balls. Let them rest for the final proof.",
-          step7: "Open the dough, add toppings, and bake.",
+      title: "Suggested Steps",
+      generic_direct: {
+        "step1": "<strong>1. Precision First:</strong> Weigh all ingredients accurately. In baking, precision is key to consistency.",
+        "step2": "<strong>2. Activation (if ADY):</strong> If using Active Dry Yeast, dissolve it in warm water (~38°C/100°F) with a pinch of sugar. Wait 5-10 min until foamy. For Instant Dry Yeast (IDY), mix it directly with the flour.",
+        "step3": "<strong>3. Initial Mix:</strong> In a large bowl, whisk flour and salt. Add the water/yeast mixture and oil (if using). Mix until a shaggy dough forms and no dry flour remains.",
+        "step4": "<strong>4. Develop Gluten (Knead):</strong> Knead on a lightly floured surface for 8-12 minutes until smooth and elastic. <em>Pro Tip:</em> Perform the 'windowpane test'—a small piece of dough should stretch thin enough to see light through it without tearing.",
+        "step5": "<strong>5. Bulk Fermentation:</strong> Shape dough into a ball, place in an oiled bowl, and cover. Let rise for 1-2 hours at room temp, or until doubled. For deeper flavor, you can cold ferment in the refrigerator for 24-72 hours.",
+        "step6": "<strong>6. Divide and Ball:</strong> Gently deflate the dough, divide into portions, and shape each into a tight ball. This creates surface tension for a good final rise.",
+        "step7": "<strong>7. Final Proof:</strong> Place dough balls in a covered container and let them rest. For pizza, this can be 1-2 hours. For bread, until an indentation from your finger springs back slowly.",
+        "step8": "<strong>8. Shape & Bake:</strong> Gently stretch your pizza dough or shape your loaf. Bake in a very hot, preheated oven on a pizza stone or steel. Pizzas bake hot and fast; breads are more moderate.",
+        "step9": "<strong>9. Cool Down:</strong> Rest the finished product on a wire rack for several minutes before slicing. This allows the internal structure (crumb) to set and improves texture."
       },
-      indirect: {
-          preferment: {
-              step1: "Mix the preferment ingredients (flour, water, yeast) until just combined.",
-              step2: "Let it ferment at room temperature for the time specified in your recipe (e.g., 8-16 hours for Poolish, 12-24 for Biga)."
+      generic_indirect: {
+          "preferment": {
+              "step1": "<strong>1. Prepare Preferment:</strong> In a bowl, mix the preferment ingredients (flour, water, tiny amount of yeast) until just combined. The consistency will vary (Poolish is wet, Biga is stiff).",
+              "step2": "<strong>2. Ferment Preferment:</strong> Cover the bowl and let it ferment at room temperature for the time specified in your recipe (e.g., 8-16 hours for Poolish, 12-24 for Biga). It should be bubbly and aromatic."
           },
-          finalDough: {
-              step1: "In a large bowl, dissolve the salt in the water.",
-              step2: "Add the preferment and break it up in the water.",
-              step3: "Gradually add the flour and any remaining yeast, mixing until combined. Add the oil (if using).",
-              step4: "Knead for 10-15 minutes until the dough is smooth and elastic.",
-              step5: "Proceed with bulk fermentation, dividing, and proofing as per your recipe.",
-              step6: "Open the dough, add toppings, and bake.",
+          "final_dough": {
+              "step1": "<strong>1. Combine:</strong> In a large bowl, dissolve the salt in the final dough water. Add the fully fermented preferment and break it up in the water.",
+              "step2": "<strong>2. Mix:</strong> Gradually add the remaining flour and any remaining yeast, mixing until a shaggy dough forms. Add oil if using.",
+              "step3": "<strong>3. Knead & Bulk Ferment:</strong> Knead the dough for 10-15 minutes until smooth. Because the preferment did a lot of work, the bulk fermentation is usually shorter. Let it rise until puffy (e.g., 30-60 minutes).",
+              "step4": "<strong>4. Final Steps:</strong> Proceed with dividing, balling, final proofing, and baking as outlined in the direct method steps (6-9)."
           }
+      },
+      neapolitan_direct: {
+          "step1": "<strong>1. Autolyse (Optional):</strong> Mix flour and about 90% of the water. Let it rest for 30-60 minutes. This hydrates the flour and makes kneading easier.",
+          "step2": "<strong>2. Dissolve Salt & Yeast:</strong> Dissolve the salt in the remaining water. In a separate small amount of water, dissolve the yeast.",
+          "step3": "<strong>3. Mix & Knead:</strong> Add the salt water and then the yeast water to the dough. Knead for 15-20 minutes by hand until extremely smooth and elastic ('windowpane test'). The final dough temperature should be around 23-26°C.",
+          "step4": "<strong>4. Bulk Fermentation:</strong> Place the dough in a covered container and let it rest at room temperature for 2 hours.",
+          "step5": "<strong>5. Balling & Cold Ferment:</strong> Divide the dough into balls (staglio). Place them in a proofing box and refrigerate for 24-48 hours for optimal flavor development.",
+          "step6": "<strong>6. Acclimatize:</strong> Remove the dough balls from the fridge 2-4 hours before baking, allowing them to come to room temperature.",
+          "step7": "<strong>7. Stretch by Hand:</strong> Gently stretch the dough from the center outwards, preserving the air in the cornicione (crust). <em>Never use a rolling pin.</em>",
+          "step8": "<strong>8. Top & Bake:</strong> Top lightly and bake in a scorching hot oven (450-500°C / 850-950°F) for 60-90 seconds."
+      },
+      pan_pizza_direct: {
+          "step1": "<strong>1. Mix:</strong> Combine all ingredients in a bowl until a sticky, shaggy dough forms. No extensive kneading is required at this stage.",
+          "step2": "<strong>2. Bulk Fermentation & Folds:</strong> Cover the bowl and let it rise for 1-2 hours. Perform a set of 'stretch and folds' every 30 minutes to build strength.",
+          "step3": "<strong>3. Pan Prep:</strong> Generously oil your baking pan (Detroit-style pan, cast iron, or cake pan). This is key for a crispy, fried-like crust.",
+          "step4": "<strong>4. Proof in Pan:</strong> Place the dough in the pan, gently stretch it towards the corners. Cover and let it proof for another 1-2 hours until it's puffy and fills the pan.",
+          "step5": "<strong>5. Dimple & Top:</strong> Gently press your oiled fingertips into the dough to create dimples. Add cheese all the way to the edges, then top with other ingredients. For Detroit style, add sauce in stripes on top of the cheese.",
+          "step6": "<strong>6. Bake:</strong> Bake in a preheated oven at a lower temperature than Neapolitan (e.g., 230-260°C / 450-500°F) for 15-25 minutes, until the cheese is bubbly and the edges are dark and crispy."
+      },
+      focaccia_direct: {
+          "step1": "<strong>1. Mix:</strong> In a large bowl, combine flour, yeast, salt, and water. Mix until a very wet and sticky dough forms. Add a generous amount of olive oil.",
+          "step2": "<strong>2. Stretch & Folds:</strong> Since the dough is too wet to knead, perform 3-4 sets of 'stretch and folds' in the bowl every 30 minutes. This will build strength.",
+          "step3": "<strong>3. Bulk Ferment:</strong> Cover the dough and let it ferment at room temperature for several hours, or overnight in the refrigerator for better flavor.",
+          "step4": "<strong>4. Pan Proof:</strong> Transfer the dough to a heavily oiled baking sheet. Gently stretch it to fit the pan. Let it proof for another 1-2 hours until very bubbly.",
+          "step5": "<strong>5. Dimple & Season:</strong> Coat your fingertips in olive oil and press firmly into the dough to create the classic dimples. Drizzle with more olive oil and sprinkle with coarse salt and rosemary.",
+          "step6": "<strong>6. Bake:</strong> Bake at 220°C (425°F) for 20-25 minutes until golden brown and crisp."
+      },
+      high_hydration_bread_direct: {
+          "step1": "<strong>1. Autolyse:</strong> Combine flour and water and let rest for at least 30 minutes. This is crucial for high-hydration doughs to absorb the water.",
+          "step2": "<strong>2. Mix:</strong> Add salt and levain/yeast. Mix gently until incorporated. The dough will be very sticky.",
+          "step3": "<strong>3. Bulk Ferment with Folds:</strong> During the 3-5 hour bulk fermentation, perform several sets of 'stretch and folds' to build strength without intense kneading.",
+          "step4": "<strong>4. Pre-shape and Bench Rest:</strong> Gently pre-shape the dough into a round on a floured surface. Let it rest for 20-30 minutes.",
+          "step5": "<strong>5. Final Shaping:</strong> Carefully shape the dough into its final form (boule or bâtard) and place it in a proofing basket (banneton).",
+          "step6": "<strong>6. Final Proof:</strong> Let it proof at room temperature or perform a long cold proof in the refrigerator for 12-24 hours to develop flavor.",
+          "step7": "<strong>7. Bake with Steam:</strong> Bake in a very hot Dutch oven or on a baking stone with steam for the first 20 minutes to achieve maximum oven spring and a crispy crust."
       }
     },
     notes_title: 'Your Notes',
@@ -1050,6 +1085,70 @@ const pt = {
   // NOTE: This is a partial translation. In a real app, all keys would be translated.
   // ... (translations omitted for brevity, assuming they exist) ...
   ...en, // Using English as a fallback for missing keys
+  results: {
+    ...en.results,
+    steps: {
+        "title": "Passos Sugeridos",
+        "generic_direct": {
+            "step1": "<strong>1. Precisão é tudo:</strong> Separe e pese todos os ingredientes com precisão. Uma balança digital é sua melhor amiga para garantir um resultado consistente.",
+            "step2": "<strong>2. Ativação (se necessário):</strong> Se usar Fermento Biológico Seco Ativo (ADY), dissolva-o na água morna (~38°C) com uma pitada de açúcar e aguarde 5-10 min até espumar. Se for o Instantâneo (IDY), pode misturá-lo direto na farinha.",
+            "step3": "<strong>3. Mistura Inicial:</strong> Em uma tigela grande, misture a farinha e o sal. Adicione a mistura de água/fermento e o azeite (se usar). Misture até que toda a farinha seja incorporada e não haja partes secas.",
+            "step4": "<strong>4. Desenvolver o Glúten (Sova):</strong> Sove a massa por 8-12 minutos até ela ficar lisa, elástica e levemente pegajosa. <em>Dica Pro:</em> Faça o 'teste do ponto de véu' — um pedaço da massa deve esticar fino o suficiente para ver a luz através, sem rasgar.",
+            "step5": "<strong>5. Primeira Fermentação (Bulk):</strong> Modele uma bola, coloque em uma tigela untada e cubra. Deixe crescer por 1-2h em local morno, ou até dobrar de volume. Para um sabor mais complexo, faça a fermentação longa na geladeira por 24-72h.",
+            "step6": "<strong>6. Divisão e Boleamento:</strong> Divida a massa em porções e modele cada uma em uma bola bem tensionada, dobrando as bordas para baixo. Isso cria uma 'pele' que ajuda no crescimento final.",
+            "step7": "<strong>7. Fermentação Final:</strong> Coloque as bolas em um recipiente coberto e deixe descansar. Para pizzas, de 1-2h. Para pães, até passar no 'teste do dedo' (uma leve pressão deve retornar lentamente).",
+            "step8": "<strong>8. Modelar e Assar:</strong> Abra o disco da pizza ou modele seu pão. Asse em forno muito quente e pré-aquecido, sobre uma pedra ou chapa de aço. Pizzas assam rápido e em alta temperatura; pães são mais moderados.",
+            "step9": "<strong>9. Resfriamento:</strong> Deixe o produto final descansar sobre uma grade por alguns minutos antes de cortar. Isso estabiliza o miolo e melhora a textura."
+        },
+        "generic_indirect": {
+            "preferment": {
+                "step1": "<strong>1. Preparo do Pré-fermento:</strong> Misture os ingredientes do pré-fermento (farinha, água, e uma quantidade mínima de fermento) até que estejam combinados. A consistência varia: Poolish é líquido, Biga é firme.",
+                "step2": "<strong>2. Fermentação do Pré-fermento:</strong> Cubra e deixe fermentar em temperatura ambiente pelo tempo indicado (ex: 8-16h para Poolish, 12-24h para Biga). Ele deve estar borbulhante e aromático."
+            },
+            "final_dough": {
+                "step1": "<strong>1. Combinação:</strong> Em uma tigela grande, dissolva o sal na água da massa final. Adicione o pré-fermento já maturado e desfaça-o na água.",
+                "step2": "<strong>2. Mistura:</strong> Adicione gradualmente o restante da farinha e do fermento, misturando até formar uma massa homogênea. Adicione o azeite, se usar.",
+                "step3": "<strong>3. Sova e Fermentação Curta:</strong> Sove a massa por 10-15 minutos. Como o pré-fermento já trabalhou bastante, a primeira fermentação da massa final é mais curta, geralmente de 30 a 60 minutos.",
+                "step4": "<strong>4. Passos Finais:</strong> Siga com a divisão, boleamento, fermentação final e cozimento, como descrito nos passos 6 a 9 do método direto."
+            }
+        },
+        "neapolitan_direct": {
+            "step1": "<strong>1. Autólise (Opcional):</strong> Misture a farinha com 90% da água e deixe descansar por 30-60 min. Isso hidrata a farinha e facilita a sova.",
+            "step2": "<strong>2. Incorporação:</strong> Dissolva o sal na água restante e adicione à massa. Em seguida, adicione o fermento (dissolvido em um pouco de água).",
+            "step3": "<strong>3. Sova Intensa:</strong> Sove por 15-20 minutos à mão até a massa ficar extremamente lisa e passar no 'teste do ponto de véu'. A temperatura final ideal da massa é de 23-26°C.",
+            "step4": "<strong>4. Primeira Fermentação:</strong> Deixe a massa descansar em um recipiente coberto por 2 horas em temperatura ambiente.",
+            "step5": "<strong>5. Boleamento e Maturação a Frio:</strong> Divida a massa em bolas (staglio), coloque em uma caixa de fermentação e refrigere por 24-48h. Isso é crucial para o desenvolvimento do sabor.",
+            "step6": "<strong>6. Aclimatação:</strong> Retire as bolas da geladeira 2-4 horas antes de assar, para que atinjam a temperatura ambiente.",
+            "step7": "<strong>7. Abertura Manual:</strong> Abra a massa suavemente do centro para as bordas, preservando o ar no cornicione (borda). <em>Nunca use um rolo.</em>",
+            "step8": "<strong>8. Cobertura e Forno:</strong> Cubra com poucos ingredientes e asse em forno extremamente quente (450-500°C) por 60-90 segundos."
+        },
+        "pan_pizza_direct": {
+            "step1": "<strong>1. Mistura:</strong> Combine todos os ingredientes em uma tigela até formar uma massa pegajosa. Não é necessário sovar muito nesta fase.",
+            "step2": "<strong>2. Fermentação com Dobras:</strong> Cubra e deixe crescer por 1-2 horas, fazendo uma série de 'dobras' (stretch and folds) a cada 30 minutos para fortalecer o glúten.",
+            "step3": "<strong>3. Preparo da Assadeira:</strong> Unte generosamente uma assadeira (de Detroit, ferro fundido ou forma de bolo). Este é o segredo para uma base crocante e quase frita.",
+            "step4": "<strong>4. Fermentação na Assadeira:</strong> Coloque a massa na assadeira, estique suavemente até os cantos. Cubra e deixe fermentar por mais 1-2 horas até ficar fofa e preencher a forma.",
+            "step5": "<strong>5. Furos e Cobertura:</strong> Pressione suavemente a massa com os dedos untados para criar as covinhas. Adicione queijo até as bordas e, em seguida, os outros ingredientes. Para o estilo Detroit, o molho vai em faixas por cima do queijo.",
+            "step6": "<strong>6. Assar:</strong> Asse em forno pré-aquecido a uma temperatura mais baixa que a Napolitana (ex: 230-260°C) por 15-25 minutos, até o queijo borbulhar e as bordas ficarem escuras e crocantes."
+        },
+        "focaccia_direct": {
+            "step1": "<strong>1. Mistura:</strong> Combine farinha, fermento, sal e água. Misture até formar uma massa muito úmida e pegajosa. Adicione uma quantidade generosa de azeite.",
+            "step2": "<strong>2. Dobras (Stretch & Folds):</strong> Como a massa é muito mole para sovar, faça 3-4 séries de 'dobras' na tigela, a cada 30 minutos, para desenvolver força.",
+            "step3": "<strong>3. Primeira Fermentação:</strong> Cubra a massa e deixe fermentar em temperatura ambiente por várias horas, ou na geladeira durante a noite para mais sabor.",
+            "step4": "<strong>4. Fermentação na Assadeira:</strong> Transfira para uma assadeira bem untada com azeite. Estique suavemente. Deixe fermentar por mais 1-2 horas até ficar cheia de bolhas.",
+            "step5": "<strong>5. Covinhas e Tempero:</strong> Unte os dedos com azeite e pressione firmemente a massa para criar as covinhas clássicas. Regue com mais azeite e salpique sal grosso e alecrim.",
+            "step6": "<strong>6. Assar:</strong> Asse a 220°C por 20-25 minutos até dourar e ficar crocante."
+        },
+        "high_hydration_bread_direct": {
+            "step1": "<strong>1. Autólise:</strong> Combine farinha e água e deixe descansar por pelo menos 30 minutos. Essencial para massas de alta hidratação absorverem a água.",
+            "step2": "<strong>2. Mistura:</strong> Adicione sal e levain/fermento. Misture suavemente. A massa ficará muito pegajosa.",
+            "step3": "<strong>3. Primeira Fermentação com Dobras:</strong> Durante a fermentação de 3-5 horas, faça várias séries de 'dobras' para fortalecer o glúten sem sova intensa.",
+            "step4": "<strong>4. Pré-modelagem e Descanso:</strong> Pré-modele a massa em uma bola e deixe descansar na bancada por 20-30 minutos.",
+            "step5": "<strong>5. Modelagem Final:</strong> Modele cuidadosamente no formato final (boule ou bâtard) e coloque em um cesto de fermentação (banneton).",
+            "step6": "<strong>6. Fermentação Final:</strong> Deixe fermentar em temperatura ambiente ou faça uma longa fermentação a frio na geladeira por 12-24h para desenvolver sabor.",
+            "step7": "<strong>7. Assar com Vapor:</strong> Asse em uma panela de ferro fundido (Dutch oven) bem quente ou sobre uma pedra de cozimento, com vapor nos primeiros 20 minutos para um 'salto de forno' máximo e uma crosta crocante."
+        }
+    }
+  },
   common: {
     ...en.common,
     edit: 'Editar',
@@ -1136,7 +1235,6 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-// FIX: Added export to make I18nProvider available for import.
 export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [locale, setLocaleState] = useState<Locale>(() => {
     try {
@@ -1217,7 +1315,6 @@ export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-// FIX: Added export to make useTranslation hook available for import.
 export const useTranslation = (): I18nContextType => {
   const context = useContext(I18nContext);
   if (context === undefined) {

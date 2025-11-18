@@ -8,11 +8,8 @@ import {
   RecipeStyle,
   UnitSystem,
   YeastType,
-  SmartAdjustmentResult,
-  SmartAdjustmentSuggestion,
   FlourDefinition,
   Oven,
-  AutoStyleInsightsResult,
   CalculationMode,
 } from '../types';
 import {
@@ -31,16 +28,11 @@ import {
   InfoIcon,
   LockClosedIcon,
   SpinnerIcon,
-  LightBulbIcon,
-  ExclamationCircleIcon,
   PizzaSliceIcon,
   BatchesIcon,
 } from './IconComponents';
 import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
-import { EnvironmentAdjustments as EnvAdjustmentsType } from '../logic/environmentAdjustments';
-import EnvironmentAdjustments from './calculator/EnvironmentAdjustments';
-import AutoStyleInsights from './calculator/AutoStyleInsights';
 
 
 // Inform TypeScript that these libraries are available on the window object
@@ -59,14 +51,10 @@ interface ResultsDisplayProps {
   onUnitChange: (unit: Unit) => void;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
-  smartAdjustments: SmartAdjustmentResult;
-  environmentAdjustments: EnvAdjustmentsType;
-  autoStyleInsights: AutoStyleInsightsResult;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onStartBatch: () => void;
   selectedFlour?: FlourDefinition;
   calculatorMode: 'basic' | 'advanced';
-  onApplyAdjustments: () => void;
   calculationMode: CalculationMode;
   saveButtonRef?: React.Ref<HTMLButtonElement>;
   onboardingStep?: number;
@@ -146,25 +134,59 @@ const RecipeSteps: React.FC<{
   config: DoughConfig;
   t: (key: string, replacements?: { [key: string]: string | number }) => string;
 }> = ({ config, t }) => {
-  const stepKeys = [1, 2, 3, 4, 5, 6, 7]; // Max steps
   
-  const getStepKey = (step: number) => {
-    let base = 'results.steps.direct';
-    if(config.fermentationTechnique !== FermentationTechnique.DIRECT) {
-      base = 'results.steps.indirect.finalDough';
+  const getStepKeyPrefix = (style: RecipeStyle): string => {
+    const base = 'results.steps';
+    switch (style) {
+      case RecipeStyle.NEAPOLITAN:
+        return `${base}.neapolitan`;
+      case RecipeStyle.PAN_PIZZA:
+      case RecipeStyle.DETROIT:
+      case RecipeStyle.SICILIAN:
+      case RecipeStyle.SICILIANA:
+      case RecipeStyle.CHICAGO:
+      case RecipeStyle.CHICAGO_DEEP_DISH:
+      case RecipeStyle.GRANDMA_STYLE:
+        return `${base}.pan_pizza`;
+      case RecipeStyle.FOCACCIA:
+        return `${base}.focaccia`;
+      case RecipeStyle.CIABATTA:
+      case RecipeStyle.COUNTRY_LOAF:
+      case RecipeStyle.BAGUETTE:
+        return `${base}.high_hydration_bread`;
+      default:
+        return `${base}.generic`;
     }
-    return `${base}.step${step}`;
   }
 
-  const renderSteps = () => (
-    <ol className="list-inside list-decimal space-y-3 pl-1 text-slate-600 dark:text-slate-300">
-      {stepKeys.map(i => {
-          const key = getStepKey(i);
-          const text = t(key, {defaultValue: ''});
-          return text ? <li key={key} dangerouslySetInnerHTML={{ __html: text }}/> : null;
-      })}
-    </ol>
-  );
+  const renderStepList = (primaryPrefix: string, fallbackPrefix: string) => {
+    const steps = [];
+    for (let i = 1; i <= 12; i++) { // Check up to 12 steps
+        let key = `${primaryPrefix}.step${i}`;
+        let text = t(key, { defaultValue: '' });
+        
+        // If style-specific step not found, try the generic fallback
+        if (!text) {
+            key = `${fallbackPrefix}.step${i}`;
+            text = t(key, { defaultValue: '' });
+        }
+        
+        if (text) {
+            steps.push(<li key={key} dangerouslySetInnerHTML={{ __html: text }}/>);
+        } else {
+            break; // Stop when no more steps are found
+        }
+    }
+    return <ol className="list-inside list-decimal space-y-4 pl-1 text-slate-600 dark:text-slate-300">{steps}</ol>;
+  };
+  
+  const stylePrefix = getStepKeyPrefix(config.recipeStyle);
+  const methodSuffix = config.fermentationTechnique === FermentationTechnique.DIRECT ? '_direct' : '_indirect';
+  
+  const primaryPrefix = stylePrefix + methodSuffix;
+  const fallbackPrefix = 'results.steps.generic' + methodSuffix;
+
+  const isIndirect = config.fermentationTechnique !== FermentationTechnique.DIRECT;
 
   return (
     <div className="mt-10">
@@ -177,7 +199,7 @@ const RecipeSteps: React.FC<{
         </h3>
       </div>
       <div className="space-y-6">
-        {config.fermentationTechnique !== FermentationTechnique.DIRECT ? (
+        {isIndirect ? (
              <>
                 <div>
                   <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
@@ -185,77 +207,18 @@ const RecipeSteps: React.FC<{
                       technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
                     })}
                   </h4>
-                   <ol className="list-inside list-decimal space-y-3 pl-1 text-slate-600 dark:text-slate-300">
-                       <li dangerouslySetInnerHTML={{ __html: t('results.steps.indirect.preferment.step1') }}/>
-                       <li dangerouslySetInnerHTML={{ __html: t('results.steps.indirect.preferment.step2') }}/>
-                   </ol>
+                   {renderStepList(`${primaryPrefix}.preferment`, `${fallbackPrefix}.preferment`)}
                 </div>
                 <div className="mt-6">
                   <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
                     {t('results.final_dough_title')}
                   </h4>
-                  {renderSteps()}
+                  {renderStepList(`${primaryPrefix}.final_dough`, `${fallbackPrefix}.final_dough`)}
                 </div>
              </>
         ) : (
-            renderSteps()
+            renderStepList(primaryPrefix, fallbackPrefix)
         )}
-      </div>
-    </div>
-  );
-};
-
-const IntelligentAdjustments: React.FC<{
-  adjustments: SmartAdjustmentResult;
-  onApplySuggestion: (suggestion: SmartAdjustmentSuggestion) => void;
-}> = ({ adjustments, onApplySuggestion }) => {
-  const { t } = useTranslation();
-  const hasAdjustments =
-    adjustments.messages.length > 0 ||
-    adjustments.riskWarnings.length > 0 ||
-    adjustments.suggestions.length > 0;
-
-  if (!hasAdjustments) {
-    return null;
-  }
-
-  return (
-    <div className="mt-10">
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-lime-500 dark:text-lime-400">
-          <LightBulbIcon className="h-6 w-6" />
-        </span>
-        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-          {t('results.adjustments.intelligent')}
-        </h3>
-      </div>
-      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50 sm:p-6">
-        {adjustments.riskWarnings.map((warning, index) => (
-          <div key={`warn-${index}`} className="flex items-start gap-3 rounded-md bg-yellow-50 p-3 text-yellow-900 ring-1 ring-inset ring-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-200 dark:ring-yellow-500/20">
-            <ExclamationCircleIcon className="h-5 w-5 flex-shrink-0 text-yellow-500" />
-            <p className="text-sm font-medium">{warning}</p>
-          </div>
-        ))}
-        
-        {adjustments.messages.map((message, index) => (
-          <p key={`msg-${index}`} className="text-sm text-slate-600 dark:text-slate-300">
-            {message}
-          </p>
-        ))}
-
-        {adjustments.suggestions.map((suggestion, index) => (
-          <div key={`sug-${index}`} className="flex flex-col items-start gap-2 rounded-md bg-lime-50 p-3 ring-1 ring-inset ring-lime-200 dark:bg-lime-500/10 dark:ring-lime-500/20 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex-grow text-sm font-medium text-lime-800 dark:text-lime-200">
-              {suggestion.message}
-            </p>
-            <button
-              onClick={() => onApplySuggestion(suggestion)}
-              className="flex-shrink-0 rounded-md bg-lime-500 py-1.5 px-3 text-xs font-semibold text-white shadow-sm hover:bg-lime-600"
-            >
-              {t('modals.adjustments.apply')}
-            </button>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -285,13 +248,9 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
   unitSystem,
   hasProAccess,
   onOpenPaywall,
-  smartAdjustments,
-  environmentAdjustments,
-  autoStyleInsights,
   onConfigChange,
   onStartBatch,
   calculatorMode,
-  onApplyAdjustments,
   calculationMode,
   saveButtonRef,
   onboardingStep,
@@ -426,10 +385,6 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     }, 50);
   };
   
-  const handleApplySuggestion = (suggestion: SmartAdjustmentSuggestion) => {
-    onConfigChange({ [suggestion.key]: suggestion.value });
-  };
-
   const renderRecipeSection = (
     title: string,
     ingredients: {
@@ -530,7 +485,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
   );
 
   const summaryText = t(
-    config.bakeType === BakeType.PIZZA
+    config.bakeType === BakeType.PIZZAS
       ? 'results.summary_pizza'
       : 'results.summary_bread',
     {
@@ -862,7 +817,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
                 {estimatedUnits}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {config.bakeType === 'PIZZA' ? t('results.yield.units') : t('results.yield.loaves')}
+                {config.bakeType === BakeType.PIZZAS ? t('results.yield.units') : t('results.yield.loaves')}
               </p>
             </div>
             <div>
@@ -879,9 +834,6 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
 
       {calculatorMode === 'advanced' && (
         <>
-            <IntelligentAdjustments adjustments={smartAdjustments} onApplySuggestion={handleApplySuggestion} />
-            <EnvironmentAdjustments adjustments={environmentAdjustments} />
-            <AutoStyleInsights insights={autoStyleInsights} onApply={onApplyAdjustments} />
             <RecipeSteps config={config} t={t} />
             {config.notes && config.notes.trim() !== '' && (
                 <div className="mt-10">

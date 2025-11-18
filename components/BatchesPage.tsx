@@ -125,7 +125,7 @@ const LabPage: React.FC<LabPageProps> = ({
                 </button>
               </div>
               <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-lime-600 dark:text-lime-400">
-                {batch.doughConfig.bakeType === BakeType.PIZZA ? (
+                {batch.doughConfig.bakeType === BakeType.PIZZAS ? (
                   <PizzaSliceIcon className="h-4 w-4" />
                 ) : (
                   <RecipeIcon className="h-4 w-4" />

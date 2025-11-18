@@ -1,5 +1,3 @@
-
-
 import React, { useMemo, useState, useRef } from 'react';
 import CalculatorForm from '../components/CalculatorForm';
 import ResultsDisplay from '../components/ResultsDisplay';
@@ -14,19 +12,12 @@ import {
   FormErrors,
   Oven,
   FlourDefinition,
-  SmartAdjustmentResult,
   AmbientTemperature,
-  AutoStyleInsightsResult,
   CalculationMode,
   Levain,
   OnboardingState,
 } from '../types';
-import { getSmartAdjustments } from '../smartAdjustments';
-import { getEnvironmentAdjustments, EnvironmentAdjustments } from '../logic/environmentAdjustments';
-import { getAutoStyleInsights } from '../logic/autoStyleAdvisor';
 import UiModeToggle from '../components/calculator/UiModeToggle';
-import { applySmartAdjustments, AdjustmentChange } from '../logic/applySmartAdjustments';
-import ApplyAdjustmentsModal from '../components/calculator/ApplyAdjustmentsModal';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import { InfoIcon } from '../components/IconComponents';
@@ -61,9 +52,6 @@ interface CalculatorPageProps {
 
 const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
   const { t } = useTranslation();
-  const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
-  const [suggestedConfig, setSuggestedConfig] = useState<DoughConfig | null>(null);
-  const [adjustmentChanges, setAdjustmentChanges] = useState<AdjustmentChange[]>([]);
   const { levains } = useUser();
 
   // Refs for onboarding targets
@@ -78,48 +66,6 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
     }
     return null;
   }, [props.config.yeastType, props.config.levainId, levains]);
-
-  const smartAdjustments = useMemo<SmartAdjustmentResult>(() => {
-    return getSmartAdjustments(props.config, {
-      oven: props.defaultOven,
-      flour: props.selectedFlour,
-      userLevain: selectedLevain,
-    });
-  }, [props.config, props.defaultOven, props.selectedFlour, selectedLevain]);
-
-  const environmentTempMapping = {
-    [AmbientTemperature.COLD]: 16,
-    [AmbientTemperature.MILD]: 22,
-    [AmbientTemperature.HOT]: 28,
-  };
-  
-  const tempC = environmentTempMapping[props.config.ambientTemperature];
-  const flourW = props.selectedFlour?.strengthW;
-
-  const environmentAdjustments = useMemo<EnvironmentAdjustments>(() => {
-    return getEnvironmentAdjustments(props.config, props.defaultOven, tempC, flourW);
-  }, [props.config, props.defaultOven, tempC, flourW]);
-
-  const autoStyleInsights = useMemo<AutoStyleInsightsResult>(() => {
-    return getAutoStyleInsights(props.config, tempC, flourW, props.defaultOven);
-  }, [props.config, tempC, flourW, props.defaultOven]);
-
-
-  const handleApplyAdjustments = () => {
-    const result = applySmartAdjustments(props.config, autoStyleInsights);
-    if (result.changes.length > 0) {
-      setSuggestedConfig(result.newConfig);
-      setAdjustmentChanges(result.changes);
-      setIsAdjustmentModalOpen(true);
-    }
-  };
-
-  const handleConfirmAdjustments = () => {
-    if (suggestedConfig) {
-      props.onConfigChange(suggestedConfig);
-    }
-    setIsAdjustmentModalOpen(false);
-  };
   
   const renderOnboardingTooltip = () => {
       if (!props.onboardingState?.isActive) return null;
@@ -177,14 +123,10 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             unit={props.unit}
             onUnitChange={props.onUnitChange}
             unitSystem={props.unitSystem}
-            smartAdjustments={smartAdjustments}
-            environmentAdjustments={environmentAdjustments}
-            autoStyleInsights={autoStyleInsights}
             onConfigChange={props.onConfigChange}
             onStartBatch={props.onStartBatch}
             selectedFlour={props.selectedFlour}
             calculatorMode={props.calculatorMode}
-            onApplyAdjustments={handleApplyAdjustments}
             calculationMode={props.calculationMode} 
             hasProAccess={props.hasProAccess} 
             onOpenPaywall={props.onOpenPaywall}
@@ -194,12 +136,6 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
         </div>
       </div>
       {props.onboardingState && renderOnboardingTooltip()}
-      <ApplyAdjustmentsModal
-        isOpen={isAdjustmentModalOpen}
-        onClose={() => setIsAdjustmentModalOpen(false)}
-        onConfirm={handleConfirmAdjustments}
-        changes={adjustmentChanges}
-      />
     </>
   );
 };

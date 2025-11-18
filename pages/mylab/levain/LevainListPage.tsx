@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Levain, Page } from '../../../types';
 import { useTranslation } from '../../../i18n';
-// FIX: Add missing icon imports
 import { BeakerIcon, PlusCircleIcon, DownloadIcon, ShareIcon } from '../../../components/IconComponents';
 import { useUser } from '../../../contexts/UserProvider';
 import LevainModal from '../../../components/LevainModal';
@@ -32,7 +31,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         // This component only creates levains.
         if (!('id' in levainData)) {
             const { createdAt, status, ...restOfData } = levainData;
-            addLevain(restOfData);
+            addLevain(restOfData as Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>);
         }
         setIsModalOpen(false);
     };
@@ -105,7 +104,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
 
     return (
         <>
-        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
+        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in-out]">
             <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">

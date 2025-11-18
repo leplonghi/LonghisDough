@@ -16,7 +16,7 @@ import { calculateWaterTempDDT } from '../helpers';
  * @param input - The environmental conditions provided by the user.
  * @returns An object containing notes, warnings, and recommendations.
  */
-export function getEnvironmentAdvice(
+export function getEnvironmentAdjustments(
   input: EnvironmentInput,
 ): EnvironmentAdvice {
   const advice: EnvironmentAdvice = {

@@ -1,9 +1,9 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 // FIX: Added LevainStatus to import
-import { Levain, LevainStatus } from '../types';
+import { Levain, LevainStatus, OvenType } from '../types';
+import { OVEN_TYPE_OPTIONS } from '../constants';
 import { CloseIcon } from './IconComponents';
 
 interface LevainModalProps {
@@ -30,7 +30,6 @@ const LevainModal: React.FC<LevainModalProps> = ({
   onSave,
   levainToEdit,
 }) => {
-  // FIX: The state type was inferred incorrectly. Now it matches the updated default state.
   const [formData, setFormData] = useState<Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'>>(DEFAULT_LEVAIN_STATE);
 
   useEffect(() => {

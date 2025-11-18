@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { LightBulbIcon } from '../IconComponents';
-import { EnvironmentAdjustments as EnvironmentAdjustmentsType } from '../../logic/environmentAdjustments';
+import { EnvironmentAdvice as EnvironmentAdjustmentsType } from '../../types';
 
 interface EnvironmentAdjustmentsProps {
     adjustments: EnvironmentAdjustmentsType;
@@ -20,9 +20,7 @@ const WarningItem: React.FC<{ text: string }> = ({ text }) => (
 
 const EnvironmentAdjustments: React.FC<EnvironmentAdjustmentsProps> = ({ adjustments }) => {
     const hasAdjustments =
-        adjustments.hydrationSuggestion ||
-        adjustments.yeastSuggestion ||
-        adjustments.fermentationTimeSuggestion ||
+        adjustments.notes.length > 0 ||
         adjustments.warnings.length > 0;
 
     if (!hasAdjustments) {
@@ -57,9 +55,9 @@ const EnvironmentAdjustments: React.FC<EnvironmentAdjustmentsProps> = ({ adjustm
                 {adjustments.warnings.map((warning, index) => (
                     <WarningItem key={`warn-${index}`} text={warning} />
                 ))}
-                {adjustments.hydrationSuggestion && <SuggestionItem text={adjustments.hydrationSuggestion} />}
-                {adjustments.yeastSuggestion && <SuggestionItem text={adjustments.yeastSuggestion} />}
-                {adjustments.fermentationTimeSuggestion && <SuggestionItem text={adjustments.fermentationTimeSuggestion} />}
+                {adjustments.notes.map((note, index) => (
+                    <SuggestionItem key={`note-${index}`} text={note} />
+                ))}
             </div>
         </div>
     );

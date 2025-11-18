@@ -28,6 +28,27 @@ const STYLE_CHARACTERISTICS: Record<
   [RecipeStyle.CIABATTA]: { hydrationRange: [80, 90], idealW: [340, 400], idealOvenTemp: [230, 260], name: 'Ciabatta' },
   [RecipeStyle.BRIOCHE]: { hydrationRange: [50, 60], idealW: [280, 350], idealOvenTemp: [170, 190], name: 'Brioche' },
   [RecipeStyle.RYE]: { hydrationRange: [70, 90], idealW: [180, 240], idealOvenTemp: [210, 240], name: 'Pão de Centeio' },
+  // FIX: Added missing properties from RecipeStyle enum
+  [RecipeStyle.CHICAGO_DEEP_DISH]: { hydrationRange: [55, 65], idealW: [280, 340], idealOvenTemp: [220, 250], name: 'Chicago Deep Dish' },
+  [RecipeStyle.ROMANA_TONDA]: { hydrationRange: [55, 62], idealW: [250, 300], idealOvenTemp: [300, 350], name: 'Romana Tonda' },
+  [RecipeStyle.SICILIANA]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Siciliana' },
+  [RecipeStyle.GRANDMA_STYLE]: { hydrationRange: [68, 78], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Grandma Style' },
+  [RecipeStyle.PAO_FRANCES]: { hydrationRange: [58, 65], idealW: [240, 290], idealOvenTemp: [200, 230], name: 'Pão Francês' },
+  [RecipeStyle.PUMPERNICKEL]: { hydrationRange: [80, 100], idealW: [150, 200], idealOvenTemp: [150, 180], name: 'Pumpernickel' },
+  [RecipeStyle.PAO_DE_BATATA]: { hydrationRange: [60, 70], idealW: [220, 280], idealOvenTemp: [180, 200], name: 'Pão de Batata' },
+  [RecipeStyle.CHALLAH]: { hydrationRange: [55, 65], idealW: [250, 320], idealOvenTemp: [180, 200], name: 'Challah' },
+  [RecipeStyle.BAGEL]: { hydrationRange: [50, 60], idealW: [300, 380], idealOvenTemp: [220, 250], name: 'Bagel' },
+  [RecipeStyle.ENGLISH_MUFFIN]: { hydrationRange: [65, 75], idealW: [240, 300], idealOvenTemp: [150, 180], name: 'English Muffin' },
+  [RecipeStyle.PITA]: { hydrationRange: [60, 70], idealW: [240, 300], idealOvenTemp: [250, 300], name: 'Pita' },
+  [RecipeStyle.MASSA_PODRE]: { hydrationRange: [30, 40], idealW: [180, 240], idealOvenTemp: [180, 200], name: 'Massa Podre' },
+  [RecipeStyle.MASSA_ESFIHA]: { hydrationRange: [55, 65], idealW: [220, 280], idealOvenTemp: [200, 230], name: 'Massa de Esfiha' },
+  [RecipeStyle.MASSA_TORTA]: { hydrationRange: [40, 50], idealW: [200, 260], idealOvenTemp: [180, 200], name: 'Massa de Torta' },
+  [RecipeStyle.PATE_SUCREE]: { hydrationRange: [30, 40], idealW: [150, 200], idealOvenTemp: [170, 190], name: 'Pâte Sucrée' },
+  [RecipeStyle.SABLEE]: { hydrationRange: [25, 35], idealW: [150, 200], idealOvenTemp: [170, 190], name: 'Sablée' },
+  [RecipeStyle.POUND_CAKE]: { hydrationRange: [50, 60], idealW: [150, 200], idealOvenTemp: [160, 180], name: 'Pound Cake' },
+  [RecipeStyle.COOKIES]: { hydrationRange: [30, 50], idealW: [180, 240], idealOvenTemp: [170, 190], name: 'Cookies' },
+  [RecipeStyle.PIE_DOUGH]: { hydrationRange: [35, 45], idealW: [180, 240], idealOvenTemp: [190, 210], name: 'Pie Dough' },
+  [RecipeStyle.BOLO_SIMPLES]: { hydrationRange: [50, 70], idealW: [150, 220], idealOvenTemp: [170, 190], name: 'Bolo Simples' },
 };
 
 

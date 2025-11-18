@@ -1,7 +1,4 @@
 
-
-
-
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -175,10 +172,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
     }
   };
 
-  const recipeStylesToShow = DOUGH_STYLE_PRESETS.filter((p) => {
-    if (config.bakeType === BakeType.PIZZA) return p.type === 'pizza';
-    return ['bread', 'focaccia', 'other'].includes(p.type);
-  });
+  const recipeStylesToShow = DOUGH_STYLE_PRESETS.filter(p => p.type === config.bakeType);
   
   const currentPreset = useMemo(() => 
     DOUGH_STYLE_PRESETS.find(p => p.id === config.stylePresetId),
@@ -235,9 +229,10 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
       )}
 
       <FormSection title={t('form.sections.style.title')} description={t('form.sections.style.description')} icon={<RecipeIcon className="h-6 w-6" />}>
-          <div className="grid grid-cols-2 gap-3">
-              <ChoiceButton active={config.bakeType === BakeType.PIZZA} onClick={() => onBakeTypeChange(BakeType.PIZZA)}>{t('form.pizzas')}</ChoiceButton>
-              <ChoiceButton active={config.bakeType === BakeType.BREAD} onClick={() => onBakeTypeChange(BakeType.BREAD)}>{t('form.breads')}</ChoiceButton>
+          <div className="grid grid-cols-3 gap-3">
+              <ChoiceButton active={config.bakeType === BakeType.PIZZAS} onClick={() => onBakeTypeChange(BakeType.PIZZAS)}>Pizzas</ChoiceButton>
+              <ChoiceButton active={config.bakeType === BakeType.BREADS_SAVORY} onClick={() => onBakeTypeChange(BakeType.BREADS_SAVORY)}>Pães & Salgados</ChoiceButton>
+              <ChoiceButton active={config.bakeType === BakeType.SWEETS_PASTRY} onClick={() => onBakeTypeChange(BakeType.SWEETS_PASTRY)}>Doces</ChoiceButton>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {recipeStylesToShow.map((preset) => (
@@ -283,11 +278,11 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           {calculationMode === 'mass' ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                    <label htmlFor="numPizzas" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZA ? t('form.num_pizzas') : t('form.num_loaves')}</label>
+                    <label htmlFor="numPizzas" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZAS ? t('form.num_pizzas') : t('form.num_loaves')}</label>
                     <input type="number" id="numPizzas" name="numPizzas" value={config.numPizzas || ''} onChange={handleNumberChange} min="1" max="100" className={getInputClasses(!!errors.numPizzas)} ref={inputRefs.numPizzas} />
                 </div>
                 <div>
-                    <label htmlFor="doughBallWeight" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZA ? t('form.weight_per_pizza') : t('form.weight_per_loaf')}</label>
+                    <label htmlFor="doughBallWeight" className="mb-1 block text-sm font-medium">{config.bakeType === BakeType.PIZZAS ? t('form.weight_per_pizza') : t('form.weight_per_loaf')}</label>
                     <input type="number" id="doughBallWeight" name="doughBallWeight" value={config.doughBallWeight || ''} onChange={handleNumberChange} min="100" max="2000" step="10" className={getInputClasses(!!errors.doughBallWeight)} />
                 </div>
             </div>
@@ -300,10 +295,43 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
       </FormSection>
 
       <FormSection title={t('form.sections.ingredients.title')} description={t('form.sections.ingredients.description')} icon={<FlourIcon className="h-6 w-6" />}>
-          <SliderInput label={t('form.hydration')} name="hydration" value={config.hydration} onChange={handleNumberChange} min={isBasic ? 50 : 0} max={100} step={1} unit="%" tooltip={t('form.hydration_tooltip')} hasError={!!errors.hydration} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultHydration} />
-          <SliderInput label={t('results.salt')} name="salt" value={config.salt} onChange={handleNumberChange} min={0} max={isBasic ? 4 : 5} step={0.1} unit="%" tooltip={t('form.salt_tooltip')} hasError={!!errors.salt} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultSalt} />
-          <SliderInput label={t('results.oil')} name="oil" value={config.oil} onChange={handleNumberChange} min={0} max={isBasic ? 10 : 20} step={0.5} unit="%" tooltip={t('form.oil_tooltip')} hasError={!!errors.oil} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultOil} />
-          <SliderInput label={t('form.sugar')} name="sugar" value={config.sugar || 0} onChange={handleNumberChange} min={0} max={isBasic ? 10 : 20} step={0.5} unit="%" tooltip={t('form.sugar_tooltip')} hasError={!!errors.sugar} disabled={isBasic} disabledTooltip={t('form.advanced_mode_tooltip')} presetValue={currentPreset?.defaultSugar} />
+        {isBasic ? (
+            <div className="space-y-4 rounded-lg border border-sky-200 bg-slate-50 p-4 dark:border-sky-800 dark:bg-slate-700/50">
+              <div className="flex items-center gap-2">
+                <LockClosedIcon className="h-5 w-5 text-sky-500" />
+                <h4 className="font-semibold text-slate-700 dark:text-slate-200">Parâmetros do Estilo</h4>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">{t('form.hydration')}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.hydration.toFixed(1)}%</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">{t('results.salt')}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.salt.toFixed(1)}%</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">{t('results.oil')}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.oil.toFixed(1)}%</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">{t('form.sugar')}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100">{(config.sugar || 0).toFixed(1)}%</span>
+                </div>
+              </div>
+              <p className="pt-3 text-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-600">
+                {t('form.advanced_mode_tooltip')}
+              </p>
+            </div>
+        ) : (
+            <>
+                <SliderInput label={t('form.hydration')} name="hydration" value={config.hydration} onChange={handleNumberChange} min={0} max={120} step={1} unit="%" tooltip={t('form.hydration_tooltip')} hasError={!!errors.hydration} />
+                <SliderInput label={t('results.salt')} name="salt" value={config.salt} onChange={handleNumberChange} min={0} max={5} step={0.1} unit="%" tooltip={t('form.salt_tooltip')} hasError={!!errors.salt} />
+                <SliderInput label={t('results.oil')} name="oil" value={config.oil} onChange={handleNumberChange} min={0} max={100} step={0.5} unit="%" tooltip={t('form.oil_tooltip')} hasError={!!errors.oil} />
+                <SliderInput label={t('form.sugar')} name="sugar" value={config.sugar || 0} onChange={handleNumberChange} min={0} max={100} step={0.5} unit="%" tooltip={t('form.sugar_tooltip')} hasError={!!errors.sugar} />
+            </>
+        )}
+
            <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
              <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2">
                 <div>

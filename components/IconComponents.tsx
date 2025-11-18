@@ -1,27 +1,6 @@
 
 import React from 'react';
 
-export const DoughLabLogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
-  props,
-) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    {/* Water Droplet */}
-    <path d="M12 2a4 4 0 0 0-4 4c0 2.21 4 6 4 6s4-3.79 4-6a4 4 0 0 0-4-4z" />
-    {/* Bowl and Dough */}
-    <path d="M20.4 14.5c.2-2.5-2.4-4.5-5.4-4.5-2.2 0-4.2 1.2-5.1 3-.7-1-1.8-1.5-3-1.5-2.5 0-4.5 2-4.5 4.5" />
-    <path d="M3.6 14.5c.1 3.5 3.1 6.5 8.4 6.5s8.3-3 8.4-6.5" />
-  </svg>
-);
-
 const createIcon =
   (path: React.ReactNode) => (props: React.SVGProps<SVGSVGElement>) =>
     (

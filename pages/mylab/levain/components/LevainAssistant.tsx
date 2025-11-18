@@ -104,4 +104,11 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
         <div className="flex-shrink-0 p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <SparklesIcon className="h-6 w-6 text-lime-500" />
-            {t('levain_pet.detail_page
+            {t('levain_pet.detail_page.assistant.modal_title')}
+          </h2>
+           <button onClick={onClose} className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700">
+                <CloseIcon className="h-6 w-6" />
+            </button>
+        </div>
+
+        <div className="flex-1 overflow
