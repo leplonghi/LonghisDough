@@ -1,3 +1,4 @@
+
 import React, { ReactNode } from 'react';
 import { Page } from '../../types';
 import { BeakerIcon, BookOpenIcon, ChartBarIcon, ClockIcon, DocumentDuplicateIcon, FlourIcon, SparklesIcon, FlaskIcon } from '../../components/IconComponents';
@@ -10,17 +11,20 @@ interface MyLabLayoutProps {
 
 const MyLabLayout: React.FC<MyLabLayoutProps> = ({ children, activePage, onNavigate }) => {
   const navItems = [
-    { page: 'mylab' as Page, label: 'Visão Geral', icon: <ChartBarIcon className="h-5 w-5" /> },
-    { page: 'mylab/fornadas' as Page, label: 'Minhas Fornadas', icon: <BeakerIcon className="h-5 w-5" /> },
+    { page: 'mylab' as Page, label: 'Overview', icon: <ChartBarIcon className="h-5 w-5" /> },
+    { page: 'mylab/fornadas' as Page, label: 'My Bakes', icon: <BeakerIcon className="h-5 w-5" /> },
     { page: 'mylab/levain' as Page, label: 'Levain Pet', icon: <SparklesIcon className="h-5 w-5" /> },
-    { page: 'mylab/objetivos' as Page, label: 'Meus Objetivos', icon: <SparklesIcon className="h-5 w-5" /> },
+    { page: 'mylab/objetivos' as Page, label: 'My Goals', icon: <SparklesIcon className="h-5 w-5" /> },
     { page: 'mylab/consistency' as Page, label: 'Consistency Mode', icon: <FlaskIcon className="h-5 w-5" /> },
-    { page: 'mylab/massas' as Page, label: 'Minhas Massas', icon: <DocumentDuplicateIcon className="h-5 w-5" />, isComingSoon: true },
-    { page: 'mylab/farinhas' as Page, label: 'Minhas Farinhas', icon: <FlourIcon className="h-5 w-5" />, isComingSoon: true },
-    { page: 'mylab/diario-sensorial' as Page, label: 'Diário Sensorial', icon: <BookOpenIcon className="h-5 w-5" />, isComingSoon: true },
-    { page: 'mylab/comparacoes' as Page, label: 'Comparações', icon: <SparklesIcon className="h-5 w-5" />, isComingSoon: true },
+    // Hidden obsolete/not implemented items
+    /*
+    { page: 'mylab/massas' as Page, label: 'My Doughs', icon: <DocumentDuplicateIcon className="h-5 w-5" />, isComingSoon: true },
+    { page: 'mylab/farinhas' as Page, label: 'My Flours', icon: <FlourIcon className="h-5 w-5" />, isComingSoon: true },
+    { page: 'mylab/diario-sensorial' as Page, label: 'Sensory Journal', icon: <BookOpenIcon className="h-5 w-5" />, isComingSoon: true },
+    { page: 'mylab/comparacoes' as Page, label: 'Comparisons', icon: <SparklesIcon className="h-5 w-5" />, isComingSoon: true },
     { page: 'mylab/insights' as Page, label: 'Insights', icon: <ChartBarIcon className="h-5 w-5" />, isComingSoon: true },
-    { page: 'mylab/timeline' as Page, label: 'Linha do Tempo', icon: <ClockIcon className="h-5 w-5" />, isComingSoon: true },
+    { page: 'mylab/timeline' as Page, label: 'Timeline', icon: <ClockIcon className="h-5 w-5" />, isComingSoon: true },
+    */
   ];
 
   return (
@@ -31,39 +35,33 @@ const MyLabLayout: React.FC<MyLabLayoutProps> = ({ children, activePage, onNavig
           {navItems.map(item => (
             <button
               key={item.page}
-              onClick={() => !item.isComingSoon && onNavigate(item.page)}
-              disabled={item.isComingSoon}
-              className={`flex w-full items-center justify-between gap-3 rounded-lg p-3 text-sm font-semibold transition-colors ${
+              onClick={() => onNavigate(item.page)}
+              className={`flex w-full items-center gap-3 rounded-lg p-3 text-sm font-semibold transition-colors ${
                 activePage === item.page
-                  ? 'bg-neutral-100 text-neutral-900'
-                  : 'text-neutral-600 hover:bg-neutral-100'
-              } ${item.isComingSoon ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100'
+                  : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
+              }`}
             >
-              <div className="flex items-center gap-3">
-                {item.icon}
-                <span className="truncate">{item.label}</span>
-              </div>
-              {item.isComingSoon && <span className="text-xs font-bold text-sky-500 bg-sky-100 px-1.5 py-0.5 rounded-full">Em Breve</span>}
+              {item.icon}
+              <span className="truncate">{item.label}</span>
             </button>
           ))}
         </nav>
         {/* Tabs for Mobile */}
         <div className="md:hidden">
-            <div className="border-b border-neutral-200">
+            <div className="border-b border-neutral-200 dark:border-neutral-700">
                 <nav className="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
                     {navItems.map(item => (
                         <button
                             key={item.page}
-                            onClick={() => !item.isComingSoon && onNavigate(item.page)}
-                            disabled={item.isComingSoon}
-                            className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center gap-1.5 ${
+                            onClick={() => onNavigate(item.page)}
+                            className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${
                                 activePage === item.page
-                                ? 'border-lime-500 text-lime-600'
-                                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-                            } ${item.isComingSoon ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                ? 'border-lime-500 text-lime-600 dark:text-lime-400'
+                                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:border-neutral-600'
+                            }`}
                         >
                             {item.label}
-                            {item.isComingSoon && <span className="text-xs text-sky-500">(Em Breve)</span>}
                         </button>
                     ))}
                 </nav>

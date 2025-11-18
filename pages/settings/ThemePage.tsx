@@ -31,8 +31,8 @@ const ThemePage: React.FC<ThemePageProps> = ({ theme, setTheme }) => {
   const { t } = useTranslation();
 
   return (
-    <SettingsPageLayout title="Tema">
-      <p>Escolha a aparência do aplicativo.</p>
+    <SettingsPageLayout title="Theme">
+      <p>Choose the application appearance.</p>
       <div className="not-prose mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <ChoiceButton active={theme === 'light'} onClick={() => setTheme('light')}>
               {t('user_menu.theme_light')}

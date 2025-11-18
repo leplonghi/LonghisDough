@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LightBulbIcon } from '../IconComponents';
 import { EnvironmentAdvice as EnvironmentAdjustmentsType } from '../../types';
@@ -30,11 +31,11 @@ const EnvironmentAdjustments: React.FC<EnvironmentAdjustmentsProps> = ({ adjustm
                         <LightBulbIcon className="h-6 w-6" />
                     </span>
                     <h3 className="text-xl font-bold text-slate-800">
-                        Ajustes Ambientais
+                        Environmental Adjustments
                     </h3>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-4 text-center text-sm text-slate-500">
-                    Sem ajustes recomendados para as condições atuais.
+                    No adjustments recommended for current conditions.
                 </div>
             </div>
         );
@@ -47,7 +48,7 @@ const EnvironmentAdjustments: React.FC<EnvironmentAdjustmentsProps> = ({ adjustm
                     <LightBulbIcon className="h-6 w-6" />
                 </span>
                 <h3 className="text-xl font-bold text-slate-800">
-                    Ajustes Ambientais Inteligentes
+                    Intelligent Environmental Adjustments
                 </h3>
             </div>
             <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 sm:p-6">

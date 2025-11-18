@@ -14,38 +14,38 @@ const InsightsComparisons: React.FC = () => {
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm h-full">
         <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
             <SparklesIcon className="h-6 w-6 text-lime-500"/>
-            Comparativos Inteligentes
+            Intelligent Comparisons
         </h2>
         <div className="space-y-4">
-            <ComparisonBlock title="Sua Hidratação Média vs. Comunidade (Napolitana)">
+            <ComparisonBlock title="Your Avg. Hydration vs. Community (Neapolitan)">
                 <div className="space-y-2 text-xs">
                     <div>
-                        <span>Você: 65%</span>
+                        <span>You: 65%</span>
                         <div className="w-full bg-slate-200 rounded-full h-2.5"><div className="bg-lime-500 h-2.5 rounded-full" style={{width: '65%'}}></div></div>
                     </div>
                     <div>
-                        <span>Comunidade: 62%</span>
+                        <span>Community: 62%</span>
                         <div className="w-full bg-slate-200 rounded-full h-2.5"><div className="bg-sky-500 h-2.5 rounded-full" style={{width: '62%'}}></div></div>
                     </div>
                 </div>
             </ComparisonBlock>
-            <ComparisonBlock title="Seu Tempo de Fermentação vs. Padrão Técnico (NY Style)">
+            <ComparisonBlock title="Your Fermentation Time vs. Technical Standard (NY Style)">
                  <div className="space-y-2 text-xs">
                     <div>
-                        <span>Você: 24h</span>
+                        <span>You: 24h</span>
                         <div className="w-full bg-slate-200 rounded-full h-2.5"><div className="bg-lime-500 h-2.5 rounded-full" style={{width: '33%'}}></div></div>
                     </div>
                     <div>
-                        <span>Recomendado: 48-72h</span>
+                        <span>Recommended: 48-72h</span>
                          <div className="relative w-full bg-slate-200 rounded-full h-2.5">
                              <div className="bg-sky-500 h-2.5 rounded-full absolute" style={{left: '66%', width: '33%'}}></div>
                          </div>
                     </div>
                 </div>
             </ComparisonBlock>
-            <ComparisonBlock title="Performance por Tipo de Farinha">
+            <ComparisonBlock title="Performance by Flour Type">
                 <p className="text-sm text-slate-600">
-                    Suas melhores avaliações (média <strong>4.8 <span className="text-yellow-400">★</span></strong>) são com farinha <strong>Tipo 00 Reforçada</strong>.
+                    Your best ratings (avg. <strong>4.8 <span className="text-yellow-400">★</span></strong>) are with <strong>Strong 00 Flour</strong>.
                 </p>
             </ComparisonBlock>
         </div>

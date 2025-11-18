@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Levain } from '../../../../types';
 import { useUser } from '../../../../contexts/UserProvider';
@@ -23,30 +24,30 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
             notificationEnabled,
             idealFeedingIntervalHours,
         });
-        addToast("Alterações salvas com sucesso.", "success");
+        addToast("Changes saved successfully.", "success");
     };
 
     return (
         <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-medium mb-4">Perfil do Starter</h3>
+            <h3 className="text-lg font-medium mb-4">Starter Profile</h3>
             <div className="space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-neutral-700">Uso típico</label>
+                    <label className="block text-sm font-medium text-neutral-700">Typical Use</label>
                     <input 
                         type="text" 
                         value={typicalUse} 
                         onChange={e => setTypicalUse(e.target.value)} 
-                        placeholder="Selecione para quais massas você usa este levain." 
+                        placeholder="Select for which doughs you use this levain." 
                         className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" 
                     />
                 </div>
                  <div>
-                    <label className="block text-sm font-medium text-neutral-700">Notas sensoriais</label>
+                    <label className="block text-sm font-medium text-neutral-700">Sensory Notes</label>
                     <textarea 
                         rows={4} 
                         value={sensoryNotes} 
                         onChange={e => setSensoryNotes(e.target.value)} 
-                        placeholder="Descreva cheiro, atividade, textura, comportamento." 
+                        placeholder="Describe smell, activity, texture, behavior." 
                         className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500"
                     ></textarea>
                 </div>
@@ -54,7 +55,7 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                 <div className="space-y-4 border-t border-neutral-200 pt-6">
                      <div className="flex items-center justify-between">
                         <label htmlFor="notification-switch" className="text-sm font-medium text-neutral-700">
-                            Lembrar de alimentar este levain
+                            Remind me to feed this levain
                         </label>
                         <div className="relative inline-block w-10 align-middle select-none">
                             <input
@@ -77,7 +78,7 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                     </div>
                     <div>
                         <label htmlFor="feeding-interval" className="block text-sm font-medium text-neutral-700">
-                            Intervalo ideal entre alimentações (horas)
+                            Ideal interval between feedings (hours)
                         </label>
                         <input
                             type="number"
@@ -96,7 +97,7 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                         onClick={handleSave}
                         className="mt-4 rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
                     >
-                        Salvar alterações
+                        Save Changes
                     </button>
                 </div>
             </div>

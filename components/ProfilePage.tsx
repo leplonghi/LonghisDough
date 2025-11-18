@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -10,6 +11,8 @@ import {
   BookmarkSquareIcon,
   BeakerIcon,
   FlourIcon,
+  ShieldCheckIcon,
+  ArrowTopRightOnSquareIcon,
 } from './IconComponents';
 import { User, Gender, Oven, Page, Levain } from '../types';
 import OvenModal from './OvenModal';
@@ -124,10 +127,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
 
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
-      <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
+      <dt className="text-sm font-medium text-slate-500">
         {label}
       </dt>
-      <dd className="mt-1 text-slate-900 dark:text-white">{value || 'N/A'}</dd>
+      <dd className="mt-1 text-slate-900">{value || 'N/A'}</dd>
     </div>
   );
 
@@ -140,7 +143,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     <div>
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+        className="block text-sm font-medium text-slate-700"
       >
         {label}
       </label>
@@ -150,7 +153,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           name={name}
           value={formData[name] || ''}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
+          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
         >
           {options?.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -165,7 +168,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           name={name}
           value={(formData[name] as string) || ''}
           onChange={handleInputChange}
-          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
+          className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 sm:text-sm"
           disabled={name === 'email'}
         />
       )}
@@ -180,36 +183,36 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   return (
     <>
     <div className="mx-auto max-w-2xl animate-[fadeIn_0.5s_ease-in-out]">
-      <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
+      <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10">
         <div className="flex flex-col items-center text-center">
           {user.avatar ? (
             <img
               src={user.avatar}
               alt={user.name}
-              className="h-24 w-24 rounded-full object-cover ring-4 ring-lime-200 dark:ring-lime-500/50"
+              className="h-24 w-24 rounded-full object-cover ring-4 ring-lime-200"
             />
           ) : (
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-200 text-4xl font-bold text-slate-600 ring-4 ring-lime-200 dark:bg-slate-700 dark:text-slate-200 dark:ring-lime-500/50">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-200 text-4xl font-bold text-slate-600 ring-4 ring-lime-200">
               {user.name.charAt(0)}
             </div>
           )}
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             {user.name}
           </h1>
-          <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-lg text-slate-600">
             {user.email}
           </p>
         </div>
 
-        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+        <div className="mt-10 border-t border-slate-200 pt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+            <h2 className="text-xl font-bold text-slate-800">
               {t('profile.settings_title')}
             </h2>
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 rounded-md bg-slate-200 py-1.5 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                className="flex items-center gap-1.5 rounded-md bg-slate-200 py-1.5 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-300"
               >
                 <PencilIcon className="h-4 w-4" />
                 <span>{t('profile.edit_profile')}</span>
@@ -229,10 +232,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                   'select',
                   genderOptions,
                 )}
-                <div className="flex items-center justify-end gap-4 border-t border-slate-200 pt-6 dark:border-slate-700">
+                <div className="flex items-center justify-end gap-4 border-t border-slate-200 pt-6">
                   <button
                     onClick={handleCancel}
-                    className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                    className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     {t('profile.cancel')}
                   </button>
@@ -256,15 +259,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                     : undefined,
                 )}
                 <div>
-                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                  <dt className="text-sm font-medium text-slate-500">
                     {t('profile.membership')}
                   </dt>
                   <dd className="mt-1">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
                         hasProAccess
-                          ? 'bg-lime-100 text-lime-800 dark:bg-lime-500/10 dark:text-lime-300'
-                          : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                          ? 'bg-lime-100 text-lime-800'
+                          : 'bg-slate-100 text-slate-800'
                       }`}
                     >
                       {hasProAccess && <StarIcon className="h-3.5 w-3.5" />}
@@ -280,9 +283,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         </div>
         
         {/* === SECTION: My Ovens === */}
-        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+        <div className="mt-10 border-t border-slate-200 pt-8">
              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                <h2 className="text-xl font-bold text-slate-800">
                 {t('profile.ovens.title')}
                 </h2>
                 <button
@@ -294,22 +297,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
              </div>
              <div className="mt-6 space-y-4">
                 {ovens.length === 0 ? (
-                    <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('profile.ovens.empty_state')}</p>
+                    <p className="text-center text-slate-500 py-4">{t('profile.ovens.empty_state')}</p>
                 ) : (
                     ovens.map(oven => (
-                        <div key={oven.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
+                        <div key={oven.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
                             <div>
-                                <p className="font-semibold text-slate-800 dark:text-slate-100">{oven.name} {oven.isDefault && <span className="ml-2 text-xs font-bold text-lime-600 dark:text-lime-400">({t('profile.ovens.default_oven')})</span>}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{t(`profile.ovens.types.${oven.type.toLowerCase()}`)} - {oven.maxTemperature}°C</p>
+                                <p className="font-semibold text-slate-800">{oven.name} {oven.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.ovens.default_oven')})</span>}</p>
+                                <p className="text-sm text-slate-500">{t(`profile.ovens.types.${oven.type.toLowerCase()}`)} - {oven.maxTemperature}°C</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button onClick={() => setDefaultOven(oven.id)} title={t('profile.ovens.set_as_default')} className={`p-2 rounded-full ${oven.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
                                     {oven.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
                                 </button>
-                                <button onClick={() => { setEditingOven(oven); setIsOvenModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600">
+                                <button onClick={() => { setEditingOven(oven); setIsOvenModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
                                     <PencilIcon className="h-5 w-5"/>
                                 </button>
-                                <button onClick={() => handleDeleteOven(oven.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10">
+                                <button onClick={() => handleDeleteOven(oven.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
                                     <TrashIcon className="h-5 w-5"/>
                                 </button>
                             </div>
@@ -320,9 +323,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         </div>
         
         {/* === SECTION: My Levains === */}
-        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+        <div className="mt-10 border-t border-slate-200 pt-8">
              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                   <BeakerIcon className="h-6 w-6 text-lime-500" />
                   {t('profile.levains.title')}
                 </h2>
@@ -335,25 +338,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
              </div>
              <div className="mt-6 space-y-4">
                 {levains.length === 0 ? (
-                    <p className="text-center text-slate-500 dark:text-slate-400 py-4">{t('profile.levains.empty_state')}</p>
+                    <p className="text-center text-slate-500 py-4">{t('profile.levains.empty_state')}</p>
                 ) : (
                     levains.map(levain => (
-                        <div key={levain.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
+                        <div key={levain.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
                             <div>
-                                <p className="font-semibold text-slate-800 dark:text-slate-100">{levain.name} {levain.isDefault && <span className="ml-2 text-xs font-bold text-lime-600 dark:text-lime-400">({t('profile.levains.default')})</span>}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{levain.hydration}% {t('profile.levains.hydration')}</p>
+                                <p className="font-semibold text-slate-800">{levain.name} {levain.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.levains.default')})</span>}</p>
+                                <p className="text-sm text-slate-500">{levain.hydration}% {t('profile.levains.hydration')}</p>
                             </div>
                             <div className="flex items-center gap-1 sm:gap-2">
-                                <button onClick={() => onNavigate('mylab/levain')} title={t('profile.levains.manage')} className="p-2 rounded-md text-sm font-semibold text-lime-600 hover:bg-lime-100 dark:text-lime-400 dark:hover:bg-lime-900/50">
+                                <button onClick={() => onNavigate('mylab/levain')} title={t('profile.levains.manage')} className="p-2 rounded-md text-sm font-semibold text-lime-600 hover:bg-lime-100">
                                     {t('profile.levains.manage')}
                                 </button>
                                 <button onClick={() => setDefaultLevain(levain.id)} title={t('profile.levains.set_as_default')} className={`p-2 rounded-full ${levain.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
                                     {levain.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
                                 </button>
-                                <button onClick={() => { setEditingLevain(levain); setIsLevainModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600">
+                                <button onClick={() => { setEditingLevain(levain); setIsLevainModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
                                     <PencilIcon className="h-5 w-5"/>
                                 </button>
-                                <button onClick={() => handleDeleteLevain(levain.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10">
+                                <button onClick={() => handleDeleteLevain(levain.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
                                     <TrashIcon className="h-5 w-5"/>
                                 </button>
                             </div>
@@ -364,38 +367,66 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         </div>
 
         {/* === SECTION: Resources === */}
-        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+        <div className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-800">
               {t('profile.resources.title')}
             </h2>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <button
                     onClick={() => onNavigate('references')}
-                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700"
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
                 >
                     <BookmarkSquareIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
                     <div>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{t('profile.resources.tech_references')}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('profile.resources.tech_references_desc')}</p>
+                        <p className="font-semibold text-slate-800">{t('profile.resources.tech_references')}</p>
+                        <p className="text-sm text-slate-500">{t('profile.resources.tech_references_desc')}</p>
                     </div>
                 </button>
                 <button
                     onClick={() => onNavigate('flours')}
-                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700"
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
                 >
                     <FlourIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
                     <div>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{t('profile.resources.flours_library')}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{t('profile.resources.flours_library_desc')}</p>
+                        <p className="font-semibold text-slate-800">{t('profile.resources.flours_library')}</p>
+                        <p className="text-sm text-slate-500">{t('profile.resources.flours_library_desc')}</p>
                     </div>
                 </button>
             </div>
         </div>
 
-        <div className="mt-10 border-t border-slate-200 pt-8 dark:border-slate-700">
+        {/* === SECTION: Legal === */}
+        <div className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-800">Legal</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                    onClick={() => onNavigate('terms')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
+                        <span className="font-medium text-slate-700">Terms of Use</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+                <button
+                    onClick={() => onNavigate('privacy')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
+                        <span className="font-medium text-slate-700">Privacy Policy</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+            </div>
+        </div>
+
+
+        <div className="mt-10 border-t border-slate-200 pt-8">
           <button
             onClick={logout}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-3 px-6 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-3 px-6 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 sm:w-auto"
           >
             <ArrowRightOnRectangleIcon className="h-5 w-5" />
             <span>{t('auth.sign_out')}</span>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { TestSeries, TestSeriesVariable } from '../../types';
 import { CloseIcon } from '../IconComponents';
@@ -42,7 +43,7 @@ const ConsistencySeriesModal: React.FC<ConsistencySeriesModalProps> = ({ isOpen,
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.name.trim() === '' || formData.steps.trim() === '') {
-            alert('Nome e Passos são obrigatórios.');
+            alert('Name and Steps are required.');
             return;
         }
 
@@ -68,10 +69,10 @@ const ConsistencySeriesModal: React.FC<ConsistencySeriesModalProps> = ({ isOpen,
     };
 
     const variableOptions: { value: TestSeriesVariable; label: string }[] = [
-        { value: 'hidratação', label: 'Hidratação (%)' },
-        { value: 'farinha', label: 'Tipo de Farinha' },
-        { value: 'tempo_fermentacao', label: 'Tempo de Fermentação (h)' },
-        { value: 'outro', label: 'Outro' },
+        { value: 'hidratação', label: 'Hydration (%)' },
+        { value: 'farinha', label: 'Flour Type' },
+        { value: 'tempo_fermentacao', label: 'Fermentation Time (h)' },
+        { value: 'outro', label: 'Other' },
     ];
 
     return (
@@ -85,7 +86,7 @@ const ConsistencySeriesModal: React.FC<ConsistencySeriesModalProps> = ({ isOpen,
             >
                 <div className="flex items-start justify-between border-b border-slate-200 pb-4">
                     <h2 className="text-xl font-bold text-slate-900">
-                        {seriesToEdit ? 'Editar Série de Testes' : 'Criar Nova Série'}
+                        {seriesToEdit ? 'Edit Test Series' : 'Create New Series'}
                     </h2>
                     <button onClick={onClose} className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200">
                         <CloseIcon className="h-6 w-6" />
@@ -93,28 +94,28 @@ const ConsistencySeriesModal: React.FC<ConsistencySeriesModalProps> = ({ isOpen,
                 </div>
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700">Nome da Série</label>
+                        <label className="block text-sm font-medium text-slate-700">Series Name</label>
                         <input type="text" name="name" value={formData.name} onChange={handleChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700">Descrição</label>
+                        <label className="block text-sm font-medium text-slate-700">Description</label>
                         <textarea name="description" value={formData.description} onChange={handleChange} rows={2} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500"></textarea>
                     </div>
                      <div className="grid grid-cols-2 gap-4">
                          <div>
-                            <label className="block text-sm font-medium text-slate-700">Variável a Testar</label>
+                            <label className="block text-sm font-medium text-slate-700">Variable to Test</label>
                             <select name="variable" value={formData.variable} onChange={handleChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500">
                                 {variableOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700">Passos (separados por vírgula)</label>
+                            <label className="block text-sm font-medium text-slate-700">Steps (comma separated)</label>
                             <input type="text" name="steps" value={formData.steps} onChange={handleChange} placeholder="60, 62, 64" required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" />
                         </div>
                      </div>
                     <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
-                        <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button>
-                        <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Salvar Série</button>
+                        <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+                        <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Save Series</button>
                     </div>
                 </form>
             </div>

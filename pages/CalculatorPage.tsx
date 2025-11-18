@@ -1,6 +1,7 @@
+
 import React, { useMemo, useState, useRef } from 'react';
 import CalculatorForm from '../components/CalculatorForm';
-import ResultsDisplay from '../components/ResultsDisplay';
+import { ResultsDisplay } from '../components/ResultsDisplay';
 import {
   DoughConfig,
   DoughResult,

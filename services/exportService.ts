@@ -1,3 +1,4 @@
+
 import { Batch, DoughConfig, DoughResult } from '../types';
 import { FLOURS } from '../flours-constants';
 
@@ -10,7 +11,7 @@ declare global {
 
 // A helper function to format dates
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('pt-BR', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -47,7 +48,7 @@ export const exportBatchToJSON = (batch: Batch, t: (key: string, options?: any) 
     const safeName = batch.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     const date = batch.createdAt.split('T')[0];
     a.href = url;
-    a.download = `fornada-${date}-${safeName}.json`;
+    a.download = `bake-${date}-${safeName}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -90,7 +91,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(100);
-        doc.text(`Criado em: ${formatDate(batch.createdAt)}`, margin, y);
+        doc.text(`Created on: ${formatDate(batch.createdAt)}`, margin, y);
         y += sectionSpacing * 2;
         doc.setTextColor(0);
 
@@ -98,7 +99,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
         checkPageBreak();
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.text('Resumo da Massa', margin, y);
+        doc.text('Dough Summary', margin, y);
         y += lineSpacing + 2;
 
         doc.setFontSize(11);
@@ -112,10 +113,10 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
             y += lineSpacing;
         };
         
-        printRow('Estilo:', t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle }));
-        printRow('Hidratação:', `${batch.doughConfig.hydration}%`);
-        printRow('Farinha:', FLOURS.find(f => f.id === batch.doughConfig.flourId)?.name || 'N/A');
-        printRow('Fermento:', `${batch.doughConfig.yeastPercentage}% (${t(`form.yeast_${batch.doughConfig.yeastType.toLowerCase()}`)})`);
+        printRow('Style:', t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle }));
+        printRow('Hydration:', `${batch.doughConfig.hydration}%`);
+        printRow('Flour:', FLOURS.find(f => f.id === batch.doughConfig.flourId)?.name || 'N/A');
+        printRow('Yeast:', `${batch.doughConfig.yeastPercentage}% (${t(`form.yeast_${batch.doughConfig.yeastType.toLowerCase()}`)})`);
         y += sectionSpacing;
 
         // --- Ingredientes ---
@@ -123,7 +124,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
             checkPageBreak();
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
-            doc.text('Ingredientes', margin, y);
+            doc.text('Ingredients', margin, y);
             y += lineSpacing + 2;
 
             const printIngredientRow = (label: string, value: number, note?: string) => {
@@ -147,13 +148,13 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
                 doc.setFont('helvetica', 'bold');
                 doc.text(t(`form.${doughConfig.fermentationTechnique.toLowerCase()}`), col1, y);
                 y += lineSpacing;
-                printIngredientRow('Farinha', doughResult.preferment.flour);
-                printIngredientRow('Água', doughResult.preferment.water);
-                if (doughResult.preferment.yeast > 0) printIngredientRow('Fermento', doughResult.preferment.yeast);
+                printIngredientRow('Flour', doughResult.preferment.flour);
+                printIngredientRow('Water', doughResult.preferment.water);
+                if (doughResult.preferment.yeast > 0) printIngredientRow('Yeast', doughResult.preferment.yeast);
                 
                 checkPageBreak();
                 doc.setFont('helvetica', 'bold');
-                doc.text('Massa Final', col1, y);
+                doc.text('Final Dough', col1, y);
                 y += lineSpacing;
                 printIngredientRow(t(`form.${doughConfig.fermentationTechnique.toLowerCase()}`), doughResult.preferment.flour + doughResult.preferment.water + doughResult.preferment.yeast);
             }
@@ -165,11 +166,11 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
             const oilAmount = 'oil' in ingredients ? ingredients.oil : ingredients.totalOil;
             const yeastAmount = 'yeast' in ingredients ? ingredients.yeast : ingredients.totalYeast;
 
-            printIngredientRow('Farinha', flourAmount);
-            printIngredientRow('Água', waterAmount);
-            printIngredientRow('Sal', saltAmount, `${doughConfig.salt.toFixed(1)}%`);
-            if (oilAmount > 0) printIngredientRow('Azeite/Óleo', oilAmount, `${doughConfig.oil.toFixed(1)}%`);
-            if (yeastAmount > 0 && !doughResult.preferment) printIngredientRow('Fermento', yeastAmount);
+            printIngredientRow('Flour', flourAmount);
+            printIngredientRow('Water', waterAmount);
+            printIngredientRow('Salt', saltAmount, `${doughConfig.salt.toFixed(1)}%`);
+            if (oilAmount > 0) printIngredientRow('Oil/Olive Oil', oilAmount, `${doughConfig.oil.toFixed(1)}%`);
+            if (yeastAmount > 0 && !doughResult.preferment) printIngredientRow('Yeast', yeastAmount);
 
             checkPageBreak();
             doc.setLineWidth(0.5);
@@ -177,7 +178,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
             y += lineSpacing;
             
             doc.setFont('helvetica', 'bold');
-            printRow('Peso Total', `${doughResult.totalDough.toFixed(0)}g`);
+            printRow('Total Weight', `${doughResult.totalDough.toFixed(0)}g`);
         }
         y += sectionSpacing;
 
@@ -186,7 +187,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
             checkPageBreak(40);
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
-            doc.text('Processo & Notas', margin, y);
+            doc.text('Process & Notes', margin, y);
             y += lineSpacing + 2;
 
             doc.setFontSize(11);
@@ -197,7 +198,7 @@ export const exportBatchToPDF = (batch: Batch, t: (key: string, options?: any) =
         
         const safeName = batch.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const date = batch.createdAt.split('T')[0];
-        doc.save(`fornada-${date}-${safeName}.pdf`);
+        doc.save(`bake-${date}-${safeName}.pdf`);
 
     } catch (error) {
         console.error("Failed to export batch to PDF:", error);

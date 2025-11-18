@@ -14,26 +14,26 @@ const SummaryCard: React.FC<{ icon: React.ReactNode; label: string; value: strin
 const InsightsSummary: React.FC = () => {
   return (
     <div>
-        <h2 className="text-xl font-bold text-slate-800 mb-4">Performance Geral</h2>
+        <h2 className="text-xl font-bold text-slate-800 mb-4">General Performance</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             <SummaryCard
                 icon={<WaterIcon className="h-6 w-6 text-slate-500" />}
-                label="Média de Hidratação"
+                label="Avg. Hydration"
                 value="68.2%"
             />
             <SummaryCard
                 icon={<CheckCircleIcon className="h-6 w-6 text-slate-500" />}
-                label="Taxa de Sucesso"
+                label="Success Rate"
                 value="92%"
             />
             <SummaryCard
                 icon={<FermentationIcon className="h-6 w-6 text-slate-500" />}
-                label="Fermentação Média"
+                label="Avg. Fermentation"
                 value="48h"
             />
             <SummaryCard
                 icon={<BatchesIcon className="h-6 w-6 text-slate-500" />}
-                label="Fornadas (30d)"
+                label="Bakes (30d)"
                 value="12"
             />
         </div>

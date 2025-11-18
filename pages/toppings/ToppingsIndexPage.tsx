@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
     SparklesIcon, 
@@ -45,17 +46,17 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadAn
                 <div className="text-center mb-8">
                      <BookOpenIcon className="mx-auto h-12 w-12 text-lime-500" />
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                        Estilos de Massa
+                        Dough Styles
                     </h1>
                     <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
-                        Explore uma biblioteca de estilos de massa. Cada um é um ponto de partida para sua fórmula na Calculadora.
+                        Explore a library of dough styles. Each is a starting point for your formula in the Calculator.
                     </p>
                 </div>
 
                  <div className="mb-8 flex flex-col md:flex-row gap-4 justify-center items-center p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <p className="text-sm font-semibold text-slate-700 text-center md:text-left">Precisa calcular os ingredientes para as coberturas da sua fornada de pizza?</p>
+                    <p className="text-sm font-semibold text-slate-700 text-center md:text-left">Need to calculate topping ingredients for your pizza bake?</p>
                      <button onClick={() => setIsPlannerOpen(true)} className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600">
-                        <CalculatorIcon className="h-5 w-5"/> Abrir Planejador de Coberturas
+                        <CalculatorIcon className="h-5 w-5"/> Open Toppings Planner
                     </button>
                 </div>
                 
@@ -66,13 +67,13 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadAn
                                 <h3 className="font-bold text-lg text-slate-900">{preset.name}</h3>
                                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mt-1">{t(`form.${preset.type.toLowerCase()}`)}</p>
                                 <div className="text-xs text-slate-600 mt-3 space-y-1 flex-grow">
-                                    <p><strong>Hidratação:</strong> {preset.defaultHydration}%</p>
-                                    <p><strong>Sal:</strong> {preset.defaultSalt}%</p>
-                                    <p><strong>Óleo:</strong> {preset.defaultOil}%</p>
+                                    <p><strong>Hydration:</strong> {preset.defaultHydration}%</p>
+                                    <p><strong>Salt:</strong> {preset.defaultSalt}%</p>
+                                    <p><strong>Oil:</strong> {preset.defaultOil}%</p>
                                     {preset.notes && <p className="pt-2 italic text-slate-500">{preset.notes}</p>}
                                 </div>
                                 <button onClick={() => handleLoadStyle(preset)} className="mt-4 w-full text-center text-sm font-semibold text-lime-600 hover:underline">
-                                    Carregar na Calculadora
+                                    Load in Calculator
                                 </button>
                             </div>
                         </div>
@@ -88,7 +89,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadAn
 // --- Modals ---
 
 const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }> = ({ onClose, totalBalls }) => {
-    const [flavors, setFlavors] = useState<{ name: string, ingredients: { name: string, amount: string }[], assignedBalls: number }[]>([{ name: 'Sabor 1', ingredients: [{ name: '', amount: '' }], assignedBalls: totalBalls }]);
+    const [flavors, setFlavors] = useState<{ name: string, ingredients: { name: string, amount: string }[], assignedBalls: number }[]>([{ name: 'Flavor 1', ingredients: [{ name: '', amount: '' }], assignedBalls: totalBalls }]);
     const [results, setResults] = useState<Record<string, number> | null>(null);
 
     const allocatedBalls = flavors.reduce((sum, item) => sum + item.assignedBalls, 0);
@@ -128,7 +129,7 @@ const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }
 
     const addFlavor = () => {
         if (remainingBalls > 0) {
-            setFlavors([...flavors, { name: `Sabor ${flavors.length + 1}`, ingredients: [{ name: '', amount: '' }], assignedBalls: 1 }]);
+            setFlavors([...flavors, { name: `Flavor ${flavors.length + 1}`, ingredients: [{ name: '', amount: '' }], assignedBalls: 1 }]);
         }
     };
     
@@ -152,9 +153,9 @@ const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <div className="relative w-full max-w-3xl bg-white rounded-2xl p-6 shadow-xl" onClick={e => e.stopPropagation()}>
-                <h2 className="text-xl font-bold mb-4">Planejador de Coberturas</h2>
+                <h2 className="text-xl font-bold mb-4">Toppings Planner</h2>
                 <div className="p-3 rounded-lg bg-slate-100 text-center font-semibold mb-4">
-                    Total de Bolas na Fornada: {totalBalls}
+                    Total Balls in Bake: {totalBalls}
                 </div>
                 
                 <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
@@ -168,28 +169,28 @@ const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }
                              <div className="space-y-2">
                                 {flavor.ingredients.map((ing, ingIndex) => (
                                     <div key={ingIndex} className="flex items-center gap-2">
-                                        <input type="text" value={ing.name} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'name', e.target.value)} placeholder="Ingrediente" className="flex-grow rounded-md border-slate-300 text-sm"/>
-                                        <input type="text" value={ing.amount} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'amount', e.target.value)} placeholder="Qtd/un" className="w-24 rounded-md border-slate-300 text-sm"/>
+                                        <input type="text" value={ing.name} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'name', e.target.value)} placeholder="Ingredient" className="flex-grow rounded-md border-slate-300 text-sm"/>
+                                        <input type="text" value={ing.amount} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'amount', e.target.value)} placeholder="Qty/unit" className="w-24 rounded-md border-slate-300 text-sm"/>
                                         {flavor.ingredients.length > 1 && <button onClick={() => removeIngredient(flavorIndex, ingIndex)}><CloseIcon className="h-4 w-4 text-slate-400"/></button>}
                                     </div>
                                 ))}
-                                <button onClick={() => addIngredient(flavorIndex)} className="text-xs font-semibold text-lime-600 flex items-center gap-1"><PlusCircleIcon className="h-4 w-4"/> Adicionar ingrediente</button>
+                                <button onClick={() => addIngredient(flavorIndex)} className="text-xs font-semibold text-lime-600 flex items-center gap-1"><PlusCircleIcon className="h-4 w-4"/> Add ingredient</button>
                              </div>
                         </div>
                     ))}
-                    <button onClick={addFlavor} disabled={remainingBalls <= 0} className="w-full text-sm font-semibold text-lime-600 flex items-center justify-center gap-1 p-2 border-2 border-dashed rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"><PlusCircleIcon className="h-5 w-5"/> Adicionar sabor</button>
+                    <button onClick={addFlavor} disabled={remainingBalls <= 0} className="w-full text-sm font-semibold text-lime-600 flex items-center justify-center gap-1 p-2 border-2 border-dashed rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"><PlusCircleIcon className="h-5 w-5"/> Add flavor</button>
                 </div>
 
                 <button onClick={calculateToppings} disabled={remainingBalls !== 0} className="mt-4 w-full bg-lime-500 text-white font-semibold py-2 rounded-lg disabled:bg-slate-400 disabled:cursor-not-allowed">
-                    {remainingBalls !== 0 ? `${remainingBalls} bola(s) restantes para alocar` : 'Calcular Lista de Compras'}
+                    {remainingBalls !== 0 ? `${remainingBalls} ball(s) remaining to allocate` : 'Calculate Shopping List'}
                 </button>
 
                 {results && (
                     <div className="mt-6 border-t pt-4">
-                        <h3 className="font-bold">Lista de Compras Consolidada:</h3>
+                        <h3 className="font-bold">Consolidated Shopping List:</h3>
                         <ul className="list-disc list-inside mt-2 text-sm columns-2">
                             {Object.entries(results).map(([name, total]) => (
-                                <li key={name}><strong>{name}:</strong> {total} (unidades)</li>
+                                <li key={name}><strong>{name}:</strong> {total} (units)</li>
                             ))}
                         </ul>
                     </div>

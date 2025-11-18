@@ -9,7 +9,7 @@ import {
   YeastType,
   Levain,
   BakeType,
-} from './types';
+} from '../types';
 import { ENVIRONMENT_TEMPERATURE_GUIDELINES } from './constants';
 import { hoursBetween } from './helpers';
 
@@ -49,20 +49,20 @@ export const getSmartAdjustments = (
   // Formula: ((DDT - 1) * 3) - roomTemp - flourTemp
   const waterTemp = ((desiredDoughTemp - 1) * 3) - roomTemp - flourTemp;
   result.messages.push(
-    `Para atingir a temperatura ideal da massa (DDT 24–26°C), use água a aproximadamente ${waterTemp.toFixed(0)}°C.`
+    `To reach the ideal dough temperature (DDT 24–26°C), use water at approximately ${waterTemp.toFixed(0)}°C.`
   );
 
 
   // --- Rule 1: Neapolitan AVPN Compliance ---
   if (config.recipeStyle === RecipeStyle.NEAPOLITAN && (config.oil > 0 || (config.sugar && config.sugar > 0))) {
     result.riskWarnings.push(
-      'Aviso de Autenticidade: A receita original da Pizza Napolitana (AVPN) não permite a adição de gordura (óleo) ou açúcar na massa.'
+      'Authenticity Warning: The original Neapolitan Pizza (AVPN) recipe does not allow fat (oil) or sugar in the dough.'
     );
     if (config.oil > 0) {
-        result.suggestions.push({ key: 'oil', value: 0, message: 'Sugestão: Remover o óleo para seguir a receita tradicional.' });
+        result.suggestions.push({ key: 'oil', value: 0, message: 'Suggestion: Remove oil to follow the traditional recipe.' });
     }
      if (config.sugar && config.sugar > 0) {
-        result.suggestions.push({ key: 'sugar', value: 0, message: 'Sugestão: Remover o açúcar.' });
+        result.suggestions.push({ key: 'sugar', value: 0, message: 'Suggestion: Remove sugar.' });
     }
   }
   
@@ -70,11 +70,11 @@ export const getSmartAdjustments = (
   if (config.yeastType === YeastType.USER_LEVAIN && userLevain) {
     const hours = hoursBetween(new Date().toISOString(), userLevain.lastFeeding);
     if (hours > 24) {
-      result.riskWarnings.push(`Seu levain foi alimentado há mais de 24 horas. Ele pode estar fraco, resultando em uma fermentação mais lenta. Considere alimentá-lo antes de usar.`);
+      result.riskWarnings.push(`Your levain was fed over 24 hours ago. It might be weak, resulting in slower fermentation. Consider feeding it before use.`);
     } else if (hours < 4) {
-      result.messages.push(`Seu levain está jovem (alimentado há ${hours.toFixed(0)}h). A fermentação pode ser um pouco mais lenta, mas isso pode desenvolver sabores mais complexos.`);
+      result.messages.push(`Your levain is young (fed ${hours.toFixed(0)}h ago). Fermentation might be slightly slower, but this can develop more complex flavors.`);
     } else if (hours <= 12) {
-       result.messages.push(`Seu levain está no pico de atividade. Ótimo para começar sua massa agora!`);
+       result.messages.push(`Your levain is at peak activity. Great time to start your dough!`);
     }
   }
 
@@ -87,13 +87,13 @@ export const getSmartAdjustments = (
     config.recipeStyle === RecipeStyle.NEAPOLITAN
   ) {
     result.messages.push(
-      'Fornos domésticos (~250°C) cozinham a pizza mais lentamente. Para compensar, considere usar um estilo como o "New York", que se beneficia da adição de óleo e açúcar para obter melhor cor e textura em temperaturas mais baixas.'
+      'Home ovens (~250°C) bake pizza slower. To compensate, consider using a style like "New York", which benefits from oil and sugar for better color and texture at lower temperatures.'
     );
     if (config.oil === 0) {
       result.suggestions.push({
         key: 'oil',
         value: 2,
-        message: 'Sugestão para adaptar: Adicionar 2% de azeite para uma crosta mais macia no forno doméstico.',
+        message: 'Adaptation tip: Add 2% olive oil for a softer crust in a home oven.',
       });
     }
   }
@@ -101,18 +101,18 @@ export const getSmartAdjustments = (
   // --- Rule 3: Weak Flour + High Hydration ---
   if (flour && config.hydration > (flour.hydrationHint?.max ?? 100)) {
      result.riskWarnings.push(
-      `Alerta: A hidratação de ${config.hydration}% é muito alta para a farinha "${flour.name}", que tem um limite recomendado de ${flour.hydrationHint?.max}%. A massa pode ficar muito pegajosa e difícil de manusear.`
+      `Warning: Hydration of ${config.hydration}% is very high for flour "${flour.name}", which has a recommended limit of ${flour.hydrationHint?.max}%. The dough may become very sticky and hard to handle.`
      );
      if(flour.hydrationHint?.max) {
         result.suggestions.push({
             key: 'hydration',
             value: flour.hydrationHint.max,
-            message: `Sugestão: Reduzir a hidratação para o máximo recomendado de ${flour.hydrationHint.max}%.`
+            message: `Suggestion: Reduce hydration to the recommended maximum of ${flour.hydrationHint.max}%.`
         });
      }
   } else if (flour && flour.strengthW && flour.strengthW < 240 && config.hydration > 65) {
       result.riskWarnings.push(
-          `Alerta: Farinhas com W ~${flour.strengthW} (fracas) podem não desenvolver uma rede de glúten forte o suficiente para hidratações acima de 65%.`
+          `Warning: Flours with W ~${flour.strengthW} (weak) might not develop a strong enough gluten network for hydration above 65%.`
       );
   }
 
@@ -127,7 +127,7 @@ export const getSmartAdjustments = (
           result.suggestions.push({
               key: 'yeastPercentage',
               value: suggestedYeast,
-              message: `Sugestão: Ajustar o fermento em ~${changePct}% (para ${suggestedYeast}%) para compensar a temperatura.`
+              message: `Suggestion: Adjust yeast by ~${changePct}% (to ${suggestedYeast}%) to compensate for temperature.`
           });
       }
   }
@@ -136,10 +136,10 @@ export const getSmartAdjustments = (
 // FIX: This comparison appears to be unintentional because the types 'BakeType' and '"PIZZA"' have no overlap. Changed to use BakeType.PIZZAS enum member.
   if(oven && config.bakeType === BakeType.PIZZAS) {
       if(oven.maxTemperature <= 300 && !oven.hasSteel) {
-          result.messages.push("Para fornos domésticos (até 300°C), um 'baking steel' (chapa de aço) é superior a uma pedra, pois transfere calor mais rápido, resultando em uma base mais crocante.");
+          result.messages.push("For home ovens (up to 300°C), a 'baking steel' is superior to a stone as it transfers heat faster, resulting in a crispier base.");
       }
       if(oven.maxTemperature > 400 && oven.hasSteel) {
-           result.messages.push("Em fornos de altíssima temperatura (>400°C), um 'baking steel' pode queimar a base da pizza muito rápido. Uma pedra refratária ou um 'biscotto' (pedra de argila) são mais indicados.");
+           result.messages.push("In extremely hot ovens (>400°C), a baking steel can burn the pizza base very quickly. A baking stone or 'biscotto' (clay stone) is recommended.");
       }
   }
 

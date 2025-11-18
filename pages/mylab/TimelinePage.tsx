@@ -1,5 +1,4 @@
 
-
 import React, { useMemo, ReactNode } from 'react';
 import { Page, Batch, Levain } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -33,7 +32,7 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
         id: `batch-${batch.id}`,
         type: 'BATCH',
         title: batch.name,
-        description: `Receita de ${t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })}, ${batch.doughConfig.hydration}% hidratação.`,
+        description: `${t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })} Recipe, ${batch.doughConfig.hydration}% hydration.`,
         date: batch.createdAt,
         link: { page: 'batch', params: batch.id },
         icon: <BatchesIcon className="h-5 w-5 text-white" />,
@@ -45,8 +44,8 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
       events.push({
         id: `levain-created-${levain.id}`,
         type: 'LEVAIN_CREATED',
-        title: `Levain criado: ${levain.name}`,
-        description: 'Um novo starter foi adicionado ao seu lab.',
+        title: `Levain created: ${levain.name}`,
+        description: 'A new starter was added to your lab.',
         date: levain.createdAt,
         link: { page: 'mylab/levain/detail', params: levain.id },
         icon: <BeakerIcon className="h-5 w-5 text-white" />,
@@ -56,8 +55,8 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
         events.push({
           id: `levain-fed-${feeding.id}`,
           type: 'LEVAIN_FED',
-          title: `Levain alimentado: ${levain.name}`,
-          description: `Alimentação com ${feeding.flourAmount}g de farinha e ${feeding.waterAmount}g de água.`,
+          title: `Levain fed: ${levain.name}`,
+          description: `Fed with ${feeding.flourAmount}g flour and ${feeding.waterAmount}g water.`,
           date: feeding.date,
           link: { page: 'mylab/levain/detail', params: levain.id },
           icon: <PlusCircleIcon className="h-5 w-5 text-white" />,
@@ -86,14 +85,14 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
   return (
     <MyLabLayout activePage="mylab/timeline" onNavigate={onNavigate}>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Linha do tempo</h1>
-        <p className="mt-1 text-sm text-neutral-500">Acompanhe sua evolução na panificação.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Timeline</h1>
+        <p className="mt-1 text-sm text-neutral-500">Track your baking evolution.</p>
       </div>
 
       {timelineEvents.length === 0 ? (
         <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center">
           <p className="text-neutral-500">
-            Sua jornada está começando. As próximas fornadas vão aparecer aqui.
+            Your journey is just beginning. Your next bakes will appear here.
           </p>
         </div>
       ) : (

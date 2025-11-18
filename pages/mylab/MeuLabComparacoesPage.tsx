@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Page, Batch } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -34,8 +35,8 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
         <MyLabLayout activePage="mylab/comparacoes" onNavigate={onNavigate}>
             <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Comparações</h1>
-                    <p className="mt-1 text-sm text-neutral-500">Selecione duas fornadas para comparar suas receitas lado a lado.</p>
+                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Comparisons</h1>
+                    <p className="mt-1 text-sm text-neutral-500">Select two bakes to compare recipes side-by-side.</p>
                 </div>
                 <button
                     onClick={handleCompare}
@@ -43,7 +44,7 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
                     className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600 disabled:bg-slate-400 disabled:cursor-not-allowed"
                 >
                     <SparklesIcon className="h-5 w-5"/>
-                    Comparar ({selectedIds.length}/2)
+                    Compare ({selectedIds.length}/2)
                 </button>
             </div>
             
@@ -72,7 +73,7 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
             ) : (
                 <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 p-6 shadow-sm text-center">
                     <p className="text-neutral-500">
-                        Você precisa ter pelo menos duas fornadas salvas para poder comparar.
+                        You need at least two saved bakes to make a comparison.
                     </p>
                 </div>
             )}

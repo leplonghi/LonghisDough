@@ -4,11 +4,11 @@ import TechnicalPageLayout from './learn/TechnicalPageLayout';
 const ToppingsEvaluatorPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-        title="Avaliador de Recheios"
-        subtitle="Em breve: conteúdo técnico para avaliar e balancear suas coberturas."
+        title="Toppings Evaluator"
+        subtitle="Coming soon: Technical content to evaluate and balance your pizza toppings."
         showReferencesSection
     >
-        <p>Esta ferramenta ajudará você a entender o equilíbrio entre os ingredientes da cobertura, como a proporção ideal de molho, queijo e toppings para diferentes estilos de pizza, além de calcular o peso total para evitar sobrecarregar a massa.</p>
+        <p>This tool will help you understand the balance between topping ingredients, such as the ideal ratio of sauce, cheese, and toppings for different pizza styles, as well as calculating total weight to avoid overloading the dough.</p>
     </TechnicalPageLayout>
   );
 };

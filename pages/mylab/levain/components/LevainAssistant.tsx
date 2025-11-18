@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage, Levain } from '../../../../types';
 import { askLevainAssistant } from '../../../../ai/assistantClient';
@@ -16,7 +17,7 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: t('levain_pet.detail_page.assistant.initial_message')
+      content: "Based on your levain's records, I can help you adjust routine, ratios, and usage time."
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -38,12 +39,12 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
     if(isOpen) {
          setMessages([{
             role: 'assistant',
-            content: t('levain_pet.detail_page.assistant.initial_message')
+            content: "Based on your levain's records, I can help you adjust routine, ratios, and usage time."
         }]);
         setInputValue('');
         setIsLoading(false);
     }
-  }, [isOpen, t]);
+  }, [isOpen]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();

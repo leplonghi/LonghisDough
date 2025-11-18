@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { useTranslation } from '../i18n';
 import { CheckIcon, CloseIcon, StarIcon } from './IconComponents';
 
 interface PlansPageProps {
@@ -26,16 +26,15 @@ const FeatureRow: React.FC<{
   );
 
 const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
-  const { t } = useTranslation();
   
   const features = [
-      { key: 'plans.feature_calculator', free: true, pro: true },
-      { key: 'plans.feature_styles', free: true, pro: true },
-      { key: 'plans.feature_units', free: true, pro: true },
-      { key: 'plans.feature_save_load', free: false, pro: true },
-      { key: 'plans.feature_export', free: false, pro: true },
-      { key: 'plans.feature_scaling', free: false, pro: true },
-      { key: 'plans.feature_pro_recipes', free: false, pro: true },
+      { label: 'Dough Calculator', free: true, pro: true },
+      { label: 'Style Presets', free: true, pro: true },
+      { label: 'Unit Conversion', free: true, pro: true },
+      { label: 'Save Unlimited Bakes', free: false, pro: true },
+      { label: 'Export PDF/JSON', free: false, pro: true },
+      { label: 'Batch Scaling', free: false, pro: true },
+      { label: 'Pro Recipes & Techniques', free: false, pro: true },
   ];
 
   const renderCheck = (value: boolean, text?: string) => {
@@ -51,10 +50,10 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
         <div className="text-center">
             <StarIcon className="mx-auto h-12 w-12 text-lime-500" />
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            {t('plans.title')}
+            DoughLab Pro
             </h1>
             <p className="mt-4 text-lg text-slate-600">
-            {t('plans.subtitle')}
+            Take your baking to the next level with advanced tools and knowledge.
             </p>
         </div>
 
@@ -62,16 +61,16 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
             <table className="min-w-full table-auto">
             <thead>
                 <tr className="border-b-2 border-slate-300">
-                <th className="py-3 pr-4 text-left text-sm font-semibold uppercase tracking-wider text-slate-500">{t('plans.feature')}</th>
-                <th className="py-3 text-center text-sm font-semibold uppercase tracking-wider text-slate-500">{t('plans.free_tier')}</th>
-                <th className="rounded-t-lg bg-lime-50 py-3 text-center text-sm font-bold uppercase tracking-wider text-lime-700">{t('plans.pro_tier')}</th>
+                <th className="py-3 pr-4 text-left text-sm font-semibold uppercase tracking-wider text-slate-500">Feature</th>
+                <th className="py-3 text-center text-sm font-semibold uppercase tracking-wider text-slate-500">Free</th>
+                <th className="rounded-t-lg bg-lime-50 py-3 text-center text-sm font-bold uppercase tracking-wider text-lime-700">Pro</th>
                 </tr>
             </thead>
             <tbody>
-                {features.map(f => (
+                {features.map((f, index) => (
                     <FeatureRow 
-                        key={f.key} 
-                        label={t(f.key)} 
+                        key={index} 
+                        label={f.label} 
                         free={renderCheck(f.free)} 
                         pro={renderCheck(f.pro)} 
                     />
@@ -86,7 +85,7 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
                 className="inline-flex items-center gap-2 rounded-lg bg-lime-500 py-3 px-8 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
             >
                 <StarIcon className="h-5 w-5" />
-                <span>{t('plans.upgrade_button')} (Demo)</span>
+                <span>Upgrade to Pro (Demo)</span>
             </button>
         </div>
       </div>

@@ -11,12 +11,12 @@ const PatternItem: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 const InsightsPatterns: React.FC = () => {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm h-full">
-        <h2 className="text-xl font-bold text-slate-800 mb-4">Consistência & Evolução</h2>
+        <h2 className="text-xl font-bold text-slate-800 mb-4">Consistency & Evolution</h2>
         <ul className="space-y-4">
-            <PatternItem>Você tende a usar hidratação <strong>+3% maior</strong> em dias quentes (&gt;28°C).</PatternItem>
-            <PatternItem>Suas fornadas com <strong>nota 5 estrelas</strong> usam, em média, <strong>48 horas</strong> de fermentação a frio.</PatternItem>
-            <PatternItem>Você usa mais o prefermento <strong>Biga</strong> aos fins de semana.</PatternItem>
-             <PatternItem>Seu estilo mais consistente é a <strong>Pizza Napolitana</strong>, com baixa variação nos resultados.</PatternItem>
+            <PatternItem>You tend to use <strong>+3% higher</strong> hydration on hot days (&gt;28°C).</PatternItem>
+            <PatternItem>Your <strong>5-star bakes</strong> average <strong>48 hours</strong> of cold fermentation.</PatternItem>
+            <PatternItem>You use <strong>Biga</strong> preferment more often on weekends.</PatternItem>
+             <PatternItem>Your most consistent style is <strong>Neapolitan Pizza</strong>, with low variance in results.</PatternItem>
         </ul>
     </div>
   );

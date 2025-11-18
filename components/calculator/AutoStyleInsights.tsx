@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AutoStyleInsightsResult } from '../../types';
 import { LightBulbIcon, StarIcon, SparklesIcon } from '../IconComponents';
@@ -8,9 +9,9 @@ interface AutoStyleInsightsProps {
 }
 
 const scoreToText = (score: number): { text: string; color: string } => {
-    if (score < 40) return { text: 'Baixo', color: 'text-red-500' };
-    if (score < 75) return { text: 'Médio', color: 'text-yellow-500' };
-    return { text: 'Alto', color: 'text-lime-500' };
+    if (score < 40) return { text: 'Low', color: 'text-red-500' };
+    if (score < 75) return { text: 'Medium', color: 'text-yellow-500' };
+    return { text: 'High', color: 'text-lime-500' };
 };
 
 const InsightRow: React.FC<{ icon: string; label: string; value: string }> = ({ icon, label, value }) => (
@@ -43,17 +44,17 @@ const AutoStyleInsights: React.FC<AutoStyleInsightsProps> = ({ insights, onApply
                     <LightBulbIcon className="h-6 w-6" />
                 </span>
                 <h3 className="text-xl font-bold text-slate-800">
-                    Análise Inteligente da Massa
+                    Intelligent Dough Analysis
                 </h3>
             </div>
             <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 sm:p-6">
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <InsightRow icon="💧" label="Hidratação Ideal" value={idealHydrationRange} />
-                    <InsightRow icon="⏳" label="Fermentação Ideal" value={idealFermentationRange} />
+                    <InsightRow icon="💧" label="Ideal Hydration" value={idealHydrationRange} />
+                    <InsightRow icon="⏳" label="Ideal Fermentation" value={idealFermentationRange} />
                     <div className="flex items-center gap-3">
                         <div>
-                            <p className="text-xs text-slate-500">Compatibilidade</p>
+                            <p className="text-xs text-slate-500">Compatibility</p>
                             <p className={`font-bold text-lg ${scoreInfo.color}`}>{scoreInfo.text}</p>
                         </div>
                     </div>
@@ -63,7 +64,7 @@ const AutoStyleInsights: React.FC<AutoStyleInsightsProps> = ({ insights, onApply
                     <div className="flex items-start gap-3 rounded-md bg-lime-50 p-3 ring-1 ring-inset ring-lime-200">
                         <StarIcon className="h-5 w-5 flex-shrink-0 text-lime-600 mt-0.5" />
                         <p className="text-sm font-medium text-lime-800">
-                            <span className="font-bold">Estilo Sugerido:</span> {recommendedStyle}. Pelas suas condições, este estilo pode trazer um resultado ainda melhor.
+                            <span className="font-bold">Suggested Style:</span> {recommendedStyle}. Based on your conditions, this style might yield an even better result.
                         </p>
                     </div>
                 )}
@@ -89,7 +90,7 @@ const AutoStyleInsights: React.FC<AutoStyleInsightsProps> = ({ insights, onApply
                             className="w-full flex items-center justify-center gap-2 rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
                         >
                             <SparklesIcon className="h-5 w-5" />
-                            Aplicar Sugestões Inteligentes
+                            Apply Intelligent Suggestions
                         </button>
                     </div>
                 )}

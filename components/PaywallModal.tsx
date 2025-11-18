@@ -1,11 +1,9 @@
+
 import React, { useState } from 'react';
-import { useTranslation } from '../i18n';
 import {
   CloseIcon,
   StarIcon,
   SaveIcon,
-  DownloadIcon,
-  ShieldCheckIcon,
   BookOpenIcon,
   CheckCircleIcon,
 } from './IconComponents';
@@ -42,7 +40,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onClose,
   onNavigateToPlans,
 }) => {
-  const { t } = useTranslation();
   const {
     grantProAccess,
     grant24hPass,
@@ -54,10 +51,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const handleGrant = (type: 'pro' | 'pass') => {
     if (type === 'pro') {
       grantProAccess();
-      setShowSuccess(t('paywall.success_title_pro'));
+      setShowSuccess("Pro Access Granted!");
     } else {
       grant24hPass();
-      setShowSuccess(t('paywall.success_title_pass'));
+      setShowSuccess("24h Pass Activated!");
     }
 
     setTimeout(() => {
@@ -89,7 +86,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 z-10 rounded-full p-1 text-slate-500 hover:bg-slate-200 disabled:opacity-50"
-          aria-label={t('modals.close')}
+          aria-label="Close"
           disabled={!!showSuccess}
         >
           <CloseIcon className="h-6 w-6" />
@@ -107,10 +104,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 id="paywall-title"
                 className="mt-4 text-2xl font-bold text-slate-900"
               >
-                {t('paywall.title')}
+                Unlock DoughLab Pro
               </h2>
               <p className="mt-2 text-slate-600">
-                {t('paywall.subtitle')}
+                Get full access to all features and take your baking to the next level.
               </p>
             </div>
 
@@ -119,15 +116,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 icon={
                   <SaveIcon className="h-6 w-6 text-lime-600" />
                 }
-                title={t('paywall.feature_save')}
-                description={t('paywall.feature_save_desc')}
+                title="Save Unlimited Bakes"
+                description="Keep a detailed history of all your experiments in your personal lab."
               />
               <Feature
                 icon={
                   <BookOpenIcon className="h-6 w-6 text-lime-600" />
                 }
-                title={t('paywall.feature_pro_recipes')}
-                description={t('paywall.feature_pro_recipes_desc')}
+                title="Advanced Recipes"
+                description="Access professional recipes and techniques like Biga, Poolish, and Sourdough."
               />
             </div>
 
@@ -137,13 +134,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
               >
                 <StarIcon className="h-5 w-5" />
-                <span>{t('paywall.cta_button')}</span>
+                <span>Go Pro (Demo)</span>
               </button>
 
               <div className="my-4 flex items-center">
                 <div className="flex-grow border-t border-slate-300"></div>
                 <span className="mx-4 flex-shrink text-xs font-semibold uppercase text-slate-500">
-                  {t('paywall.or_divider')}
+                  OR
                 </span>
                 <div className="flex-grow border-t border-slate-300"></div>
               </div>
@@ -154,10 +151,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300/50"
               >
                 {isPassOnCooldown
-                  ? t('paywall.cooldown_button', {
-                      hours: cooldownHoursRemaining,
-                    })
-                  : t('paywall.pass_button')}
+                  ? `Available in ${cooldownHoursRemaining} hours`
+                  : "Get a 24h Free Pass"}
               </button>
             </div>
           </div>
@@ -171,7 +166,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               {showSuccess}
             </h3>
             <p className="mt-2 text-slate-600">
-              {t('paywall.success_subtitle')}
+              You now have full access. Happy baking!
             </p>
           </div>
         )}

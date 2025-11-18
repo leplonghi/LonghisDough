@@ -3,8 +3,10 @@ import LegalPageLayout from './LegalPageLayout';
 
 const CookiesPage: React.FC = () => {
   return (
-    <LegalPageLayout title="Política de Cookies" lastUpdated="1 de Agosto de 2024">
-        <p>Este documento será preenchido com o texto completo de Política de Cookies, baseado em modelos jurídicos reais e nas legislações aplicáveis (como LGPD, GDPR, etc.).</p>
+    <LegalPageLayout title="Cookie Policy" lastUpdated="August 1, 2024">
+        <p>This document will be filled with the complete Cookie Policy text, based on real legal models and applicable legislation (such as GDPR, CCPA, etc.).</p>
+        <h3>1. What are Cookies?</h3>
+        <p>Cookies are small text files that are placed on your computer or mobile device by websites that you visit. They are widely used in order to make websites work, or work more efficiently, as well as to provide information to the owners of the site.</p>
     </LegalPageLayout>
   );
 };

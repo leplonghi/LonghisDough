@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Page } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -25,45 +26,45 @@ const MeuLabInsightsPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ on
             <div className="mb-6">
                 <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Insights</h1>
                 <p className="mt-1 text-sm text-neutral-500">
-                    Analise os padrões e tendências das suas produções.
+                    Analyze patterns and trends in your baking.
                 </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <InsightCard
-                    title="Massas Favoritas"
-                    description="Placeholder: Aqui aparecerá a sua receita de massa mais utilizada, com base nas suas fornadas."
-                    linkText="Ver Minhas Massas"
+                    title="Favorite Doughs"
+                    description="Placeholder: Here you will see your most used dough recipe based on your bake history."
+                    linkText="View My Doughs"
                     onLinkClick={() => onNavigate('mylab/massas')}
                 />
                 <InsightCard
-                    title="Farinhas Favoritas"
-                    description="Placeholder: A farinha que você mais registra em suas fornadas ou define como padrão será destacada aqui."
-                    linkText="Ir para Minhas Farinhas"
+                    title="Favorite Flours"
+                    description="Placeholder: The flour you log most frequently or set as default will be highlighted here."
+                    linkText="Go to My Flours"
                     onLinkClick={() => onNavigate('mylab/farinhas')}
                 />
                 <InsightCard
-                    title="Estilos Mais Usados"
-                    description="Placeholder: Descubra qual estilo de pizza ou pão você mais tem explorado em suas fornadas."
-                    linkText="Ver Minhas Fornadas"
+                    title="Most Used Styles"
+                    description="Placeholder: Discover which pizza or bread style you've been exploring the most."
+                    linkText="View My Bakes"
                     onLinkClick={() => onNavigate('mylab/fornadas')}
                 />
                  <InsightCard
-                    title="Notas do Diário Sensorial"
-                    description="Placeholder: Um resumo das palavras-chave mais comuns em suas anotações, como 'crocante' ou 'ácido'."
-                    linkText="Abrir Diário Sensorial"
+                    title="Sensory Notes"
+                    description="Placeholder: A summary of common keywords from your notes, like 'crispy' or 'sour'."
+                    linkText="Open Sensory Journal"
                     onLinkClick={() => onNavigate('mylab/diario-sensorial')}
                 />
                 <InsightCard
-                    title="Erros Comuns"
-                    description="Placeholder: Identifique padrões nos problemas que você registra, como 'massa rasgou' ou 'base crua'."
-                    linkText="Ver Minhas Fornadas"
+                    title="Common Errors"
+                    description="Placeholder: Identify patterns in problems you log, such as 'dough tore' or 'pale crust'."
+                    linkText="View My Bakes"
                     onLinkClick={() => onNavigate('mylab/fornadas')}
                 />
                 <InsightCard
-                    title="Sugestões do MyLab"
-                    description="Placeholder: Com base nos seus dados, o MyLab poderá sugerir experimentos, como 'Tente comparar A vs B'."
-                    linkText="Ir para Comparações"
+                    title="MyLab Suggestions"
+                    description="Placeholder: Based on your data, MyLab might suggest experiments, e.g., 'Try comparing A vs B'."
+                    linkText="Go to Comparisons"
                     onLinkClick={() => onNavigate('mylab/comparacoes')}
                 />
             </div>

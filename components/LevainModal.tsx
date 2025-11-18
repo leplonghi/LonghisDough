@@ -1,8 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from '../i18n';
-// FIX: Added LevainStatus to import
-import { Levain, LevainStatus, OvenType } from '../types';
-import { OVEN_TYPE_OPTIONS } from '../constants';
+import { Levain, LevainStatus } from '../types';
 import { CloseIcon } from './IconComponents';
 
 interface LevainModalProps {
@@ -12,7 +10,6 @@ interface LevainModalProps {
   levainToEdit: Levain | null;
 }
 
-// FIX: Added missing properties createdAt and status to satisfy the Omit type.
 const DEFAULT_LEVAIN_STATE: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> = {
     name: '',
     hydration: 100,
@@ -70,7 +67,7 @@ const LevainModal: React.FC<LevainModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name.trim() === '') {
-        alert('O nome do Levain é obrigatório.');
+        alert('Levain name is required.');
         return;
     }
     if (levainToEdit) {
@@ -96,7 +93,7 @@ const LevainModal: React.FC<LevainModalProps> = ({
       >
         <div className="flex items-start justify-between border-b border-slate-200 pb-4">
           <h2 className="text-xl font-bold text-slate-900">
-            {levainToEdit ? 'Editar Levain' : 'Criar Novo Levain'}
+            {levainToEdit ? 'Edit Levain' : 'Create New Levain'}
           </h2>
           <button
             onClick={onClose}
@@ -108,33 +105,33 @@ const LevainModal: React.FC<LevainModalProps> = ({
         
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Nome do Levain</label>
-                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" placeholder="Ex: Isauri, o Levain" />
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Levain Name</label>
+                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" placeholder="e.g. Joe, the Starter" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <div>
-                    <label htmlFor="hydration" className="block text-sm font-medium text-slate-700">Hidratação (%)</label>
+                    <label htmlFor="hydration" className="block text-sm font-medium text-slate-700">Hydration (%)</label>
                     <input type="number" name="hydration" id="hydration" value={formData.hydration} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
                 <div>
-                    <label htmlFor="totalWeight" className="block text-sm font-medium text-slate-700">Peso Total (g)</label>
+                    <label htmlFor="totalWeight" className="block text-sm font-medium text-slate-700">Total Weight (g)</label>
                     <input type="number" name="totalWeight" id="totalWeight" value={formData.totalWeight} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
             </div>
              <div>
-                <label className="block text-sm font-medium text-slate-700">Última Alimentação</label>
+                <label className="block text-sm font-medium text-slate-700">Last Feeding</label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
                      <input type="date" name="lastFeedingDate" value={isoDate} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                      <input type="time" name="lastFeedingTime" value={isoTime} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
             </div>
             <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-slate-700">Anotações</label>
+                <label htmlFor="notes" className="block text-sm font-medium text-slate-700">Notes</label>
                 <textarea name="notes" id="notes" value={formData.notes || ''} onChange={handleInputChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500"></textarea>
             </div>
             <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
-                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button>
-                <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Salvar</button>
+                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+                <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Save</button>
             </div>
         </form>
       </div>

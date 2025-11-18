@@ -1,23 +1,15 @@
-import React from 'react';
-import { Page, RecipeStyle, Batch, Levain, LevainStatus } from '../types';
+
+import React, { useMemo } from 'react';
+import { Page, LevainStatus } from '../types';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
-import { calculateUserInsights } from '../logic/insights';
 import { timeSince } from '../helpers';
 import MyLabLayout from './mylab/MyLabLayout';
 import { 
-    CalculatorIcon, 
-    ChartBarIcon, 
-    StarIcon,
     BeakerIcon,
-    SparklesIcon,
-    BookOpenIcon,
-    ListBulletIcon,
-    AcademicCapIcon,
-    ShieldCheckIcon,
-    UsersIcon,
-    ChevronRightIcon,
-    FlaskIcon
+    BatchesIcon,
+    PlusCircleIcon,
+    ArrowTopRightOnSquareIcon
 } from '../components/IconComponents';
 
 interface MyLabPageProps {
@@ -26,13 +18,11 @@ interface MyLabPageProps {
     onLoadAndNavigate: (config: any) => void;
 }
 
-const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch, onLoadAndNavigate }) => {
-  const { user, batches, levains, goals, testSeries } = useUser();
+const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch }) => {
+  const { user, batches, levains } = useUser();
   const { t } = useTranslation();
-  const insights = calculateUserInsights(batches);
-  const activeGoals = goals.filter(g => g.status === 'ativo').slice(0, 3);
-  const recentSeries = [...testSeries].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 3);
 
+  // Greeting Logic
   const getGreeting = () => {
     const name = user?.name.split(' ')[0] || 'Chef';
     const hour = new Date().getHours();
@@ -40,191 +30,139 @@ const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch, o
     if (hour < 18) return t('dashboard.greeting_afternoon', { name });
     return t('dashboard.greeting_evening', { name });
   };
-  
-  const Card: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
-    <div className={`rounded-xl border border-neutral-200 bg-white p-6 shadow-sm ${className}`}>
-        {children}
-    </div>
-  );
-  
-  const StatCard: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
-    <div className="text-center">
-      <p className="text-xl font-semibold text-neutral-800 truncate" title={String(value)}>{value}</p>
-      <p className="mt-1 text-sm text-neutral-500">{label}</p>
-    </div>
-  );
+
+  // Recent Activity Logic
+  const lastBatch = useMemo(() => {
+    if (batches.length === 0) return null;
+    const validBatches = batches.filter(b => b.status !== 'DRAFT');
+    return validBatches.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+  }, [batches]);
+
+  // Levain Logic
+  const mainLevain = useMemo(() => levains.find(l => l.isDefault) || levains[0], [levains]);
 
   return (
     <MyLabLayout activePage="mylab" onNavigate={onNavigate}>
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 mb-4">{t('dashboard.title')}</h1>
-                <p className="text-sm text-neutral-500 mb-6">{t('dashboard.subtitle')}</p>
+        <div className="space-y-8">
+            {/* 1. Greeting & Actions Header */}
+            <div className="rounded-2xl bg-gradient-to-br from-lime-50 to-white border border-lime-100 p-6 sm:p-8 shadow-sm">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">{getGreeting()}</h1>
+                <p className="text-slate-600 mb-6">{t('dashboard.greeting_subtext')}</p>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <button 
+                        onClick={() => onNavigate('calculator')}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-lime-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-lime-600 hover:shadow-lg active:scale-95"
+                    >
+                        <PlusCircleIcon className="h-5 w-5" />
+                        {t('dashboard.action_new_dough')}
+                    </button>
+                    <button 
+                         onClick={() => onNavigate('mylab/fornadas')}
+                         className="flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50"
+                    >
+                        <BatchesIcon className="h-5 w-5 text-slate-400" />
+                        {t('dashboard.recent_batches_view_all')}
+                    </button>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Greeting + Quick Actions */}
-                <Card className="lg:col-span-2 bg-lime-50 border-lime-300">
-                    <h2 className="text-2xl font-semibold text-neutral-900">{getGreeting()}</h2>
-                    <p className="mt-1 text-neutral-600">{t('dashboard.greeting_subtext')}</p>
-                    <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        <button onClick={() => onNavigate('calculator')} className="rounded-lg bg-white/70 p-3 text-center font-semibold text-neutral-700 hover:bg-white transition">
-                            {t('dashboard.action_new_dough')}
-                        </button>
-                        <button onClick={onCreateDraftBatch} className="rounded-lg bg-white/70 p-3 text-center font-semibold text-neutral-700 hover:bg-white transition">
-                            {t('dashboard.action_log_batch')}
-                        </button>
-                        <button onClick={() => onNavigate('mylab/levain')} className="rounded-lg bg-white/70 p-3 text-center font-semibold text-neutral-700 hover:bg-white transition">
-                            {t('dashboard.action_open_levain')}
-                        </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 2. Levain Pet Card */}
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="p-2 rounded-lg bg-amber-100 text-amber-600">
+                                <BeakerIcon className="h-6 w-6" />
+                            </span>
+                            <h2 className="text-lg font-bold text-slate-800">{t('levain_pet.title')}</h2>
+                        </div>
+                        
+                        {mainLevain ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-slate-900">{mainLevain.name}</h3>
+                                <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                                     <span className={`inline-block h-2.5 w-2.5 rounded-full ${mainLevain.status === 'ativo' ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+                                     <span>{t(`levain_pet.status.${mainLevain.status as LevainStatus}`)}</span>
+                                </div>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    {t('dashboard.levain_status_fed', { time: timeSince(mainLevain.lastFeeding) })}
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-slate-600">{t('dashboard.levain_empty_state')}</p>
+                        )}
                     </div>
-                </Card>
-
-                {/* Levain Pet - Highlighted */}
-                <div className="lg:col-span-2 rounded-xl border border-amber-300 bg-amber-50 p-6 shadow-md flex flex-col items-center justify-between gap-4 sm:flex-row sm:gap-8">
-                    {levains.length > 0 ? (
-                        <>
-                            <div className="flex-shrink-0">
-                                <BeakerIcon className="h-16 w-16 text-amber-400 opacity-70" />
-                            </div>
-                            <div className="flex-grow text-center sm:text-left">
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-amber-800">{t('dashboard.levain_title')}</h3>
-                                {(() => {
-                                    const mainLevain = levains.find(l => l.isDefault) || levains[0];
-                                    const statusColor = mainLevain.status === 'ativo' 
-                                        ? 'bg-green-500' 
-                                        : mainLevain.status === 'precisa_atencao' 
-                                        ? 'bg-yellow-500' 
-                                        : mainLevain.status === 'descanso'
-                                        ? 'bg-blue-500'
-                                        : 'bg-neutral-500';
-                                    return (
-                                        <>
-                                            <p className="mt-1 text-2xl font-bold text-neutral-900">{mainLevain.name}</p>
-                                            <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
-                                                <span className="relative flex h-3 w-3">
-                                                    {['ativo', 'precisa_atencao'].includes(mainLevain.status) && <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${statusColor} opacity-75`}></span>}
-                                                    <span className={`relative inline-flex rounded-full h-3 w-3 ${statusColor}`}></span>
-                                                </span>
-                                                <p className="text-sm text-neutral-600">
-                                                    {t(`levain_pet.status.${mainLevain.status as LevainStatus}`)} - {t('dashboard.levain_status_fed', { time: timeSince(mainLevain.lastFeeding) })}
-                                                </p>
-                                            </div>
-                                        </>
-                                    );
-                                })()}
-                            </div>
-                            <div className="mt-4 sm:mt-0 flex-shrink-0">
-                                <button onClick={() => onNavigate('mylab/levain')} className="rounded-lg bg-white/70 py-2 px-5 font-semibold text-amber-800 hover:bg-white transition ring-1 ring-inset ring-amber-300">
-                                    Ver detalhes
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="text-center w-full">
-                             <h3 className="text-lg font-bold text-amber-900">{t('dashboard.levain_title')}</h3>
-                             <p className="mt-2 text-neutral-600">{t('dashboard.levain_empty_state')}</p>
-                             <button onClick={() => onNavigate('mylab/levain')} className="mt-4 rounded-lg bg-white/70 py-2 px-5 font-semibold text-amber-800 hover:bg-white transition ring-1 ring-inset ring-amber-300">
-                                Criar Levain
+                    
+                    <div className="mt-6 pt-6 border-t border-slate-100">
+                        {mainLevain ? (
+                            <button 
+                                onClick={() => onNavigate('mylab/levain/detail', mainLevain.id)}
+                                className="text-sm font-semibold text-lime-600 hover:text-lime-700 flex items-center gap-1"
+                            >
+                                {t('dashboard.action_open_levain')} <ArrowTopRightOnSquareIcon className="h-4 w-4" />
                             </button>
-                        </div>
-                    )}
+                        ) : (
+                            <button 
+                                onClick={() => onNavigate('mylab/levain')}
+                                className="text-sm font-semibold text-lime-600 hover:text-lime-700"
+                            >
+                                {t('levain_pet.create_button')} &rarr;
+                            </button>
+                        )}
+                    </div>
                 </div>
-                
-                {/* Recent Batches */}
-                <Card>
-                    <h3 className="text-lg font-medium text-neutral-900 mb-4">{t('dashboard.recent_batches_title')}</h3>
-                    <div className="space-y-3">
-                        {batches.slice(0, 3).map(b => (
-                            <div key={b.id} className="flex justify-between items-center text-sm">
-                                <div>
-                                    <p className="font-semibold text-neutral-700">{b.name}</p>
-                                    <p className="text-xs text-neutral-500">{b.doughConfig.hydration}% - {new Date(b.createdAt).toLocaleDateString()}</p>
-                                </div>
-                                <button onClick={() => onNavigate('batch', b.id)} className="text-xs font-semibold text-lime-600 hover:underline">Detalhes</button>
-                            </div>
-                        ))}
-                    </div>
-                    <button onClick={() => onNavigate('mylab/fornadas')} className="mt-4 text-sm font-semibold text-lime-600 hover:underline">{t('dashboard.recent_batches_view_all')} &rarr;</button>
-                </Card>
-                
-                {/* Lab Summary */}
-                <Card>
-                    <h3 className="text-lg font-medium text-neutral-900 mb-4">{t('dashboard.summary_title')}</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-                        <StatCard label={t('dashboard.summary_batches_7_days')} value={insights.batchesLast30Days} />
-                        <StatCard label={t('dashboard.summary_last_batch')} value={insights.lastBatchDate ? t('dashboard.summary_last_batch_value', { time: timeSince(insights.lastBatchDate)}) : 'N/A'} />
-                        <StatCard label={t('dashboard.summary_frequent_style')} value={insights.mostUsedStyles[0]?.styleId || 'N/A'} />
-                        <StatCard label="Média Hidratação" value={`${insights.avgHydrationOverall?.toFixed(1) || 'N/A'}%`} />
-                    </div>
-                </Card>
 
-                 {/* My Goals */}
-                <Card>
-                    <h3 className="text-lg font-medium text-neutral-900 mb-2">Meus objetivos</h3>
-                    <p className="text-sm text-neutral-500 mb-4">Defina pequenos desafios para evoluir nas massas.</p>
-                    {activeGoals.length > 0 ? (
-                        <div className="space-y-3">
-                            {activeGoals.map(goal => (
-                                <div key={goal.id}>
-                                    <div className="flex justify-between items-center text-sm mb-1">
-                                        <span className="font-semibold text-neutral-700">{goal.title}</span>
-                                        <span className="font-bold text-lime-600">{goal.progress}%</span>
-                                    </div>
-                                    <div className="h-2 w-full rounded-full bg-neutral-200">
-                                        <div
-                                            className="h-2 rounded-full bg-lime-500"
-                                            style={{ width: `${goal.progress}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                {/* 3. Last Batch Card */}
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
+                    <div>
+                         <div className="flex items-center gap-2 mb-4">
+                            <span className="p-2 rounded-lg bg-blue-100 text-blue-600">
+                                <BatchesIcon className="h-6 w-6" />
+                            </span>
+                            <h2 className="text-lg font-bold text-slate-800">{t('dashboard.summary_last_batch')}</h2>
                         </div>
-                    ) : <p className="text-sm text-center py-4 text-neutral-500">Nenhum objetivo ativo.</p>}
-                    <div className="mt-4 flex gap-3">
-                        <button onClick={() => onNavigate('mylab/objetivos')} className="flex-1 text-sm text-center font-semibold text-lime-600 hover:underline">Ver todos</button>
-                        <button onClick={() => onNavigate('mylab/objetivos')} className="flex-1 rounded-lg bg-white/70 p-2 text-center font-semibold text-neutral-700 hover:bg-white transition">
-                            Criar objetivo
-                        </button>
-                    </div>
-                </Card>
 
-                {/* Consistency Mode */}
-                <Card>
-                    <h3 className="text-lg font-medium text-neutral-900 mb-2 flex items-center gap-2">
-                        <FlaskIcon className="h-5 w-5 text-lime-500" />
-                        Consistency Mode
-                    </h3>
-                    <p className="text-sm text-neutral-500 mb-4">Planeje séries de testes com variações controladas.</p>
-                    {recentSeries.length > 0 ? (
-                        <div className="space-y-3">
-                            {recentSeries.map(series => (
-                                <div 
-                                    key={series.id} 
-                                    onClick={() => onNavigate(`mylab/consistency/${series.id}`)}
-                                    className="flex justify-between items-center text-sm p-3 rounded-lg bg-neutral-50 cursor-pointer hover:bg-neutral-100 transition-colors"
-                                >
+                        {lastBatch ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-slate-900 line-clamp-1">{lastBatch.name}</h3>
+                                <p className="text-sm font-medium text-lime-600 mt-1">
+                                    {t(`form.${lastBatch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: lastBatch.doughConfig.recipeStyle })}
+                                </p>
+                                <div className="mt-3 flex gap-4 text-sm text-slate-500">
                                     <div>
-                                        <p className="font-semibold text-neutral-700">{series.name}</p>
-                                        <p className="text-xs text-neutral-500 capitalize">
-                                            Variável: {series.parameters.variable}
-                                        </p>
+                                        <span className="block font-semibold text-slate-700">{lastBatch.doughConfig.hydration}%</span>
+                                        Hydration
                                     </div>
-                                    <div className="text-right flex-shrink-0 ml-4">
-                                        <p className="font-bold text-lg text-neutral-800">{series.relatedBakes.length}</p>
-                                        <p className="text-xs text-neutral-500">Fornada(s)</p>
+                                    <div>
+                                        <span className="block font-semibold text-slate-700">{new Date(lastBatch.createdAt).toLocaleDateString()}</span>
+                                        Date
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    ) : <p className="text-sm text-center py-4 text-neutral-500">Nenhuma série de testes criada.</p>}
-                    <div className="mt-4 flex gap-3">
-                        <button onClick={() => onNavigate('mylab/consistency')} className="flex-1 text-sm text-center font-semibold text-lime-600 hover:underline">Ver todas</button>
-                        <button onClick={() => onNavigate('mylab/consistency')} className="flex-1 rounded-lg bg-white/70 p-2 text-center font-semibold text-neutral-700 hover:bg-white transition">
-                            Criar nova série
-                        </button>
+                            </>
+                        ) : (
+                            <p className="text-slate-600">No bakes registered yet.</p>
+                        )}
                     </div>
-                </Card>
+
+                     <div className="mt-6 pt-6 border-t border-slate-100">
+                        {lastBatch ? (
+                             <button 
+                                onClick={() => onNavigate('batch', lastBatch.id)}
+                                className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                            >
+                                {t('common.details')} <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => onNavigate('calculator')}
+                                className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                            >
+                                {t('dashboard.action_new_dough')} &rarr;
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     </MyLabLayout>

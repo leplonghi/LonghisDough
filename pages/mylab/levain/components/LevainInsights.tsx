@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Levain } from '../../../../types';
 import { hoursBetween } from '../../../../helpers';
@@ -38,16 +39,16 @@ const LevainInsights: React.FC<LevainInsightsProps> = ({ levain }) => {
 
     return (
         <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-medium mb-4">Insights do Levain</h3>
+            <h3 className="text-lg font-medium mb-4">Levain Insights</h3>
             {!insights ? (
                 <p className="text-sm text-center py-8 text-neutral-500">
-                    Ainda não há dados suficientes para gerar insights.
+                    Not enough data to generate insights yet.
                 </p>
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <InsightKPI label="Frequência média de alimentação" value={`${insights.avgFrequencyHours}h`} />
-                    <InsightKPI label="Temperatura média" value={`${insights.avgTemp}°C`} />
-                    <InsightKPI label="Usado em receitas" value="0" />
+                    <InsightKPI label="Avg. feeding frequency" value={`${insights.avgFrequencyHours}h`} />
+                    <InsightKPI label="Avg. temperature" value={`${insights.avgTemp}°C`} />
+                    <InsightKPI label="Used in recipes" value="0" />
                 </div>
             )}
         </div>

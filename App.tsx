@@ -1,14 +1,14 @@
+
 import React, {
   useState,
   useEffect,
   useCallback,
   useMemo,
-  ReactNode,
   useRef,
 } from 'react';
 import CalculatorPage from './pages/CalculatorPage';
-import CommunityPage from './pages/CommunityPage';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import BatchDetailPage from './pages/BatchDetailPage';
 
 import {
@@ -33,27 +33,26 @@ import {
   CalculationMode,
   Levain,
   FeedingEvent,
+  DoughStyleDefinition,
 } from './types';
 import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
-import { I18nProvider, useTranslation } from './i18n';
+import { STYLES_DATA, getStyleById } from './data/stylesData';
 import { PaywallModal } from './components/PaywallModal';
 import AuthModal from './components/AuthModal';
-import ProfilePage from './components/ProfilePage';
+import ProfilePage from './pages/ProfilePage';
 import PlansPage from './components/PlansPage';
 import LearnPage from './pages/learn/LearnPage';
-import ReferencesPage from './components/ReferencesPage';
+import ReferencesPage from './pages/ReferencesPage';
 import { FLOURS } from './flours-constants';
-import CommunityBatchDetailPage from './pages/CommunityBatchDetailPage';
 import MyLabPage from './pages/MyLabPage';
 import LevainManagerPage from './pages/LevainManagerPage';
 import { ToastProvider, useToast } from './components/ToastProvider';
 import { UserProvider, useUser } from './contexts/UserProvider';
 import AssistantPage from './components/AssistantPage';
 import FloatingActionButton from './components/FloatingActionButton';
-// FIX: Changed import to a named import to resolve module resolution error.
 import { OvenAnalysisPage } from './pages/OvenAnalysisPage';
 import DoughStylesPage from './pages/styles/DoughStylesPage';
-import DoughbotPage from './pages/DoughbotPage';
+import { StyleDetailPage } from './pages/styles/StyleDetailPage';
 import SettingsPage from './pages/SettingsPage';
 import LanguagePage from './pages/settings/LanguagePage';
 import TermsPage from './pages/legal/TermsPage';
@@ -138,182 +137,51 @@ import { logEvent } from './services/analytics';
 import CompareReceitasPage from './pages/mylab/CompareReceitasPage';
 import ConsistencyListPage from './pages/mylab/ConsistencyListPage';
 import ConsistencyDetailPage from './pages/mylab/ConsistencyDetailPage';
+import { calculateDoughUniversal, syncIngredientsFromConfig } from './logic/doughMath';
+import { I18nProvider } from './i18n';
+import ShopPage from './pages/ShopPage';
+import CommunityPage from './pages/CommunityPage';
 
 
 // --- Placeholder Pages ---
 function HelpPage() {
-  const { t } = useTranslation();
-  return <div className="p-8 text-center">{t('help_page.title')}</div>;
+  return <div className="p-8 text-center">Help & Support (Coming Soon)</div>;
 }
 function LandingPage() {
-  const { t } = useTranslation();
-  return <div className="p-8 text-center">{t('landing_page.title')}</div>;
+  return <div className="p-8 text-center">Landing Page (Coming Soon)</div>;
 }
-
-// --- Calculator Logic ---
-const calculateDough = (
-  config: DoughConfig,
-  calculatorMode: 'basic' | 'advanced',
-  userLevain?: Levain | null
-): DoughResult => {
-  let effectiveConfig = { ...config };
-
-  // In Basic (Pro) mode, always enforce the preset values for core percentages.
-  if (calculatorMode === 'basic' && effectiveConfig.stylePresetId) {
-    const preset = DOUGH_STYLE_PRESETS.find(p => p.id === effectiveConfig.stylePresetId);
-    if (preset) {
-      effectiveConfig.hydration = preset.defaultHydration;
-      effectiveConfig.salt = preset.defaultSalt;
-      effectiveConfig.oil = preset.defaultOil;
-      effectiveConfig.sugar = preset.defaultSugar || 0;
-    }
-  }
-  
-  const totalDoughWeight =
-    effectiveConfig.numPizzas * effectiveConfig.doughBallWeight * effectiveConfig.scale;
-
-  const totalPercentage = 100 + effectiveConfig.hydration + effectiveConfig.salt + effectiveConfig.oil + (effectiveConfig.sugar || 0);
-  const flourMultiplier = 100 / totalPercentage;
-
-  const totalFlour = totalDoughWeight * flourMultiplier;
-  const totalWater = totalFlour * (effectiveConfig.hydration / 100);
-  const totalSalt = totalFlour * (effectiveConfig.salt / 100);
-  const totalOil = totalFlour * (effectiveConfig.oil / 100);
-  const totalSugar = totalFlour * ((effectiveConfig.sugar || 0) / 100);
-
-  const result: DoughResult = {
-    totalFlour,
-    totalWater,
-    totalSalt,
-    totalOil,
-    totalSugar,
-    totalYeast: 0, // Will be set based on type
-    totalDough: totalDoughWeight,
-  };
-
-  if (effectiveConfig.yeastType === YeastType.SOURDOUGH_STARTER) {
-    const totalStarter = totalFlour * (effectiveConfig.yeastPercentage / 100);
-    // Assume 100% hydration starter (equal parts flour and water by weight)
-    const starterFlour = totalStarter / 2;
-    const starterWater = totalStarter / 2;
-
-    result.totalYeast = totalStarter; // Represents total starter weight
-
-    result.preferment = {
-      flour: starterFlour,
-      water: starterWater,
-      yeast: 0, // No commercial yeast in the starter
-    };
-
-    result.finalDough = {
-      flour: totalFlour - starterFlour,
-      water: totalWater - starterWater,
-      salt: totalSalt,
-      oil: totalOil,
-      sugar: totalSugar,
-      yeast: 0, // No additional commercial yeast
-    };
-  } else if (effectiveConfig.yeastType === YeastType.USER_LEVAIN && userLevain) {
-    const totalStarter = totalFlour * (effectiveConfig.yeastPercentage / 100);
-    const levainHydrationRatio = userLevain.hydration / 100;
-    const starterFlour = totalStarter / (1 + levainHydrationRatio);
-    const starterWater = totalStarter - starterFlour;
-
-    result.totalYeast = totalStarter;
-
-    result.preferment = {
-      flour: starterFlour,
-      water: starterWater,
-      yeast: 0,
-    };
-
-    result.finalDough = {
-      flour: totalFlour - starterFlour,
-      water: totalWater - starterWater,
-      salt: totalSalt,
-      oil: totalOil,
-      sugar: totalSugar,
-      yeast: 0,
-    };
-
-  } else {
-    // Commercial yeast logic
-    let yeastPercentage = effectiveConfig.yeastPercentage;
-    if (effectiveConfig.yeastType === YeastType.ADY) {
-      yeastPercentage /= 1.25;
-    } else if (effectiveConfig.yeastType === YeastType.FRESH) {
-      yeastPercentage /= 3;
-    }
-    const totalYeast = totalFlour * (yeastPercentage / 100);
-    result.totalYeast = totalYeast;
-
-    if (effectiveConfig.fermentationTechnique !== FermentationTechnique.DIRECT) {
-      const prefermentFlour =
-        totalFlour * (effectiveConfig.prefermentFlourPercentage / 100);
-      let prefermentWater = prefermentFlour; // Poolish
-      if (effectiveConfig.fermentationTechnique === FermentationTechnique.BIGA) {
-        prefermentWater = prefermentFlour * 0.5; // Biga
-      }
-      const prefermentYeast = prefermentFlour * 0.002;
-
-      result.preferment = {
-        flour: prefermentFlour,
-        water: prefermentWater,
-        yeast: prefermentYeast,
-      };
-      result.finalDough = {
-        flour: totalFlour - prefermentFlour,
-        water: totalWater - prefermentWater,
-        salt: totalSalt,
-        oil: totalOil,
-        sugar: totalSugar,
-        yeast: Math.max(0, totalYeast - prefermentYeast), // Prevent negative yeast
-      };
-    }
-  }
-
-  return result;
-};
-
 
 // --- Validation Logic ---
 const validateConfig = (
-  config: DoughConfig,
-  t: (key: string, replacements?: { [key: string]: string | number }) => string,
+  config: DoughConfig
 ): FormErrors => {
   const errors: FormErrors = {};
 
   if (config.numPizzas < 1 || config.numPizzas > 100) {
-    errors.numPizzas = t('form.errors.range', { min: 1, max: 100 });
+    errors.numPizzas = 'A value between 1 and 100 is recommended.';
   }
   if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
-    errors.doughBallWeight = t('form.errors.range', { min: 100, max: 2000 });
+    errors.doughBallWeight = 'A value between 100g and 2000g is recommended.';
   }
   if (config.hydration < 0 || config.hydration > 120) {
-    errors.hydration = t('form.errors.range_percent', { min: 0, max: 120 });
+    errors.hydration = 'A value between 0% and 120% is recommended.';
   }
   if (config.scale < 0.25 || config.scale > 4) {
-    errors.scale = t('form.errors.range_multiplier', { min: 0.25, max: 4 });
+    errors.scale = 'A scale multiplier between 0.25x and 4x is recommended.';
   }
   if (config.bakingTempC < 150 || config.bakingTempC > 500) {
-    errors.bakingTempC = t('form.errors.range_tempC', { min: 150, max: 500 });
+    errors.bakingTempC = 'A value between 150°C and 500°C is recommended.';
   }
   const maxYeast = isAnySourdough(config.yeastType) ? 50 : 5;
   if (config.yeastPercentage < 0 || config.yeastPercentage > maxYeast) {
-    errors.yeastPercentage = t('form.errors.range_percent', {
-      min: 0,
-      max: maxYeast,
-    });
+    errors.yeastPercentage = `A value between 0% and ${maxYeast}% is recommended.`;
   }
   if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
     if (
       config.prefermentFlourPercentage < 10 ||
       config.prefermentFlourPercentage > 100
     ) {
-      errors.prefermentFlourPercentage = t('form.errors.range_percent', {
-        min: 10,
-        max: 100,
-      });
+      errors.prefermentFlourPercentage = 'A value between 10% and 100% is recommended.';
     }
   }
 
@@ -326,12 +194,10 @@ const isAnySourdough = (yeastType: YeastType) =>
 
 
 function AppContent() {
-  const { t } = useTranslation();
   const [route, setRoute] = useState<Page>('mylab');
   const [routeParams, setRouteParams] = useState<string | null>(null);
 
   const { user, grantSessionProAccess, hasProAccess, preferredFlourId, ovens, batches, addBatch, createDraftBatch, levains } = useUser();
-  
   
   // Last batch calculation
   const lastBatch = useMemo(() => {
@@ -405,9 +271,17 @@ function AppContent() {
     if (window.location.hash !== newHash) {
         window.location.hash = newHash;
     } else {
+        // Handle manual setRoute for same-hash navigation if needed, 
+        // or simply rely on hash change listener. 
+        // For safety, we force the state update if the hash matches but state differs.
         const hash = (page as string) + (params ? `/${params}` : '');
         const parts = hash.split('?')[0].split('/');
-        if ((parts[0] === 'batch' || parts[0] === 'community') && parts.length > 1) {
+        
+        // Consistent route parsing logic (mirrored from hashchange listener)
+        if (page === 'styles' && params) {
+            setRoute('styles/detail');
+            setRouteParams(params);
+        } else if ((parts[0] === 'batch') && parts.length > 1) {
             setRoute(parts[0] as Page);
             setRouteParams(parts[1]);
         } else if (hash.startsWith('mylab/levain/') && parts.length > 2) {
@@ -416,11 +290,10 @@ function AppContent() {
         } else if (hash.startsWith('mylab/consistency/') && parts.length > 2) {
             setRoute('mylab/consistency/detail');
             setRouteParams(parts[2]);
-        } else if (parts.length > 1) { 
-            setRoute(hash as Page);
-            setRouteParams(null);
-        }
-        else {
+        } else if (hash.startsWith('community/') && parts.length > 1) {
+            setRoute('community/detail');
+            setRouteParams(parts[1]);
+        } else {
             setRoute(hash as Page);
             setRouteParams(null);
         }
@@ -437,8 +310,13 @@ function AppContent() {
       }
       
       const parts = hash.split('?')[0].split('/');
-      if ((parts[0] === 'batch' || parts[0] === 'community') && parts.length > 1) {
+      
+      // Specific route handling
+      if ((parts[0] === 'batch') && parts.length > 1) {
           setRoute(parts[0] as Page);
+          setRouteParams(parts[1]);
+      } else if (hash.startsWith('styles/') && parts.length > 1) {
+          setRoute('styles/detail');
           setRouteParams(parts[1]);
       } else if (hash.startsWith('mylab/levain/') && parts.length > 2) {
           setRoute('mylab/levain/detail');
@@ -446,18 +324,17 @@ function AppContent() {
       } else if (hash.startsWith('mylab/consistency/') && parts.length > 2) {
           setRoute('mylab/consistency/detail');
           setRouteParams(parts[2]);
-      } else if (parts.length > 1) {
-          setRoute(hash.split('?')[0] as Page);
-          setRouteParams(null);
-      }
-      else {
+      } else if (hash.startsWith('community/') && parts.length > 1) {
+          setRoute('community/detail');
+          setRouteParams(parts[1]);
+      } else {
           setRoute(hash.split('?')[0] as Page);
           setRouteParams(null);
       }
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
+    handleHashChange(); // Handle initial load
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
@@ -465,9 +342,9 @@ function AppContent() {
   }, [navigate]);
 
   useEffect(() => {
-    const validationErrors = validateConfig(config, t);
+    const validationErrors = validateConfig(config);
     setErrors(validationErrors);
-  }, [config, t]);
+  }, [config]);
 
   useEffect(() => {
     const currentErrors = errors;
@@ -490,8 +367,8 @@ function AppContent() {
     const userLevain = config.yeastType === YeastType.USER_LEVAIN
       ? levains.find(l => l.id === config.levainId)
       : null;
-    return calculateDough(config, calculatorMode, userLevain);
-  }, [config, hasErrors, levains, calculatorMode]);
+    return calculateDoughUniversal(config, calculatorMode, calculationMode, userLevain);
+  }, [config, hasErrors, levains, calculatorMode, calculationMode]);
 
   const isSummaryBarVisible = route === 'calculator' && !!results;
 
@@ -504,7 +381,15 @@ function AppContent() {
   }, [grantSessionProAccess]);
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
-    const updatedConfig = { ...config, ...newConfig, stylePresetId: calculatorMode === 'basic' ? config.stylePresetId : undefined };
+    const updatedConfig = { 
+        ...config, 
+        ...newConfig, 
+        stylePresetId: calculatorMode === 'basic' ? config.stylePresetId : undefined 
+    };
+    
+    const syncedIngredients = syncIngredientsFromConfig(updatedConfig);
+    updatedConfig.ingredients = syncedIngredients;
+
     setConfig(updatedConfig);
   }, [calculatorMode, config]);
 
@@ -514,17 +399,20 @@ function AppContent() {
       const preset = DOUGH_STYLE_PRESETS.find(p => p.recipeStyle === config.recipeStyle);
       if (preset) {
         const { defaultHydration, defaultSalt, defaultOil, defaultSugar } = preset;
-        setConfig(prev => ({
-          ...prev,
+        const newConf = {
+          ...config,
           hydration: defaultHydration,
           salt: defaultSalt,
           oil: defaultOil,
           sugar: defaultSugar || 0,
           stylePresetId: preset.id,
-        }));
+        };
+        // Sync ingredients
+        newConf.ingredients = syncIngredientsFromConfig(newConf);
+        setConfig(newConf);
       }
     }
-  }, [config.recipeStyle]);
+  }, [config.recipeStyle, config]);
 
   const handleBakeTypeChange = useCallback(
     (bakeType: BakeType) => {
@@ -549,19 +437,23 @@ function AppContent() {
             presetValues.flourId = preferredFlourProfileId;
         }
 
-        setConfig((prev) => ({
+        const newConf = {
           ...initialConfig,
-          ...prev,
+          ...config,
           bakeType,
           recipeStyle: recipeStyle,
           ...presetValues,
           stylePresetId: firstMatchingPreset.id,
-        }));
+        };
+        newConf.ingredients = syncIngredientsFromConfig(newConf);
+        setConfig(newConf);
       } else {
-        setConfig((prev) => ({ ...prev, bakeType, stylePresetId: undefined }));
+        const newConf = { ...config, bakeType, stylePresetId: undefined };
+        newConf.ingredients = syncIngredientsFromConfig(newConf);
+        setConfig(newConf);
       }
     },
-    [initialConfig, config.yeastType],
+    [initialConfig, config.yeastType, config],
   );
 
   const handleStyleChange = useCallback((presetId: string) => {
@@ -580,9 +472,11 @@ function AppContent() {
       if (preferredFlourProfileId) {
           presetValues.flourId = preferredFlourProfileId;
       }
-      setConfig((prev) => ({ ...prev, recipeStyle, ...presetValues, stylePresetId: preset.id }));
+      const newConf = { ...config, recipeStyle, ...presetValues, stylePresetId: preset.id };
+      newConf.ingredients = syncIngredientsFromConfig(newConf);
+      setConfig(newConf);
     }
-  }, [config.yeastType]);
+  }, [config.yeastType, config]);
 
   const handleYeastTypeChange = useCallback((yeastType: YeastType) => {
     setConfig((prev) => {
@@ -603,19 +497,24 @@ function AppContent() {
         newConfig.fermentationTechnique = FermentationTechnique.DIRECT;
         newConfig.yeastPercentage = 0.4;
       }
-      return newConfig as DoughConfig;
+      
+      const merged = { ...prev, ...newConfig } as DoughConfig;
+      merged.ingredients = syncIngredientsFromConfig(merged);
+      return merged;
     });
   }, [levains, user]);
 
   const handleLoadProRecipe = (newConfig: ProRecipe['config']) => {
-    setConfig((prev) => ({ ...prev, ...newConfig, stylePresetId: undefined }));
+    const fullConfig = { ...config, ...newConfig, stylePresetId: undefined };
+    fullConfig.ingredients = syncIngredientsFromConfig(fullConfig);
+    setConfig(fullConfig);
     navigate('calculator');
   };
   
   const handleStartBatch = useCallback(async () => {
     if (!results) return;
 
-    const batchName = prompt(t('prompts.batch_name_title'), t('prompts.batch_name_default', {style: config.recipeStyle}));
+    const batchName = prompt("Name this bake:", `${config.recipeStyle} Bake`);
     if (batchName) {
         const newBatch = await addBatch({
             name: batchName,
@@ -624,17 +523,52 @@ function AppContent() {
             status: BatchStatus.PLANNED,
             isFavorite: false,
         });
-        addToast(t('info.batch_started', { name: newBatch.name }), 'success');
+        addToast(`Bake "${newBatch.name}" started!`, 'success');
         navigate('mylab/fornadas');
     }
-  }, [config, results, addBatch, navigate, t]);
+  }, [config, results, addBatch, navigate]);
 
 
   const handleLoadAndNavigate = useCallback((configToLoad: Partial<DoughConfig>) => {
-    setConfig(prev => ({ ...prev, ...configToLoad }));
-    addToast(t('info.preset_loaded', { name: configToLoad.recipeStyle }), 'info');
+    const merged = { ...config, ...configToLoad };
+    merged.ingredients = syncIngredientsFromConfig(merged);
+    setConfig(merged);
+    addToast(`Style "${configToLoad.recipeStyle || 'Preset'}" loaded.`, 'info');
     navigate('calculator');
-  }, [navigate, t]);
+  }, [navigate, config]);
+
+  // Handle loading a Data-Driven Style Module
+  const handleLoadStyleFromModule = useCallback((style: DoughStyleDefinition) => {
+      const newDoughConfig: Partial<DoughConfig> = {
+        // We might need a way to map Categories to BakeType more robustly, 
+        // but for now Pizza -> PIZZAS works for most cases.
+        bakeType: style.category === 'Pizza' ? BakeType.PIZZAS : 
+                  style.category === 'Pão' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
+        
+        // Set the base style name for display in calculator
+        baseStyleName: style.name,
+
+        // We keep the hydration/salt/oil from the style definition
+        hydration: style.technical.hydration,
+        salt: style.technical.salt,
+        oil: style.technical.oil,
+        sugar: style.technical.sugar,
+        bakingTempC: style.technical.bakingTempC,
+        fermentationTechnique: style.technical.fermentationTechnique,
+        
+        // Force ingredients list from the style definition for accuracy
+        ingredients: style.ingredients.map(ing => ({...ing, manualOverride: false})),
+        
+        // Reset specific calculator states
+        stylePresetId: undefined // It's a custom load effectively
+      };
+
+      // Switch to advanced mode to show all parameters from the style
+      setCalculatorMode('advanced');
+
+      handleLoadAndNavigate(newDoughConfig);
+  }, [handleLoadAndNavigate]);
+
 
   const handleCreateDraftAndNavigate = useCallback(async () => {
     const draft = await createDraftBatch();
@@ -645,11 +579,9 @@ function AppContent() {
     const defaultOven = ovens.find(o => o.isDefault) || (ovens.length > 0 ? ovens[0] : undefined);
     const selectedFlour = FLOURS.find(f => f.id === config.flourId);
     
+    // Handle Dynamic Routes
     if (route === 'batch') {
         return <BatchDetailPage batchId={routeParams} onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />;
-    }
-    if (route === 'community' && routeParams) {
-        return <CommunityBatchDetailPage batchId={routeParams} onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} />;
     }
     if (route === 'mylab/levain/detail' && routeParams) {
         return <LevainDetailPage levainId={routeParams} onNavigate={navigate} />;
@@ -657,10 +589,23 @@ function AppContent() {
     if (route === 'mylab/consistency/detail' && routeParams) {
         return <ConsistencyDetailPage seriesId={routeParams} onNavigate={navigate} />;
     }
+    if (route === 'styles/detail' && routeParams) {
+        const style = getStyleById(routeParams);
+        if (style) {
+             return <StyleDetailPage style={style} onLoadAndNavigate={handleLoadStyleFromModule} onBack={() => navigate('styles')} />;
+        }
+    }
 
     switch (route) {
       case 'mylab':
-        return <MyLabPage onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+      case 'lab': // Legacy redirect
+        return (
+          <MyLabPage
+            onNavigate={navigate}
+            onCreateDraftBatch={handleCreateDraftAndNavigate}
+            onLoadAndNavigate={handleLoadAndNavigate}
+          />
+        );
       case 'mylab/receitas':
         return <MeuLabReceitasPage onNavigate={navigate} />;
       case 'mylab/receitas/comparar':
@@ -821,8 +766,10 @@ function AppContent() {
       case 'legal':
         return <LegalIndexPage onNavigate={navigate} />;
       case 'legal/terms':
+      case 'terms':
         return <TermsPage />;
       case 'legal/privacy':
+      case 'privacy':
         return <PrivacyPage />;
       case 'legal/cookies':
         return <CookiesPage />;
@@ -835,12 +782,11 @@ function AppContent() {
       case 'landing':
         return <LandingPage />;
       case 'styles':
-      case 'pizzas': // Rota antiga redireciona para a nova de Estilos
-        return <DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
+        return <DoughStylesPage onNavigateToDetail={(id) => navigate('styles', id)} />;
       case 'tools-oven-analysis':
         return <OvenAnalysisPage />;
-      case 'tools-doughbot':
-        return <DoughbotPage />;
+      case 'shop':
+        return <ShopPage />;
       case 'calculator':
         return (
           <CalculatorPage
@@ -850,7 +796,7 @@ function AppContent() {
             onBakeTypeChange={handleBakeTypeChange}
             onStyleChange={handleStyleChange}
             onYeastTypeChange={handleYeastTypeChange}
-            onReset={() => setConfig({...initialConfig, stylePresetId: undefined })}
+            onReset={() => setConfig({...initialConfig, stylePresetId: undefined, ingredients: syncIngredientsFromConfig(initialConfig) })}
             results={results}
             unit={unit}
             onUnitChange={setUnit}
@@ -866,11 +812,10 @@ function AppContent() {
             onOpenPaywall={() => setIsPaywallModalOpen(true)}
           />
         );
-      case 'community':
-        return <CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />;
       case 'flours':
         return <MeuLabFarinhasPage onNavigate={navigate} />;
-      case 'lab':
+      case 'community':
+        return <CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />;
       default:
         return (
           <MyLabPage
@@ -883,14 +828,14 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-neutral-900 transition-colors duration-300">
+    <div className="min-h-screen bg-white font-sans text-slate-900 transition-colors duration-300 flex flex-col">
       <Navigation
         activePage={route as PrimaryPage}
         onNavigate={navigate}
         onOpenAuth={() => setIsAuthModalOpen(true)}
       />
 
-      <main className="container mx-auto px-4 py-8 md:py-10 pb-24 sm:pb-10">
+      <main className="flex-grow container mx-auto px-4 py-8 md:py-10 mt-20">
         {isAssistantOpen ? (
           <AssistantPage 
             config={config} 
@@ -898,7 +843,6 @@ function AppContent() {
             defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
             selectedFlour={FLOURS.find(f => f.id === config.flourId)}
             lastBatch={lastBatch}
-            t={t}
           />
         ) : (
           <ErrorBoundary>
@@ -907,10 +851,12 @@ function AppContent() {
         )}
       </main>
       
+      <Footer onNavigate={navigate} />
+
       {!isAssistantOpen && (
          <FloatingActionButton 
             onClick={() => setIsAssistantOpen(true)} 
-            label={t('assistant.title_short')}
+            label="Doughy"
             isShifted={isSummaryBarVisible}
          />
       )}
@@ -943,15 +889,15 @@ function AppContent() {
 
 function App() {
   return (
-    <I18nProvider>
       <FirebaseAuthProvider>
         <ToastProvider>
-         <UserProvider>
-          <AppContent />
-          </UserProvider>
+         <I18nProvider>
+           <UserProvider>
+            <AppContent />
+           </UserProvider>
+         </I18nProvider>
         </ToastProvider>
       </FirebaseAuthProvider>
-    </I18nProvider>
   );
 }
 

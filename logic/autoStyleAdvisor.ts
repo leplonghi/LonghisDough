@@ -1,3 +1,4 @@
+
 import { DoughConfig, Oven, RecipeStyle, AutoStyleInsightsResult } from '../types';
 
 const STYLE_CHARACTERISTICS: Record<
@@ -9,46 +10,44 @@ const STYLE_CHARACTERISTICS: Record<
     name: string;
   }
 > = {
-  [RecipeStyle.NEAPOLITAN]: { hydrationRange: [55, 62], idealW: [250, 310], idealOvenTemp: [450, 500], name: 'Napolitana' },
+  [RecipeStyle.NEAPOLITAN]: { hydrationRange: [55, 62], idealW: [250, 310], idealOvenTemp: [450, 500], name: 'Neapolitan' },
   [RecipeStyle.NEW_YORK]: { hydrationRange: [63, 67], idealW: [320, 360], idealOvenTemp: [280, 450], name: 'NY Style' },
   [RecipeStyle.DETROIT]: { hydrationRange: [67, 75], idealW: [300, 360], idealOvenTemp: [250, 300], name: 'Detroit' },
-  [RecipeStyle.ROMAN]: { hydrationRange: [75, 85], idealW: [340, 400], idealOvenTemp: [250, 320], name: 'Romana (Teglia)' },
+  [RecipeStyle.ROMAN]: { hydrationRange: [75, 85], idealW: [340, 400], idealOvenTemp: [250, 320], name: 'Roman (Teglia)' },
   [RecipeStyle.FOCACCIA]: { hydrationRange: [70, 85], idealW: [300, 380], idealOvenTemp: [220, 260], name: 'Focaccia' },
-  [RecipeStyle.COUNTRY_LOAF]: { hydrationRange: [70, 85], idealW: [320, 400], idealOvenTemp: [230, 260], name: 'Pão Rústico' },
+  [RecipeStyle.COUNTRY_LOAF]: { hydrationRange: [70, 85], idealW: [320, 400], idealOvenTemp: [230, 260], name: 'Rustic Loaf' },
   [RecipeStyle.BAGUETTE]: { hydrationRange: [65, 75], idealW: [280, 330], idealOvenTemp: [240, 270], name: 'Baguette' },
-  // Add other styles with default values to prevent errors
   [RecipeStyle.PAN_PIZZA]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Pan Pizza' },
-  [RecipeStyle.THIN_CRUST]: { hydrationRange: [50, 60], idealW: [220, 280], idealOvenTemp: [250, 300], name: 'Fina e Crocante' },
-  [RecipeStyle.SANDWICH_LOAF]: { hydrationRange: [60, 70], idealW: [240, 300], idealOvenTemp: [180, 210], name: 'Pão de Forma' },
+  [RecipeStyle.THIN_CRUST]: { hydrationRange: [50, 60], idealW: [220, 280], idealOvenTemp: [250, 300], name: 'Thin & Crispy' },
+  [RecipeStyle.SANDWICH_LOAF]: { hydrationRange: [60, 70], idealW: [240, 300], idealOvenTemp: [180, 210], name: 'Sandwich Loaf' },
   [RecipeStyle.FLATBREAD]: { hydrationRange: [60, 70], idealW: [200, 260], idealOvenTemp: [250, 350], name: 'Flatbread' },
   [RecipeStyle.NY_STYLE]: { hydrationRange: [63, 67], idealW: [320, 360], idealOvenTemp: [280, 450], name: 'NY Style' },
-  [RecipeStyle.SICILIAN]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Siciliana' },
+  [RecipeStyle.SICILIAN]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Sicilian' },
   [RecipeStyle.CHICAGO]: { hydrationRange: [55, 65], idealW: [280, 340], idealOvenTemp: [220, 250], name: 'Chicago Deep Dish' },
-  [RecipeStyle.SOURDOUGH]: { hydrationRange: [70, 85], idealW: [320, 400], idealOvenTemp: [230, 260], name: 'Pão de Fermentação Natural' },
+  [RecipeStyle.SOURDOUGH]: { hydrationRange: [70, 85], idealW: [320, 400], idealOvenTemp: [230, 260], name: 'Sourdough Bread' },
   [RecipeStyle.CIABATTA]: { hydrationRange: [80, 90], idealW: [340, 400], idealOvenTemp: [230, 260], name: 'Ciabatta' },
   [RecipeStyle.BRIOCHE]: { hydrationRange: [50, 60], idealW: [280, 350], idealOvenTemp: [170, 190], name: 'Brioche' },
-  [RecipeStyle.RYE]: { hydrationRange: [70, 90], idealW: [180, 240], idealOvenTemp: [210, 240], name: 'Pão de Centeio' },
-  // FIX: Added missing properties from RecipeStyle enum
+  [RecipeStyle.RYE]: { hydrationRange: [70, 90], idealW: [180, 240], idealOvenTemp: [210, 240], name: 'Rye Bread' },
   [RecipeStyle.CHICAGO_DEEP_DISH]: { hydrationRange: [55, 65], idealW: [280, 340], idealOvenTemp: [220, 250], name: 'Chicago Deep Dish' },
   [RecipeStyle.ROMANA_TONDA]: { hydrationRange: [55, 62], idealW: [250, 300], idealOvenTemp: [300, 350], name: 'Romana Tonda' },
-  [RecipeStyle.SICILIANA]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Siciliana' },
+  [RecipeStyle.SICILIANA]: { hydrationRange: [65, 75], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Sicilian' },
   [RecipeStyle.GRANDMA_STYLE]: { hydrationRange: [68, 78], idealW: [280, 340], idealOvenTemp: [240, 280], name: 'Grandma Style' },
-  [RecipeStyle.PAO_FRANCES]: { hydrationRange: [58, 65], idealW: [240, 290], idealOvenTemp: [200, 230], name: 'Pão Francês' },
+  [RecipeStyle.PAO_FRANCES]: { hydrationRange: [58, 65], idealW: [240, 290], idealOvenTemp: [200, 230], name: 'French Bread' },
   [RecipeStyle.PUMPERNICKEL]: { hydrationRange: [80, 100], idealW: [150, 200], idealOvenTemp: [150, 180], name: 'Pumpernickel' },
-  [RecipeStyle.PAO_DE_BATATA]: { hydrationRange: [60, 70], idealW: [220, 280], idealOvenTemp: [180, 200], name: 'Pão de Batata' },
+  [RecipeStyle.PAO_DE_BATATA]: { hydrationRange: [60, 70], idealW: [220, 280], idealOvenTemp: [180, 200], name: 'Potato Bread' },
   [RecipeStyle.CHALLAH]: { hydrationRange: [55, 65], idealW: [250, 320], idealOvenTemp: [180, 200], name: 'Challah' },
   [RecipeStyle.BAGEL]: { hydrationRange: [50, 60], idealW: [300, 380], idealOvenTemp: [220, 250], name: 'Bagel' },
   [RecipeStyle.ENGLISH_MUFFIN]: { hydrationRange: [65, 75], idealW: [240, 300], idealOvenTemp: [150, 180], name: 'English Muffin' },
   [RecipeStyle.PITA]: { hydrationRange: [60, 70], idealW: [240, 300], idealOvenTemp: [250, 300], name: 'Pita' },
-  [RecipeStyle.MASSA_PODRE]: { hydrationRange: [30, 40], idealW: [180, 240], idealOvenTemp: [180, 200], name: 'Massa Podre' },
-  [RecipeStyle.MASSA_ESFIHA]: { hydrationRange: [55, 65], idealW: [220, 280], idealOvenTemp: [200, 230], name: 'Massa de Esfiha' },
-  [RecipeStyle.MASSA_TORTA]: { hydrationRange: [40, 50], idealW: [200, 260], idealOvenTemp: [180, 200], name: 'Massa de Torta' },
+  [RecipeStyle.MASSA_PODRE]: { hydrationRange: [30, 40], idealW: [180, 240], idealOvenTemp: [180, 200], name: 'Shortcrust' },
+  [RecipeStyle.MASSA_ESFIHA]: { hydrationRange: [55, 65], idealW: [220, 280], idealOvenTemp: [200, 230], name: 'Esfiha Dough' },
+  [RecipeStyle.MASSA_TORTA]: { hydrationRange: [40, 50], idealW: [200, 260], idealOvenTemp: [180, 200], name: 'Savory Pie Dough' },
   [RecipeStyle.PATE_SUCREE]: { hydrationRange: [30, 40], idealW: [150, 200], idealOvenTemp: [170, 190], name: 'Pâte Sucrée' },
   [RecipeStyle.SABLEE]: { hydrationRange: [25, 35], idealW: [150, 200], idealOvenTemp: [170, 190], name: 'Sablée' },
   [RecipeStyle.POUND_CAKE]: { hydrationRange: [50, 60], idealW: [150, 200], idealOvenTemp: [160, 180], name: 'Pound Cake' },
   [RecipeStyle.COOKIES]: { hydrationRange: [30, 50], idealW: [180, 240], idealOvenTemp: [170, 190], name: 'Cookies' },
   [RecipeStyle.PIE_DOUGH]: { hydrationRange: [35, 45], idealW: [180, 240], idealOvenTemp: [190, 210], name: 'Pie Dough' },
-  [RecipeStyle.BOLO_SIMPLES]: { hydrationRange: [50, 70], idealW: [150, 220], idealOvenTemp: [170, 190], name: 'Bolo Simples' },
+  [RecipeStyle.BOLO_SIMPLES]: { hydrationRange: [50, 70], idealW: [150, 220], idealOvenTemp: [170, 190], name: 'Simple Cake' },
 };
 
 
@@ -123,10 +122,10 @@ export function getAutoStyleInsights(
   insights.idealHydrationRange = `${currentStyleChars.hydrationRange[0]}% - ${currentStyleChars.hydrationRange[1]}%`;
   
   if (environmentTempC) {
-    if (environmentTempC < 20) insights.idealFermentationRange = "24–72 horas (frio ou ambiente)";
-    else if (environmentTempC <= 24) insights.idealFermentationRange = "12–24 horas";
-    else if (environmentTempC <= 28) insights.idealFermentationRange = "8–12 horas";
-    else insights.idealFermentationRange = "4–8 horas (ou reduza o fermento)";
+    if (environmentTempC < 20) insights.idealFermentationRange = "24–72 hours (cold or ambient)";
+    else if (environmentTempC <= 24) insights.idealFermentationRange = "12–24 hours";
+    else if (environmentTempC <= 28) insights.idealFermentationRange = "8–12 hours";
+    else insights.idealFermentationRange = "4–8 hours (or reduce yeast)";
   }
 
   // 2. Calculate Fit Score for the current configuration
@@ -135,16 +134,16 @@ export function getAutoStyleInsights(
   // 3. Generate Warnings and Notes
   if (flourStrength) {
       const [minW, maxW] = currentStyleChars.idealW;
-      if(flourStrength < minW) insights.mismatchWarnings.push(`Sua farinha (W ${flourStrength}) pode ser fraca demais para o estilo ${currentStyleChars.name}, que performa melhor com W ${minW}-${maxW}.`);
-      if(flourStrength > maxW) insights.mismatchWarnings.push(`Sua farinha (W ${flourStrength}) é mais forte que o necessário para ${currentStyleChars.name}.`);
+      if(flourStrength < minW) insights.mismatchWarnings.push(`Your flour (W ${flourStrength}) might be too weak for ${currentStyleChars.name}, which performs better with W ${minW}-${maxW}.`);
+      if(flourStrength > maxW) insights.mismatchWarnings.push(`Your flour (W ${flourStrength}) is stronger than necessary for ${currentStyleChars.name}.`);
   }
   
   if (oven) {
       const [minT] = currentStyleChars.idealOvenTemp;
       if(oven.maxTemperature < minT) {
-          insights.mismatchWarnings.push(`Seu forno (${oven.maxTemperature}°C) não atinge a temperatura ideal de ${minT}°C para o estilo ${currentStyleChars.name}.`);
+          insights.mismatchWarnings.push(`Your oven (${oven.maxTemperature}°C) does not reach the ideal temperature of ${minT}°C for ${currentStyleChars.name}.`);
           if (currentStyle === RecipeStyle.NEAPOLITAN) {
-              insights.professionalNotes.push("Dica de mestre: Para fornos domésticos, um estilo como NY Style com uma chapa de aço ('baking steel') geralmente produz um resultado superior à tentativa de uma Napolitana adaptada.");
+              insights.professionalNotes.push("Master Tip: For home ovens, a style like NY Style with a baking steel generally yields a superior result compared to adapting Neapolitan.");
           }
       }
   }
@@ -166,7 +165,7 @@ export function getAutoStyleInsights(
 
   if (bestFitStyle && bestFitScore > insights.styleFitScore + 18) {
       insights.recommendedStyle = STYLE_CHARACTERISTICS[bestFitStyle].name;
-      insights.professionalNotes.push(`Com base no seu forno e farinha, o estilo ${insights.recommendedStyle} parece ser uma combinação ainda melhor.`);
+      insights.professionalNotes.push(`Based on your oven and flour, the style ${insights.recommendedStyle} seems to be an even better match.`);
   }
 
   return insights;

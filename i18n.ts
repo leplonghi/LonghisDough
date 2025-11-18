@@ -5,11 +5,10 @@ import React, {
   ReactNode,
   FC,
   useCallback,
-  useEffect,
 } from 'react';
 import { Locale } from './types';
 
-// English Translations
+// English Translations (Single Source of Truth)
 const en = {
   dashboard: {
     title: "My Lab",
@@ -56,7 +55,6 @@ const en = {
     shortcuts_levain: "Levain Pet",
     shortcuts_legal: "Legal",
   },
-  // TODO: Translate all levain_pet keys
   levain_pet: {
     title: "Levain Pet",
     subtitle: "Track your starters as partners in your dough lab.",
@@ -194,20 +192,21 @@ const en = {
     success: 'Success',
     warning: 'Warning',
     skip: 'Skip',
+    share_link: 'Share',
   },
   nav: {
-    lab: "Meu Lab",
+    lab: "My Lab",
     diary: "Diary",
-    calculator: "Calculadora",
-    styles: "Estilos de Massa",
-    learn: "Aprender",
-    community: "Comunidade",
+    calculator: "Calculator",
+    styles: "Dough Styles",
+    learn: "Learn",
+    community: "Community",
     insights: "Insights",
     flours: "Flours",
     help: "Help",
     references: "References",
-    profile: "Perfil",
-    tools: "Ferramentas"
+    profile: "Profile",
+    tools: "Tools"
   },
   user_menu: {
     profile: "Profile",
@@ -289,6 +288,8 @@ const en = {
     calc_mode_mass: 'By Total Weight',
     calc_mode_flour: 'By Flour Weight',
     hydration: 'Hydration',
+    salt: 'Salt',
+    oil: 'Oil/Fat',
     sugar: 'Sugar',
     yeast_type: 'Yeast Type',
     yeast: 'Yeast',
@@ -369,6 +370,34 @@ const en = {
       range_tempC: "A value between {min}°C and {max}°C is recommended.",
       total_flour_range: 'The recommended total flour is between {min} and {max}g.',
     },
+    // Style Names
+    neapolitan: 'Neapolitan',
+    new_york: 'New York',
+    pan_pizza: 'Pan Pizza',
+    chicago_deep_dish: 'Chicago Deep Dish',
+    romana_tonda: 'Romana Tonda',
+    siciliana: 'Sicilian',
+    grandma_style: 'Grandma Style',
+    pao_frances: 'French Bread',
+    baguette: 'Baguette',
+    ciabatta: 'Ciabatta',
+    pumpernickel: 'Pumpernickel',
+    rye: 'Rye',
+    pao_de_batata: 'Potato Bread',
+    focaccia: 'Focaccia',
+    challah: 'Challah',
+    bagel: 'Bagel',
+    english_muffin: 'English Muffin',
+    pita: 'Pita',
+    massa_podre: 'Shortcrust (Savory)',
+    massa_esfiha: 'Esfiha Dough',
+    massa_torta: 'Savory Pie Dough',
+    pate_sucree: 'Pâte Sucrée',
+    sablee: 'Sablée',
+    pound_cake: 'Pound Cake',
+    cookies: 'Cookies',
+    pie_dough: 'Pie Dough',
+    bolo_simples: 'Simple Cake',
   },
   results: {
     title: 'Calculated Formula',
@@ -377,6 +406,7 @@ const en = {
     salt: 'Salt',
     oil: 'Oil / Olive Oil',
     yeast: 'Yeast',
+    sugar: 'Sugar',
     total_dough: 'Total Dough',
     notes: {
       flour: '100% (Calculation base)',
@@ -728,6 +758,7 @@ const en = {
     sugar: 'Sugar',
     yeast: 'Yeast',
     baking_temp: "Baking Temp.",
+    ingredients_title: 'Ingredients',
     publish: 'Publish to CrustCrew',
     publish_desc: 'Make this bake visible to other users.',
     back: 'Back',
@@ -740,7 +771,6 @@ const en = {
     anonymous: 'Anonymous',
     data_title: 'Dough Data',
     preferment_title: 'Preferment',
-    ingredients_title: 'Ingredients',
     process_title: 'Process & Observations',
     photos_title: 'Photos',
     actions_title: 'Actions',
@@ -840,7 +870,7 @@ const en = {
     }
   },
   assistant: {
-    system_prompt: 'You are Doughy, a friendly and expert assistant for DoughLabPro, specializing in pizza and bread dough. Your goal is to help users understand their formulas, solve problems, and learn the science of baking. Always reply in Brazilian Portuguese. Be helpful, concise, and encouraging. You are a "Dough Coach".',
+    system_prompt: 'You are Doughy, a friendly and expert assistant for DoughLabPro, specializing in pizza and bread dough. Your goal is to help users understand their formulas, solve problems, and learn the science of baking. Always reply in English. Be helpful, concise, and encouraging. You are a "Dough Coach".',
     context: {
         active_recipe: "Active Formula in Calculator",
         style: "Style",
@@ -1011,9 +1041,9 @@ const en = {
     home_aria: 'Home',
     menu: 'Menu',
     tools: {
-      tech_references: 'Referências Técnicas',
-      oven_analysis: 'Análise de Forno (FormulaLab)',
-      doughbot: 'Diagnóstico de Massa (Massabo)',
+      tech_references: 'Technical References',
+      oven_analysis: 'Oven Analysis (FormulaLab)',
+      doughbot: 'Dough Diagnostic (Massabo)',
     }
   },
   mylab_page: {
@@ -1080,149 +1110,7 @@ const en = {
   },
 };
 
-// Portuguese Translations
-const pt = {
-  // NOTE: This is a partial translation. In a real app, all keys would be translated.
-  // ... (translations omitted for brevity, assuming they exist) ...
-  ...en, // Using English as a fallback for missing keys
-  results: {
-    ...en.results,
-    steps: {
-        "title": "Passos Sugeridos",
-        "generic_direct": {
-            "step1": "<strong>1. Precisão é tudo:</strong> Separe e pese todos os ingredientes com precisão. Uma balança digital é sua melhor amiga para garantir um resultado consistente.",
-            "step2": "<strong>2. Ativação (se necessário):</strong> Se usar Fermento Biológico Seco Ativo (ADY), dissolva-o na água morna (~38°C) com uma pitada de açúcar e aguarde 5-10 min até espumar. Se for o Instantâneo (IDY), pode misturá-lo direto na farinha.",
-            "step3": "<strong>3. Mistura Inicial:</strong> Em uma tigela grande, misture a farinha e o sal. Adicione a mistura de água/fermento e o azeite (se usar). Misture até que toda a farinha seja incorporada e não haja partes secas.",
-            "step4": "<strong>4. Desenvolver o Glúten (Sova):</strong> Sove a massa por 8-12 minutos até ela ficar lisa, elástica e levemente pegajosa. <em>Dica Pro:</em> Faça o 'teste do ponto de véu' — um pedaço da massa deve esticar fino o suficiente para ver a luz através, sem rasgar.",
-            "step5": "<strong>5. Primeira Fermentação (Bulk):</strong> Modele uma bola, coloque em uma tigela untada e cubra. Deixe crescer por 1-2h em local morno, ou até dobrar de volume. Para um sabor mais complexo, faça a fermentação longa na geladeira por 24-72h.",
-            "step6": "<strong>6. Divisão e Boleamento:</strong> Divida a massa em porções e modele cada uma em uma bola bem tensionada, dobrando as bordas para baixo. Isso cria uma 'pele' que ajuda no crescimento final.",
-            "step7": "<strong>7. Fermentação Final:</strong> Coloque as bolas em um recipiente coberto e deixe descansar. Para pizzas, de 1-2h. Para pães, até passar no 'teste do dedo' (uma leve pressão deve retornar lentamente).",
-            "step8": "<strong>8. Modelar e Assar:</strong> Abra o disco da pizza ou modele seu pão. Asse em forno muito quente e pré-aquecido, sobre uma pedra ou chapa de aço. Pizzas assam rápido e em alta temperatura; pães são mais moderados.",
-            "step9": "<strong>9. Resfriamento:</strong> Deixe o produto final descansar sobre uma grade por alguns minutos antes de cortar. Isso estabiliza o miolo e melhora a textura."
-        },
-        "generic_indirect": {
-            "preferment": {
-                "step1": "<strong>1. Preparo do Pré-fermento:</strong> Misture os ingredientes do pré-fermento (farinha, água, e uma quantidade mínima de fermento) até que estejam combinados. A consistência varia: Poolish é líquido, Biga é firme.",
-                "step2": "<strong>2. Fermentação do Pré-fermento:</strong> Cubra e deixe fermentar em temperatura ambiente pelo tempo indicado (ex: 8-16h para Poolish, 12-24h para Biga). Ele deve estar borbulhante e aromático."
-            },
-            "final_dough": {
-                "step1": "<strong>1. Combinação:</strong> Em uma tigela grande, dissolva o sal na água da massa final. Adicione o pré-fermento já maturado e desfaça-o na água.",
-                "step2": "<strong>2. Mistura:</strong> Adicione gradualmente o restante da farinha e do fermento, misturando até formar uma massa homogênea. Adicione o azeite, se usar.",
-                "step3": "<strong>3. Sova e Fermentação Curta:</strong> Sove a massa por 10-15 minutos. Como o pré-fermento já trabalhou bastante, a primeira fermentação da massa final é mais curta, geralmente de 30 a 60 minutos.",
-                "step4": "<strong>4. Passos Finais:</strong> Siga com a divisão, boleamento, fermentação final e cozimento, como descrito nos passos 6 a 9 do método direto."
-            }
-        },
-        "neapolitan_direct": {
-            "step1": "<strong>1. Autólise (Opcional):</strong> Misture a farinha com 90% da água e deixe descansar por 30-60 min. Isso hidrata a farinha e facilita a sova.",
-            "step2": "<strong>2. Incorporação:</strong> Dissolva o sal na água restante e adicione à massa. Em seguida, adicione o fermento (dissolvido em um pouco de água).",
-            "step3": "<strong>3. Sova Intensa:</strong> Sove por 15-20 minutos à mão até a massa ficar extremamente lisa e passar no 'teste do ponto de véu'. A temperatura final ideal da massa é de 23-26°C.",
-            "step4": "<strong>4. Primeira Fermentação:</strong> Deixe a massa descansar em um recipiente coberto por 2 horas em temperatura ambiente.",
-            "step5": "<strong>5. Boleamento e Maturação a Frio:</strong> Divida a massa em bolas (staglio), coloque em uma caixa de fermentação e refrigere por 24-48h. Isso é crucial para o desenvolvimento do sabor.",
-            "step6": "<strong>6. Aclimatação:</strong> Retire as bolas da geladeira 2-4 horas antes de assar, para que atinjam a temperatura ambiente.",
-            "step7": "<strong>7. Abertura Manual:</strong> Abra a massa suavemente do centro para as bordas, preservando o ar no cornicione (borda). <em>Nunca use um rolo.</em>",
-            "step8": "<strong>8. Cobertura e Forno:</strong> Cubra com poucos ingredientes e asse em forno extremamente quente (450-500°C) por 60-90 segundos."
-        },
-        "pan_pizza_direct": {
-            "step1": "<strong>1. Mistura:</strong> Combine todos os ingredientes em uma tigela até formar uma massa pegajosa. Não é necessário sovar muito nesta fase.",
-            "step2": "<strong>2. Fermentação com Dobras:</strong> Cubra e deixe crescer por 1-2 horas, fazendo uma série de 'dobras' (stretch and folds) a cada 30 minutos para fortalecer o glúten.",
-            "step3": "<strong>3. Preparo da Assadeira:</strong> Unte generosamente uma assadeira (de Detroit, ferro fundido ou forma de bolo). Este é o segredo para uma base crocante e quase frita.",
-            "step4": "<strong>4. Fermentação na Assadeira:</strong> Coloque a massa na assadeira, estique suavemente até os cantos. Cubra e deixe fermentar por mais 1-2 horas até ficar fofa e preencher a forma.",
-            "step5": "<strong>5. Furos e Cobertura:</strong> Pressione suavemente a massa com os dedos untados para criar as covinhas. Adicione queijo até as bordas e, em seguida, os outros ingredientes. Para o estilo Detroit, o molho vai em faixas por cima do queijo.",
-            "step6": "<strong>6. Assar:</strong> Asse em forno pré-aquecido a uma temperatura mais baixa que a Napolitana (ex: 230-260°C) por 15-25 minutos, até o queijo borbulhar e as bordas ficarem escuras e crocantes."
-        },
-        "focaccia_direct": {
-            "step1": "<strong>1. Mistura:</strong> Combine farinha, fermento, sal e água. Misture até formar uma massa muito úmida e pegajosa. Adicione uma quantidade generosa de azeite.",
-            "step2": "<strong>2. Dobras (Stretch & Folds):</strong> Como a massa é muito mole para sovar, faça 3-4 séries de 'dobras' na tigela, a cada 30 minutos, para desenvolver força.",
-            "step3": "<strong>3. Primeira Fermentação:</strong> Cubra a massa e deixe fermentar em temperatura ambiente por várias horas, ou na geladeira durante a noite para mais sabor.",
-            "step4": "<strong>4. Fermentação na Assadeira:</strong> Transfira para uma assadeira bem untada com azeite. Estique suavemente. Deixe fermentar por mais 1-2 horas até ficar cheia de bolhas.",
-            "step5": "<strong>5. Covinhas e Tempero:</strong> Unte os dedos com azeite e pressione firmemente a massa para criar as covinhas clássicas. Regue com mais azeite e salpique sal grosso e alecrim.",
-            "step6": "<strong>6. Assar:</strong> Asse a 220°C por 20-25 minutos até dourar e ficar crocante."
-        },
-        "high_hydration_bread_direct": {
-            "step1": "<strong>1. Autólise:</strong> Combine farinha e água e deixe descansar por pelo menos 30 minutos. Essencial para massas de alta hidratação absorverem a água.",
-            "step2": "<strong>2. Mistura:</strong> Adicione sal e levain/fermento. Misture suavemente. A massa ficará muito pegajosa.",
-            "step3": "<strong>3. Primeira Fermentação com Dobras:</strong> Durante a fermentação de 3-5 horas, faça várias séries de 'dobras' para fortalecer o glúten sem sova intensa.",
-            "step4": "<strong>4. Pré-modelagem e Descanso:</strong> Pré-modele a massa em uma bola e deixe descansar na bancada por 20-30 minutos.",
-            "step5": "<strong>5. Modelagem Final:</strong> Modele cuidadosamente no formato final (boule ou bâtard) e coloque em um cesto de fermentação (banneton).",
-            "step6": "<strong>6. Fermentação Final:</strong> Deixe fermentar em temperatura ambiente ou faça uma longa fermentação a frio na geladeira por 12-24h para desenvolver sabor.",
-            "step7": "<strong>7. Assar com Vapor:</strong> Asse em uma panela de ferro fundido (Dutch oven) bem quente ou sobre uma pedra de cozimento, com vapor nos primeiros 20 minutos para um 'salto de forno' máximo e uma crosta crocante."
-        }
-    }
-  },
-  common: {
-    ...en.common,
-    edit: 'Editar',
-    add: 'Adicionar',
-    cancel: 'Cancelar',
-    save: 'Salvar',
-    save_changes: 'Salvar Alterações',
-    delete: 'Excluir',
-    load: 'Carregar',
-    by: 'Por',
-    back: 'Voltar',
-    next: 'Avançar',
-    finish: 'Finalizar',
-    close: 'Fechar',
-    details: 'Detalhes',
-    explore: 'Explorar',
-  },
-  nav: {
-    ...en.nav,
-    lab: "Meu Lab",
-    calculator: "Calculadora",
-    styles: "Estilos de Massa",
-    learn: "Aprender",
-    community: "Comunidade",
-    profile: "Perfil",
-  },
-  user_menu: {
-    ...en.user_menu,
-    profile: "Perfil",
-    settings: "Configurações Gerais",
-    theme: "Tema",
-    theme_light: "Claro",
-    theme_dark: "Escuro",
-    theme_system: "Sistema",
-    language: "Idioma",
-    help: "Ajuda",
-    sign_out: "Sair",
-    legal: "Assuntos Legais",
-  },
-  auth: {
-    ...en.auth,
-    sign_in: 'Entrar',
-    modal_title: 'Acesse sua conta',
-    modal_subtitle: 'Salve suas fornadas, fornos e levains.',
-    continue_with_google: 'Continuar com Google',
-    terms_notice: 'Ao continuar, você concorda com nossos Termos de Serviço.',
-  },
-  mode_toggle: {
-    ...en.mode_toggle,
-    basic: 'Modo Guiado',
-    advanced: 'Modo Livre',
-  },
-};
-
-// Spanish Translations
-const es = {
-  ...en, // Using English as a fallback
-  common: {
-    ...en.common,
-    edit: 'Editar',
-    add: 'Añadir',
-    cancel: 'Cancelar',
-    save: 'Guardar',
-  },
-  nav: {
-    ...en.nav,
-    calculator: "Calculadora",
-    styles: "Estilos de Masa",
-    learn: "Aprender",
-    community: "Comunidad",
-  },
-};
-
-const translations = { en, pt, es };
+const translations = { en };
 
 interface I18nContextType {
   locale: Locale;
@@ -1233,67 +1121,29 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    try {
-      const storedLocale = localStorage.getItem('doughlab_locale');
-      if (storedLocale && ['en', 'pt', 'es'].includes(storedLocale)) {
-        return storedLocale as Locale;
-      }
-    } catch (error) {
-      console.error('Failed to load locale from localStorage', error);
-    }
-    const browserLang = navigator.language.split('-')[0];
-    return ['en', 'pt', 'es'].includes(browserLang) ? (browserLang as Locale) : 'en';
-  });
+  // Always force English locale
+  const [locale] = useState<Locale>('en');
 
+  // No-op function for compatibility
   const setLocale = useCallback((newLocale: Locale) => {
-    setLocaleState(newLocale);
-    try {
-      localStorage.setItem('doughlab_locale', newLocale);
-    } catch (error) {
-      console.error('Failed to save locale to localStorage', error);
-    }
+    console.log('Locale change disabled, enforcing English.');
   }, []);
 
   const t = useCallback((key: string, replacements?: { [key: string]: string | number | undefined }): string => {
     const keyParts = key.split('.');
-    let translation = (translations[locale] || translations.en) as any;
+    let translation = translations.en as any;
     
     for (const part of keyParts) {
       if (translation && typeof translation === 'object' && part in translation) {
         translation = translation[part];
       } else {
-        // Fallback to English if key not found in current locale
-        translation = translations.en as any;
-        for (const part_en of keyParts) {
-             if (translation && typeof translation === 'object' && part_en in translation) {
-                translation = translation[part_en];
-             } else {
-                return (replacements as any)?.defaultValue ?? key;
-             }
-        }
-        break;
+        // If key not found, return the key itself or defaultValue
+        return (replacements as any)?.defaultValue ?? key;
       }
     }
 
     if (typeof translation !== 'string') {
-        const defaultValue = (replacements as any)?.defaultValue;
-        if (defaultValue !== undefined) return defaultValue;
-        
-        // Fallback for nested keys that don't resolve to a string
-        let fallback_translation = translations.en as any;
-         for (const part of keyParts) {
-             if (fallback_translation && typeof fallback_translation === 'object' && part in fallback_translation) {
-                fallback_translation = fallback_translation[part];
-             } else {
-                 return key;
-             }
-         }
-         if(typeof fallback_translation === 'string') {
-             translation = fallback_translation;
-         } else {
-             return key;
-         }
+         return (replacements as any)?.defaultValue ?? key;
     }
 
     if (replacements) {
@@ -1303,7 +1153,7 @@ export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     return translation;
-  }, [locale]);
+  }, []);
 
   return React.createElement(
     I18nContext.Provider,

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AdjustmentChange } from '../../logic/applySmartAdjustments';
 import { CloseIcon, SparklesIcon } from '../IconComponents';
@@ -50,9 +51,9 @@ const ApplyAdjustmentsModal: React.FC<ApplyAdjustmentsModalProps> = ({
             <div>
                  <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <SparklesIcon className="h-6 w-6 text-lime-500" />
-                    Aplicar Sugestões
+                    Apply Suggestions
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">Confirme as alterações sugeridas.</p>
+                <p className="text-sm text-slate-500 mt-1">Confirm the suggested changes.</p>
             </div>
           <button onClick={onClose} className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200">
             <CloseIcon className="h-6 w-6" />
@@ -74,10 +75,10 @@ const ApplyAdjustmentsModal: React.FC<ApplyAdjustmentsModalProps> = ({
 
         <div className="mt-6 flex justify-end gap-4 border-t border-slate-200 pt-6">
           <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">
-            Cancelar
+            Cancel
           </button>
           <button type="button" onClick={onConfirm} className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">
-            Aplicar Alterações
+            Apply Changes
           </button>
         </div>
       </div>

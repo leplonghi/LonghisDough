@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { useTranslation } from '../i18n';
 import { UnitSystem } from '../types';
 import { CloseIcon, SettingsIcon } from './IconComponents';
 
@@ -34,7 +34,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   unitSystem,
   onUnitSystemChange,
 }) => {
-  const { t } = useTranslation();
 
   if (!isOpen) return null;
 
@@ -56,12 +55,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             className="flex items-center gap-2 text-xl font-bold text-slate-900"
           >
             <SettingsIcon className="h-6 w-6 text-lime-500" />
-            <span>{t('form.settings')}</span>
+            <span>Settings</span>
           </h2>
           <button
             onClick={onClose}
             className="rounded-full p-1 text-slate-500 hover:bg-slate-200"
-            aria-label={t('load_modal.close_aria')}
+            aria-label="Close"
           >
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -70,24 +69,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="mt-6 space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
-              {t('form.unit_system')}
+              Unit System (Volume)
             </label>
             <div className="grid grid-cols-2 gap-3">
               <ChoiceButton
                 active={unitSystem === UnitSystem.US_CUSTOMARY}
                 onClick={() => onUnitSystemChange(UnitSystem.US_CUSTOMARY)}
               >
-                {t('form.us_customary')}
+                US Customary
               </ChoiceButton>
               <ChoiceButton
                 active={unitSystem === UnitSystem.METRIC}
                 onClick={() => onUnitSystemChange(UnitSystem.METRIC)}
               >
-                {t('form.metric')}
+                Metric
               </ChoiceButton>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              {t('form.unit_system_tooltip')}
+              Affects the conversion from grams to cups/spoons. The metric system (1 cup = 250ml) differs from the US customary system (1 cup = ~236ml).
             </p>
           </div>
         </div>

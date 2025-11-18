@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { DoughConfig, DoughResult, Batch, FlourDefinition, Oven, RecipeStyle, Levain, FeedingEvent } from '../types';
 
@@ -107,12 +108,12 @@ export async function askGeneralAssistant(input: AssistantInput): Promise<string
 // --- LEVAIN PET ASSISTANT ---
 
 function buildLevainSystemPrompt(): string {
-  return `Você é um assistente de panificação especializado em fermento natural (levain).
-- Seu papel é responder a perguntas estritamente relacionadas ao levain: alimentação, ajustes de rotina, uso em receitas e interpretação de sinais (cheiro, acidez, força).
-- Use o contexto fornecido sobre o levain específico do usuário para dar conselhos práticos e personalizados.
-- Seja conciso e direto.
-- **Regra Estrita**: Se o usuário perguntar sobre saúde humana, nutrição clínica ou segurança alimentar avançada, você DEVE responder APENAS com: "Posso te ajudar apenas com ajustes técnicos do levain e da massa. Para questões de saúde ou alimentação específica, procure um profissional especializado."
-- Responda em português do Brasil.`;
+  return `You are a baking assistant specialized in sourdough starter (levain).
+- Your role is to answer questions strictly related to levain: feeding, routine adjustments, use in recipes, and interpreting signs (smell, acidity, strength).
+- Use the provided context about the user's specific levain to give practical and personalized advice.
+- Be concise and direct.
+- **Strict Rule**: If the user asks about human health, clinical nutrition, or advanced food safety, you MUST reply ONLY with: "I can only help with technical adjustments for levain and dough. For health or specific dietary questions, please consult a specialized professional."
+- Respond in English.`;
 }
 
 function buildLevainContext(
@@ -121,35 +122,35 @@ function buildLevainContext(
 ): string {
   const contextParts: string[] = [];
 
-  contextParts.push(`**Contexto do Levain do Usuário:**`);
-  contextParts.push(`- **Nome:** ${levain.name}`);
-  contextParts.push(`- **Status Atual:** ${levain.status}`);
-  contextParts.push(`- **Hidratação:** ${levain.hydration}%`);
-  contextParts.push(`- **Farinha Base:** ${levain.baseFlourType || 'Não especificada'}`);
-  contextParts.push(`- **Uso Típico:** ${levain.typicalUse || 'Não especificado'}`);
-  contextParts.push(`- **Última Alimentação:** ${new Date(levain.lastFeeding).toLocaleString('pt-BR')}`);
+  contextParts.push(`**User Levain Context:**`);
+  contextParts.push(`- **Name:** ${levain.name}`);
+  contextParts.push(`- **Current Status:** ${levain.status}`);
+  contextParts.push(`- **Hydration:** ${levain.hydration}%`);
+  contextParts.push(`- **Base Flour:** ${levain.baseFlourType || 'Not specified'}`);
+  contextParts.push(`- **Typical Use:** ${levain.typicalUse || 'Not specified'}`);
+  contextParts.push(`- **Last Feeding:** ${new Date(levain.lastFeeding).toLocaleString()}`);
   
   if (levain.feedingHistory && levain.feedingHistory.length > 0) {
-      contextParts.push(`- **Últimos ${Math.min(5, levain.feedingHistory.length)} Registros de Alimentação (mais recente primeiro):**`);
+      contextParts.push(`- **Last ${Math.min(5, levain.feedingHistory.length)} Feeding Logs (newest first):**`);
       levain.feedingHistory.slice(0, 5).forEach(log => {
-          contextParts.push(`  - **Data:** ${new Date(log.date).toLocaleString('pt-BR')}`);
-          contextParts.push(`    - **Proporção:** ${log.ratio || 'N/A'}`);
-          contextParts.push(`    - **Temperatura:** ${log.ambientTemperature ? log.ambientTemperature + '°C' : 'N/A'}`);
-          if(log.notes) contextParts.push(`    - **Notas:** ${log.notes}`);
+          contextParts.push(`  - **Date:** ${new Date(log.date).toLocaleString()}`);
+          contextParts.push(`    - **Ratio:** ${log.ratio || 'N/A'}`);
+          contextParts.push(`    - **Temperature:** ${log.ambientTemperature ? log.ambientTemperature + '°C' : 'N/A'}`);
+          if(log.notes) contextParts.push(`    - **Notes:** ${log.notes}`);
       });
   }
 
-  return `${contextParts.join('\n')}\n\n**Pergunta do Usuário:**\n"${question}"`;
+  return `${contextParts.join('\n')}\n\n**User Question:**\n"${question}"`;
 }
 
 export async function askLevainAssistant(levain: Levain, question: string): Promise<string> {
     const systemInstruction = buildLevainSystemPrompt();
     const userPrompt = buildLevainContext(levain, question);
 
-    // Hardcoded check for out-of-scope questions
-    const healthKeywords = ['saúde', 'nutrição', 'clínico', 'médico', 'comer', 'ingerir', 'seguro para consumo'];
+    // Hardcoded check for out-of-scope questions (English keywords)
+    const healthKeywords = ['health', 'nutrition', 'clinical', 'medical', 'eat', 'ingest', 'safe to eat', 'safe for consumption'];
     if (healthKeywords.some(keyword => question.toLowerCase().includes(keyword))) {
-        return "Posso te ajudar apenas com ajustes técnicos do levain e da massa. Para questões de saúde ou alimentação específica, procure um profissional especializado.";
+        return "I can only help with technical adjustments for levain and dough. For health or specific dietary questions, please consult a specialized professional.";
     }
 
     try {
@@ -168,6 +169,6 @@ export async function askLevainAssistant(levain: Levain, question: string): Prom
         return text;
     } catch (error) {
         console.error('[Levain Assistant] Error calling AI model:', error);
-        throw new Error("Desculpe, não consegui processar sua pergunta agora. Tente novamente.");
+        throw new Error("Sorry, I couldn't process your question right now. Please try again.");
     }
 }

@@ -1,6 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Page } from '../types';
-import { useTranslation } from '../i18n';
 import UserMenu from './UserMenu';
 import {
   CalculatorIcon,
@@ -10,10 +10,9 @@ import {
   ChevronDownIcon,
   BookOpenIcon,
   FireIcon,
-  SparklesIcon,
-  ListBulletIcon,
   BeakerIcon,
-  UsersIcon,
+  UserCircleIcon,
+  ShoppingBagIcon,
 } from './IconComponents';
 
 interface NavigationProps {
@@ -50,8 +49,7 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
     
     const toolItems = [
       { page: 'tools-oven-analysis' as Page, label: 'FormulaLab', icon: <FireIcon className="h-5 w-5" /> },
-      { page: 'tools-doughbot' as Page, label: 'Massabo', icon: <SparklesIcon className="h-5 w-5" /> },
-      { page: 'references' as Page, label: 'Referências Técnicas', icon: <BookOpenIcon className="h-5 w-5" /> },
+      { page: 'references' as Page, label: 'Technical References', icon: <BookOpenIcon className="h-5 w-5" /> },
     ];
 
     return (
@@ -60,7 +58,7 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
                 onClick={() => setIsOpen(prev => !prev)}
                 className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-800"
             >
-                Ferramentas
+                Tools
                 <ChevronDownIcon className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             {isOpen && (
@@ -83,17 +81,17 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
 };
 
 const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavigate, onNavigate, onOpenAuth }) => {
-    const { t } = useTranslation();
+    
     const navLinks = [
-      { page: 'calculator', label: t('nav.calculator') },
-      { page: 'mylab', label: t('nav.lab') },
-      { page: 'styles', label: t('nav.styles') },
-      { page: 'learn', label: t('nav.learn') },
-      { page: 'community', label: t('nav.community'), isBeta: true },
+      { page: 'mylab', label: 'My Lab' },
+      { page: 'calculator', label: 'Calculator' },
+      { page: 'styles', label: 'Styles' },
+      { page: 'learn', label: 'Learn' },
+      { page: 'shop', label: 'Shop' },
     ];
 
     return (
-        <header className="sticky top-0 z-20 hidden border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sm:block">
+        <header className="fixed top-0 left-0 w-full z-50 hidden border-b border-slate-200/80 bg-white/90 backdrop-blur-md sm:block transition-all duration-200 shadow-sm">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             {/* Left Section: Logo & main links */}
             <div className="flex items-center gap-6">
@@ -106,13 +104,12 @@ const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavig
                         key={link.page}
                         onClick={() => handleNavigate(link.page as Page)}
                         className={`rounded-md px-3 py-2 text-sm font-semibold transition-colors flex items-center gap-1.5 ${
-                          activePage.startsWith(link.page) || (link.page === 'mylab' && activePage === 'batch')
-                            ? 'text-lime-600'
+                          activePage === link.page || activePage.startsWith(link.page + '/')
+                            ? 'text-lime-600 bg-lime-50'
                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800'
                         }`}
                       >
                         {link.label}
-                        {link.isBeta && <span className="text-xs font-bold text-sky-500 bg-sky-100 px-1.5 py-0.5 rounded-full">Beta</span>}
                     </button>
                   ))}
                   <ToolsMenu onNavigate={onNavigate} />
@@ -129,18 +126,18 @@ const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavig
 };
 
 const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean; setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>; }> = ({ activePage, handleNavigate, onNavigate, onOpenAuth, isMobileMenuOpen, setIsMobileMenuOpen }) => {
-    const { t } = useTranslation();
     
     const navLinks = [
-      { page: 'calculator', label: t('nav.calculator'), icon: <CalculatorIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'mylab', label: t('nav.lab'), icon: <BeakerIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'styles', label: t('nav.styles'), icon: <ListBulletIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'learn', label: t('nav.learn'), icon: <AcademicCapIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'community', label: t('nav.community'), icon: <UsersIcon className="h-6 w-6 text-slate-500" />, isBeta: true },
+      { page: 'mylab', label: 'My Lab', icon: <BeakerIcon className="h-6 w-6 text-slate-500" /> },
+      { page: 'calculator', label: 'Calculator', icon: <CalculatorIcon className="h-6 w-6 text-slate-500" /> },
+      { page: 'styles', label: 'Styles', icon: <BookOpenIcon className="h-6 w-6 text-slate-500" /> },
+      { page: 'learn', label: 'Learn', icon: <AcademicCapIcon className="h-6 w-6 text-slate-500" /> },
+      { page: 'shop', label: 'Shop', icon: <ShoppingBagIcon className="h-6 w-6 text-slate-500" /> },
+      { page: 'profile', label: 'Profile', icon: <UserCircleIcon className="h-6 w-6 text-slate-500" /> },
     ];
 
     return (
-        <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sm:hidden">
+        <header className="fixed top-0 left-0 w-full z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md sm:hidden transition-all duration-200 shadow-sm">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
                 <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center">
                     <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fescuro%20FINAL%20COMLETA.png?alt=media&token=abf76ee2-4052-45c8-bd06-1ebeba2c7487" alt="DoughLabPro Logo" className="h-8 w-auto" />
@@ -153,7 +150,7 @@ const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean;
                 </div>
             </div>
             {isMobileMenuOpen && (
-                 <nav className="space-y-1 p-4 border-t border-slate-200">
+                 <nav className="space-y-1 p-4 border-t border-slate-200 bg-white shadow-lg absolute w-full left-0 max-h-[80vh] overflow-y-auto">
                     {navLinks.map(link => (
                         <button
                             key={link.page}
@@ -162,7 +159,6 @@ const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean;
                         >
                             {link.icon}
                             <span>{link.label}</span>
-                            {link.isBeta && <span className="text-xs font-bold text-sky-500 bg-sky-100 px-1.5 py-0.5 rounded-full">Beta</span>}
                         </button>
                     ))}
                 </nav>

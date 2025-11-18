@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useTranslation } from '../../i18n';
 import { useUser } from '../../contexts/UserProvider';
@@ -25,7 +26,7 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
     } else {
       setSelectedFile(null);
       if(file) {
-        addToast('Por favor, selecione um arquivo .json válido.', 'error');
+        addToast('Please select a valid .json file.', 'error');
       }
     }
   };
@@ -45,17 +46,17 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
 
   const handleImport = async () => {
     if (!selectedFile) {
-      addToast('Nenhum arquivo selecionado.', 'error');
+      addToast('No file selected.', 'error');
       return;
     }
     setIsLoading(true);
     try {
       const newBatchData = await importReceitaFromJSON(selectedFile);
       addBatch(newBatchData);
-      addToast('Receita importada com sucesso.', 'success');
+      addToast('Recipe imported successfully.', 'success');
       handleClose();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Ocorreu um erro inesperado.';
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
       addToast(errorMessage, 'error');
       setIsLoading(false);
     }
@@ -75,7 +76,7 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between border-b border-slate-200 pb-4">
-          <h2 className="text-xl font-bold text-slate-900">Importar receita</h2>
+          <h2 className="text-xl font-bold text-slate-900">Import Recipe</h2>
           <button onClick={handleClose} className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200">
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -83,10 +84,10 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
         
         <div className="mt-6 space-y-4">
             <p className="text-sm text-slate-600">
-                Selecione um arquivo .json exportado pelo DoughLabPro. Cada importação cria uma nova receita como rascunho.
+                Select a .json file exported from DoughLabPro. Each import creates a new recipe draft.
             </p>
             <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Arquivo da Receita</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Recipe File</label>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -107,7 +108,7 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
                 disabled={!selectedFile || isLoading}
                 className="flex items-center justify-center gap-2 rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600 disabled:bg-slate-400 disabled:cursor-not-allowed"
             >
-                {isLoading ? 'Importando...' : 'Importar'}
+                {isLoading ? 'Importing...' : 'Import'}
             </button>
         </div>
       </div>

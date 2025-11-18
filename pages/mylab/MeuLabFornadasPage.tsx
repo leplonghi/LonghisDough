@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
 import { useUser } from '../../contexts/UserProvider';
@@ -26,12 +27,12 @@ const ResultTag: React.FC<{ rating?: number }> = ({ rating }) => {
     if (!rating || rating < 1) return null;
 
     if (rating >= 4.5) {
-        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">Ótima</span>;
+        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">Great</span>;
     }
     if (rating >= 3) {
-        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Boa</span>;
+        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Good</span>;
     }
-    return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Ajustar</span>;
+    return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Adjust</span>;
 };
 
 
@@ -97,20 +98,20 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     }, [batches, filters]);
 
     const periodOptions = [
-        { value: 'ALL', label: 'Desde o início' },
-        { value: '7d', label: 'Últimos 7 dias' },
-        { value: '30d', label: 'Últimos 30 dias' },
-        { value: '6m', label: 'Últimos 6 meses' },
+        { value: 'ALL', label: 'All Time' },
+        { value: '7d', label: 'Last 7 days' },
+        { value: '30d', label: 'Last 30 days' },
+        { value: '6m', label: 'Last 6 months' },
     ];
     
     return (
         <MyLabLayout activePage="mylab/fornadas" onNavigate={onNavigate}>
             <div className="mb-6">
                 <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-                    Fornadas
+                    My Bakes
                 </h1>
                 <p className="mt-1 text-sm text-neutral-500">
-                    Seu histórico completo de massas.
+                    Your complete baking history.
                 </p>
             </div>
             
@@ -118,29 +119,29 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
              {batches.filter(b => b.status !== BatchStatus.DRAFT).length > 0 && (
                 <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 md:p-6 rounded-xl bg-neutral-50 border border-neutral-200 shadow-sm">
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 mb-1">Estilo</label>
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Style</label>
                         <select name="style" value={filters.style} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
-                            <option value="ALL">Todos</option>
+                            <option value="ALL">All</option>
                             {uniqueStylesInBatches.map(style => (
                                 <option key={style} value={style}>{t(`form.${style.toLowerCase()}`, { defaultValue: style })}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 mb-1">Período</label>
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Period</label>
                         <select name="period" value={filters.period} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
                             {periodOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 mb-1">Forno</label>
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Oven</label>
                         <select name="oven" value={filters.oven} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
-                            <option value="ALL">Todos</option>
+                            <option value="ALL">All</option>
                             {OVEN_TYPE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 mb-1">Hidratação (%)</label>
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Hydration (%)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" name="minHydration" value={filters.minHydration} onChange={handleFilterChange} placeholder="Min" className="w-1/2 rounded-md border-neutral-300 bg-white text-sm py-2" />
                             <input type="number" name="maxHydration" value={filters.maxHydration} onChange={handleFilterChange} placeholder="Max" className="w-1/2 rounded-md border-neutral-300 bg-white text-sm py-2" />
@@ -153,10 +154,10 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                  <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 p-6 shadow-sm text-center">
                     <div>
                         <BatchesIcon className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
-                        <h2 className="text-lg font-medium text-neutral-800">Nenhuma fornada registrada ainda.</h2>
-                        <p className="mt-2 text-sm text-neutral-500">Registre sua primeira fornada para acompanhar sua evolução.</p>
+                        <h2 className="text-lg font-medium text-neutral-800">No bakes recorded yet.</h2>
+                        <p className="mt-2 text-sm text-neutral-500">Record your first bake to track your progress.</p>
                         <button onClick={onCreateDraftBatch} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md">
-                           <CalculatorIcon className="h-5 w-5"/> Registrar Fornada
+                           <CalculatorIcon className="h-5 w-5"/> Log Bake
                         </button>
                     </div>
                 </div>
@@ -173,17 +174,17 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                              <p className="text-xs text-neutral-500 mt-1">{new Date(batch.createdAt).toLocaleDateString()}</p>
                              
                              <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm border-t border-neutral-200 pt-4">
-                                <div className="text-neutral-500">Hidratação</div>
+                                <div className="text-neutral-500">Hydration</div>
                                 <div className="font-semibold text-right">{batch.doughConfig.hydration}%</div>
-                                <div className="text-neutral-500">Fermento</div>
+                                <div className="text-neutral-500">Yeast</div>
                                 <div className="font-semibold text-right">{t(`form.yeast_${batch.doughConfig.yeastType.toLowerCase()}`)}</div>
-                                <div className="text-neutral-500">Forno</div>
+                                <div className="text-neutral-500">Oven</div>
                                 <div className="font-semibold text-right">{batch.ovenType ? t(`profile.ovens.types.${batch.ovenType.toLowerCase()}`) : 'N/A'}</div>
                              </div>
                            </div>
                            <div className="p-3 bg-neutral-50 rounded-b-xl border-t border-neutral-200">
                              <button onClick={() => onNavigate('batch', batch.id)} className="w-full text-center text-sm font-semibold text-lime-600 hover:underline">
-                                Ver detalhes &rarr;
+                                View Details &rarr;
                              </button>
                            </div>
                         </div>

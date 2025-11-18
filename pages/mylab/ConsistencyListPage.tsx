@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Page, TestSeries } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -37,11 +38,11 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
                 <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Consistency Mode</h1>
-                        <p className="mt-1 text-sm text-neutral-500">Planeje e acompanhe séries de testes com variações controladas.</p>
+                        <p className="mt-1 text-sm text-neutral-500">Plan and track test series with controlled variables.</p>
                     </div>
                     <button onClick={() => handleOpenModal()} className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600">
                         <PlusCircleIcon className="h-5 w-5"/>
-                        Criar Nova Série
+                        Create New Series
                     </button>
                 </div>
 
@@ -55,13 +56,13 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
                                         <p className="text-sm text-neutral-500 mt-1">{series.description}</p>
                                     </div>
                                     <button onClick={() => onNavigate(`mylab/consistency/${series.id}`)} className="text-sm font-semibold text-lime-600 hover:underline">
-                                        Ver detalhes
+                                        View details
                                     </button>
                                 </div>
                                 <div className="mt-3 pt-3 border-t border-neutral-200 flex items-center gap-4 text-xs text-neutral-500">
-                                    <span>Variável: <strong>{series.parameters.variable}</strong></span>
-                                    <span>Passos: <strong>{series.parameters.steps.join(' / ')}</strong></span>
-                                    <span>Fornadas: <strong>{series.relatedBakes.length}</strong></span>
+                                    <span>Variable: <strong>{series.parameters.variable}</strong></span>
+                                    <span>Steps: <strong>{series.parameters.steps.join(' / ')}</strong></span>
+                                    <span>Bakes: <strong>{series.relatedBakes.length}</strong></span>
                                 </div>
                             </div>
                         ))}
@@ -69,8 +70,8 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
                 ) : (
                     <div className="text-center py-12 rounded-xl border-2 border-dashed border-neutral-300">
                         <FlaskIcon className="mx-auto h-10 w-10 text-neutral-400" />
-                        <p className="mt-4 font-medium">Nenhuma série de testes criada.</p>
-                        <p className="text-sm text-neutral-500">Clique em "Criar Nova Série" para começar seu primeiro experimento.</p>
+                        <p className="mt-4 font-medium">No test series created.</p>
+                        <p className="text-sm text-neutral-500">Click "Create New Series" to start your first experiment.</p>
                     </div>
                 )}
             </MyLabLayout>

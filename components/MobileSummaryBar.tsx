@@ -1,12 +1,10 @@
+
 import React from 'react';
 import {
   WeightIcon,
-  SaveIcon,
   BatchesIcon,
-  StarIcon,
 } from './IconComponents';
 import { Unit } from '../types';
-import { useTranslation } from '../i18n';
 import { useUser } from '../contexts/UserProvider';
 
 interface MobileSummaryBarProps {
@@ -20,13 +18,11 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   unit,
   onStartBatch,
 }) => {
-  const { t } = useTranslation();
-  const { hasProAccess } = useUser();
   const GRAMS_TO_OUNCES = 0.035274;
 
   const displayValue =
     unit === 'oz' ? totalDough * GRAMS_TO_OUNCES : totalDough;
-  const displayUnit = t(`units.${unit === 'volume' ? 'g' : unit}`);
+  const displayUnit = unit === 'volume' ? 'g' : unit;
 
   const handleSaveClick = () => {
     onStartBatch();
@@ -39,7 +35,7 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
           <WeightIcon className="h-5 w-5 text-slate-500" />
           <div className="ml-2">
             <div className="text-xs font-medium text-slate-500">
-              {t('footer.total_dough')}
+              Total Dough
             </div>
             <div className="font-bold text-slate-900">
               {displayValue.toFixed(0)}
@@ -52,11 +48,11 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
           <div className="flex items-center space-x-2">
             <button
               onClick={handleSaveClick}
-              aria-label={t('footer.start_batch')}
+              aria-label="Save Bake"
               className="flex h-10 items-center justify-center rounded-lg bg-lime-500 px-4 font-semibold text-white shadow-sm transition-colors hover:bg-lime-600"
             >
               <BatchesIcon className="h-5 w-5 mr-2" />
-              {t('footer.start_batch')}
+              Save Bake
             </button>
           </div>
         

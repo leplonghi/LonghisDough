@@ -5,10 +5,10 @@ const MeuLabLevainPetPage: React.FC = () => {
   return (
     <TechnicalPageLayout
       title="Levain Pet"
-      subtitle="Cuide da sua cultura de fermento natural."
+      subtitle="Care for your sourdough starter culture."
     >
       <p>
-        Em breve: uma ferramenta interativa para acompanhar a saúde e a alimentação do seu levain (massa madre).
+        Coming soon: An interactive tool to track the health and feeding of your levain (sourdough starter).
       </p>
     </TechnicalPageLayout>
   );

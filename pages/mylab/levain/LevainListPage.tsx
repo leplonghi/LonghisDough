@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Levain, Page } from '../../../types';
 import { useTranslation } from '../../../i18n';
@@ -37,19 +38,19 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     };
     
     const formatTimeSince = (dateString: string) => {
-        if (!dateString) return 'nunca';
+        if (!dateString) return 'never';
         const seconds = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
         let interval = seconds / 31536000;
-        if (interval > 1) return `aprox. ${Math.floor(interval)} anos`;
+        if (interval > 1) return `approx. ${Math.floor(interval)} years`;
         interval = seconds / 2592000;
-        if (interval > 1) return `aprox. ${Math.floor(interval)} meses`;
+        if (interval > 1) return `approx. ${Math.floor(interval)} months`;
         interval = seconds / 86400;
-        if (interval > 1) return `aprox. ${Math.floor(interval)} dias`;
+        if (interval > 1) return `approx. ${Math.floor(interval)} days`;
         interval = seconds / 3600;
-        if (interval > 1) return `aprox. ${Math.floor(interval)} horas`;
+        if (interval > 1) return `approx. ${Math.floor(interval)} hours`;
         interval = seconds / 60;
-        if (interval > 1) return `aprox. ${Math.floor(interval)} minutos`;
-        return `aprox. ${Math.floor(seconds)} segundos`;
+        if (interval > 1) return `approx. ${Math.floor(interval)} minutes`;
+        return `approx. ${Math.floor(seconds)} seconds`;
     };
 
     const handleExport = () => {
@@ -63,7 +64,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        addToast('Dados exportados com sucesso.', 'success');
+        addToast('Data exported successfully.', 'success');
     };
 
     const handleImportClick = () => {
@@ -83,7 +84,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                     addToast(result.error, 'error');
                 } else {
                     importLevainsToContext(result.newLevains);
-                    addToast('Dados do Levain Pet importados com sucesso.', 'success');
+                    addToast('Levain Pet data imported successfully.', 'success');
                 }
             }
         };
@@ -92,14 +93,14 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     };
 
     const statusStyles = {
-        ativo: { text: 'Ativo', color: 'bg-green-100 text-green-800' },
-        precisa_atencao: { text: 'Precisa de Atenção', color: 'bg-yellow-100 text-yellow-800' },
-        descanso: { text: 'Em Descanso', color: 'bg-blue-100 text-blue-800' },
-        arquivado: { text: 'Arquivado', color: 'bg-neutral-100 text-neutral-800' },
+        ativo: { text: 'Active', color: 'bg-green-100 text-green-800' },
+        precisa_atencao: { text: 'Needs Attention', color: 'bg-yellow-100 text-yellow-800' },
+        descanso: { text: 'Resting', color: 'bg-blue-100 text-blue-800' },
+        arquivado: { text: 'Archived', color: 'bg-neutral-100 text-neutral-800' },
     };
     
     if (isLoading) {
-        return <div className="p-8 text-center">Carregando...</div>;
+        return <div className="p-8 text-center">Loading...</div>;
     }
 
     return (
@@ -111,7 +112,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                         Levain Pet
                     </h1>
                     <p className="mt-2 text-sm text-neutral-500">
-                        Acompanhe seus starters como parceiros do seu laboratório de massas.
+                        Track your starters as partners in your dough lab.
                     </p>
                 </div>
                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -120,14 +121,14 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md transition-all hover:bg-lime-600"
                     >
                         <PlusCircleIcon className="h-5 w-5"/>
-                        <span>Adicionar levain</span>
+                        <span>Add Levain</span>
                     </button>
                     <div className="flex gap-2">
                          <button onClick={handleImportClick} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300">
-                            <DownloadIcon className="h-5 w-5"/> Importar
+                            <DownloadIcon className="h-5 w-5"/> Import
                          </button>
                          <button onClick={handleExport} disabled={levains.length === 0} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300 disabled:opacity-50">
-                            <ShareIcon className="h-5 w-5"/> Exportar
+                            <ShareIcon className="h-5 w-5"/> Export
                          </button>
                          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" style={{ display: 'none' }} />
                     </div>
@@ -138,16 +139,16 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                 <div className="text-center rounded-xl border border-neutral-200 bg-neutral-50 p-10 shadow-sm">
                     <BeakerIcon className="mx-auto h-12 w-12 text-lime-400" />
                     <h2 className="mt-4 text-lg font-medium text-neutral-900">
-                        Você ainda não tem um Levain Pet.
+                        You don't have a Levain Pet yet.
                     </h2>
                     <p className="mt-2 text-sm text-neutral-600">
-                        Crie seu primeiro starter e acompanhe tudo — alimentação, rotina, observações e uso nas receitas.
+                        Create your first starter and track everything—feeding, routine, observations, and usage in recipes.
                     </p>
                     <button
                         onClick={() => setIsModalOpen(true)}
                         className="mt-6 rounded-md bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600"
                     >
-                        Criar Levain
+                        Create Levain
                     </button>
                 </div>
             ) : (
@@ -162,14 +163,14 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                                 </span>
                             </div>
                              <p className="mt-2 text-sm text-neutral-500">
-                                Última alimentação: há {formatTimeSince(starter.lastFeeding)}
+                                Last fed: {formatTimeSince(starter.lastFeeding)} ago
                              </p>
                              <div className="mt-4 border-t border-neutral-200 pt-4">
                                 <button
                                     onClick={() => onNavigate('mylab/levain/detail', starter.id)}
                                     className="text-sm font-semibold text-lime-600 hover:underline"
                                 >
-                                    Ver Detalhes &rarr;
+                                    View Details &rarr;
                                 </button>
                              </div>
                         </div>
