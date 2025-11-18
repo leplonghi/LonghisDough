@@ -33,15 +33,15 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   };
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-10 border-t border-slate-200/80 bg-white/80 backdrop-blur-sm transition-colors duration-300 dark:border-slate-700/80 dark:bg-slate-800/80 sm:hidden">
+    <div className="fixed bottom-0 inset-x-0 z-10 border-t border-slate-200/80 bg-white/80 backdrop-blur-sm transition-colors duration-300 sm:hidden">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <div className="flex items-center text-slate-700 dark:text-slate-200">
-          <WeightIcon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+        <div className="flex items-center text-slate-700">
+          <WeightIcon className="h-5 w-5 text-slate-500" />
           <div className="ml-2">
-            <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            <div className="text-xs font-medium text-slate-500">
               {t('footer.total_dough')}
             </div>
-            <div className="font-bold text-slate-900 dark:text-white">
+            <div className="font-bold text-slate-900">
               {displayValue.toFixed(0)}
               {displayUnit}
             </div>

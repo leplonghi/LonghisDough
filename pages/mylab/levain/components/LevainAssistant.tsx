@@ -72,8 +72,8 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
     const bubbleClasses = isUser
       ? 'bg-lime-500 text-white self-end'
       : isError 
-        ? 'bg-red-100 dark:bg-red-500/10 text-red-800 dark:text-red-200 self-start'
-        : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 self-start';
+        ? 'bg-red-100 text-red-800 self-start'
+        : 'bg-slate-200 text-slate-800 self-start';
 
     const icon = isUser ? <UserCircleIcon className="h-6 w-6" /> : <SparklesIcon className="h-6 w-6 text-lime-500" />;
 
@@ -98,17 +98,57 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
       aria-modal="true"
     >
       <div
-        className="relative mx-4 flex flex-col w-full max-w-2xl h-[80vh] max-h-[700px] rounded-2xl bg-white shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+        className="relative mx-4 flex flex-col w-full max-w-2xl h-[80vh] max-h-[700px] rounded-2xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-shrink-0 p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <div className="flex-shrink-0 p-4 border-b border-slate-200 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <SparklesIcon className="h-6 w-6 text-lime-500" />
             {t('levain_pet.detail_page.assistant.modal_title')}
           </h2>
-           <button onClick={onClose} className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700">
+           <button onClick={onClose} className="rounded-full p-1 text-slate-500 hover:bg-slate-200">
                 <CloseIcon className="h-6 w-6" />
             </button>
         </div>
 
-        <div className="flex-1 overflow
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {messages.map((msg, index) => (
+            <MessageBubble key={index} message={msg} />
+            ))}
+            {isLoading && (
+            <div className="flex items-start gap-3 w-full justify-start">
+                <div className="flex-shrink-0"><SparklesIcon className="h-6 w-6 text-lime-500" /></div>
+                <div className="max-w-md rounded-2xl p-4 bg-slate-200 flex items-center gap-2">
+                    <SpinnerIcon className="h-5 w-5 animate-spin" />
+                    <span className="text-sm font-medium">{t('common.thinking')}</span>
+                </div>
+            </div>
+            )}
+            <div ref={messagesEndRef} />
+        </div>
+
+        <div className="flex-shrink-0 p-4 border-t border-slate-200">
+            <form onSubmit={handleSend} className="flex items-center gap-4">
+            <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={t('levain_pet.detail_page.assistant.placeholder')}
+                className="flex-1 rounded-lg border-slate-300 bg-slate-100 p-3 text-slate-900 focus:border-lime-500 focus:ring-lime-500"
+                disabled={isLoading}
+            />
+            <button
+                type="submit"
+                disabled={isLoading || !inputValue.trim()}
+                className="rounded-lg bg-lime-500 py-3 px-5 font-semibold text-white shadow-sm transition-colors hover:bg-lime-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+            >
+                {t('assistant_page.send')}
+            </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LevainAssistant;

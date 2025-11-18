@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
 import { useUser } from '../../contexts/UserProvider';
@@ -27,12 +26,12 @@ const ResultTag: React.FC<{ rating?: number }> = ({ rating }) => {
     if (!rating || rating < 1) return null;
 
     if (rating >= 4.5) {
-        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Ótima</span>;
+        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">Ótima</span>;
     }
     if (rating >= 3) {
-        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Boa</span>;
+        return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Boa</span>;
     }
-    return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Ajustar</span>;
+    return <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Ajustar</span>;
 };
 
 
@@ -107,7 +106,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     return (
         <MyLabLayout activePage="mylab/fornadas" onNavigate={onNavigate}>
             <div className="mb-6">
-                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
                     Fornadas
                 </h1>
                 <p className="mt-1 text-sm text-neutral-500">
@@ -117,10 +116,10 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
             
             {/* Filters */}
              {batches.filter(b => b.status !== BatchStatus.DRAFT).length > 0 && (
-                <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 md:p-6 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 md:p-6 rounded-xl bg-neutral-50 border border-neutral-200 shadow-sm">
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">Estilo</label>
-                        <select name="style" value={filters.style} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white dark:bg-neutral-700 text-sm py-2">
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Estilo</label>
+                        <select name="style" value={filters.style} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
                             <option value="ALL">Todos</option>
                             {uniqueStylesInBatches.map(style => (
                                 <option key={style} value={style}>{t(`form.${style.toLowerCase()}`, { defaultValue: style })}</option>
@@ -128,34 +127,34 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">Período</label>
-                        <select name="period" value={filters.period} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white dark:bg-neutral-700 text-sm py-2">
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Período</label>
+                        <select name="period" value={filters.period} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
                             {periodOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">Forno</label>
-                        <select name="oven" value={filters.oven} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white dark:bg-neutral-700 text-sm py-2">
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Forno</label>
+                        <select name="oven" value={filters.oven} onChange={handleFilterChange} className="w-full rounded-md border-neutral-300 bg-white text-sm py-2">
                             <option value="ALL">Todos</option>
                             {OVEN_TYPE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>)}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">Hidratação (%)</label>
+                        <label className="block text-xs font-medium text-neutral-500 mb-1">Hidratação (%)</label>
                         <div className="flex items-center gap-2">
-                            <input type="number" name="minHydration" value={filters.minHydration} onChange={handleFilterChange} placeholder="Min" className="w-1/2 rounded-md border-neutral-300 bg-white dark:bg-neutral-700 text-sm py-2" />
-                            <input type="number" name="maxHydration" value={filters.maxHydration} onChange={handleFilterChange} placeholder="Max" className="w-1/2 rounded-md border-neutral-300 bg-white dark:bg-neutral-700 text-sm py-2" />
+                            <input type="number" name="minHydration" value={filters.minHydration} onChange={handleFilterChange} placeholder="Min" className="w-1/2 rounded-md border-neutral-300 bg-white text-sm py-2" />
+                            <input type="number" name="maxHydration" value={filters.maxHydration} onChange={handleFilterChange} placeholder="Max" className="w-1/2 rounded-md border-neutral-300 bg-white text-sm py-2" />
                         </div>
                     </div>
                 </div>
             )}
 
             {batches.filter(b => b.status !== BatchStatus.DRAFT).length === 0 ? (
-                 <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 p-6 shadow-sm text-center">
+                 <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 p-6 shadow-sm text-center">
                     <div>
                         <BatchesIcon className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
-                        <h2 className="text-lg font-medium text-neutral-800 dark:text-neutral-200">Nenhuma fornada registrada ainda.</h2>
-                        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">Registre sua primeira fornada para acompanhar sua evolução.</p>
+                        <h2 className="text-lg font-medium text-neutral-800">Nenhuma fornada registrada ainda.</h2>
+                        <p className="mt-2 text-sm text-neutral-500">Registre sua primeira fornada para acompanhar sua evolução.</p>
                         <button onClick={onCreateDraftBatch} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md">
                            <CalculatorIcon className="h-5 w-5"/> Registrar Fornada
                         </button>
@@ -164,26 +163,26 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredBatches.map(batch => (
-                        <div key={batch.id} className="rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-800 flex flex-col">
+                        <div key={batch.id} className="rounded-xl border border-neutral-200 bg-white shadow-sm flex flex-col">
                            <div className="p-5 flex-grow">
                              <div className="flex justify-between items-start">
-                               <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 pr-2">{batch.name}</h3>
+                               <h3 className="text-lg font-medium text-neutral-900 pr-2">{batch.name}</h3>
                                <ResultTag rating={batch.rating} />
                              </div>
-                             <p className="text-sm font-semibold text-lime-600 dark:text-lime-400 mt-1">{t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })}</p>
-                             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">{new Date(batch.createdAt).toLocaleDateString()}</p>
+                             <p className="text-sm font-semibold text-lime-600 mt-1">{t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })}</p>
+                             <p className="text-xs text-neutral-500 mt-1">{new Date(batch.createdAt).toLocaleDateString()}</p>
                              
-                             <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm border-t border-neutral-200 dark:border-neutral-700 pt-4">
-                                <div className="text-neutral-500 dark:text-neutral-400">Hidratação</div>
+                             <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm border-t border-neutral-200 pt-4">
+                                <div className="text-neutral-500">Hidratação</div>
                                 <div className="font-semibold text-right">{batch.doughConfig.hydration}%</div>
-                                <div className="text-neutral-500 dark:text-neutral-400">Fermento</div>
+                                <div className="text-neutral-500">Fermento</div>
                                 <div className="font-semibold text-right">{t(`form.yeast_${batch.doughConfig.yeastType.toLowerCase()}`)}</div>
-                                <div className="text-neutral-500 dark:text-neutral-400">Forno</div>
+                                <div className="text-neutral-500">Forno</div>
                                 <div className="font-semibold text-right">{batch.ovenType ? t(`profile.ovens.types.${batch.ovenType.toLowerCase()}`) : 'N/A'}</div>
                              </div>
                            </div>
-                           <div className="p-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-b-xl border-t border-neutral-200 dark:border-neutral-700">
-                             <button onClick={() => onNavigate('batch', batch.id)} className="w-full text-center text-sm font-semibold text-lime-600 dark:text-lime-400 hover:underline">
+                           <div className="p-3 bg-neutral-50 rounded-b-xl border-t border-neutral-200">
+                             <button onClick={() => onNavigate('batch', batch.id)} className="w-full text-center text-sm font-semibold text-lime-600 hover:underline">
                                 Ver detalhes &rarr;
                              </button>
                            </div>

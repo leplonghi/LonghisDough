@@ -1,9 +1,8 @@
-
 import React from 'react';
 
 const ChartCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <h3 className="text-md font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 className="text-md font-semibold text-slate-800">{title}</h3>
         <div className="mt-4">{children}</div>
     </div>
 );
@@ -11,11 +10,11 @@ const ChartCard: React.FC<{ title: string; children: React.ReactNode }> = ({ tit
 const InsightsCharts: React.FC = () => {
   return (
     <div>
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">Tendências de Massa</h2>
+        <h2 className="text-xl font-bold text-slate-800 mb-4">Tendências de Massa</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Line Chart Placeholder */}
             <ChartCard title="Evolução da Hidratação (Últimos 10 Batches)">
-                <div className="h-40 flex items-end justify-center bg-slate-50 dark:bg-slate-700/50 rounded-lg p-2">
+                <div className="h-40 flex items-end justify-center bg-slate-50 rounded-lg p-2">
                     <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 60">
                         <path d="M0 30 L20 40 L40 20 L60 50 L80 45 L100 25" fill="none" stroke="#84cc16" strokeWidth="2" vectorEffect="non-scaling-stroke"/>
                     </svg>
@@ -26,9 +25,9 @@ const InsightsCharts: React.FC = () => {
             <ChartCard title="Estilos Mais Utilizados">
                 <div className="h-40 flex flex-col justify-end gap-2 rounded-lg p-4">
                     <div className="flex items-end gap-4 h-full">
-                        <div className="w-1/3 bg-lime-300 dark:bg-lime-700 rounded-t-sm" style={{ height: '80%' }} title="Napolitana"></div>
-                        <div className="w-1/3 bg-lime-400 dark:bg-lime-600 rounded-t-sm" style={{ height: '50%' }} title="NY Style"></div>
-                        <div className="w-1/3 bg-lime-200 dark:bg-lime-800 rounded-t-sm" style={{ height: '30%' }} title="Detroit"></div>
+                        <div className="w-1/3 bg-lime-300 rounded-t-sm" style={{ height: '80%' }} title="Napolitana"></div>
+                        <div className="w-1/3 bg-lime-400 rounded-t-sm" style={{ height: '50%' }} title="NY Style"></div>
+                        <div className="w-1/3 bg-lime-200 rounded-t-sm" style={{ height: '30%' }} title="Detroit"></div>
                     </div>
                 </div>
             </ChartCard>
@@ -43,7 +42,6 @@ const InsightsCharts: React.FC = () => {
                             a 15.9155 15.9155 0 0 1 0 -31.831"
                             fill="none"
                             stroke="#e2e8f0"
-                            className="dark:stroke-slate-700"
                             strokeWidth="3.5"
                         />
                         <path
@@ -56,7 +54,7 @@ const InsightsCharts: React.FC = () => {
                             strokeDasharray="85, 100"
                             strokeLinecap="round"
                         />
-                         <text x="18" y="21" className="fill-current text-slate-700 dark:text-slate-200 text-lg font-bold" textAnchor="middle">85%</text>
+                         <text x="18" y="21" className="fill-current text-slate-700 text-lg font-bold" textAnchor="middle">85%</text>
                     </svg>
                 </div>
             </ChartCard>

@@ -77,7 +77,7 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
         'LEVAIN_FED': 'bg-amber-500',
     };
     return (
-        <span className={`absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full ${bgColors[type]} ring-8 ring-white dark:ring-neutral-800`}>
+        <span className={`absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full ${bgColors[type]} ring-8 ring-white`}>
             {icon}
         </span>
     );
@@ -86,27 +86,27 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
   return (
     <MyLabLayout activePage="mylab/timeline" onNavigate={onNavigate}>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Linha do tempo</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Linha do tempo</h1>
         <p className="mt-1 text-sm text-neutral-500">Acompanhe sua evolução na panificação.</p>
       </div>
 
       {timelineEvents.length === 0 ? (
-        <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 p-6 text-center">
-          <p className="text-neutral-500 dark:text-neutral-400">
+        <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center">
+          <p className="text-neutral-500">
             Sua jornada está começando. As próximas fornadas vão aparecer aqui.
           </p>
         </div>
       ) : (
-        <ol className="relative border-l border-neutral-200 dark:border-neutral-700">
+        <ol className="relative border-l border-neutral-200">
             {timelineEvents.map(event => (
                  <li key={event.id} className="mb-10 ml-6">
                     <EventIcon type={event.type} icon={event.icon} />
-                    <button onClick={() => onNavigate(event.link.page, event.link.params)} className="text-left w-full p-4 bg-neutral-50 border border-neutral-200 rounded-lg shadow-sm hover:bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+                    <button onClick={() => onNavigate(event.link.page, event.link.params)} className="text-left w-full p-4 bg-neutral-50 border border-neutral-200 rounded-lg shadow-sm hover:bg-neutral-100">
                         <div className="flex items-center justify-between mb-2">
-                             <h3 className="font-semibold text-neutral-900 dark:text-white">{event.title}</h3>
-                             <time className="text-xs font-normal text-neutral-500 dark:text-neutral-400">{new Date(event.date).toLocaleDateString()}</time>
+                             <h3 className="font-semibold text-neutral-900">{event.title}</h3>
+                             <time className="text-xs font-normal text-neutral-500">{new Date(event.date).toLocaleDateString()}</time>
                         </div>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-300">{event.description}</p>
+                        <p className="text-sm text-neutral-600">{event.description}</p>
                     </button>
                 </li>
             ))}

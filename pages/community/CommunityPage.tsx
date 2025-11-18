@@ -43,7 +43,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ onLoadInspiration, onNavi
     }, [communityBatches]);
 
     return (
-        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in-out]">
+        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
             <div className="text-center mb-12">
                 <FeedIcon className="mx-auto h-12 w-12 text-lime-500" />
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">

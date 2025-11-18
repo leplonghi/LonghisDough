@@ -27,33 +27,33 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
     };
 
     return (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-medium mb-4">Perfil do Starter</h3>
             <div className="space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Uso típico</label>
+                    <label className="block text-sm font-medium text-neutral-700">Uso típico</label>
                     <input 
                         type="text" 
                         value={typicalUse} 
                         onChange={e => setTypicalUse(e.target.value)} 
                         placeholder="Selecione para quais massas você usa este levain." 
-                        className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-neutral-600 dark:bg-neutral-900" 
+                        className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" 
                     />
                 </div>
                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Notas sensoriais</label>
+                    <label className="block text-sm font-medium text-neutral-700">Notas sensoriais</label>
                     <textarea 
                         rows={4} 
                         value={sensoryNotes} 
                         onChange={e => setSensoryNotes(e.target.value)} 
                         placeholder="Descreva cheiro, atividade, textura, comportamento." 
-                        className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-neutral-600 dark:bg-neutral-900"
+                        className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500"
                     ></textarea>
                 </div>
 
-                <div className="space-y-4 border-t border-neutral-200 dark:border-neutral-700 pt-6">
+                <div className="space-y-4 border-t border-neutral-200 pt-6">
                      <div className="flex items-center justify-between">
-                        <label htmlFor="notification-switch" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        <label htmlFor="notification-switch" className="text-sm font-medium text-neutral-700">
                             Lembrar de alimentar este levain
                         </label>
                         <div className="relative inline-block w-10 align-middle select-none">
@@ -67,7 +67,7 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                             />
                             <label
                                 htmlFor="notification-switch"
-                                className="block h-6 cursor-pointer overflow-hidden rounded-full bg-neutral-300 peer-checked:bg-lime-500 dark:bg-neutral-600"
+                                className="block h-6 cursor-pointer overflow-hidden rounded-full bg-neutral-300 peer-checked:bg-lime-500"
                             ></label>
                             <label
                                 htmlFor="notification-switch"
@@ -76,7 +76,7 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                         </div>
                     </div>
                     <div>
-                        <label htmlFor="feeding-interval" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        <label htmlFor="feeding-interval" className="block text-sm font-medium text-neutral-700">
                             Intervalo ideal entre alimentações (horas)
                         </label>
                         <input
@@ -86,12 +86,12 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
                             onChange={(e) => setIdealFeedingIntervalHours(Number(e.target.value))}
                             placeholder="24"
                             disabled={!notificationEnabled}
-                            className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-900"
+                            className="mt-1 block w-full rounded-md border-neutral-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 disabled:opacity-50"
                         />
                     </div>
                 </div>
 
-                 <div className="flex justify-end pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                 <div className="flex justify-end pt-2 border-t border-neutral-200">
                     <button 
                         onClick={handleSave}
                         className="mt-4 rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"

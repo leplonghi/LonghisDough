@@ -12,10 +12,10 @@ const ChoiceButton: React.FC<{
   <button
     type="button"
     onClick={onClick}
-    className={`w-full rounded-lg px-4 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+    className={`w-full rounded-lg px-4 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 ${
       active
         ? 'bg-lime-500 text-white font-semibold shadow-md'
-        : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600'
+        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
     }`}
   >
     {children}

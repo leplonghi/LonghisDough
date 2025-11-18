@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-// FIX: Use named imports for modular Firebase SDK.
-import { onAuthStateChanged, User } from 'firebase/auth';
+// FIX: Importing from '@firebase/auth' to avoid name collision with local file 'firebase/auth.ts'
+import { User, onAuthStateChanged } from '@firebase/auth';
 import auth from '../firebase/auth';
 
 interface FirebaseUserContextType {

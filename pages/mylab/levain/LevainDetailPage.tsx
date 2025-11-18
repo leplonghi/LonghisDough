@@ -14,8 +14,8 @@ interface LevainDetailPageProps {
 
 const DetailRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
     <div>
-        <dt className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{label}</dt>
-        <dd className="mt-1 font-semibold text-neutral-900 dark:text-white">{value}</dd>
+        <dt className="text-sm font-medium text-neutral-500">{label}</dt>
+        <dd className="mt-1 font-semibold text-neutral-900">{value}</dd>
     </div>
 );
 
@@ -44,22 +44,22 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
 
     const renderSummary = () => (
         <div className="space-y-6">
-            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-medium mb-4">Resumo</h3>
                 <dl className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <DetailRow label="Hidratação" value={`${levain.hydration}%`} />
                     <DetailRow label="Farinha base" value={levain.baseFlourType || 'N/A'} />
                     <DetailRow label="Criado em" value={new Date(levain.createdAt).toLocaleDateString()} />
                 </dl>
-                 <div className="mt-6 border-t border-neutral-200 dark:border-neutral-700 pt-4">
-                    <p className="text-sm text-neutral-600 dark:text-neutral-300">{statusText[levain.status]}</p>
+                 <div className="mt-6 border-t border-neutral-200 pt-4">
+                    <p className="text-sm text-neutral-600">{statusText[levain.status]}</p>
                  </div>
             </div>
         </div>
     );
     
     const renderFeedings = () => (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
                  <h3 className="text-lg font-medium">Alimentações</h3>
                  <button onClick={() => setIsFeedModalOpen(true)} className="flex items-center gap-2 rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">
@@ -68,13 +68,13 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
                  </button>
             </div>
              {levain.feedingHistory.length === 0 ? (
-                <p className="text-sm text-center py-8 text-neutral-500 dark:text-neutral-400">Nenhuma alimentação registrada ainda.</p>
+                <p className="text-sm text-center py-8 text-neutral-500">Nenhuma alimentação registrada ainda.</p>
             ) : (
                 <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                     {[...levain.feedingHistory].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(log => (
-                        <div key={log.id} className="rounded-md bg-neutral-50 dark:bg-neutral-700/50 p-3 text-sm">
+                        <div key={log.id} className="rounded-md bg-neutral-50 p-3 text-sm">
                             <p className="font-semibold">{new Date(log.date).toLocaleString()}</p>
-                            <div className="flex gap-4 mt-1 text-neutral-600 dark:text-neutral-300">
+                            <div className="flex gap-4 mt-1 text-neutral-600">
                                <span>Proporção: {log.ratio || 'N/A'}</span>
                                <span>Farinha: {log.flourType || 'N/A'}</span>
                             </div>

@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { useTranslation } from '../i18n';
 import { CloseIcon, BookOpenIcon } from './IconComponents';
@@ -30,20 +28,20 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
       aria-labelledby="pro-recipes-title"
     >
       <div
-        className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+        className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-700">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <h2
             id="pro-recipes-title"
-            className="flex items-center gap-2 text-xl font-bold text-slate-900 dark:text-white"
+            className="flex items-center gap-2 text-xl font-bold text-slate-900"
           >
             <BookOpenIcon className="h-6 w-6 text-lime-500" />
             <span>{t('pro_recipes.modal_title')}</span>
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="rounded-full p-1 text-slate-500 hover:bg-slate-200"
             aria-label={t('load_modal.close_aria')}
           >
             <CloseIcon className="h-6 w-6" />
@@ -55,12 +53,12 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
             <button
               key={recipe.nameKey}
               onClick={() => onLoadRecipe(recipe.config)}
-              className="w-full rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 dark:bg-slate-700/50 dark:hover:bg-slate-700"
+              className="w-full rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500"
             >
-              <span className="font-medium text-slate-800 dark:text-slate-200">
+              <span className="font-medium text-slate-800">
                 {t(recipe.nameKey)}
               </span>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-sm text-slate-500">
                 {t(recipe.descriptionKey)}
               </p>
             </button>

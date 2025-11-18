@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { Page } from '../types';
 // FIX: Add missing import for InsightsIcon

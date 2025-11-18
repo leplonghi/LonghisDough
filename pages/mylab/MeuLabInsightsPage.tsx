@@ -8,12 +8,12 @@ const InsightCard: React.FC<{
   linkText: string;
   onLinkClick: () => void;
 }> = ({ title, description, linkText, onLinkClick }) => (
-  <div className="rounded-xl border border-neutral-200 bg-white dark:bg-neutral-800 p-6 shadow-sm flex flex-col justify-between">
+  <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm flex flex-col justify-between">
     <div>
-      <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{title}</h3>
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
+      <h3 className="text-lg font-medium text-neutral-900">{title}</h3>
+      <p className="mt-2 text-sm text-neutral-600">{description}</p>
     </div>
-    <button onClick={onLinkClick} className="mt-4 text-sm font-semibold text-lime-600 dark:text-lime-400 hover:underline text-left">
+    <button onClick={onLinkClick} className="mt-4 text-sm font-semibold text-lime-600 hover:underline text-left">
       {linkText} &rarr;
     </button>
   </div>
@@ -23,7 +23,7 @@ const MeuLabInsightsPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ on
     return (
         <MyLabLayout activePage="mylab/insights" onNavigate={onNavigate}>
             <div className="mb-6">
-                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Insights</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Insights</h1>
                 <p className="mt-1 text-sm text-neutral-500">
                     Analise os padrões e tendências das suas produções.
                 </p>

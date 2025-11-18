@@ -309,17 +309,18 @@ export interface UserContextType {
   preferredFlourId: string | null;
   setPreferredFlour: (id: string | null) => void;
   batches: Batch[];
-  addBatch: (newBatch: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'>) => Batch;
+  // FIX: Updated return types to Promise to reflect async nature of database operations.
+  addBatch: (newBatch: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Batch>;
   updateBatch: (updatedBatch: Batch) => void;
   deleteBatch: (id: string) => void;
-  createDraftBatch: () => Batch;
+  createDraftBatch: () => Promise<Batch>;
   goals: Goal[];
-  addGoal: (goal: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'>) => Goal;
+  addGoal: (goal: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'>) => Promise<Goal>;
   updateGoal: (goal: Partial<Goal> & { id: string }) => void;
   deleteGoal: (id: string) => void;
   completeGoal: (id: string) => void;
   testSeries: TestSeries[];
-  addTestSeries: (series: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>) => TestSeries;
+  addTestSeries: (series: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>) => Promise<TestSeries>;
   updateTestSeries: (series: Partial<TestSeries> & { id: string }) => void;
   deleteTestSeries: (id: string) => void;
   attachBakeToSeries: (seriesId: string, bakeId: string) => void;
@@ -333,7 +334,7 @@ export type FormErrors = {
 };
 
 // Represents the main pages accessible via the primary navigation
-export type PrimaryPage = 'mylab' | 'calculator' | 'learn' | 'community';
+export type PrimaryPage = 'mylab' | 'calculator' | 'learn' | 'community' | 'styles' | 'profile';
 
 // Represents all possible pages/views in the app
 export type Page =
@@ -342,7 +343,6 @@ export type Page =
   | 'flours'
   | 'help'
   | 'references'
-  | 'profile'
   | 'plans'
   | 'landing'
   | 'batch'
@@ -367,6 +367,8 @@ export type Page =
   | 'mylab/levain-pet'
   | 'usermenu'
   | 'pizzas'
+// FIX: Add 'styles' to the Page type to resolve a type comparison error.
+  | 'styles'
   | 'breads-and-savory'
   | 'sweets-and-pastry'
   | 'tools-oven-analysis'

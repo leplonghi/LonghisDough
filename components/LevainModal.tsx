@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 // FIX: Added LevainStatus to import
@@ -9,7 +8,7 @@ import { CloseIcon } from './IconComponents';
 interface LevainModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | (Partial<Levain> & { id: string })) => void;
+  onSave: (ovenData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | (Partial<Levain> & { id: string })) => void;
   levainToEdit: Levain | null;
 }
 
@@ -74,7 +73,11 @@ const LevainModal: React.FC<LevainModalProps> = ({
         alert('O nome do Levain é obrigatório.');
         return;
     }
-    onSave(formData);
+    if (levainToEdit) {
+        onSave({ ...levainToEdit, ...formData });
+    } else {
+        onSave(formData);
+    }
   };
   
   const isoDate = formData.lastFeeding.split('T')[0];
@@ -88,16 +91,16 @@ const LevainModal: React.FC<LevainModalProps> = ({
       aria-modal="true"
     >
       <div
-        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-slate-200 pb-4 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+          <h2 className="text-xl font-bold text-slate-900">
             {levainToEdit ? 'Editar Levain' : 'Criar Novo Levain'}
           </h2>
           <button
             onClick={onClose}
-            className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200"
           >
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -105,32 +108,32 @@ const LevainModal: React.FC<LevainModalProps> = ({
         
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nome do Levain</label>
-                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" placeholder="Ex: Isauri, o Levain" />
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Nome do Levain</label>
+                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" placeholder="Ex: Isauri, o Levain" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <div>
-                    <label htmlFor="hydration" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Hidratação (%)</label>
-                    <input type="number" name="hydration" id="hydration" value={formData.hydration} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" />
+                    <label htmlFor="hydration" className="block text-sm font-medium text-slate-700">Hidratação (%)</label>
+                    <input type="number" name="hydration" id="hydration" value={formData.hydration} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
                 <div>
-                    <label htmlFor="totalWeight" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Peso Total (g)</label>
-                    <input type="number" name="totalWeight" id="totalWeight" value={formData.totalWeight} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" />
+                    <label htmlFor="totalWeight" className="block text-sm font-medium text-slate-700">Peso Total (g)</label>
+                    <input type="number" name="totalWeight" id="totalWeight" value={formData.totalWeight} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
             </div>
              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Última Alimentação</label>
+                <label className="block text-sm font-medium text-slate-700">Última Alimentação</label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
-                     <input type="date" name="lastFeedingDate" value={isoDate} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" />
-                     <input type="time" name="lastFeedingTime" value={isoTime} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" />
+                     <input type="date" name="lastFeedingDate" value={isoDate} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
+                     <input type="time" name="lastFeedingTime" value={isoTime} onChange={handleDateChange} className="block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
             </div>
             <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Anotações</label>
-                <textarea name="notes" id="notes" value={formData.notes || ''} onChange={handleInputChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"></textarea>
+                <label htmlFor="notes" className="block text-sm font-medium text-slate-700">Anotações</label>
+                <textarea name="notes" id="notes" value={formData.notes || ''} onChange={handleInputChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500"></textarea>
             </div>
-            <div className="flex justify-end gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">Cancelar</button>
+            <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
+                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button>
                 <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Salvar</button>
             </div>
         </form>

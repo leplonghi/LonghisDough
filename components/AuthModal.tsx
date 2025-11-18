@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -39,19 +37,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       aria-labelledby="auth-modal-title"
     >
       <div
-        className="relative mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800 sm:p-8"
+        className="relative mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
           <h2
             id="auth-modal-title"
-            className="text-xl font-bold text-slate-900 dark:text-white"
+            className="text-xl font-bold text-slate-900"
           >
             {t('auth.modal_title')}
           </h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="rounded-full p-1 text-slate-500 hover:bg-slate-200"
             aria-label={t('modals.close')}
           >
             <CloseIcon className="h-6 w-6" />
@@ -59,19 +57,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-slate-600 dark:text-slate-300">
+          <p className="text-slate-600">
             {t('auth.modal_subtitle')}
           </p>
           <div className="mt-6">
             <button
               onClick={handleGoogleLogin}
-              className="inline-flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white py-2.5 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white py-2.5 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
             >
               <GoogleIcon className="h-5 w-5" />
               <span>{t('auth.continue_with_google')}</span>
             </button>
           </div>
-          <p className="mt-6 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-6 text-xs text-slate-500">
             {t('auth.terms_notice')}
           </p>
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -63,10 +62,10 @@ const ChoiceButton: React.FC<{
   <button
     type="button"
     onClick={onClick}
-    className={`w-full rounded-lg px-4 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+    className={`w-full rounded-lg px-4 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 ${
       active
         ? 'bg-lime-500 text-white font-semibold shadow-md'
-        : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600'
+        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
     }`}
   >
     {children}
@@ -178,15 +177,15 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
     DOUGH_STYLE_PRESETS.find(p => p.id === config.stylePresetId),
   [config.stylePresetId]);
 
-  const getInputClasses = (hasError: boolean) => `w-full rounded-lg bg-slate-50 p-2 text-slate-900 dark:bg-slate-700 dark:text-slate-100 border ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500' : 'border-slate-300 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600'}`;
-  const getSelectClasses = () => "w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100";
+  const getInputClasses = (hasError: boolean) => `w-full rounded-lg bg-slate-50 p-2 text-slate-900 border ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-lime-500 focus:ring-lime-500'}`;
+  const getSelectClasses = () => "w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500";
 
   const isAnySourdough = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType);
 
   return (
     <div className="space-y-6">
         <div className="text-center">
-            <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${isBasic ? 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300' : 'bg-lime-100 text-lime-800 dark:bg-lime-900/50 dark:text-lime-300'}`}>
+            <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${isBasic ? 'bg-sky-100 text-sky-800' : 'bg-lime-100 text-lime-800'}`}>
             {isBasic ? t('mode_toggle.basic_tag') : t('mode_toggle.advanced_tag')}
             </span>
         </div>
@@ -211,7 +210,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     <button
                         onClick={handleDeletePreset}
                         disabled={!selectedPreset}
-                        className="flex-shrink-0 rounded-lg p-2 text-red-500 transition-colors hover:bg-red-100 dark:hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex-shrink-0 rounded-lg p-2 text-red-500 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                         title={t('form.delete_preset')}
                     >
                         <TrashIcon className="h-5 w-5" />
@@ -220,7 +219,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 <button
                     onClick={handleLoadPreset}
                     disabled={!selectedPreset}
-                    className="w-full rounded-md bg-slate-200 py-2 px-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300 dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full rounded-md bg-slate-200 py-2 px-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {t('form.load_preset')}
                 </button>
@@ -240,10 +239,10 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               ))}
           </div>
            {isBasic && currentPreset && (
-             <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+             <div className="pt-4 mt-4 border-t border-slate-200">
                 <button
                     onClick={handleResetPreset}
-                    className="w-full text-sm font-semibold text-lime-600 hover:underline dark:text-lime-400"
+                    className="w-full text-sm font-semibold text-lime-600 hover:underline"
                 >
                     {t('form.reset_preset_button', { name: currentPreset.name })}
                 </button>
@@ -253,7 +252,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
       <FormSection title={t('form.sections.fermentation.title')} description={t('form.sections.fermentation.description')} icon={<FermentationIcon className="h-6 w-6" />}>
            {isAnySourdough ? (
-             <p className="text-center text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg">{t('form.sourdough_as_preferment')}</p>
+             <p className="text-center text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">{t('form.sourdough_as_preferment')}</p>
            ) : (
             <>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -262,7 +261,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   <ChoiceButton active={config.fermentationTechnique === FermentationTechnique.BIGA} onClick={() => onConfigChange({ fermentationTechnique: FermentationTechnique.BIGA })}>{t('form.biga')}</ChoiceButton>
                 </div>
                 {(config.fermentationTechnique !== FermentationTechnique.DIRECT) && (
-                 <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
+                 <div className="pt-6 border-t border-slate-200">
                      <SliderInput label={t('form.preferment_flour')} name="prefermentFlourPercentage" value={config.prefermentFlourPercentage} onChange={handleNumberChange} min={isBasic ? (config.fermentationTechnique === FermentationTechnique.BIGA ? 30 : 20) : 0} max={isBasic ? (config.fermentationTechnique === FermentationTechnique.BIGA ? 60 : 50) : 100} step={5} unit="%" tooltip={t('form.preferment_flour_tooltip')} hasError={!!errors.prefermentFlourPercentage} />
                  </div>
                )}
@@ -296,30 +295,30 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
       <FormSection title={t('form.sections.ingredients.title')} description={t('form.sections.ingredients.description')} icon={<FlourIcon className="h-6 w-6" />}>
         {isBasic ? (
-            <div className="space-y-4 rounded-lg border border-sky-200 bg-slate-50 p-4 dark:border-sky-800 dark:bg-slate-700/50">
+            <div className="space-y-4 rounded-lg border border-sky-200 bg-slate-50 p-4">
               <div className="flex items-center gap-2">
                 <LockClosedIcon className="h-5 w-5 text-sky-500" />
-                <h4 className="font-semibold text-slate-700 dark:text-slate-200">Parâmetros do Estilo</h4>
+                <h4 className="font-semibold text-slate-700">Parâmetros do Estilo</h4>
               </div>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">{t('form.hydration')}</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.hydration.toFixed(1)}%</span>
+                  <span className="text-slate-500">{t('form.hydration')}</span>
+                  <span className="font-bold text-slate-800">{config.hydration.toFixed(1)}%</span>
                 </div>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">{t('results.salt')}</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.salt.toFixed(1)}%</span>
+                  <span className="text-slate-500">{t('results.salt')}</span>
+                  <span className="font-bold text-slate-800">{config.salt.toFixed(1)}%</span>
                 </div>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">{t('results.oil')}</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">{config.oil.toFixed(1)}%</span>
+                  <span className="text-slate-500">{t('results.oil')}</span>
+                  <span className="font-bold text-slate-800">{config.oil.toFixed(1)}%</span>
                 </div>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">{t('form.sugar')}</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-100">{(config.sugar || 0).toFixed(1)}%</span>
+                  <span className="text-slate-500">{t('form.sugar')}</span>
+                  <span className="font-bold text-slate-800">{(config.sugar || 0).toFixed(1)}%</span>
                 </div>
               </div>
-              <p className="pt-3 text-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-600">
+              <p className="pt-3 text-center text-xs text-slate-500 border-t border-slate-200">
                 {t('form.advanced_mode_tooltip')}
               </p>
             </div>
@@ -332,7 +331,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
             </>
         )}
 
-           <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
+           <div className="pt-6 border-t border-slate-200">
              <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2">
                 <div>
                     <label htmlFor="yeastType" className="mb-1 block text-sm font-medium">{t('form.yeast_type')}</label>
@@ -351,7 +350,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                           {levains.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                       </select>
                       {selectedLevain && (
-                        <div className="mt-2 rounded-lg bg-slate-100 dark:bg-slate-700/50 p-3 text-sm">
+                        <div className="mt-2 rounded-lg bg-slate-100 p-3 text-sm">
                           <p><span className="font-semibold">{t('form.using_levain')}:</span> {selectedLevain.name}</p>
                           <p><span className="font-semibold">{t('form.levain_hydration')}:</span> {selectedLevain.hydration}%</p>
                           <p><span className="font-semibold">{t('form.levain_fed')}:</span> {hoursBetween(new Date().toISOString(), selectedLevain.lastFeeding).toFixed(1)} {t('form.levain_hours_ago')}</p>
@@ -359,8 +358,8 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                       )}
                     </>
                   ) : (
-                    <div className="text-center text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg">
-                      <p>{t('form.no_levain_found')} <a href="#/mylab/levain" className="font-semibold text-lime-600 hover:underline dark:text-lime-400">{t('form.create_one_link')}</a></p>
+                    <div className="text-center text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
+                      <p>{t('form.no_levain_found')} <a href="#/mylab/levain" className="font-semibold text-lime-600 hover:underline">{t('form.create_one_link')}</a></p>
                     </div>
                   )}
                 </div>
@@ -410,12 +409,12 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     value={config.notes || ''}
                     onChange={handleTextareaChange}
                     placeholder={hasProAccess ? t('batch_detail.notes_placeholder') : t('pro.locked_tooltip')}
-                    className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:disabled:bg-slate-700/50"
+                    className="w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:bg-slate-100"
                     disabled={!hasProAccess}
                 />
                 {!hasProAccess && (
                     <div
-                    className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm dark:bg-slate-800/50"
+                    className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-lg bg-white/50 backdrop-blur-sm"
                     onClick={onOpenPaywall}
                     title={t('pro.locked_tooltip')}
                     >
@@ -440,7 +439,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
       )}
 
       <div>
-        <button type="button" onClick={onReset} className="w-full rounded-lg bg-slate-200 py-3 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-800">
+        <button type="button" onClick={onReset} className="w-full rounded-lg bg-slate-200 py-3 px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2">
           {t('form.reset')}
         </button>
       </div>

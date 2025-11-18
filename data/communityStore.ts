@@ -23,7 +23,7 @@ export function seedDefaultCommunityBatchesIfEmpty() {
             sugar: preset.defaultSugar || 0,
             recipeStyle: preset.recipeStyle,
 // FIX: Corrected BakeType.PIZZA to BakeType.PIZZAS and BakeType.BREAD to BakeType.BREADS_SAVORY.
-            bakeType: preset.type === BakeType.PIZZAS ? BakeType.PIZZAS : BakeType.BREADS_SAVORY,
+            bakeType: preset.type,
             stylePresetId: preset.id,
             flourId: preset.preferredFlourProfileId || 'generic_all_purpose',
             ambientTemperature: AmbientTemperature.MILD,

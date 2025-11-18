@@ -104,7 +104,7 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             <UiModeToggle mode={props.calculatorMode} onModeChange={props.onCalculatorModeChange} />
             <div className="group relative">
                 <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
-                <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-3 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700">
+                <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-3 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100">
                     <p dangerouslySetInnerHTML={{ __html: t('form.tooltips.ui_mode') }} />
                 </div>
             </div>

@@ -34,7 +34,7 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
         <MyLabLayout activePage="mylab/comparacoes" onNavigate={onNavigate}>
             <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Comparações</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Comparações</h1>
                     <p className="mt-1 text-sm text-neutral-500">Selecione duas fornadas para comparar suas receitas lado a lado.</p>
                 </div>
                 <button
@@ -52,7 +52,7 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
                     {batches.map(batch => {
                         const isSelected = selectedIds.includes(batch.id);
                         return (
-                            <label key={batch.id} className={`flex items-center gap-4 rounded-lg p-4 border transition-colors cursor-pointer ${isSelected ? 'bg-lime-50 border-lime-300 dark:bg-lime-900/50 dark:border-lime-700' : 'bg-white border-neutral-200 dark:bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700/50'}`}>
+                            <label key={batch.id} className={`flex items-center gap-4 rounded-lg p-4 border transition-colors cursor-pointer ${isSelected ? 'bg-lime-50 border-lime-300' : 'bg-white border-neutral-200 hover:bg-neutral-50'}`}>
                                 <input
                                     type="checkbox"
                                     checked={isSelected}
@@ -60,8 +60,8 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
                                     className="h-5 w-5 rounded border-neutral-300 text-lime-600 focus:ring-lime-500"
                                 />
                                 <div className="flex-grow">
-                                    <p className="font-medium text-neutral-800 dark:text-neutral-100">{batch.name}</p>
-                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                    <p className="font-medium text-neutral-800">{batch.name}</p>
+                                    <p className="text-xs text-neutral-500">
                                         {t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })} &bull; {new Date(batch.createdAt).toLocaleDateString()}
                                     </p>
                                 </div>
@@ -70,8 +70,8 @@ const MeuLabComparacoesPage: React.FC<{ onNavigate: (page: Page, params?: string
                     })}
                 </div>
             ) : (
-                <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 p-6 shadow-sm text-center">
-                    <p className="text-neutral-500 dark:text-neutral-400">
+                <div className="flex h-64 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 p-6 shadow-sm text-center">
+                    <p className="text-neutral-500">
                         Você precisa ter pelo menos duas fornadas salvas para poder comparar.
                     </p>
                 </div>

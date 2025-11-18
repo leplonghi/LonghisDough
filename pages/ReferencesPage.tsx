@@ -1,9 +1,6 @@
-
-
-
 import React from 'react';
 // FIX: Add missing imports for BookOpenIcon and ArrowTopRightOnSquareIcon
-import { BookOpenIcon, ArrowTopRightOnSquareIcon } from './IconComponents';
+import { BookOpenIcon, ArrowTopRightOnSquareIcon } from '../components/IconComponents';
 
 interface ReferenceItemProps {
   title: string;
@@ -14,21 +11,21 @@ interface ReferenceItemProps {
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className="mt-12 first:mt-0">
-    <h2 className="mb-4 text-2xl font-bold text-slate-800 dark:text-slate-100">{title}</h2>
+    <h2 className="mb-4 text-2xl font-bold text-slate-800">{title}</h2>
     <div className="space-y-6">{children}</div>
   </div>
 );
 
 const ReferenceItem: React.FC<ReferenceItemProps> = ({ title, type, description, link }) => (
-  <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
+  <div className="rounded-lg bg-slate-50 p-4">
     <div className="flex items-center justify-between">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+      <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
       {link && (
         <a
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-sm font-medium text-lime-600 hover:underline dark:text-lime-400"
+          className="flex items-center gap-1 text-sm font-medium text-lime-600 hover:underline"
           aria-label={`Visitar ${title}`}
         >
           <span>Visitar</span>
@@ -36,21 +33,21 @@ const ReferenceItem: React.FC<ReferenceItemProps> = ({ title, type, description,
         </a>
       )}
     </div>
-    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{type}</p>
-    <p className="mt-2 text-slate-600 dark:text-slate-300">{description}</p>
+    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">{type}</p>
+    <p className="mt-2 text-slate-600">{description}</p>
   </div>
 );
 
 const ReferencesPage: React.FC = () => {
   return (
-    <div className="mx-auto max-w-4xl animate-[fadeIn_0.5s_ease-in-out]">
-      <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
+    <div className="mx-auto max-w-4xl animate-[fadeIn_0.5s_ease-in_out]">
+      <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10">
         <div className="text-center">
           <BookOpenIcon className="mx-auto h-12 w-12 text-lime-500" />
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Referências Técnicas
           </h1>
-          <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
+          <p className="mt-4 text-lg text-slate-600">
             Uma coleção curada de livros, normas e recursos para aprofundar seu conhecimento.
           </p>
         </div>

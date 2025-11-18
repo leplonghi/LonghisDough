@@ -76,9 +76,9 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
 
   const BG_COLORS: Record<ToastType, string> = {
     success:
-      'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
-    error: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
-    info: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',
+      'bg-green-50 border-green-200',
+    error: 'bg-red-50 border-red-200',
+    info: 'bg-blue-50 border-blue-200',
   };
 
   useEffect(() => {
@@ -99,13 +99,13 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
       role="alert"
     >
       <div className="flex-shrink-0">{ICONS[toast.type]}</div>
-      <div className="flex-1 text-sm font-medium text-slate-800 dark:text-slate-200">
+      <div className="flex-1 text-sm font-medium text-slate-800">
         {toast.message}
       </div>
       <div className="flex-shrink-0">
         <button
           onClick={() => onDismiss(toast.id)}
-          className="-m-1.5 rounded-full p-1.5 text-slate-500 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:bg-slate-700/50"
+          className="-m-1.5 rounded-full p-1.5 text-slate-500 hover:bg-slate-200/50"
           aria-label="Dismiss"
         >
           <CloseIcon className="h-5 w-5" />

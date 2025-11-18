@@ -54,9 +54,9 @@ const AdSenseBlock: React.FC = () => {
   return (
     <div
       ref={adRef}
-      className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-700/50"
+      className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-center"
     >
-      <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <span className="text-xs uppercase tracking-wider text-slate-500">
         {t('ads.advertisement')}
       </span>
       <ins

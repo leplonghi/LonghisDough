@@ -92,10 +92,10 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     };
 
     const statusStyles = {
-        ativo: { text: 'Ativo', color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' },
-        precisa_atencao: { text: 'Precisa de Atenção', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' },
-        descanso: { text: 'Em Descanso', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300' },
-        arquivado: { text: 'Arquivado', color: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300' },
+        ativo: { text: 'Ativo', color: 'bg-green-100 text-green-800' },
+        precisa_atencao: { text: 'Precisa de Atenção', color: 'bg-yellow-100 text-yellow-800' },
+        descanso: { text: 'Em Descanso', color: 'bg-blue-100 text-blue-800' },
+        arquivado: { text: 'Arquivado', color: 'bg-neutral-100 text-neutral-800' },
     };
     
     if (isLoading) {
@@ -104,10 +104,10 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
 
     return (
         <>
-        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in-out]">
+        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
             <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
                         Levain Pet
                     </h1>
                     <p className="mt-2 text-sm text-neutral-500">
@@ -123,10 +123,10 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                         <span>Adicionar levain</span>
                     </button>
                     <div className="flex gap-2">
-                         <button onClick={handleImportClick} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600">
+                         <button onClick={handleImportClick} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300">
                             <DownloadIcon className="h-5 w-5"/> Importar
                          </button>
-                         <button onClick={handleExport} disabled={levains.length === 0} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-600 disabled:opacity-50">
+                         <button onClick={handleExport} disabled={levains.length === 0} className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-200 py-2 px-4 font-semibold text-neutral-700 shadow-sm hover:bg-neutral-300 disabled:opacity-50">
                             <ShareIcon className="h-5 w-5"/> Exportar
                          </button>
                          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" style={{ display: 'none' }} />
@@ -135,12 +135,12 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
             </div>
 
             {levains.length === 0 ? (
-                <div className="text-center rounded-xl border border-neutral-200 bg-neutral-50 dark:border-neutral-700 p-10 shadow-sm">
+                <div className="text-center rounded-xl border border-neutral-200 bg-neutral-50 p-10 shadow-sm">
                     <BeakerIcon className="mx-auto h-12 w-12 text-lime-400" />
-                    <h2 className="mt-4 text-lg font-medium text-neutral-900 dark:text-white">
+                    <h2 className="mt-4 text-lg font-medium text-neutral-900">
                         Você ainda não tem um Levain Pet.
                     </h2>
-                    <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+                    <p className="mt-2 text-sm text-neutral-600">
                         Crie seu primeiro starter e acompanhe tudo — alimentação, rotina, observações e uso nas receitas.
                     </p>
                     <button
@@ -154,20 +154,20 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {levains.map(starter => {
                         return (
-                        <div key={starter.id} className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
+                        <div key={starter.id} className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg">
                             <div className="flex items-start justify-between">
-                                <h3 className="text-lg font-medium text-neutral-900 dark:text-white">{starter.name}</h3>
+                                <h3 className="text-lg font-medium text-neutral-900">{starter.name}</h3>
                                 <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusStyles[starter.status].color}`}>
                                     {statusStyles[starter.status].text}
                                 </span>
                             </div>
-                             <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                             <p className="mt-2 text-sm text-neutral-500">
                                 Última alimentação: há {formatTimeSince(starter.lastFeeding)}
                              </p>
-                             <div className="mt-4 border-t border-neutral-200 dark:border-neutral-700 pt-4">
+                             <div className="mt-4 border-t border-neutral-200 pt-4">
                                 <button
                                     onClick={() => onNavigate('mylab/levain/detail', starter.id)}
-                                    className="text-sm font-semibold text-lime-600 hover:underline dark:text-lime-400"
+                                    className="text-sm font-semibold text-lime-600 hover:underline"
                                 >
                                     Ver Detalhes &rarr;
                                 </button>

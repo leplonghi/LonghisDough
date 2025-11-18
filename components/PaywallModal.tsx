@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
 import {
@@ -27,14 +23,14 @@ const Feature: React.FC<{
   description: string;
 }> = ({ icon, title, description }) => (
   <div className="flex items-start gap-4">
-    <div className="flex-shrink-0 rounded-full bg-lime-100 p-2 dark:bg-lime-500/10">
+    <div className="flex-shrink-0 rounded-full bg-lime-100 p-2">
       {icon}
     </div>
     <div>
-      <h4 className="font-semibold text-slate-800 dark:text-slate-100">
+      <h4 className="font-semibold text-slate-800">
         {title}
       </h4>
-      <p className="text-sm text-slate-600 dark:text-slate-400">
+      <p className="text-sm text-slate-600">
         {description}
       </p>
     </div>
@@ -87,12 +83,12 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       aria-labelledby="paywall-title"
     >
       <div
-        className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+        className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 rounded-full p-1 text-slate-500 hover:bg-slate-200 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-700"
+          className="absolute top-4 right-4 z-10 rounded-full p-1 text-slate-500 hover:bg-slate-200 disabled:opacity-50"
           aria-label={t('modals.close')}
           disabled={!!showSuccess}
         >
@@ -109,11 +105,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               <StarIcon className="mx-auto h-12 w-12 text-lime-500" />
               <h2
                 id="paywall-title"
-                className="mt-4 text-2xl font-bold text-slate-900 dark:text-white"
+                className="mt-4 text-2xl font-bold text-slate-900"
               >
                 {t('paywall.title')}
               </h2>
-              <p className="mt-2 text-slate-600 dark:text-slate-300">
+              <p className="mt-2 text-slate-600">
                 {t('paywall.subtitle')}
               </p>
             </div>
@@ -121,14 +117,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <div className="mt-8 space-y-6">
               <Feature
                 icon={
-                  <SaveIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />
+                  <SaveIcon className="h-6 w-6 text-lime-600" />
                 }
                 title={t('paywall.feature_save')}
                 description={t('paywall.feature_save_desc')}
               />
               <Feature
                 icon={
-                  <BookOpenIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />
+                  <BookOpenIcon className="h-6 w-6 text-lime-600" />
                 }
                 title={t('paywall.feature_pro_recipes')}
                 description={t('paywall.feature_pro_recipes_desc')}
@@ -138,24 +134,24 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <div className="mt-8">
               <button
                 onClick={() => handleGrant('pro')}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
               >
                 <StarIcon className="h-5 w-5" />
                 <span>{t('paywall.cta_button')}</span>
               </button>
 
               <div className="my-4 flex items-center">
-                <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
-                <span className="mx-4 flex-shrink text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">
+                <div className="flex-grow border-t border-slate-300"></div>
+                <span className="mx-4 flex-shrink text-xs font-semibold uppercase text-slate-500">
                   {t('paywall.or_divider')}
                 </span>
-                <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
+                <div className="flex-grow border-t border-slate-300"></div>
               </div>
 
               <button
                 onClick={() => handleGrant('pass')}
                 disabled={isPassOnCooldown}
-                className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300/50 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600 dark:disabled:bg-slate-700/50"
+                className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300/50"
               >
                 {isPassOnCooldown
                   ? t('paywall.cooldown_button', {
@@ -169,12 +165,12 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
         {/* Success State Overlay */}
         {showSuccess && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center dark:bg-slate-800 animate-[fadeIn_0.3s_ease-out]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center animate-[fadeIn_0.3s_ease-out]">
             <CheckCircleIcon className="h-16 w-16 text-lime-500" />
-            <h3 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
+            <h3 className="mt-4 text-2xl font-bold text-slate-900">
               {showSuccess}
             </h3>
-            <p className="mt-2 text-slate-600 dark:text-slate-300">
+            <p className="mt-2 text-slate-600">
               {t('paywall.success_subtitle')}
             </p>
           </div>

@@ -84,7 +84,7 @@ export async function askGeneralAssistant(input: AssistantInput): Promise<string
   const userPrompt = buildRichContext(t, question, doughConfig, flour, oven, lastBatch);
 
   try {
-// FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
+    // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-pro',
       contents: userPrompt,
@@ -153,7 +153,7 @@ export async function askLevainAssistant(levain: Levain, question: string): Prom
     }
 
     try {
-// FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
+        // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro',
             contents: userPrompt,

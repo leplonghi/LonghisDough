@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CommunityBatch, DoughConfig, Page } from '../types';
 import { getCommunityBatchById } from '../data/communityStore';

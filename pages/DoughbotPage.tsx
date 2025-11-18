@@ -33,20 +33,20 @@ const DoughbotPage: React.FC = () => {
     >
       <div className="space-y-8">
         {/* Input Section */}
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-700/50">
-          <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-4">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-6">
+          <h3 className="text-xl font-semibold text-slate-800 mb-4">
             1. Descreva seu problema
           </h3>
           <div className="space-y-4">
             <div>
-              <label htmlFor="problem-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="problem-select" className="block text-sm font-medium text-slate-700">
                 Problema Comum (opcional)
               </label>
               <select
                 id="problem-select"
                 value={problem}
                 onChange={(e) => setProblem(e.target.value)}
-                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm"
+                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
               >
                 {commonProblems.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -56,7 +56,7 @@ const DoughbotPage: React.FC = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="problem-description" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="problem-description" className="block text-sm font-medium text-slate-700">
                 Descrição Detalhada
               </label>
               <textarea
@@ -64,7 +64,7 @@ const DoughbotPage: React.FC = () => {
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm"
+                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
                 placeholder="Ex: Minha massa de 68% de hidratação ficou 24h na geladeira, mas está rasgando muito fácil ao tentar abrir..."
               />
             </div>
@@ -80,26 +80,26 @@ const DoughbotPage: React.FC = () => {
 
         {/* Results Section Placeholder */}
         <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+            <h3 className="text-2xl font-bold text-slate-800">
                 2. Diagnóstico Preliminar
             </h3>
-            <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800">
-                <h4 className="flex items-center gap-2 text-lg font-semibold text-slate-800 dark:text-slate-200">
+            <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+                <h4 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
                     <BeakerIcon className="h-5 w-5 text-slate-500" />
                     Possíveis Causas
                 </h4>
-                <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600 dark:text-slate-300">
+                <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600">
                     {/* TODO: Preencher dinamicamente com base no diagnóstico */}
                     <li>O diagnóstico sobre as possíveis causas do problema aparecerá aqui.</li>
                     <li>Cada causa será explicada com base em ciência da panificação.</li>
                 </ul>
             </div>
-             <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800">
-                <h4 className="flex items-center gap-2 text-lg font-semibold text-slate-800 dark:text-slate-200">
+             <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+                <h4 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
                     <LightBulbIcon className="h-5 w-5 text-yellow-400" />
                     Soluções Sugeridas
                 </h4>
-                <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600 dark:text-slate-300">
+                <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600">
                     {/* TODO: Preencher dinamicamente com base no diagnóstico */}
                     <li>As sugestões de correção, baseadas em fontes técnicas, aparecerão aqui.</li>
                     <li>As soluções incluirão ajustes na receita e no processo.</li>

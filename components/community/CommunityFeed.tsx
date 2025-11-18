@@ -32,9 +32,9 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({ batches, onLoadInspiratio
 
     if (batches.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 rounded-lg bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-300 dark:border-slate-700">
-                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">{t('community_page.empty_title')}</h3>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t('community_page.empty_subtitle')}</p>
+            <div className="flex flex-col items-center justify-center h-64 rounded-lg bg-slate-50 border-2 border-dashed border-slate-300">
+                <h3 className="text-lg font-semibold text-slate-700">{t('community_page.empty_title')}</h3>
+                <p className="mt-2 text-sm text-slate-500">{t('community_page.empty_subtitle')}</p>
             </div>
         );
     }

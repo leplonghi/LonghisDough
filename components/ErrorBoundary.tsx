@@ -1,5 +1,4 @@
-
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+import React, { ReactNode, ErrorInfo } from 'react';
 import { ExclamationCircleIcon } from './IconComponents';
 
 interface Props {
@@ -11,7 +10,6 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Use class property for state initialization.
   state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {
@@ -22,7 +20,6 @@ class ErrorBoundary extends React.Component<Props, State> {
     console.error("DoughLabPro ErrorBoundary caught an error:", error, errorInfo);
   }
 
-  // FIX: Use arrow function to automatically bind 'this'.
   handleTryAgain = () => {
     this.setState({ hasError: false });
   };
@@ -30,16 +27,16 @@ class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="mx-auto my-8 max-w-2xl rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10 text-center">
+        <div className="mx-auto my-8 max-w-2xl rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10 text-center">
           <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-500" />
-          <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">Ops! Algo deu errado.</h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-300">
+          <h1 className="mt-4 text-2xl font-bold text-slate-900">Ops! Algo deu errado.</h1>
+          <p className="mt-2 text-slate-600">
             Algo deu errado ao carregar esta parte do DoughLabPro. Atualize a página ou tente novamente. Se o erro persistir, entre em contato com o suporte.
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <button
               onClick={() => window.location.reload()}
-              className="rounded-md bg-slate-200 py-2 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-300 dark:bg-slate-600 dark:text-slate-200 dark:hover:bg-slate-500"
+              className="rounded-md bg-slate-200 py-2 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-300"
             >
               Atualizar a Página
             </button>

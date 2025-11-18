@@ -8,8 +8,8 @@ interface LevainInsightsProps {
 
 const InsightKPI: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
     <div className="text-center">
-        <p className="text-2xl font-semibold text-lime-600 dark:text-lime-400">{value}</p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{label}</p>
+        <p className="text-2xl font-semibold text-lime-600">{value}</p>
+        <p className="text-sm text-neutral-500">{label}</p>
     </div>
 );
 
@@ -37,10 +37,10 @@ const LevainInsights: React.FC<LevainInsightsProps> = ({ levain }) => {
     }, [levain]);
 
     return (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-medium mb-4">Insights do Levain</h3>
             {!insights ? (
-                <p className="text-sm text-center py-8 text-neutral-500 dark:text-neutral-400">
+                <p className="text-sm text-center py-8 text-neutral-500">
                     Ainda não há dados suficientes para gerar insights.
                 </p>
             ) : (

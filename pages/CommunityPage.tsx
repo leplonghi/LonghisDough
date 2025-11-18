@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { DoughConfig, Page, Batch, CommunityBatch, BatchStatus } from '../types';
 import CommunityFeed from '../components/community/CommunityFeed';
@@ -40,9 +41,9 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ onLoadInspiration, onNavi
             ovenType: cb.ovenType,
         }));
     }, [communityBatches]);
-
+    
     return (
-        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in-out]">
+        <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
             <div className="text-center mb-12">
                 <FeedIcon className="mx-auto h-12 w-12 text-lime-500" />
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
@@ -60,6 +61,7 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ onLoadInspiration, onNavi
 
                 {/* Main Feed (Center) */}
                 <div className="col-span-1 lg:col-span-6 lg:order-2">
+                    {/* FIX: Pass required props to CommunityFeed component. */}
                     <CommunityFeed
                         batches={adaptedBatches}
                         onLoadInspiration={onLoadInspiration}

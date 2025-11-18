@@ -71,12 +71,12 @@ const ResultRow: React.FC<{
   <div
     className={`flex items-center justify-between ${
       isTotal
-        ? 'mt-4 rounded-lg bg-lime-50 p-3 dark:bg-lime-500/10 sm:p-4'
-        : 'border-b border-slate-200 py-3 dark:border-slate-700 sm:py-4'
+        ? 'mt-4 rounded-lg bg-lime-50 p-3 sm:p-4'
+        : 'border-b border-slate-200 py-3 sm:py-4'
     }`}
   >
     <div className="flex items-center pr-4">
-      <span className="mr-3 flex-shrink-0 text-lime-500 dark:text-lime-400 sm:mr-4">
+      <span className="mr-3 flex-shrink-0 text-lime-500 sm:mr-4">
         {icon}
       </span>
       <div>
@@ -84,8 +84,8 @@ const ResultRow: React.FC<{
           <span
             className={`font-medium ${
               isTotal
-                ? 'text-lg font-bold text-slate-900 dark:text-white'
-                : 'text-slate-700 dark:text-slate-300'
+                ? 'text-lg font-bold text-slate-900'
+                : 'text-slate-700'
             }`}
           >
             {label}
@@ -93,10 +93,10 @@ const ResultRow: React.FC<{
           {tooltip && (
             <div className="group relative flex items-center">
               <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
-              <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-700">
+              <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100">
                 {tooltip}
                 <svg
-                  className="absolute left-0 top-full h-2 w-full text-slate-800 dark:text-slate-700"
+                  className="absolute left-0 top-full h-2 w-full text-slate-800"
                   x="0px"
                   y="0px"
                   viewBox="0 0 255 255"
@@ -112,7 +112,7 @@ const ResultRow: React.FC<{
           )}
         </div>
         {note && (
-          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-xs text-slate-500">
             {note}
           </p>
         )}
@@ -121,8 +121,8 @@ const ResultRow: React.FC<{
     <span
       className={`flex-shrink-0 text-right font-semibold ${
         isTotal
-          ? 'text-xl font-bold text-slate-900 dark:text-white sm:text-2xl'
-          : 'text-base text-slate-800 dark:text-slate-100 sm:text-lg'
+          ? 'text-xl font-bold text-slate-900 sm:text-2xl'
+          : 'text-base text-slate-800 sm:text-lg'
       }`}
     >
       {value}
@@ -177,7 +177,7 @@ const RecipeSteps: React.FC<{
             break; // Stop when no more steps are found
         }
     }
-    return <ol className="list-inside list-decimal space-y-4 pl-1 text-slate-600 dark:text-slate-300">{steps}</ol>;
+    return <ol className="list-inside list-decimal space-y-4 pl-1 text-slate-600">{steps}</ol>;
   };
   
   const stylePrefix = getStepKeyPrefix(config.recipeStyle);
@@ -191,10 +191,10 @@ const RecipeSteps: React.FC<{
   return (
     <div className="mt-10">
       <div className="mb-4 flex items-center gap-3">
-        <span className="text-lime-500 dark:text-lime-400">
+        <span className="text-lime-500">
           <RecipeIcon className="h-6 w-6" />
         </span>
-        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+        <h3 className="text-xl font-bold text-slate-800">
           {t('results.steps.title')}
         </h3>
       </div>
@@ -202,7 +202,7 @@ const RecipeSteps: React.FC<{
         {isIndirect ? (
              <>
                 <div>
-                  <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
+                  <h4 className="mb-2 font-semibold text-slate-800">
                     {t('results.preferment_title', {
                       technique: t(`form.${config.fermentationTechnique.toLowerCase()}`),
                     })}
@@ -210,7 +210,7 @@ const RecipeSteps: React.FC<{
                    {renderStepList(`${primaryPrefix}.preferment`, `${fallbackPrefix}.preferment`)}
                 </div>
                 <div className="mt-6">
-                  <h4 className="mb-2 font-semibold text-slate-800 dark:text-slate-100">
+                  <h4 className="mb-2 font-semibold text-slate-800">
                     {t('results.final_dough_title')}
                   </h4>
                   {renderStepList(`${primaryPrefix}.final_dough`, `${fallbackPrefix}.final_dough`)}
@@ -227,14 +227,14 @@ const RecipeSteps: React.FC<{
 const ErrorMessage: React.FC<{
   t: (key: string) => string;
 }> = ({ t }) => (
-  <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-red-300 bg-red-50 p-8 text-center dark:border-red-500/50 dark:bg-red-500/10">
-    <div className="rounded-full bg-red-100 p-3 dark:bg-red-500/20">
+  <div className="flex h-full min-h-[300px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-red-300 bg-red-50 p-8 text-center">
+    <div className="rounded-full bg-red-100 p-3">
       <InfoIcon className="h-8 w-8 text-red-500" />
     </div>
-    <h3 className="mt-4 text-xl font-bold text-red-700 dark:text-red-300">
+    <h3 className="mt-4 text-xl font-bold text-red-700">
       {t('results.errors.title')}
     </h3>
-    <p className="mt-2 text-red-600 dark:text-red-400">
+    <p className="mt-2 text-red-600">
       {t('results.errors.message')}
     </p>
   </div>
@@ -396,7 +396,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     },
   ) => (
     <div className="mb-6">
-      <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
+      <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800">
         {title}
       </h3>
       <div className="space-y-1">
@@ -489,8 +489,8 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
       ? 'results.summary_pizza'
       : 'results.summary_bread',
     {
-      count: `<span class="font-bold text-lime-600 dark:text-lime-400">${config.numPizzas}</span>`,
-      weight: `<span class="font-bold text-lime-600 dark:text-lime-400">${config.doughBallWeight}</span>`,
+      count: `<span class="font-bold text-lime-600">${config.numPizzas}</span>`,
+      weight: `<span class="font-bold text-lime-600">${config.doughBallWeight}</span>`,
     },
   );
 
@@ -500,7 +500,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     { id: 'volume', label: t('results.cups') },
   ];
   
-  const containerClasses = "h-full rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 dark:border dark:border-slate-700/50 dark:bg-slate-800 dark:ring-0 sm:p-8";
+  const containerClasses = "h-full rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200/50 transition-colors duration-300 sm:p-8";
 
   if (!results) {
     return (
@@ -526,7 +526,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     >
       <div className="flex items-center justify-between">
         <div className="flex-1"></div> {/* Left Spacer */}
-        <h2 className="flex-shrink-0 text-center text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+        <h2 className="flex-shrink-0 text-center text-2xl font-bold text-slate-900 sm:text-3xl">
           {t('results.title')}
         </h2>
         <div className="no-print flex flex-1 justify-end space-x-2">
@@ -534,12 +534,12 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             onClick={handleShare}
             aria-label={t('results.share_recipe_aria')}
             title={!hasProAccess ? t('pro.locked_tooltip') : ''}
-            className={`relative rounded-full p-2 text-slate-500 transition-all hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800 ${
-              isCopied ? 'bg-lime-100 dark:bg-lime-500/10' : ''
+            className={`relative rounded-full p-2 text-slate-500 transition-all hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 ${
+              isCopied ? 'bg-lime-100' : ''
             }`}
           >
             {isCopied ? (
-              <CheckIcon className="h-6 w-6 text-lime-600 dark:text-lime-400" />
+              <CheckIcon className="h-6 w-6 text-lime-600" />
             ) : hasProAccess ? (
               <ShareIcon className="h-6 w-6" />
             ) : (
@@ -551,7 +551,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             disabled={isExportingPDF}
             aria-label={isExportingPDF ? t('results.exporting_pdf_aria') : t('results.export_pdf_aria')}
             title={!hasProAccess ? t('pro.locked_tooltip') : ''}
-            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-800"
+            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {hasProAccess ? (
                 isExportingPDF ? (
@@ -570,7 +570,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         <div className="mx-auto mt-8 mb-6 max-w-xs text-center">
           <div className="flex items-center justify-center gap-2">
             <div
-            className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1 dark:bg-slate-700"
+            className="flex w-full items-center justify-center rounded-full bg-slate-100 p-1"
             role="group"
             >
             {units.map((unitOption) => (
@@ -579,10 +579,10 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
                 type="button"
                 onClick={() => onUnitChange(unitOption.id)}
                 aria-pressed={unit === unitOption.id}
-                className={`w-1/3 rounded-full py-2 px-3 text-sm font-semibold transition-all duration-300 focus:z-10 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
+                className={`w-1/3 rounded-full py-2 px-3 text-sm font-semibold transition-all duration-300 focus:z-10 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 ${
                     unit === unitOption.id
-                    ? 'bg-white text-lime-600 shadow-sm dark:bg-slate-900'
-                    : 'bg-transparent text-slate-600 hover:bg-slate-200/50 dark:text-slate-300 dark:hover:bg-slate-600/50'
+                    ? 'bg-white text-lime-600 shadow-sm'
+                    : 'bg-transparent text-slate-600 hover:bg-slate-200/50'
                 }`}
                 >
                 {unitOption.label}
@@ -591,7 +591,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             </div>
             <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
           </div>
-            <p className="mt-3 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="mt-3 text-xs uppercase tracking-wider text-slate-500">
             {t('results.unit_system_display', {
                 system: t(
                 unitSystem === UnitSystem.METRIC
@@ -617,7 +617,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
       results.finalDough &&
       results.preferment ? (
         <div className="mb-6">
-          <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800 dark:border-lime-400 dark:text-slate-100">
+          <h3 className="mb-2 border-b-2 border-lime-500 pb-2 text-xl font-bold text-slate-800">
             {t('results.final_dough_title')}
           </h3>
           <div className="space-y-1">
@@ -807,24 +807,24 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
       />
       
       {calculationMode === 'flour' && results && (
-        <div className="mt-4 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-4 dark:border-slate-600 dark:bg-slate-700/50">
-          <h4 className="font-semibold text-center text-slate-800 dark:text-slate-100">
+        <div className="mt-4 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-4">
+          <h4 className="font-semibold text-center text-slate-800">
             {t('results.yield.title')}
           </h4>
           <div className="mt-2 grid grid-cols-2 gap-4 text-center">
             <div>
-              <p className="text-xl font-bold text-lime-600 dark:text-lime-400">
+              <p className="text-xl font-bold text-lime-600">
                 {estimatedUnits}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500">
                 {config.bakeType === BakeType.PIZZAS ? t('results.yield.units') : t('results.yield.loaves')}
               </p>
             </div>
             <div>
-              <p className="text-xl font-bold text-lime-600 dark:text-lime-400">
+              <p className="text-xl font-bold text-lime-600">
                 ~{Math.round(results.totalDough / estimatedUnits)}g
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500">
                 {t('results.yield.weight_per_unit')}
               </p>
             </div>
@@ -838,14 +838,14 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             {config.notes && config.notes.trim() !== '' && (
                 <div className="mt-10">
                 <div className="mb-4 flex items-center gap-3">
-                    <span className="text-lime-500 dark:text-lime-400">
+                    <span className="text-lime-500">
                     <PencilIcon className="h-6 w-6" />
                     </span>
-                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    <h3 className="text-xl font-bold text-slate-800">
                     {t('results.notes_title')}
                     </h3>
                 </div>
-                <div className="prose prose-sm dark:prose-invert max-w-none rounded-lg bg-slate-50 p-4 text-slate-700 dark:bg-slate-700/50 dark:text-slate-300">
+                <div className="prose prose-sm max-w-none rounded-lg bg-slate-50 p-4 text-slate-700">
                     <p className="whitespace-pre-wrap">{config.notes}</p>
                 </div>
                 </div>
@@ -854,9 +854,9 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
       )}
 
       {calculationMode === 'mass' && (
-          <div className="mt-10 rounded-lg border-2 border-dashed border-lime-300 bg-lime-50 p-4 text-center dark:border-lime-500/50 dark:bg-lime-500/10">
+          <div className="mt-10 rounded-lg border-2 border-dashed border-lime-300 bg-lime-50 p-4 text-center">
             <p
-              className="font-semibold text-slate-800 dark:text-slate-100"
+              className="font-semibold text-slate-800"
               dangerouslySetInnerHTML={{
                 __html: summaryText,
               }}
@@ -868,7 +868,7 @@ const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         <button
           onClick={onStartBatch}
           ref={saveButtonRef}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
         >
           <BatchesIcon className="h-5 w-5" />
           <span>{t('footer.start_batch')}</span>

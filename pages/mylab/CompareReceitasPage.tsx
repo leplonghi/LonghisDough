@@ -60,7 +60,11 @@ const CompareReceitasPage: React.FC<CompareReceitasPageProps> = ({ onNavigate, o
 
     useEffect(() => {
         try {
-            const params = new URLSearchParams(window.location.search);
+            // FIX: Parse params from hash for HashRouter
+            const hash = window.location.hash;
+            const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+            const params = new URLSearchParams(queryString);
+            
             const idA = params.get('idA');
             const idB = params.get('idB');
 

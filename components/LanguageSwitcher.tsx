@@ -39,7 +39,7 @@ const LanguageSwitcher: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-900"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
         aria-label="Change language"
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -49,7 +49,7 @@ const LanguageSwitcher: React.FC = () => {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-800 dark:ring-white/10"
+          className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
@@ -59,20 +59,20 @@ const LanguageSwitcher: React.FC = () => {
               <button
                 key={lang.code}
                 onClick={() => handleLanguageSelect(lang.code)}
-                className="flex w-full items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+                className="flex w-full items-center justify-between px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                 role="menuitem"
               >
                 <span
                   className={
                     locale === lang.code
-                      ? 'font-semibold text-lime-600 dark:text-lime-400'
+                      ? 'font-semibold text-lime-600'
                       : ''
                   }
                 >
                   {lang.name}
                 </span>
                 {locale === lang.code && (
-                  <CheckIcon className="h-5 w-5 text-lime-600 dark:text-lime-400" />
+                  <CheckIcon className="h-5 w-5 text-lime-600" />
                 )}
               </button>
             ))}

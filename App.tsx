@@ -1,4 +1,3 @@
-
 import React, {
   useState,
   useEffect,
@@ -39,7 +38,7 @@ import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
 import { I18nProvider, useTranslation } from './i18n';
 import { PaywallModal } from './components/PaywallModal';
 import AuthModal from './components/AuthModal';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './components/ProfilePage';
 import PlansPage from './components/PlansPage';
 import LearnPage from './pages/learn/LearnPage';
 import ReferencesPage from './components/ReferencesPage';
@@ -51,12 +50,11 @@ import { ToastProvider, useToast } from './components/ToastProvider';
 import { UserProvider, useUser } from './contexts/UserProvider';
 import AssistantPage from './components/AssistantPage';
 import FloatingActionButton from './components/FloatingActionButton';
-import OvenAnalysisPage from './pages/OvenAnalysisPage';
-import PizzasPage from './pages/toppings/ToppingsIndexPage';
+// FIX: Changed import to a named import to resolve module resolution error.
+import { OvenAnalysisPage } from './pages/OvenAnalysisPage';
+import DoughStylesPage from './pages/styles/DoughStylesPage';
 import DoughbotPage from './pages/DoughbotPage';
-import PantryPizzaPage from './pages/PantryPizzaPage';
 import SettingsPage from './pages/SettingsPage';
-import ThemePage from './pages/settings/ThemePage';
 import LanguagePage from './pages/settings/LanguagePage';
 import TermsPage from './pages/legal/TermsPage';
 import PrivacyPage from './pages/legal/PrivacyPage';
@@ -329,14 +327,6 @@ const isAnySourdough = (yeastType: YeastType) =>
 
 function AppContent() {
   const { t } = useTranslation();
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
-    try {
-      const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
-      return storedTheme || 'system';
-    } catch {
-      return 'system';
-    }
-  });
   const [route, setRoute] = useState<Page>('mylab');
   const [routeParams, setRouteParams] = useState<string | null>(null);
 
@@ -513,38 +503,6 @@ function AppContent() {
     }
   }, [grantSessionProAccess]);
 
- useEffect(() => {
-    const root = window.document.documentElement;
-    
-    const applyTheme = () => {
-        let effectiveTheme: 'light' | 'dark';
-        if (theme === 'system') {
-            effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        } else {
-            effectiveTheme = theme;
-        }
-
-        if (effectiveTheme === 'dark') {
-            root.classList.add('dark');
-        } else {
-            root.classList.remove('dark');
-        }
-    };
-
-    applyTheme();
-
-    try {
-      localStorage.setItem('theme', theme);
-    } catch (error) {
-        console.error("Failed to save theme to localStorage", error);
-    }
-    
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', applyTheme);
-
-    return () => mediaQuery.removeEventListener('change', applyTheme);
-}, [theme]);
-
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
     const updatedConfig = { ...config, ...newConfig, stylePresetId: calculatorMode === 'basic' ? config.stylePresetId : undefined };
     setConfig(updatedConfig);
@@ -654,12 +612,12 @@ function AppContent() {
     navigate('calculator');
   };
   
-  const handleStartBatch = useCallback(() => {
+  const handleStartBatch = useCallback(async () => {
     if (!results) return;
 
     const batchName = prompt(t('prompts.batch_name_title'), t('prompts.batch_name_default', {style: config.recipeStyle}));
     if (batchName) {
-        const newBatch = addBatch({
+        const newBatch = await addBatch({
             name: batchName,
             doughConfig: config,
             doughResult: results,
@@ -672,13 +630,14 @@ function AppContent() {
   }, [config, results, addBatch, navigate, t]);
 
 
-  const handleLoadAndNavigate = useCallback((configToLoad: DoughConfig) => {
-    setConfig(configToLoad);
+  const handleLoadAndNavigate = useCallback((configToLoad: Partial<DoughConfig>) => {
+    setConfig(prev => ({ ...prev, ...configToLoad }));
+    addToast(t('info.preset_loaded', { name: configToLoad.recipeStyle }), 'info');
     navigate('calculator');
-  }, [navigate]);
+  }, [navigate, t]);
 
-  const handleCreateDraftAndNavigate = useCallback(() => {
-    const draft = createDraftBatch();
+  const handleCreateDraftAndNavigate = useCallback(async () => {
+    const draft = await createDraftBatch();
     navigate(`batch/${draft.id}`);
   }, [createDraftBatch, navigate]);
 
@@ -857,8 +816,6 @@ function AppContent() {
         return <HelpPage />;
       case 'settings':
         return <SettingsPage />;
-      case 'settings/theme':
-        return <ThemePage theme={theme} setTheme={setTheme} />;
       case 'settings/language':
         return <LanguagePage />;
       case 'legal':
@@ -877,14 +834,13 @@ function AppContent() {
         return <ContactPage />;
       case 'landing':
         return <LandingPage />;
-      case 'pizzas':
-        return <PizzasPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
+      case 'styles':
+      case 'pizzas': // Rota antiga redireciona para a nova de Estilos
+        return <DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
       case 'tools-oven-analysis':
         return <OvenAnalysisPage />;
       case 'tools-doughbot':
         return <DoughbotPage />;
-      case 'tools-pantry-pizza':
-        return <PantryPizzaPage />;
       case 'calculator':
         return (
           <CalculatorPage
@@ -927,13 +883,11 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-neutral-900 transition-colors duration-300 dark:bg-neutral-900 dark:text-neutral-200">
+    <div className="min-h-screen bg-white font-sans text-neutral-900 transition-colors duration-300">
       <Navigation
         activePage={route as PrimaryPage}
         onNavigate={navigate}
         onOpenAuth={() => setIsAuthModalOpen(true)}
-        theme={theme}
-        setTheme={setTheme}
       />
 
       <main className="container mx-auto px-4 py-8 md:py-10 pb-24 sm:pb-10">
@@ -956,7 +910,7 @@ function AppContent() {
       {!isAssistantOpen && (
          <FloatingActionButton 
             onClick={() => setIsAssistantOpen(true)} 
-            label={t('assistant_page.title_short')}
+            label={t('assistant.title_short')}
             isShifted={isSummaryBarVisible}
          />
       )}

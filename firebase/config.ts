@@ -27,8 +27,8 @@ const app = isConfigValid
 
 if (!isConfigValid) {
   console.warn(
-    "Firebase configuration is missing or uses placeholder values. " +
-    "Firebase-dependent features will be disabled."
+    "A configuração do Firebase está ausente ou usa valores de placeholder. " +
+    "Recursos dependentes do Firebase (como autenticação e banco de dados Firestore) serão desativados."
   );
 }
 

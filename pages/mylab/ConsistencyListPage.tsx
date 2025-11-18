@@ -17,11 +17,12 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
         setIsModalOpen(true);
     };
 
-    const handleSaveSeries = (seriesData: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'> | (Partial<TestSeries> & { id: string })) => {
+    // FIX: Make function async to handle promises from context.
+    const handleSaveSeries = async (seriesData: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'> | (Partial<TestSeries> & { id: string })) => {
         if ('id' in seriesData) {
-            updateTestSeries(seriesData);
+            await updateTestSeries(seriesData);
         } else {
-            addTestSeries(seriesData);
+            await addTestSeries(seriesData);
         }
         setIsModalOpen(false);
     };
@@ -35,7 +36,7 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
             <MyLabLayout activePage="mylab/consistency" onNavigate={onNavigate}>
                 <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Consistency Mode</h1>
+                        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">Consistency Mode</h1>
                         <p className="mt-1 text-sm text-neutral-500">Planeje e acompanhe séries de testes com variações controladas.</p>
                     </div>
                     <button onClick={() => handleOpenModal()} className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600">
@@ -47,17 +48,17 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
                 {sortedSeries.length > 0 ? (
                     <div className="space-y-4">
                         {sortedSeries.map(series => (
-                            <div key={series.id} className="rounded-lg bg-white dark:bg-neutral-800 p-4 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+                            <div key={series.id} className="rounded-lg bg-white p-4 border border-neutral-200 shadow-sm">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h4 className="font-semibold text-neutral-800 dark:text-neutral-100">{series.name}</h4>
-                                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{series.description}</p>
+                                        <h4 className="font-semibold text-neutral-800">{series.name}</h4>
+                                        <p className="text-sm text-neutral-500 mt-1">{series.description}</p>
                                     </div>
-                                    <button onClick={() => onNavigate(`mylab/consistency/${series.id}`)} className="text-sm font-semibold text-lime-600 dark:text-lime-400 hover:underline">
+                                    <button onClick={() => onNavigate(`mylab/consistency/${series.id}`)} className="text-sm font-semibold text-lime-600 hover:underline">
                                         Ver detalhes
                                     </button>
                                 </div>
-                                <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-700 flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400">
+                                <div className="mt-3 pt-3 border-t border-neutral-200 flex items-center gap-4 text-xs text-neutral-500">
                                     <span>Variável: <strong>{series.parameters.variable}</strong></span>
                                     <span>Passos: <strong>{series.parameters.steps.join(' / ')}</strong></span>
                                     <span>Fornadas: <strong>{series.relatedBakes.length}</strong></span>
@@ -66,7 +67,7 @@ const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) 
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-12 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700">
+                    <div className="text-center py-12 rounded-xl border-2 border-dashed border-neutral-300">
                         <FlaskIcon className="mx-auto h-10 w-10 text-neutral-400" />
                         <p className="mt-4 font-medium">Nenhuma série de testes criada.</p>
                         <p className="text-sm text-neutral-500">Clique em "Criar Nova Série" para começar seu primeiro experimento.</p>

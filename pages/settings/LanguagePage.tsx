@@ -11,14 +11,14 @@ const LanguagePage: React.FC = () => {
     <SettingsPageLayout title="Idioma">
         <p>Escolha o seu idioma de preferência. Esta funcionalidade é apenas visual no momento.</p>
          <div className="not-prose mt-6">
-            <label htmlFor="language-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label htmlFor="language-select" className="block text-sm font-medium text-slate-700">
                 Idioma Selecionado
             </label>
             <div className="relative mt-1">
                 <select
                 id="language-select"
                 disabled // Non-functional as requested
-                className="w-full appearance-none rounded-lg border-slate-300 bg-slate-50 p-3 text-slate-900 focus:border-lime-500 focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 disabled:opacity-70"
+                className="w-full appearance-none rounded-lg border-slate-300 bg-slate-50 p-3 text-slate-900 focus:border-lime-500 focus:ring-lime-500 disabled:opacity-70"
                 >
                 <option>Português</option>
                 <option>English</option>

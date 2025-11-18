@@ -19,7 +19,7 @@ const en = {
     greeting_evening: "Good evening, {name}.",
     greeting_subtext: "Let's take another dough out of guesswork today?",
     actions_title: "Quick Actions",
-    action_new_dough: "New Dough",
+    action_new_dough: "New Dough Formula",
     action_log_batch: "Log Bake",
     action_open_levain: "Open Levain Pet",
     summary_title: "Your Lab's Summary",
@@ -37,7 +37,7 @@ const en = {
     levain_status_fed: "last fed {time} ago",
     levain_empty_state: "You don't have a Levain Pet yet. Create your first starter to track everything.",
     levain_view_all: "View all starters",
-    presets_title: "Presets & Favorite Recipes",
+    presets_title: "Presets & Favorite Doughs",
     presets_subtext: "Quickly access what works best in your kitchen.",
     presets_action: "Use in calculator",
     insights_title: "Your Dough Insights",
@@ -196,17 +196,18 @@ const en = {
     skip: 'Skip',
   },
   nav: {
-    lab: "My Lab",
+    lab: "Meu Lab",
     diary: "Diary",
-    calculator: "Calculator",
-    learn: "Learn",
-    community: "CrustCrew",
+    calculator: "Calculadora",
+    styles: "Estilos de Massa",
+    learn: "Aprender",
+    community: "Comunidade",
     insights: "Insights",
     flours: "Flours",
     help: "Help",
     references: "References",
-    profile: "Profile",
-    tools: "Tools"
+    profile: "Perfil",
+    tools: "Ferramentas"
   },
   user_menu: {
     profile: "Profile",
@@ -230,7 +231,7 @@ const en = {
     sign_in: 'Sign In',
     sign_out: 'Sign Out',
     modal_title: 'Access your account',
-    modal_subtitle: 'Save your batches, ovens, and more.',
+    modal_subtitle: 'Save your bakes, ovens, and levains.',
     continue_with_google: 'Continue with Google',
     terms_notice: 'By continuing, you agree to our Terms of Service.',
     view_profile: 'View Profile'
@@ -239,13 +240,13 @@ const en = {
     basic: 'Guided Mode',
     advanced: 'Free Mode',
     basic_tooltip: 'Follow a style with recommended parameters for greater consistency. Ideal for learning.',
-    advanced_tooltip: 'Freely edit all parameters and create your own recipe.',
+    advanced_tooltip: 'Freely edit all parameters and create your own dough formula.',
     basic_tag: 'Guided Mode',
     advanced_tag: 'Free Mode',
   },
   form: {
     pizzas: 'Pizzas',
-    breads: 'Breads',
+    breads: 'Breads & Savory',
     sections: {
       style: {
         title: "Dough Style",
@@ -268,15 +269,15 @@ const en = {
         description: "Factors that influence your dough's behavior."
       },
       tools: {
-        title: "Load Preset",
-        description: "Start from one of your saved recipes."
+        title: "Load Custom Style",
+        description: "Start from one of your saved dough formulas."
       },
       notes: {
         title: "Your Notes",
-        description: "Log observations and learnings about this recipe."
+        description: "Log observations and learnings about this formula."
       },
       save_preset: {
-        title: "Save Preset",
+        title: "Save as Custom Style",
         description: "Save the current configuration for future use."
       }
     },
@@ -310,14 +311,14 @@ const en = {
     salt_tooltip: 'Salt controls fermentation, strengthens gluten, and adds flavor.',
     oil_tooltip: 'Oil/fat adds softness and helps with crust browning, especially in lower-temperature ovens.',
     sugar_tooltip: 'Percentage of sugar. Used for color and softness. It is not typically used in some traditional styles.',
-    yeast_type_tooltip: 'Each type has different potency. The choice also impacts the final flavor of the dough. <a href="#/learn" class="text-lime-500 hover:underline">Learn more in our tutorials.</a>',
+    yeast_type_tooltip: 'Each type has different potency. The choice also impacts the final flavor of the dough. <a href="#/learn" class="text-lime-500 hover:underline">Learn more in our technical library.</a>',
     yeast_tooltip: 'The percentage of yeast relative to the flour. This varies with yeast type, temperature, and desired fermentation time.',
     preferment_flour_tooltip: 'The percentage of total flour used in the preferment. Common ranges are 20-50% for Poolish and 30-60% for Biga.',
     unit_system_tooltip: 'Affects the conversion from grams to cups/spoons. The metric system (1 cup = 250ml) differs from the US customary system (1 cup = ~236ml).',
     advanced_mode_tooltip: 'This parameter is set by the selected style. Switch to Free Mode to edit it.',
     baking_temp_tooltip: "The target temperature of your baking surface (°C). This affects the analysis and suggestions.",
     tooltips: {
-      ui_mode: '<b>Guided Mode:</b> Guided, with locked parameters for consistency.<br><b>Free Mode:</b> Full control over all recipe parameters.',
+      ui_mode: '<b>Guided Mode:</b> Guided, with locked parameters for consistency.<br><b>Free Mode:</b> Full control over all formula parameters.',
       calculation_mode: '<b>By Total Weight:</b> Ideal for beginners. Define how many pizzas and the weight of each.<br><b>By Flour:</b> Professional method. Define the total flour weight as the base (100%).',
       num_pizzas: 'The number of dough balls (or loaves) you want to produce.',
       dough_ball_weight: 'The final weight of each dough ball. Different styles call for different weights (e.g., Neapolitan 250-280g, NY 350-450g).',
@@ -327,13 +328,13 @@ const en = {
       flour_type: 'The flour selection affects hydration recommendations and the intelligent dough analysis.',
       ambient_temperature: 'The ambient temperature influences the speed of fermentation. The app uses this information to suggest adjustments.',
       notes: 'Your notes are saved with the batch in "My Lab". Write down what went right, what went wrong, and what you learned.',
-      save_preset: 'Saves the current configuration as a reusable recipe in Free Mode.',
-      load_preset: 'Loads one of your saved recipes, overwriting the current values.',
+      save_preset: 'Saves the current configuration as a reusable custom style.',
+      load_preset: 'Loads one of your saved styles, overwriting the current values.',
       unit_selection: 'Switch between grams, ounces, or volume units (cups/spoons). The conversion to volume is an approximation based on the density of each ingredient.',
-      start_batch: 'This is the final weight of your dough. Use the "Start Batch" button below to save this recipe to your diary.',
-      batch_status: 'Update the status to organize your batch diary. E.g., "Planned", "In Progress", "Completed".',
-      batch_rating: 'Rate your batch from 1 to 5 stars. This helps track your best results in the Insights.',
-      publish_community: 'By checking this option and saving, a copy of this batch (recipe and notes) will be visible to other users in the CrustCrew tab.',
+      start_batch: 'This is the final weight of your dough. Use the "Save Bake" button below to save this formula to your lab diary.',
+      batch_status: 'Update the status to organize your bake diary. E.g., "Planned", "In Progress", "Completed".',
+      batch_rating: 'Rate your bake from 1 to 5 stars. This helps track your best results in the Insights.',
+      publish_community: 'By checking this option and saving, a copy of this bake (formula and notes) will be visible to other users in the CrustCrew tab.',
     },
     // Yeast Types
     yeast_idy: 'Instant Dry (IDY)',
@@ -347,11 +348,11 @@ const en = {
     temp_hot: 'Hot (> 24°C)',
     // Presets
     reset_preset_button: 'Reset to "{name}" recommended values',
-    load_preset: "Load Preset",
-    save_preset: "Save Current as Preset",
-    delete_preset: "Delete Preset",
-    no_presets: "No saved presets",
-    select_preset_aria: "Select saved preset",
+    load_preset: "Load Style",
+    save_preset: "Save Current as Style",
+    delete_preset: "Delete Style",
+    no_presets: "No saved styles",
+    select_preset_aria: "Select saved style",
     // Levain selection
     select_levain: "Select your Levain Pet",
     using_levain: "Using",
@@ -370,7 +371,7 @@ const en = {
     },
   },
   results: {
-    title: 'Calculated Recipe',
+    title: 'Calculated Formula',
     flour: 'Flour',
     water: 'Water',
     salt: 'Salt',
@@ -392,7 +393,7 @@ const en = {
     ounces: 'Ounces',
     cups: 'Cups/Spoons',
     unit_system_display: 'Volume calc: {system}',
-    share_recipe_aria: 'Share recipe',
+    share_recipe_aria: 'Share formula',
     exporting_pdf_aria: 'Exporting PDF...',
     export_pdf_aria: 'Export as PDF',
     preferment_title: 'Preferment ({technique})',
@@ -400,65 +401,65 @@ const en = {
     levain_details: 'Levain Details',
     total_levain: 'Total Levain',
     steps: {
-      title: "Suggested Steps",
-      generic_direct: {
-        "step1": "<strong>1. Precision First:</strong> Weigh all ingredients accurately. In baking, precision is key to consistency.",
-        "step2": "<strong>2. Activation (if ADY):</strong> If using Active Dry Yeast, dissolve it in warm water (~38°C/100°F) with a pinch of sugar. Wait 5-10 min until foamy. For Instant Dry Yeast (IDY), mix it directly with the flour.",
-        "step3": "<strong>3. Initial Mix:</strong> In a large bowl, whisk flour and salt. Add the water/yeast mixture and oil (if using). Mix until a shaggy dough forms and no dry flour remains.",
-        "step4": "<strong>4. Develop Gluten (Knead):</strong> Knead on a lightly floured surface for 8-12 minutes until smooth and elastic. <em>Pro Tip:</em> Perform the 'windowpane test'—a small piece of dough should stretch thin enough to see light through it without tearing.",
-        "step5": "<strong>5. Bulk Fermentation:</strong> Shape dough into a ball, place in an oiled bowl, and cover. Let rise for 1-2 hours at room temp, or until doubled. For deeper flavor, you can cold ferment in the refrigerator for 24-72 hours.",
-        "step6": "<strong>6. Divide and Ball:</strong> Gently deflate the dough, divide into portions, and shape each into a tight ball. This creates surface tension for a good final rise.",
-        "step7": "<strong>7. Final Proof:</strong> Place dough balls in a covered container and let them rest. For pizza, this can be 1-2 hours. For bread, until an indentation from your finger springs back slowly.",
-        "step8": "<strong>8. Shape & Bake:</strong> Gently stretch your pizza dough or shape your loaf. Bake in a very hot, preheated oven on a pizza stone or steel. Pizzas bake hot and fast; breads are more moderate.",
-        "step9": "<strong>9. Cool Down:</strong> Rest the finished product on a wire rack for several minutes before slicing. This allows the internal structure (crumb) to set and improves texture."
-      },
-      generic_indirect: {
-          "preferment": {
-              "step1": "<strong>1. Prepare Preferment:</strong> In a bowl, mix the preferment ingredients (flour, water, tiny amount of yeast) until just combined. The consistency will vary (Poolish is wet, Biga is stiff).",
-              "step2": "<strong>2. Ferment Preferment:</strong> Cover the bowl and let it ferment at room temperature for the time specified in your recipe (e.g., 8-16 hours for Poolish, 12-24 for Biga). It should be bubbly and aromatic."
-          },
-          "final_dough": {
-              "step1": "<strong>1. Combine:</strong> In a large bowl, dissolve the salt in the final dough water. Add the fully fermented preferment and break it up in the water.",
-              "step2": "<strong>2. Mix:</strong> Gradually add the remaining flour and any remaining yeast, mixing until a shaggy dough forms. Add oil if using.",
-              "step3": "<strong>3. Knead & Bulk Ferment:</strong> Knead the dough for 10-15 minutes until smooth. Because the preferment did a lot of work, the bulk fermentation is usually shorter. Let it rise until puffy (e.g., 30-60 minutes).",
-              "step4": "<strong>4. Final Steps:</strong> Proceed with dividing, balling, final proofing, and baking as outlined in the direct method steps (6-9)."
-          }
-      },
-      neapolitan_direct: {
-          "step1": "<strong>1. Autolyse (Optional):</strong> Mix flour and about 90% of the water. Let it rest for 30-60 minutes. This hydrates the flour and makes kneading easier.",
-          "step2": "<strong>2. Dissolve Salt & Yeast:</strong> Dissolve the salt in the remaining water. In a separate small amount of water, dissolve the yeast.",
-          "step3": "<strong>3. Mix & Knead:</strong> Add the salt water and then the yeast water to the dough. Knead for 15-20 minutes by hand until extremely smooth and elastic ('windowpane test'). The final dough temperature should be around 23-26°C.",
-          "step4": "<strong>4. Bulk Fermentation:</strong> Place the dough in a covered container and let it rest at room temperature for 2 hours.",
-          "step5": "<strong>5. Balling & Cold Ferment:</strong> Divide the dough into balls (staglio). Place them in a proofing box and refrigerate for 24-48 hours for optimal flavor development.",
-          "step6": "<strong>6. Acclimatize:</strong> Remove the dough balls from the fridge 2-4 hours before baking, allowing them to come to room temperature.",
-          "step7": "<strong>7. Stretch by Hand:</strong> Gently stretch the dough from the center outwards, preserving the air in the cornicione (crust). <em>Never use a rolling pin.</em>",
-          "step8": "<strong>8. Top & Bake:</strong> Top lightly and bake in a scorching hot oven (450-500°C / 850-950°F) for 60-90 seconds."
-      },
-      pan_pizza_direct: {
-          "step1": "<strong>1. Mix:</strong> Combine all ingredients in a bowl until a sticky, shaggy dough forms. No extensive kneading is required at this stage.",
-          "step2": "<strong>2. Bulk Fermentation & Folds:</strong> Cover the bowl and let it rise for 1-2 hours. Perform a set of 'stretch and folds' every 30 minutes to build strength.",
-          "step3": "<strong>3. Pan Prep:</strong> Generously oil your baking pan (Detroit-style pan, cast iron, or cake pan). This is key for a crispy, fried-like crust.",
-          "step4": "<strong>4. Proof in Pan:</strong> Place the dough in the pan, gently stretch it towards the corners. Cover and let it proof for another 1-2 hours until it's puffy and fills the pan.",
-          "step5": "<strong>5. Dimple & Top:</strong> Gently press your oiled fingertips into the dough to create dimples. Add cheese all the way to the edges, then top with other ingredients. For Detroit style, add sauce in stripes on top of the cheese.",
-          "step6": "<strong>6. Bake:</strong> Bake in a preheated oven at a lower temperature than Neapolitan (e.g., 230-260°C / 450-500°F) for 15-25 minutes, until the cheese is bubbly and the edges are dark and crispy."
-      },
-      focaccia_direct: {
-          "step1": "<strong>1. Mix:</strong> In a large bowl, combine flour, yeast, salt, and water. Mix until a very wet and sticky dough forms. Add a generous amount of olive oil.",
-          "step2": "<strong>2. Stretch & Folds:</strong> Since the dough is too wet to knead, perform 3-4 sets of 'stretch and folds' in the bowl every 30 minutes. This will build strength.",
-          "step3": "<strong>3. Bulk Ferment:</strong> Cover the dough and let it ferment at room temperature for several hours, or overnight in the refrigerator for better flavor.",
-          "step4": "<strong>4. Pan Proof:</strong> Transfer the dough to a heavily oiled baking sheet. Gently stretch it to fit the pan. Let it proof for another 1-2 hours until very bubbly.",
-          "step5": "<strong>5. Dimple & Season:</strong> Coat your fingertips in olive oil and press firmly into the dough to create the classic dimples. Drizzle with more olive oil and sprinkle with coarse salt and rosemary.",
-          "step6": "<strong>6. Bake:</strong> Bake at 220°C (425°F) for 20-25 minutes until golden brown and crisp."
-      },
-      high_hydration_bread_direct: {
-          "step1": "<strong>1. Autolyse:</strong> Combine flour and water and let rest for at least 30 minutes. This is crucial for high-hydration doughs to absorb the water.",
-          "step2": "<strong>2. Mix:</strong> Add salt and levain/yeast. Mix gently until incorporated. The dough will be very sticky.",
-          "step3": "<strong>3. Bulk Ferment with Folds:</strong> During the 3-5 hour bulk fermentation, perform several sets of 'stretch and folds' to build strength without intense kneading.",
-          "step4": "<strong>4. Pre-shape and Bench Rest:</strong> Gently pre-shape the dough into a round on a floured surface. Let it rest for 20-30 minutes.",
-          "step5": "<strong>5. Final Shaping:</strong> Carefully shape the dough into its final form (boule or bâtard) and place it in a proofing basket (banneton).",
-          "step6": "<strong>6. Final Proof:</strong> Let it proof at room temperature or perform a long cold proof in the refrigerator for 12-24 hours to develop flavor.",
-          "step7": "<strong>7. Bake with Steam:</strong> Bake in a very hot Dutch oven or on a baking stone with steam for the first 20 minutes to achieve maximum oven spring and a crispy crust."
-      }
+        "title": "Suggested Steps",
+        "generic_direct": {
+            "step1": "<strong>1. Precision First:</strong> Weigh all ingredients accurately. In baking, precision is key to consistency.",
+            "step2": "<strong>2. Activation (if ADY):</strong> If using Active Dry Yeast, dissolve it in warm water (~38°C/100°F) with a pinch of sugar. Wait 5-10 min until foamy. For Instant Dry Yeast (IDY), mix it directly with the flour.",
+            "step3": "<strong>3. Initial Mix:</strong> In a large bowl, whisk flour and salt. Add the water/yeast mixture and oil (if using). Mix until a shaggy dough forms and no dry flour remains.",
+            "step4": "<strong>4. Develop Gluten (Knead):</strong> Knead on a lightly floured surface for 8-12 minutes until smooth and elastic. <em>Pro Tip:</em> Perform the 'windowpane test'—a small piece of dough should stretch thin enough to see light through it without tearing.",
+            "step5": "<strong>5. Bulk Fermentation:</strong> Shape dough into a ball, place in an oiled bowl, and cover. Let rise for 1-2 hours at room temp, or until doubled. For deeper flavor, you can cold ferment in the refrigerator for 24-72 hours.",
+            "step6": "<strong>6. Divide and Ball:</strong> Gently deflate the dough, divide into portions, and shape each into a tight ball. This creates surface tension for a good final rise.",
+            "step7": "<strong>7. Final Proof:</strong> Place dough balls in a covered container and let them rest. For pizza, this can be 1-2 hours. For bread, until an indentation from your finger springs back slowly.",
+            "step8": "<strong>8. Shape & Bake:</strong> Gently stretch your pizza dough or shape your loaf. Bake in a very hot, preheated oven on a pizza stone or steel. Pizzas bake hot and fast; breads are more moderate.",
+            "step9": "<strong>9. Cool Down:</strong> Rest the finished product on a wire rack for several minutes before slicing. This allows the internal structure (crumb) to set and improves texture."
+        },
+        "generic_indirect": {
+            "preferment": {
+                "step1": "<strong>1. Prepare Preferment:</strong> In a bowl, mix the preferment ingredients (flour, water, tiny amount of yeast) until just combined. The consistency will vary (Poolish is wet, Biga is stiff).",
+                "step2": "<strong>2. Ferment Preferment:</strong> Cover the bowl and let it ferment at room temperature for the time specified in your recipe (e.g., 8-16 hours for Poolish, 12-24 for Biga). It should be bubbly and aromatic."
+            },
+            "final_dough": {
+                "step1": "<strong>1. Combine:</strong> In a large bowl, dissolve the salt in the final dough water. Add the fully fermented preferment and break it up in the water.",
+                "step2": "<strong>2. Mix:</strong> Gradually add the remaining flour and any remaining yeast, mixing until a shaggy dough forms. Add oil if using.",
+                "step3": "<strong>3. Knead & Bulk Ferment:</strong> Knead the dough for 10-15 minutes until smooth. Because the preferment did a lot of work, the bulk fermentation is usually shorter. Let it rise until puffy (e.g., 30-60 minutes).",
+                "step4": "<strong>4. Final Steps:</strong> Proceed with dividing, balling, final proofing, and baking as outlined in the direct method steps (6-9)."
+            }
+        },
+        "neapolitan_direct": {
+            "step1": "<strong>1. Autolyse (Optional):</strong> Mix flour and about 90% of the water. Let it rest for 30-60 minutes. This hydrates the flour and makes kneading easier.",
+            "step2": "<strong>2. Dissolve Salt & Yeast:</strong> Dissolve the salt in the remaining water. In a separate small amount of water, dissolve the yeast.",
+            "step3": "<strong>3. Mix & Knead:</strong> Add the salt water and then the yeast water to the dough. Knead for 15-20 minutes by hand until extremely smooth and elastic ('windowpane test'). The final dough temperature should be around 23-26°C.",
+            "step4": "<strong>4. Bulk Fermentation:</strong> Place the dough in a covered container and let it rest at room temperature for 2 hours.",
+            "step5": "<strong>5. Balling & Cold Ferment:</strong> Divide the dough into balls (staglio). Place them in a proofing box and refrigerate for 24-48 hours for optimal flavor development.",
+            "step6": "<strong>6. Acclimatize:</strong> Remove the dough balls from the fridge 2-4 hours before baking, allowing them to come to room temperature.",
+            "step7": "<strong>7. Stretch by Hand:</strong> Gently stretch the dough from the center outwards, preserving the air in the cornicione (crust). <em>Never use a rolling pin.</em>",
+            "step8": "<strong>8. Top & Bake:</strong> Top lightly and bake in a scorching hot oven (450-500°C / 850-950°F) for 60-90 seconds."
+        },
+        "pan_pizza_direct": {
+            "step1": "<strong>1. Mix:</strong> Combine all ingredients in a bowl until a sticky, shaggy dough forms. No extensive kneading is required at this stage.",
+            "step2": "<strong>2. Bulk Fermentation & Folds:</strong> Cover the bowl and let it rise for 1-2 hours. Perform a set of 'stretch and folds' every 30 minutes to build strength.",
+            "step3": "<strong>3. Pan Prep:</strong> Generously oil your baking pan (Detroit-style pan, cast iron, or cake pan). This is key for a crispy, fried-like crust.",
+            "step4": "<strong>4. Proof in Pan:</strong> Place the dough in the pan, gently stretch it towards the corners. Cover and let it proof for another 1-2 hours until it's puffy and fills the pan.",
+            "step5": "<strong>5. Dimple & Top:</strong> Gently press your oiled fingertips into the dough to create dimples. Add cheese all the way to the edges, then top with other ingredients. For Detroit style, add sauce in stripes on top of the cheese.",
+            "step6": "<strong>6. Bake:</strong> Bake in a preheated oven at a lower temperature than Neapolitan (e.g., 230-260°C / 450-500°F) for 15-25 minutes, until the cheese is bubbly and the edges are dark and crispy."
+        },
+        "focaccia_direct": {
+            "step1": "<strong>1. Mix:</strong> In a large bowl, combine flour, yeast, salt, and water. Mix until a very wet and sticky dough forms. Add a generous amount of olive oil.",
+            "step2": "<strong>2. Stretch & Folds:</strong> Since the dough is too wet to knead, perform 3-4 sets of 'stretch and folds' in the bowl every 30 minutes. This will build strength.",
+            "step3": "<strong>3. Bulk Ferment:</strong> Cover the dough and let it ferment at room temperature for several hours, or overnight in the refrigerator for better flavor.",
+            "step4": "<strong>4. Pan Proof:</strong> Transfer the dough to a heavily oiled baking sheet. Gently stretch it to fit the pan. Let it proof for another 1-2 hours until very bubbly.",
+            "step5": "<strong>5. Dimple & Season:</strong> Coat your fingertips in olive oil and press firmly into the dough to create the classic dimples. Drizzle with more olive oil and sprinkle with coarse salt and rosemary.",
+            "step6": "<strong>6. Bake:</strong> Bake at 220°C (425°F) for 20-25 minutes until golden brown and crisp."
+        },
+        "high_hydration_bread_direct": {
+            "step1": "<strong>1. Autolyse:</strong> Combine flour and water and let rest for at least 30 minutes. This is crucial for high-hydration doughs to absorb the water.",
+            "step2": "<strong>2. Mix:</strong> Add salt and levain/yeast. Mix gently until incorporated. The dough will be very sticky.",
+            "step3": "<strong>3. Bulk Ferment with Folds:</strong> During the 3-5 hour bulk fermentation, perform several sets of 'stretch and folds' to build strength without intense kneading.",
+            "step4": "<strong>4. Pre-shape and Bench Rest:</strong> Gently pre-shape the dough into a round on a floured surface. Let it rest for 20-30 minutes.",
+            "step5": "<strong>5. Final Shaping:</strong> Carefully shape the dough into its final form (boule or bâtard) and place it in a proofing basket (banneton).",
+            "step6": "<strong>6. Final Proof:</strong> Let it proof at room temperature or perform a long cold proof in the refrigerator for 12-24 hours to develop flavor.",
+            "step7": "<strong>7. Bake with Steam:</strong> Bake in a very hot Dutch oven or on a baking stone with steam for the first 20 minutes to achieve maximum oven spring and a crispy crust."
+        }
     },
     notes_title: 'Your Notes',
     yield: {
@@ -484,13 +485,13 @@ const en = {
       oil: 'oil',
       yeast: 'yeast'
     },
-    share_error: 'Could not copy recipe link to clipboard.',
+    share_error: 'Could not copy formula link to clipboard.',
     pdf_error_alert: 'Sorry, there was an error exporting the PDF. Please try again later.',
     pdf_error_console: 'PDF generation failed: A required library or element is missing.',
   },
   footer: {
     total_dough: 'Total Dough',
-    start_batch: 'Save & Start Batch'
+    start_batch: 'Save Bake'
   },
   pro: {
     locked_tooltip: 'This is a Pro feature.',
@@ -526,28 +527,28 @@ const en = {
     }
   },
   info: {
-    preset_loaded: 'Preset "{name}" loaded.',
-    preset_saved: 'Preset "{name}" saved!',
-    preset_deleted: 'Preset "{name}" deleted.',
-    batch_deleted: 'Batch "{name}" deleted.',
-    batch_started: 'Batch "{name}" started!',
-    legacy_migration: "Your saved recipes have been updated to the new 'Batches' format!",
-    save_success: 'Pronto! Ajuste salvo com sucesso.',
-    update_success: 'Massas atualizadas. Suas alterações foram aplicadas.',
+    preset_loaded: 'Style "{name}" loaded.',
+    preset_saved: 'Style "{name}" saved!',
+    preset_deleted: 'Style "{name}" deleted.',
+    batch_deleted: 'Bake "{name}" deleted.',
+    batch_started: 'Bake "{name}" started!',
+    legacy_migration: "Your saved recipes have been updated to the new 'Bakes' format!",
+    save_success: 'Done! Adjustment saved successfully.',
+    update_success: 'Doughs updated. Your changes have been applied.',
     error: {
-      generic: 'Algo não saiu como esperado. Tente novamente ou revise os campos.'
+      generic: 'Something didn\'t go as expected. Please try again or review the fields.'
     }
   },
   prompts: {
-    batch_name_title: "Name this batch:",
-    batch_name_default: "Batch of {style}",
-    preset_name_title: "Name this preset:",
+    batch_name_title: "Name this bake:",
+    batch_name_default: "Bake of {style}",
+    preset_name_title: "Name this style:",
   },
   confirmations: {
     delete_oven: 'Are you sure you want to delete the oven "{name}"?',
     delete_levain: 'Are you sure you want to delete the levain "{name}"?',
-    delete_preset: 'Are you sure you want to delete the preset "{name}"?',
-    delete_batch: 'Tem certeza que deseja excluir a fornada "{name}"?',
+    delete_preset: 'Are you sure you want to delete the style "{name}"?',
+    delete_batch: 'Are you sure you want to delete the bake "{name}"?',
   },
   profile: {
     not_logged_in: 'Please log in to view your profile.',
@@ -660,19 +661,19 @@ const en = {
   modals: {
     close: 'Close',
     load: {
-      title: 'Load Recipe',
-      all: 'All Recipes',
+      title: 'Load Bake',
+      all: 'All Bakes',
       favorites: 'Favorites',
-      empty: 'No saved recipes yet.',
-      empty_favorites: 'You have no favorite recipes.',
-      delete_aria: 'Delete recipe',
+      empty: 'No saved bakes yet.',
+      empty_favorites: 'You have no favorite bakes.',
+      delete_aria: 'Delete bake',
     },
     presets: {
-      title: 'My Presets',
-      select_aria: 'Select saved preset',
-      empty: 'No saved presets',
-      delete_title: 'Delete Preset',
-      load: 'Load Preset',
+      title: 'My Styles',
+      select_aria: 'Select saved style',
+      empty: 'No saved styles',
+      delete_title: 'Delete Style',
+      load: 'Load Style',
       save: 'Save Current'
     },
     adjustments: {
@@ -693,32 +694,32 @@ const en = {
     }
   },
   diary_page: {
-    title: 'My Batches',
+    title: 'My Bakes',
     subtitle: 'Track your dough journey, from planning to baking.',
-    empty_title: 'Welcome to your Diary!',
-    empty_subtitle: 'This is where you can track your dough batches. Create your first recipe to get started!',
-    create_first: 'Create First Recipe',
-    new_batch: 'New Batch',
-    my_recipes: 'My Recipes',
+    empty_title: 'Welcome to your Lab Diary!',
+    empty_subtitle: 'This is where you can track your dough bakes. Create your first formula to get started!',
+    create_first: 'Create First Formula',
+    new_batch: 'New Bake',
+    my_recipes: 'My Doughs',
     explore: 'Explore',
     card: {
       hydration: 'Hydration',
       weight: 'Weight',
       units: 'Units',
       open: 'Details',
-      redo: 'Redo Batch',
+      redo: 'Redo Bake',
     }
   },
   batch_detail: {
-    not_found: 'Batch not found',
-    not_found_desc: 'The batch you are looking for does not exist or has been deleted.',
-    back_to_diary: 'Back to Diary',
+    not_found: 'Bake not found',
+    not_found_desc: 'The bake you are looking for does not exist or has been deleted.',
+    back_to_diary: 'Back to Bakes',
     created_on: 'Created on',
     status: 'Status',
     rating: 'Rating',
     notes: 'Process Notes',
     notes_placeholder: 'e.g., Fermented for 48h in the fridge, baked at 280°C for 5 minutes...',
-    recipe_summary: 'Recipe Summary',
+    recipe_summary: 'Formula Summary',
     style: 'Style',
     units: 'Units',
     hydration: 'Hydration',
@@ -728,7 +729,7 @@ const en = {
     yeast: 'Yeast',
     baking_temp: "Baking Temp.",
     publish: 'Publish to CrustCrew',
-    publish_desc: 'Make this batch visible to other users.',
+    publish_desc: 'Make this bake visible to other users.',
     back: 'Back',
     save: 'Save Changes',
     edit_notes: 'Edit',
@@ -737,67 +738,67 @@ const en = {
     save_notes: 'Save Notes',
     no_notes: 'No notes yet.',
     anonymous: 'Anonymous',
-    data_title: 'Dados da Massa',
-    preferment_title: 'Pré-fermento',
-    ingredients_title: 'Ingredientes',
-    process_title: 'Processo & Observações',
-    photos_title: 'Fotos',
-    actions_title: 'Ações',
+    data_title: 'Dough Data',
+    preferment_title: 'Preferment',
+    ingredients_title: 'Ingredients',
+    process_title: 'Process & Observations',
+    photos_title: 'Photos',
+    actions_title: 'Actions',
     actions: {
-        repeat: 'Repetir na Calculadora',
-        duplicate: 'Duplicar Fornada',
-        export_pdf: 'Exportar PDF',
-        export_json: 'Exportar JSON',
-        delete: 'Excluir Fornada'
+        repeat: 'Load in Calculator',
+        duplicate: 'Duplicate Bake',
+        export_pdf: 'Export PDF',
+        export_json: 'Export JSON',
+        delete: 'Delete Bake'
     },
     badge: {
-        great: 'Ótima',
-        good: 'Boa',
+        great: 'Great',
+        good: 'Good',
         regular: 'Regular',
-        adjust: 'Ajustar',
+        adjust: 'Adjust',
     }
   },
   community_page: {
     title: 'CrustCrew',
-    subtitle: 'Junte-se à CrustCrew e compartilhe suas fornadas.',
+    subtitle: 'Join the CrustCrew and share your bakes.',
     search_placeholder: 'Search by name...',
     all_styles: 'All Styles',
     featured: 'Community Highlights',
-    all_batches: 'All Batches',
-    empty_title: 'No batches found.',
-    empty_subtitle: 'Try adjusting your filters or publish one of your batches!',
+    all_batches: 'All Bakes',
+    empty_title: 'No bakes found.',
+    empty_subtitle: 'Try adjusting your filters or publish one of your bakes!',
     by: 'By',
     feed_tab: "Feed",
     reviews_tab: "Reviews",
     leaderboard_tab: "Leaderboard",
-    clone_confirm_title: "Clone Recipe",
-    clone_confirm_q: "Do you want to adapt this recipe to your default equipment profile?",
+    clone_confirm_title: "Clone Formula",
+    clone_confirm_q: "Do you want to adapt this formula to your default equipment profile?",
     clone_confirm_yes: "Yes, adapt",
     clone_confirm_no: "No, clone original",
     create_post_title: "Create Post",
-    create_post_no_batch_warning: 'You need to register a batch in "My Lab" to auto-fill the data.',
+    create_post_no_batch_warning: 'You need to register a bake in "My Lab" to auto-fill the data.',
     photo_upload_label: 'Click to upload',
     photo_upload_types: 'PNG, JPG',
-    recipe_name_label: 'Recipe Name',
+    recipe_name_label: 'Formula Name',
     recipe_name_placeholder: 'e.g., 72h Neapolitan Pizza',
     description_label: 'Description',
-    description_placeholder: 'Tell us a bit about your batch...',
+    description_placeholder: 'Tell us a bit about your bake...',
     oven_label: 'Oven',
     hydration_label: 'Hydration (%)',
     publish_button: 'Publish',
     publishing_button: 'Publishing...',
-    photo_and_name_required: 'Photo and recipe name are required.',
+    photo_and_name_required: 'Photo and formula name are required.',
     post_created_success: 'Post created successfully!',
-    clone_recipe_label: 'Clone Recipe',
+    clone_recipe_label: 'Clone Formula',
     save_label: 'Save',
   },
   community_detail: {
-    not_found: 'CrustCrew Batch not found',
-    not_found_desc: 'This batch does not exist or has been removed.',
-    back_to_community: 'Voltar para a CrustCrew',
+    not_found: 'CrustCrew Bake not found',
+    not_found_desc: 'This bake does not exist or has been removed.',
+    back_to_community: 'Back to CrustCrew',
     by: 'By',
     on: 'on',
-    recipe_params: 'Recipe Parameters',
+    recipe_params: 'Formula Parameters',
     env_process: 'Environment & Process',
     style: 'Style',
     units: 'Units',
@@ -839,48 +840,49 @@ const en = {
     }
   },
   assistant: {
-    system_prompt: 'Você é a Doughy, uma assistente amigável e especialista em massas de pizza para o DoughLabPro. Seu objetivo é ajudar os usuários a entender suas receitas, resolver problemas e aprender a ciência da panificação. Responda sempre em português do Brasil. Seja prestativa, concisa e encorajadora.',
+    system_prompt: 'You are Doughy, a friendly and expert assistant for DoughLabPro, specializing in pizza and bread dough. Your goal is to help users understand their formulas, solve problems, and learn the science of baking. Always reply in Brazilian Portuguese. Be helpful, concise, and encouraging. You are a "Dough Coach".',
     context: {
-        active_recipe: "Receita Ativa na Calculadora",
-        style: "Estilo",
-        hydration: "Hidratação",
-        salt: "Sal",
-        oil: "Óleo/Azeite",
-        yeast: "Fermento",
-        technique: "Técnica",
-        ambient: "Ambiente",
+        active_recipe: "Active Formula in Calculator",
+        style: "Style",
+        hydration: "Hydration",
+        salt: "Salt",
+        oil: "Oil/Olive Oil",
+        yeast: "Yeast",
+        technique: "Technique",
+        ambient: "Ambient",
         style_warning: {
-            title: "Aviso de Estilo",
-            neapolitan: "A receita Napolitana tradicional (AVPN) não usa óleo ou açúcar.",
-            ny_style: "O estilo NY geralmente se beneficia de um pouco de óleo para maciez."
+            title: "Style Warning",
+            neapolitan: "The traditional Neapolitan recipe (AVPN) does not use oil or sugar.",
+            ny_style: "NY style usually benefits from a bit of oil for softness."
         },
-        selected_flour: "Farinha Selecionada",
-        strength_w: "Força W",
-        protein: "Proteína",
-        default_oven: "Forno Padrão",
-        max_temp: "Temp. Máx.",
-        surface: "Superfície",
-        steel: "Aço",
-        stone: "Pedra",
-        none: "Nenhuma",
-        last_batch: "Última Fornada Registrada",
-        rating: "Avaliação",
-        stars: "estrelas",
-        header: "Contexto Atual",
-        no_context: "Sem contexto de receita ativo.",
-        user_question: "Pergunta do Usuário"
-    }
+        selected_flour: "Selected Flour",
+        strength_w: "Strength W",
+        protein: "Protein",
+        default_oven: "Default Oven",
+        max_temp: "Max Temp.",
+        surface: "Surface",
+        steel: "Steel",
+        stone: "Stone",
+        none: "None",
+        last_batch: "Last Registered Bake",
+        rating: "Rating",
+        stars: "stars",
+        header: "Current Context",
+        no_context: "No active formula context.",
+        user_question: "User Question"
+    },
+    title_short: 'Doughy'
   },
   assistant_page: {
-    title: 'Doughy',
-    greeting: "Olá! Sou a Doughy, sua assistente de massas. Como posso te ajudar a entender melhor sua receita hoje?",
-    thinking: 'Pensando...',
+    title: 'Doughy, your Dough Coach',
+    greeting: "Hi! I'm Doughy, your dough assistant. How can I help you better understand your formula today?",
+    thinking: 'Thinking...',
     placeholder: 'Ask something about your dough...',
     send: 'Send',
     error: 'I could not answer right now. Please try again in a few moments.',
     title_short: 'Doughy',
-    greeting_short: "Olá, sou a Doughy! Pronta para ajudar com sua massa.",
-    placeholder_short: "Pergunte à Doughy o que sua massa precisa..."
+    greeting_short: "Hi, I'm Doughy! Ready to help with your dough.",
+    placeholder_short: "Ask Doughy what your dough needs..."
   },
   suggestions: {
       hot_day: {
@@ -904,17 +906,17 @@ const en = {
     title: "Your Insights",
     subtitle: "A summary of your baking journey.",
     empty_title: "Your Insights will appear here.",
-    empty_subtitle: "Start creating batches to see your progress and trends.",
+    empty_subtitle: "Start creating bakes to see your progress and trends.",
     go_to_calculator: "Go to Calculator",
     summary_tab: "Summary",
     history_tab: "History",
     community_tab: "Community",
-    total_batches: "Total Batches",
-    batches_last_30_days: "Batches (30d)",
+    total_batches: "Total Bakes",
+    batches_last_30_days: "Bakes (30d)",
     most_used_style: "Most Used Style",
     avg_hydration: "Avg. Hydration",
     avg_hydration_by_style: "Avg. Hydration by Style",
-    batch_history: "Batch History",
+    batch_history: "Bake History",
     filter_by_style: "Filter by Style",
     all_styles: "All Styles",
     filter_by_rating: "Filter by Rating",
@@ -929,7 +931,7 @@ const en = {
     top_baker: "You are in the top {percent}% of most active bakers this month!",
     overall_performance: "Overall Performance",
     dough_trends: "Dough Trends",
-    hydration_evolution_title: "Hydration Evolution (Last 10 Batches)",
+    hydration_evolution_title: "Hydration Evolution (Last 10 Bakes)",
     most_used_styles_title: "Most Used Styles",
     consistency_index_title: "Consistency Index",
     consistency_evolution_title: "Consistency & Evolution",
@@ -951,8 +953,8 @@ const en = {
     step1_desc: "This is the heart of DoughLabPro. We've pre-selected a classic Neapolitan style for you.",
     step2_title: "Set the Quantity",
     step2_desc: "Just tell us how many pizzas you want. All ingredients will adjust automatically. Let's start with 2.",
-    step3_title: "See Your Recipe",
-    step3_desc: "And that's it! Your recipe is ready. Here are the exact amounts you'll need.",
+    step3_title: "See Your Formula",
+    step3_desc: "And that's it! Your formula is ready. Here are the exact amounts you'll need.",
     step4_title: "Save Your Bake",
     step4_desc: "Now, the most important part: save this bake to your 'My Lab' diary to track your process and results.",
     step5_title: "Welcome to My Lab!",
@@ -977,7 +979,7 @@ const en = {
     screen3_title: "Understand your levain's state",
     screen3_text: "The app shows if it's active, needs attention, or is resting. Total clarity before you use it.",
     screen3_button: "Next",
-    screen4_title: "Use your Levain Pet in recipes",
+    screen4_title: "Use your Levain Pet in formulas",
     screen4_text: "In the calculator, choose your levain and DoughLabPro adjusts everything automatically.",
     screen4_button: "Almost there",
     screen5_title: "Your lab starts now",
@@ -1009,24 +1011,22 @@ const en = {
     home_aria: 'Home',
     menu: 'Menu',
     tools: {
-      tech_references: 'Technical References',
-      oven_analysis: 'Oven Analysis',
-      toppings_combos: 'Toppings & Combos',
-      doughbot: 'Massabo',
-      pantry_pizza: 'Pantry Pizza'
+      tech_references: 'Referências Técnicas',
+      oven_analysis: 'Análise de Forno (FormulaLab)',
+      doughbot: 'Diagnóstico de Massa (Massabo)',
     }
   },
   mylab_page: {
     overview: {
       title: 'MyLab Overview',
       subtitle: 'Your personal center to track and analyze your creations.',
-      last_batch: 'Last Batch',
+      last_batch: 'Last Bake',
       most_used_style: 'Most Used Style',
       default_flour: 'Default Flour',
       no_batch: 'None',
       no_flour: 'None',
       next_experiment_title: 'Next Experiment',
-      next_experiment_desc: 'Ready for a new batch? Head to the calculator to get started.',
+      next_experiment_desc: 'Ready for a new bake? Head to the calculator to get started.',
       go_to_calculator: 'Go to Calculator'
     },
     header: {
@@ -1035,9 +1035,9 @@ const en = {
       new_batch_button: 'Create New Dough'
     },
     last_batch_card: {
-      title: 'Last Batch',
+      title: 'Last Bake',
       redo_button: 'Redo in DoughLabPro',
-      empty_state: 'You haven\'t saved any batches yet.'
+      empty_state: 'You haven\'t saved any bakes yet.'
     },
     learn_card: {
       title: 'Quick Learn',
@@ -1050,9 +1050,9 @@ const en = {
       read_more: 'Read more'
     },
     recent_batches_card: {
-      title: 'Recent Batches',
-      empty_state: 'Your recent batches will appear here.',
-      view_all: 'View all batches'
+      title: 'Recent Bakes',
+      empty_state: 'Your recent bakes will appear here.',
+      view_all: 'View all bakes'
     },
     environment_card: {
       title: 'My Environment',
@@ -1068,9 +1068,9 @@ const en = {
       select_placeholder: 'Select...',
     },
     recipes_page: {
-      title: 'My Recipes',
-      subtitle: 'Your collection of saved recipes and presets.',
-      coming_soon: 'Coming soon: Manage your saved recipe presets for quick use in the calculator.'
+      title: 'My Styles',
+      subtitle: 'Your collection of saved dough styles and presets.',
+      coming_soon: 'Coming soon: Manage your saved dough styles for quick use in the calculator.'
     },
     flours_page: {
       title: 'My Flours',
@@ -1170,14 +1170,10 @@ const pt = {
     ...en.nav,
     lab: "Meu Lab",
     calculator: "Calculadora",
+    styles: "Estilos de Massa",
     learn: "Aprender",
-    community: "CrustCrew",
-    insights: "Insights",
-    flours: "Farinhas",
-    help: "Ajuda",
-    references: "Referências",
+    community: "Comunidade",
     profile: "Perfil",
-    tools: "Ferramentas"
   },
   user_menu: {
     ...en.user_menu,
@@ -1196,7 +1192,7 @@ const pt = {
     ...en.auth,
     sign_in: 'Entrar',
     modal_title: 'Acesse sua conta',
-    modal_subtitle: 'Salve suas fornadas, fornos e mais.',
+    modal_subtitle: 'Salve suas fornadas, fornos e levains.',
     continue_with_google: 'Continuar com Google',
     terms_notice: 'Ao continuar, você concorda com nossos Termos de Serviço.',
   },
@@ -1220,8 +1216,9 @@ const es = {
   nav: {
     ...en.nav,
     calculator: "Calculadora",
+    styles: "Estilos de Masa",
     learn: "Aprender",
-    community: "CrustCrew",
+    community: "Comunidad",
   },
 };
 

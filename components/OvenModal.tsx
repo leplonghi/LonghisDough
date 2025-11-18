@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n';
 import { Oven, OvenType } from '../types';
@@ -79,16 +78,16 @@ const OvenModal: React.FC<OvenModalProps> = ({
       aria-modal="true"
     >
       <div
-        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+        className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-slate-200 pb-4 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+          <h2 className="text-xl font-bold text-slate-900">
             {ovenToEdit ? t('profile.ovens.edit_oven') : t('profile.ovens.add_oven')}
           </h2>
           <button
             onClick={onClose}
-            className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+            className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200"
             aria-label={t('load_modal.close_aria')}
           >
             <CloseIcon className="h-6 w-6" />
@@ -97,39 +96,39 @@ const OvenModal: React.FC<OvenModalProps> = ({
         
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('profile.ovens.form.name')}</label>
-                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" placeholder={t('profile.ovens.form.name_placeholder')} />
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700">{t('profile.ovens.form.name')}</label>
+                <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" placeholder={t('profile.ovens.form.name_placeholder')} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label htmlFor="type" className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('profile.ovens.form.type')}</label>
-                    <select name="type" id="type" value={formData.type} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
+                    <label htmlFor="type" className="block text-sm font-medium text-slate-700">{t('profile.ovens.form.type')}</label>
+                    <select name="type" id="type" value={formData.type} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500">
                         {OVEN_TYPE_OPTIONS.map(opt => (
                             <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>
                         ))}
                     </select>
                 </div>
                  <div>
-                    <label htmlFor="maxTemperature" className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('profile.ovens.form.max_temp')}</label>
-                    <input type="number" name="maxTemperature" id="maxTemperature" value={formData.maxTemperature} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" />
+                    <label htmlFor="maxTemperature" className="block text-sm font-medium text-slate-700">{t('profile.ovens.form.max_temp')}</label>
+                    <input type="number" name="maxTemperature" id="maxTemperature" value={formData.maxTemperature} onChange={handleInputChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" />
                 </div>
             </div>
              <div className="space-y-2">
                 <label className="flex items-center gap-2">
                     <input type="checkbox" name="hasStone" checked={formData.hasStone} onChange={handleInputChange} className="h-4 w-4 rounded border-slate-300 text-lime-600 focus:ring-lime-500" />
-                    <span className="text-sm text-slate-700 dark:text-slate-300">{t('profile.ovens.form.has_stone')}</span>
+                    <span className="text-sm text-slate-700">{t('profile.ovens.form.has_stone')}</span>
                 </label>
                  <label className="flex items-center gap-2">
                     <input type="checkbox" name="hasSteel" checked={formData.hasSteel} onChange={handleInputChange} className="h-4 w-4 rounded border-slate-300 text-lime-600 focus:ring-lime-500" />
-                    <span className="text-sm text-slate-700 dark:text-slate-300">{t('profile.ovens.form.has_steel')}</span>
+                    <span className="text-sm text-slate-700">{t('profile.ovens.form.has_steel')}</span>
                 </label>
             </div>
             <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('profile.ovens.form.notes')}</label>
-                <textarea name="notes" id="notes" value={formData.notes} onChange={handleInputChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white" placeholder={t('profile.ovens.form.notes_placeholder')}></textarea>
+                <label htmlFor="notes" className="block text-sm font-medium text-slate-700">{t('profile.ovens.form.notes')}</label>
+                <textarea name="notes" id="notes" value={formData.notes} onChange={handleInputChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500" placeholder={t('profile.ovens.form.notes_placeholder')}></textarea>
             </div>
-            <div className="flex justify-end gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">{t('profile.cancel')}</button>
+            <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
+                <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">{t('profile.cancel')}</button>
                 <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">{t('profile.save_changes')}</button>
             </div>
         </form>

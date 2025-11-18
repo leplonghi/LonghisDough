@@ -63,23 +63,23 @@ const OnboardingTooltip: React.FC<OnboardingTooltipProps> = ({
 
       {/* Tooltip */}
       <div
-        className="absolute w-80 max-w-[calc(100vw-2rem)] rounded-lg bg-white p-5 shadow-2xl dark:bg-slate-800"
+        className="absolute w-80 max-w-[calc(100vw-2rem)] rounded-lg bg-white p-5 shadow-2xl"
         style={{
           top: `${tooltipTop}px`,
           left: `${tooltipLeft}px`,
           transform: 'translateX(-50%)',
         }}
       >
-        <p className="text-xs font-bold uppercase tracking-wider text-lime-600 dark:text-lime-400">
+        <p className="text-xs font-bold uppercase tracking-wider text-lime-600">
           Passo {step} de {totalSteps}
         </p>
-        <h3 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{description}</p>
+        <h3 className="mt-1 text-lg font-bold text-slate-900">{title}</h3>
+        <p className="mt-2 text-sm text-slate-600">{description}</p>
         <div className="mt-5 flex items-center justify-between">
           <button
             onClick={onBack}
             disabled={step === 1}
-            className="text-sm font-semibold text-slate-500 hover:text-slate-700 disabled:opacity-50 dark:text-slate-400 dark:hover:text-slate-200"
+            className="text-sm font-semibold text-slate-500 hover:text-slate-700 disabled:opacity-50"
           >
             {t('onboarding.back')}
           </button>

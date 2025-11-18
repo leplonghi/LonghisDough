@@ -1,5 +1,3 @@
-
-
 import { UnitSystem, ToppingSizeProfile, YeastType } from './types';
 import { YEAST_EQUIVALENCIES } from './constants';
 
@@ -237,4 +235,23 @@ export function timeSince(dateString: string): string {
     interval = seconds / 60;
     if (interval > 1) return `${Math.floor(interval)}min`;
     return `${Math.floor(seconds)}s`;
+}
+
+// Add polyfill for randomUUID if it doesn't exist
+if (typeof crypto === 'undefined') {
+    (globalThis as any).crypto = {
+        randomUUID: () => {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    };
+} else if (!crypto.randomUUID) {
+    crypto.randomUUID = (() => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }) as any;
 }

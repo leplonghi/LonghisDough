@@ -73,45 +73,45 @@ const GoalModal: React.FC<GoalModalProps> = ({ isOpen, onClose, onSave, goalToEd
             aria-modal="true"
         >
             <div
-                className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800"
+                className="relative mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex items-start justify-between border-b border-slate-200 pb-4 dark:border-slate-700">
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                <div className="flex items-start justify-between border-b border-slate-200 pb-4">
+                    <h2 className="text-xl font-bold text-slate-900">
                         {goalToEdit ? 'Editar Objetivo' : 'Criar Novo Objetivo'}
                     </h2>
-                    <button onClick={onClose} className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700">
+                    <button onClick={onClose} className="-mt-2 -mr-2 rounded-full p-1 text-slate-500 hover:bg-slate-200">
                         <CloseIcon className="h-6 w-6" />
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Título</label>
-                        <input type="text" name="title" value={formData.title} onChange={handleChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-slate-600 dark:bg-slate-900" />
+                        <label className="block text-sm font-medium text-slate-700">Título</label>
+                        <input type="text" name="title" value={formData.title} onChange={handleChange} required className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Descrição</label>
-                        <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-slate-600 dark:bg-slate-900"></textarea>
+                        <label className="block text-sm font-medium text-slate-700">Descrição</label>
+                        <textarea name="description" value={formData.description} onChange={handleChange} rows={3} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500"></textarea>
                     </div>
                      <div className="grid grid-cols-2 gap-4">
                          <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Tipo de Alvo</label>
-                            <select name="targetType" value={formData.targetType} onChange={handleChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-slate-600 dark:bg-slate-900">
+                            <label className="block text-sm font-medium text-slate-700">Tipo de Alvo</label>
+                            <select name="targetType" value={formData.targetType} onChange={handleChange} className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500">
                                 {targetTypeOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Valor do Alvo</label>
+                            <label className="block text-sm font-medium text-slate-700">Valor do Alvo</label>
                             <input 
                                 type={formData.targetType === 'hidratação' ? 'number' : 'text'}
                                 name="targetValue"
                                 value={formData.targetValue}
                                 onChange={handleChange} 
-                                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 dark:border-slate-600 dark:bg-slate-900" />
+                                className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500" />
                         </div>
                      </div>
-                    <div className="flex justify-end gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700">Cancelar</button>
+                    <div className="flex justify-end gap-4 pt-4 border-t border-slate-200">
+                        <button type="button" onClick={onClose} className="rounded-md py-2 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancelar</button>
                         <button type="submit" className="rounded-md bg-lime-500 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">Salvar Objetivo</button>
                     </div>
                 </form>

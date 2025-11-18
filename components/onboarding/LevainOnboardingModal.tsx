@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from '../../i18n';
 // FIX: Add missing icon import
@@ -45,28 +44,28 @@ const LevainOnboardingModal: React.FC<LevainOnboardingModalProps> = ({ onComplet
       aria-modal="true"
       aria-labelledby="levain-onboarding-title"
     >
-      <div className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl dark:border dark:border-slate-700 dark:bg-slate-800">
+      <div className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
         <BeakerIcon className="mx-auto h-12 w-auto text-lime-500" />
         <h1
           id="levain-onboarding-title"
-          className="mt-6 text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
+          className="mt-6 text-2xl font-bold tracking-tight text-slate-900"
         >
           {currentScreen.title}
         </h1>
-        <p className="mt-4 text-slate-600 dark:text-slate-300">
+        <p className="mt-4 text-slate-600">
           {currentScreen.text}
         </p>
 
         <div className="mt-8 flex items-center justify-center gap-2">
             {Array.from({ length: totalSteps }).map((_, i) => (
-                <div key={i} className={`h-2 w-2 rounded-full transition-colors ${i + 1 === step ? 'bg-lime-500' : 'bg-slate-300 dark:bg-slate-600'}`}></div>
+                <div key={i} className={`h-2 w-2 rounded-full transition-colors ${i + 1 === step ? 'bg-lime-500' : 'bg-slate-300'}`}></div>
             ))}
         </div>
 
         <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row sm:justify-center">
           <button
             onClick={handleSkip}
-            className="rounded-lg py-3 px-6 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+            className="rounded-lg py-3 px-6 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100"
           >
             {t('common.skip')}
           </button>

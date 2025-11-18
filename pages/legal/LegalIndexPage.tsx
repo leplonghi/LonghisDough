@@ -21,13 +21,13 @@ const sections = [
 
 const LegalSection: React.FC<{ id: string, title: string, lastUpdated?: string, children: React.ReactNode }> = ({ id, title, lastUpdated, children }) => (
   <section id={id} className="mb-12 scroll-mt-24">
-    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
-      <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">{title}</h2>
+    <div className="border-b border-slate-200 pb-4">
+      <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
       {lastUpdated && (
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Última atualização: {lastUpdated}</p>
+        <p className="mt-2 text-sm text-slate-500">Última atualização: {lastUpdated}</p>
       )}
     </div>
-    <div className="prose dark:prose-invert mt-6 max-w-none text-slate-600 dark:text-slate-300">
+    <div className="prose mt-6 max-w-none text-slate-600">
       {children}
     </div>
   </section>
@@ -49,19 +49,19 @@ const LegalIndexPage: React.FC<{ onNavigate: (page: Page) => void }> = () => {
             <div className="lg:hidden mb-6 relative">
                 <button 
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="w-full flex items-center justify-between rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 text-left"
+                    className="w-full flex items-center justify-between rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200/50 text-left"
                 >
                     <span className="font-semibold">Navegar na página</span>
                     <ChevronDownIcon className={`h-5 w-5 text-slate-400 transition-transform ${isMobileMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isMobileMenuOpen && (
-                    <div className="absolute top-full left-0 w-full mt-2 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 p-2 z-10 dark:bg-slate-800 dark:ring-white/10">
+                    <div className="absolute top-full left-0 w-full mt-2 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 p-2 z-10">
                         {sections.map((section) => (
                             <a
                                 key={section.id}
                                 href={`#/legal#${section.id}`}
                                 onClick={(e) => { e.preventDefault(); handleMobileNav(section.id); }}
-                                className="block w-full text-left rounded-md p-3 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
+                                className="block w-full text-left rounded-md p-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
                             >
                                 {section.title}
                             </a>
@@ -78,7 +78,7 @@ const LegalIndexPage: React.FC<{ onNavigate: (page: Page) => void }> = () => {
                         <a
                             key={section.id}
                             href={`#/legal#${section.id}`}
-                            className="flex w-full items-center rounded-lg p-3 text-sm font-semibold transition-colors text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                            className="flex w-full items-center rounded-lg p-3 text-sm font-semibold transition-colors text-slate-600 hover:bg-slate-100"
                         >
                             <span className="truncate">{section.title}</span>
                         </a>
@@ -87,7 +87,7 @@ const LegalIndexPage: React.FC<{ onNavigate: (page: Page) => void }> = () => {
                 </aside>
 
                 <main className="lg:col-span-3">
-                    <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
+                    <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10">
                         
                         <LegalSection id="visao-geral" title="Assuntos Legais">
                             <p>Esta área reúne os documentos que regulam o uso do DoughLabPro, a proteção dos seus dados, o uso de cookies, a licença do aplicativo e os canais para contato em questões jurídicas.</p>

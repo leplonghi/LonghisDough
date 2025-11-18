@@ -21,15 +21,15 @@ const LevainLayout: React.FC<LevainLayoutProps> = ({ children, levainName, activ
   return (
     <div className="mx-auto max-w-4xl">
       <header className="mb-8">
-        <a href="#/mylab/levain" className="text-lime-600 dark:text-lime-400 font-semibold text-sm hover:underline">
+        <a href="#/mylab/levain" className="text-lime-600 font-semibold text-sm hover:underline">
             &larr; Voltar para Levain Pet
         </a>
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-2">{levainName}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 mt-2">{levainName}</h1>
       </header>
 
        {/* Tabs Navigation */}
         <div className="mb-6">
-            <div className="border-b border-neutral-200 dark:border-neutral-700">
+            <div className="border-b border-neutral-200">
                 <nav className="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
                     {navItems.map(item => (
                         <button
@@ -37,8 +37,8 @@ const LevainLayout: React.FC<LevainLayoutProps> = ({ children, levainName, activ
                             onClick={() => onTabChange(item.id)}
                             className={`whitespace-nowrap flex items-center gap-2 py-3 px-1 border-b-2 font-medium text-sm ${
                                 activeTab === item.id
-                                ? 'border-lime-500 text-lime-600 dark:text-lime-400'
-                                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:border-neutral-600'
+                                ? 'border-lime-500 text-lime-600'
+                                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
                             }`}
                         >
                             {item.icon}
