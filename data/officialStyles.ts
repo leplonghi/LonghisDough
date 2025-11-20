@@ -1,6 +1,4 @@
 
-import { DoughStyle } from '../types';
-
 export const OFFICIAL_STYLES: any[] = [
   {
     "id": "neapolitan_avpn",
