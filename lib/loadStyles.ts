@@ -1,9 +1,9 @@
 
-import officialStyles from '../data/official_styles.json';
+import { OFFICIAL_STYLES } from '../data/officialStyles';
 import { DoughStyle, DoughCategory } from '../types';
 
-// Force cast to DoughStyle[] because JSON import inference can be tricky with specific types/enums
-const styles: DoughStyle[] = officialStyles as unknown as DoughStyle[];
+// The TS file already exports an array, but we cast it to ensure type alignment
+const styles: DoughStyle[] = OFFICIAL_STYLES as unknown as DoughStyle[];
 
 export function loadAllStyles(): DoughStyle[] {
   return styles;

@@ -1,18 +1,25 @@
 
-// ATENÇÃO: Substitua os valores placeholder abaixo pelas suas credenciais reais do Firebase.
-// Em um projeto de produção, estes valores devem ser carregados a partir de variáveis de ambiente.
-
 const getEnv = (key: string) => {
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
+  try {
     // @ts-ignore
-    return import.meta.env[key];
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      // @ts-ignore
+      return import.meta.env[key];
+    }
+  } catch (e) {
+    // ignore
   }
-  // @ts-ignore
-  if (typeof process !== 'undefined' && process.env) {
+  
+  try {
     // @ts-ignore
-    return process.env[key];
+    if (typeof process !== 'undefined' && process.env) {
+      // @ts-ignore
+      return process.env[key];
+    }
+  } catch (e) {
+    // ignore
   }
+
   return '';
 };
 

@@ -37,7 +37,6 @@ export const updateOvenInFirestore = async (
 ): Promise<void> => {
   if (!db) return;
   const docRef = doc(db, OVENS_COLLECTION, ovenId);
-  // Remove id from updates if present to avoid error
   const { id, ...cleanUpdates } = updates as any;
   await updateDoc(docRef, cleanUpdates);
 };

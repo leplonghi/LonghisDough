@@ -1,17 +1,17 @@
 
 import { DoughStyle } from '../types';
-import officialStyles from '../data/official_styles.json';
+import { OFFICIAL_STYLES } from '../data/officialStyles';
 import { db } from './db';
 import { collection, query, where, getDocs, addDoc, doc, deleteDoc } from 'firebase/firestore';
 
 const USER_STYLES_COLLECTION = 'user_styles';
 
 export const fetchOfficialStyles = async (): Promise<DoughStyle[]> => {
-    return officialStyles as unknown as DoughStyle[];
+    return OFFICIAL_STYLES as unknown as DoughStyle[];
 };
 
 export const fetchCommunityStyles = async (): Promise<DoughStyle[]> => {
-    // Placeholder for community styles
+    // Placeholder for community styles logic
     return [];
 };
 
@@ -53,9 +53,8 @@ export const deleteUserStyle = async (styleId: string): Promise<void> => {
 export const fetchStyleBySlug = async (slug: string): Promise<DoughStyle | undefined> => {
     // 1. Try official
     // @ts-ignore
-    const official = officialStyles.find((s: any) => s.slug === slug || s.id === slug);
+    const official = OFFICIAL_STYLES.find((s: any) => s.slug === slug || s.id === slug);
     if (official) return official as unknown as DoughStyle;
 
-    // 2. In real app, query Firestore for custom/community by slug
     return undefined;
 };

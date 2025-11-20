@@ -8,9 +8,6 @@ import {
   getDocs,
   query,
   where,
-  Timestamp,
-  orderBy,
-  setDoc
 } from 'firebase/firestore';
 import { db } from './db';
 import { Batch } from '../types';
@@ -25,8 +22,6 @@ export const createBatchInFirestore = async (
   
   const now = new Date().toISOString();
   
-  // We can use addDoc for auto-ID, or setDoc with a specific ID if we generate it client-side.
-  // Using addDoc for simplicity here, but mapping to our Batch type.
   const docRef = await addDoc(collection(db, BATCHES_COLLECTION), {
     ...batchData,
     userId,
@@ -48,10 +43,14 @@ export const updateBatchInFirestore = async (
 ): Promise<void> => {
   if (!db) return;
   const docRef = doc(db, BATCHES_COLLECTION, batchId);
-  await updateDoc(docRef, {
-    ...updates,
-    updatedAt: new Date().toISOString(),
-  });
+  
+  // Create an update object, excluding undefined fields and handling date update
+  const dataToUpdate = {
+      ...updates,
+      updatedAt: new Date().toISOString(),
+  };
+
+  await updateDoc(docRef, dataToUpdate);
 };
 
 export const deleteBatchInFirestore = async (batchId: string): Promise<void> => {
@@ -64,7 +63,6 @@ export const listBatchesByUser = async (userId: string): Promise<Batch[]> => {
   const q = query(
     collection(db, BATCHES_COLLECTION),
     where('userId', '==', userId)
-    // orderBy('createdAt', 'desc') // Requires composite index sometimes, safer to sort client-side if needed immediately
   );
   
   const querySnapshot = await getDocs(q);
