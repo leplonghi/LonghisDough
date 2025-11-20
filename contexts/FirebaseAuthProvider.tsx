@@ -1,7 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-// FIX: Importing from '@firebase/auth' to avoid name collision with local file 'firebase/auth.ts'
 import { User, onAuthStateChanged } from '@firebase/auth';
-import auth from '../firebase/auth';
+import { auth } from '../firebase/auth';
+import { ensureUserDocument } from '../firebase/userDoc';
 
 interface FirebaseUserContextType {
   firebaseUser: User | null;
@@ -16,7 +17,15 @@ export const FirebaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     if (auth) {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            // Ensure the user document exists in Firestore
+            await ensureUserDocument(user);
+          } catch (error) {
+            console.error("Error ensuring user document:", error);
+          }
+        }
         setFirebaseUser(user);
         setIsLoading(false);
       });

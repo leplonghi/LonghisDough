@@ -1,8 +1,13 @@
 
-import { getFirestore } from "firebase/firestore";
-import app from "./config";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { firebaseApp } from "./app";
 
-// Inicializa o Cloud Firestore e obtém a referência para o serviço.
-const db = app ? getFirestore(app) : null;
+export let db: Firestore | null = null;
 
-export default db;
+if (firebaseApp) {
+  try {
+    db = getFirestore(firebaseApp);
+  } catch (error) {
+    console.error("Failed to initialize Firestore:", error);
+  }
+}

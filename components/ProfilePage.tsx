@@ -8,15 +8,17 @@ import {
   StarIcon,
   TrashIcon,
   SolidStarIcon,
-  BookmarkSquareIcon,
   BeakerIcon,
-  FlourIcon,
   ShieldCheckIcon,
   ArrowTopRightOnSquareIcon,
+  SparklesIcon,
+  CreditCardIcon
 } from './IconComponents';
 import { User, Gender, Oven, Page, Levain } from '../types';
-import OvenModal from './OvenModal';
-import LevainModal from './LevainModal';
+import OvenModal from '../components/OvenModal';
+import LevainModal from '../components/LevainModal';
+import AuthPlaceholder from '../components/AuthPlaceholder';
+import { useToast } from './ToastProvider';
 
 interface ProfilePageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -28,6 +30,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     logout,
     updateUser,
     hasProAccess,
+    openPaywall,
     ovens,
     addOven,
     updateOven,
@@ -38,8 +41,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     updateLevain,
     deleteLevain,
     setDefaultLevain,
+    isAuthenticated
   } = useUser();
   const { t } = useTranslation();
+  const { addToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
@@ -60,12 +65,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     }
   }, [user]);
 
-  if (!user) {
-    return (
-      <div className="mx-auto max-w-4xl text-center">
-        <p>{t('profile.not_logged_in')}</p>
-      </div>
-    );
+  if (!isAuthenticated || !user) {
+    return <AuthPlaceholder />;
   }
 
   const handleInputChange = (
@@ -124,6 +125,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           deleteLevain(id);
       }
   }
+
+  const handleCancelSubscription = () => {
+    if (window.confirm("Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.")) {
+        // In a real app, this would call the backend Stripe API
+        addToast("Subscription cancellation requested.", "info");
+    }
+  };
 
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
@@ -204,6 +212,79 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
+        {/* === SECTION: Membership Status === */}
+        <div className="mt-8 border-t border-slate-200 pt-8">
+             <h2 className="text-xl font-bold text-slate-800 mb-4">Membership Status</h2>
+             
+             {hasProAccess ? (
+                 <div className="rounded-xl border border-lime-200 bg-lime-50 p-6 shadow-sm">
+                     <div className="flex items-center justify-between mb-4">
+                         <div className="flex items-center gap-3">
+                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500 text-white shadow-sm">
+                                 <StarIcon className="h-6 w-6" />
+                             </div>
+                             <div>
+                                 <h3 className="font-bold text-slate-900">DoughLab Pro</h3>
+                                 <p className="text-xs text-lime-700 font-medium">Active Subscription</p>
+                             </div>
+                         </div>
+                         <span className="px-3 py-1 bg-white text-lime-700 text-xs font-bold rounded-full border border-lime-200 shadow-sm">
+                             ACTIVE
+                         </span>
+                     </div>
+                     <div className="space-y-2 text-sm text-slate-600">
+                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Unlimited Batches & History</p>
+                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Advanced AI Insights</p>
+                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Multiple Levain Pets</p>
+                     </div>
+                     <div className="mt-6 pt-4 border-t border-lime-200/60">
+                         <button 
+                            onClick={handleCancelSubscription} 
+                            className="text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
+                         >
+                             <CreditCardIcon className="h-4 w-4" />
+                             Cancel Subscription
+                         </button>
+                     </div>
+                 </div>
+             ) : (
+                 <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
+                     <div className="relative z-10">
+                         <div className="flex items-center justify-between mb-4">
+                             <div>
+                                <h3 className="font-bold text-slate-900 text-lg">Free Plan</h3>
+                                <p className="text-xs text-slate-500">Limited Features</p>
+                             </div>
+                             <span className="px-3 py-1 bg-slate-100 text-slate-500 text-xs font-bold rounded-full">
+                                 CURRENT
+                             </span>
+                         </div>
+                         
+                         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                            You are currently limited to <strong>1 saved batch</strong> and <strong>1 levain</strong>. Upgrade to unlock the full potential of your dough lab.
+                         </p>
+
+                         <div className="grid grid-cols-2 gap-2 mb-6">
+                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 No AI Insights</div>
+                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 Limited Exports</div>
+                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 1 Levain Only</div>
+                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 Basic Styles</div>
+                         </div>
+
+                         <button 
+                            onClick={() => openPaywall('general')} 
+                            className="w-full py-3 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 transition-all active:scale-[0.98]"
+                         >
+                             <SparklesIcon className="h-4 w-4 text-lime-400"/>
+                             Upgrade to Pro
+                         </button>
+                     </div>
+                     {/* Decorative Background */}
+                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-lime-100 rounded-full opacity-50 blur-3xl"></div>
+                 </div>
+             )}
+        </div>
+
         <div className="mt-10 border-t border-slate-200 pt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-800">
@@ -258,25 +339,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                     ? t(`profile.genders.${user.gender.toLowerCase()}`)
                     : undefined,
                 )}
-                <div>
-                  <dt className="text-sm font-medium text-slate-500">
-                    {t('profile.membership')}
-                  </dt>
-                  <dd className="mt-1">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        hasProAccess
-                          ? 'bg-lime-100 text-lime-800'
-                          : 'bg-slate-100 text-slate-800'
-                      }`}
-                    >
-                      {hasProAccess && <StarIcon className="h-3.5 w-3.5" />}
-                      {hasProAccess
-                        ? t('profile.pro_member')
-                        : t('profile.free_member')}
-                    </span>
-                  </dd>
-                </div>
               </dl>
             )}
           </div>
@@ -365,63 +427,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 )}
              </div>
         </div>
-
-        {/* === SECTION: Resources === */}
-        <div className="mt-10 border-t border-slate-200 pt-8">
-            <h2 className="text-xl font-bold text-slate-800">
-              {t('profile.resources.title')}
-            </h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <button
-                    onClick={() => onNavigate('references')}
-                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
-                >
-                    <BookmarkSquareIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
-                    <div>
-                        <p className="font-semibold text-slate-800">{t('profile.resources.tech_references')}</p>
-                        <p className="text-sm text-slate-500">{t('profile.resources.tech_references_desc')}</p>
-                    </div>
-                </button>
-                <button
-                    onClick={() => onNavigate('flours')}
-                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
-                >
-                    <FlourIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
-                    <div>
-                        <p className="font-semibold text-slate-800">{t('profile.resources.flours_library')}</p>
-                        <p className="text-sm text-slate-500">{t('profile.resources.flours_library_desc')}</p>
-                    </div>
-                </button>
-            </div>
-        </div>
-
-        {/* === SECTION: Legal === */}
-        <div className="mt-10 border-t border-slate-200 pt-8">
-            <h2 className="text-xl font-bold text-slate-800">Legal</h2>
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button
-                    onClick={() => onNavigate('terms')}
-                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
-                >
-                    <div className="flex items-center gap-2">
-                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
-                        <span className="font-medium text-slate-700">Terms of Use</span>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
-                </button>
-                <button
-                    onClick={() => onNavigate('privacy')}
-                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
-                >
-                    <div className="flex items-center gap-2">
-                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
-                        <span className="font-medium text-slate-700">Privacy Policy</span>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
-                </button>
-            </div>
-        </div>
-
 
         <div className="mt-10 border-t border-slate-200 pt-8">
           <button

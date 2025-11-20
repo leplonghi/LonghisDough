@@ -3,173 +3,214 @@ import React, { useState } from 'react';
 import {
   CloseIcon,
   StarIcon,
-  SaveIcon,
   BookOpenIcon,
-  CheckCircleIcon,
+  BeakerIcon,
+  BatchesIcon,
+  SparklesIcon,
+  DownloadIcon,
+  ShieldCheckIcon,
 } from './IconComponents';
 import { useUser } from '../contexts/UserProvider';
+import { PaywallOrigin } from '../types';
 
 interface PaywallModalProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigateToPlans?: () => void;
+  origin?: PaywallOrigin | null;
 }
 
-const Feature: React.FC<{
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}> = ({ icon, title, description }) => (
-  <div className="flex items-start gap-4">
-    <div className="flex-shrink-0 rounded-full bg-lime-100 p-2">
-      {icon}
-    </div>
-    <div>
-      <h4 className="font-semibold text-slate-800">
-        {title}
-      </h4>
-      <p className="text-sm text-slate-600">
-        {description}
-      </p>
-    </div>
-  </div>
-);
+type BillingCycle = 'monthly' | 'yearly';
 
 export const PaywallModal: React.FC<PaywallModalProps> = ({
   isOpen,
   onClose,
   onNavigateToPlans,
+  origin
 }) => {
-  const {
-    grantProAccess,
-    grant24hPass,
-    isPassOnCooldown,
-    cooldownHoursRemaining,
-  } = useUser();
-  const [showSuccess, setShowSuccess] = useState<string | null>(null);
-
-  const handleGrant = (type: 'pro' | 'pass') => {
-    if (type === 'pro') {
-      grantProAccess();
-      setShowSuccess("Pro Access Granted!");
-    } else {
-      grant24hPass();
-      setShowSuccess("24h Pass Activated!");
-    }
-
-    setTimeout(() => {
-      onClose();
-      // Reset state for next time modal opens
-      setTimeout(() => setShowSuccess(null), 300);
-    }, 2500);
-  };
-
-  const handleClose = () => {
-    if (showSuccess) return;
-    onClose();
-  };
+  const { grantProAccess } = useUser();
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('yearly');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isOpen) return null;
 
+  const handleSubscribe = () => {
+    setIsProcessing(true);
+    // Simulate API call / Stripe Checkout delay
+    setTimeout(() => {
+      grantProAccess();
+      setIsProcessing(false);
+      onClose();
+      // Ideally redirect to a success page or show a toast here
+    }, 1500);
+  };
+
+  const getHeaderText = () => {
+    switch(origin) {
+        case 'levain': return "Advanced Levain Tools require DoughLabPro Pro";
+        case 'mylab': return "Unlock your full baking history and insights";
+        case 'calculator': return "Export, AI tools and advanced presets are Pro-only";
+        case 'styles': return "Access professional dough styles with Pro";
+        case 'learn': return "Continue reading advanced techniques with Pro";
+        default: return "Unlock DoughLabPro Pro";
+    }
+  }
+
+  const benefits = [
+    {
+      icon: <BeakerIcon className="h-5 w-5" />,
+      title: "Unlimited Levain Pets",
+      desc: "Manage multiple starters with advanced vitality analytics."
+    },
+    {
+      icon: <BatchesIcon className="h-5 w-5" />,
+      title: "Unlimited Batches in MyLab",
+      desc: "Full history, photos, charts and comparisons."
+    },
+    {
+      icon: <SparklesIcon className="h-5 w-5" />,
+      title: "Advanced Dough Insights",
+      desc: "Understand hydration, fermentation, stability and structure."
+    },
+    {
+      icon: <BookOpenIcon className="h-5 w-5" />,
+      title: "Complete Styles Library",
+      desc: "Load any professional preset directly into the calculator."
+    },
+    {
+      icon: <DownloadIcon className="h-5 w-5" />,
+      title: "Smart Exports",
+      desc: "Generate clean PDFs, JSON and batch reports."
+    },
+    {
+      icon: <StarIcon className="h-5 w-5" />,
+      title: "Priority Access",
+      desc: "New tools, new styles, new intelligence every month."
+    },
+    {
+      icon: <ShieldCheckIcon className="h-5 w-5" />,
+      title: "Ad-free & Faster Sync",
+      desc: "Optimized for performance."
+    }
+  ];
+
   return (
     <div
-      className="fixed inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out]"
-      onClick={handleClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out] p-4 overflow-y-auto"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="paywall-title"
     >
-      <div
-        className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        
+        {/* Close Button */}
         <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 z-10 rounded-full p-1 text-slate-500 hover:bg-slate-200 disabled:opacity-50"
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
           aria-label="Close"
-          disabled={!!showSuccess}
         >
-          <CloseIcon className="h-6 w-6" />
+          <CloseIcon className="h-5 w-5" />
         </button>
 
-        <div
-          className={`transition-opacity duration-300 ${
-            showSuccess ? 'opacity-0' : 'opacity-100'
-          }`}
-        >
-          <div className="p-6 sm:p-8">
-            <div className="text-center">
-              <StarIcon className="mx-auto h-12 w-12 text-lime-500" />
-              <h2
-                id="paywall-title"
-                className="mt-4 text-2xl font-bold text-slate-900"
-              >
-                Unlock DoughLab Pro
-              </h2>
-              <p className="mt-2 text-slate-600">
-                Get full access to all features and take your baking to the next level.
-              </p>
-            </div>
-
-            <div className="mt-8 space-y-6">
-              <Feature
-                icon={
-                  <SaveIcon className="h-6 w-6 text-lime-600" />
-                }
-                title="Save Unlimited Bakes"
-                description="Keep a detailed history of all your experiments in your personal lab."
-              />
-              <Feature
-                icon={
-                  <BookOpenIcon className="h-6 w-6 text-lime-600" />
-                }
-                title="Advanced Recipes"
-                description="Access professional recipes and techniques like Biga, Poolish, and Sourdough."
-              />
-            </div>
-
-            <div className="mt-8">
-              <button
-                onClick={() => handleGrant('pro')}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
-              >
-                <StarIcon className="h-5 w-5" />
-                <span>Go Pro (Demo)</span>
-              </button>
-
-              <div className="my-4 flex items-center">
-                <div className="flex-grow border-t border-slate-300"></div>
-                <span className="mx-4 flex-shrink text-xs font-semibold uppercase text-slate-500">
-                  OR
-                </span>
-                <div className="flex-grow border-t border-slate-300"></div>
-              </div>
-
-              <button
-                onClick={() => handleGrant('pass')}
-                disabled={isPassOnCooldown}
-                className="w-full rounded-lg bg-slate-200 py-3 px-4 text-base font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300/50"
-              >
-                {isPassOnCooldown
-                  ? `Available in ${cooldownHoursRemaining} hours`
-                  : "Get a 24h Free Pass"}
-              </button>
-            </div>
+        {/* Header Section */}
+        <div className="bg-slate-50 px-8 pt-10 pb-6 text-center border-b border-slate-200">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-lime-100 mb-4">
+             <StarIcon className="h-6 w-6 text-lime-600" />
           </div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            {getHeaderText()}
+          </h2>
+          <p className="mt-2 text-lg text-slate-600">
+            Experience the full power of dough engineering.
+          </p>
         </div>
 
-        {/* Success State Overlay */}
-        {showSuccess && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center animate-[fadeIn_0.3s_ease-out]">
-            <CheckCircleIcon className="h-16 w-16 text-lime-500" />
-            <h3 className="mt-4 text-2xl font-bold text-slate-900">
-              {showSuccess}
-            </h3>
-            <p className="mt-2 text-slate-600">
-              You now have full access. Happy baking!
-            </p>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 md:px-10">
+          
+          {/* Benefits Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5 text-lime-600">
+                  {benefit.icon}
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-800 text-sm">{benefit.title}</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+
+          {/* Pricing Section */}
+          <div className="bg-slate-900 rounded-2xl p-6 text-white mb-6">
+             {/* Toggle */}
+             <div className="flex justify-center mb-6">
+                <div className="bg-slate-800 p-1 rounded-full flex relative">
+                   <button 
+                      onClick={() => setBillingCycle('monthly')}
+                      className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${billingCycle === 'monthly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                   >
+                      Monthly
+                   </button>
+                   <button 
+                      onClick={() => setBillingCycle('yearly')}
+                      className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+                   >
+                      Yearly
+                      <span className="bg-lime-500 text-white text-[10px] px-1.5 py-0.5 rounded-full uppercase font-bold">
+                        Save 18%
+                      </span>
+                   </button>
+                </div>
+             </div>
+
+             <div className="text-center">
+                <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold">
+                        {billingCycle === 'yearly' ? '$79' : '$8'}
+                    </span>
+                    <span className="text-slate-400 font-medium">
+                         /{billingCycle === 'yearly' ? 'year' : 'month'}
+                    </span>
+                </div>
+                <p className="text-slate-400 text-sm mt-1">
+                    {billingCycle === 'yearly' 
+                        ? 'Just $6.58/month, billed annually.' 
+                        : 'Flexible plan, cancel anytime.'}
+                </p>
+             </div>
+
+             <button
+                onClick={handleSubscribe}
+                disabled={isProcessing}
+                className="mt-6 w-full py-3.5 px-6 rounded-xl bg-lime-500 hover:bg-lime-400 text-slate-900 font-bold text-lg shadow-lg shadow-lime-900/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+             >
+                {isProcessing ? (
+                    <span>Processing...</span>
+                ) : (
+                    <>
+                        <span>Start your 7-day free trial</span>
+                        <span className="text-xs bg-slate-900/10 px-2 py-0.5 rounded font-medium">
+                           Then {billingCycle === 'yearly' ? '$79/yr' : '$8/mo'}
+                        </span>
+                    </>
+                )}
+             </button>
+             
+             <p className="text-center text-xs text-slate-500 mt-3">
+                Instant access to all Pro tools. Cancel anytime before the trial ends. 
+                <br className="hidden md:block"/> Card required. You will not be charged if you cancel before day 7.
+             </p>
+          </div>
+
+          <div className="text-center">
+              <button onClick={onClose} className="text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors">
+                  Maybe later
+              </button>
+          </div>
+
+        </div>
       </div>
     </div>
   );

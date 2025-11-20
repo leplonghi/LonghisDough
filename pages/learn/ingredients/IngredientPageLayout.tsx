@@ -16,13 +16,13 @@ const IngredientPageLayout: React.FC<IngredientPageLayoutProps> = ({ title, desc
             {category && <p className="text-sm font-semibold text-lime-600 mb-1">{category}</p>}
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
             {description && (
-                <p className="mt-4 text-lg text-slate-600">
+                <p className="mt-4 text-lg text-slate-700">
                 {description}
                 </p>
             )}
         </div>
 
-        <div className="mt-2">
+        <div className="mt-2 text-slate-700">
           {children}
         </div>
 

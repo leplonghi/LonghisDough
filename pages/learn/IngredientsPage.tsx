@@ -35,7 +35,7 @@ const LearnCategoryCard: React.FC<{
             <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
                 {title}
             </h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{description}</p>
+            <p className="mt-2 text-sm text-slate-700 dark:text-slate-400">{description}</p>
         </div>
         <p className="mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 group-hover:text-lime-500 transition-colors">
             Explorar &rarr;
@@ -129,7 +129,7 @@ const IngredientsPage: React.FC<IngredientsPageProps> = ({ onNavigate }) => {
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
                     Guia de Ingredientes
                 </h1>
-                <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-600 dark:text-slate-300">
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 dark:text-slate-300">
                     Explore o universo de sabores que vão sobre a sua massa.
                 </p>
             </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useEffect } from 'react';
 import {
   DoughConfig,
@@ -22,12 +23,21 @@ import {
   BatchesIcon,
   CubeIcon,
   ShoppingBagIcon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  DownloadIcon,
+  DocumentTextIcon,
+  LockClosedIcon
 } from './IconComponents';
 import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
 import { useTranslation } from '../i18n';
 import { useToast } from './ToastProvider';
 import { getAffiliateSuggestionsForConfig, AffiliateSuggestion } from '../logic/affiliateSuggestions';
+import { useUser } from '../contexts/UserProvider';
+import { generateRecipeSteps } from '../logic/recipeStepsGenerator';
+import RecipeTimeline from './RecipeTimeline';
+import { isFreeUser } from '../lib/subscriptions';
+import { AffiliateBlock } from './AffiliateBlock'; // Assuming AffiliateBlock is properly exported
+import { ProBadge } from './ProBadge';
 
 // Inform TypeScript that these libraries are available on the window object
 declare global {
@@ -44,7 +54,7 @@ interface ResultsDisplayProps {
   unitSystem: UnitSystem;
   onUnitChange: (unit: Unit) => void;
   hasProAccess: boolean;
-  onOpenPaywall: () => void;
+  onOpenPaywall: (origin?: string) => void;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onStartBatch: () => void;
   selectedFlour?: FlourDefinition;
@@ -124,45 +134,17 @@ const ResultRow: React.FC<{
   </div>
 );
 
-const RecipeSteps: React.FC<{
-  config: DoughConfig;
-}> = ({ config }) => {
-  const { t } = useTranslation();
-  
-    const getSteps = () => {
-        const techniqueKey = config.fermentationTechnique === FermentationTechnique.DIRECT ? 'generic_direct' : 'generic_indirect';
-        return (
-            <div className="space-y-4 text-slate-600 text-sm" dangerouslySetInnerHTML={{ 
-                __html: t(`results.steps.${techniqueKey}.step1`, { defaultValue: "Mix ingredients..." }) 
-            }} />
-        );
-    }
-
-  return (
-    <div className="mt-10">
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-lime-500">
-          <RecipeIcon className="h-6 w-6" />
-        </span>
-        <h3 className="text-xl font-bold text-slate-800">
-          {t('results.steps.title')}
-        </h3>
-      </div>
-      <div className="space-y-6">
-        {getSteps()}
-      </div>
-    </div>
-  );
-};
-
 const SuggestionsBlock: React.FC<{ config: DoughConfig }> = ({ config }) => {
   const [suggestions, setSuggestions] = useState<AffiliateSuggestion[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     const s = getAffiliateSuggestionsForConfig(config);
     setSuggestions(s);
   }, [config]);
 
+  // Only show suggestions to Free users
+  if (!isFreeUser(user)) return null;
   if (suggestions.length === 0) return null;
 
   return (
@@ -218,6 +200,8 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     tbsp: t('units.tbsp'),
     tsp: t('units.tsp'),
   };
+  
+  const recipeSteps = React.useMemo(() => generateRecipeSteps(config), [config]);
 
   const getConversionTooltip = (
     ingredient: keyof typeof INGREDIENT_DENSITIES,
@@ -249,6 +233,10 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
   };
 
   const handleShare = async () => {
+    if (!hasProAccess) {
+      onOpenPaywall('calculator');
+      return;
+    }
     try {
         const url = window.location.href;
         await navigator.clipboard.writeText(url);
@@ -256,6 +244,24 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     } catch (e) {
         addToast(t('results.share_error'), "error");
     }
+  };
+
+  const handleExportPDF = () => {
+    if (!hasProAccess) {
+        onOpenPaywall('calculator');
+        return;
+    }
+    // Implementation for PDF export would go here
+    addToast("Exporting PDF...", "info");
+  };
+
+  const handleExportJSON = () => {
+     if (!hasProAccess) {
+        onOpenPaywall('calculator');
+        return;
+    }
+     // Implementation for JSON export
+     addToast("Exporting JSON...", "info");
   };
 
   if (!results) {
@@ -307,6 +313,25 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
               </button>
             ))}
           </div>
+        </div>
+        
+        <div className="mt-4 flex gap-2">
+            <button 
+                onClick={handleExportPDF} 
+                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
+                title={hasProAccess ? "Export as PDF" : "Available in DoughLabPro Pro: export your recipes as clean PDFs."}
+            >
+                {hasProAccess ? <DownloadIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3 text-slate-400" />}
+                Export PDF {!hasProAccess && "(Pro)"}
+            </button>
+            <button 
+                onClick={handleExportJSON} 
+                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
+                title={hasProAccess ? "Export as JSON" : "Available in DoughLabPro Pro: export your recipes as JSON."}
+            >
+                {hasProAccess ? <DocumentTextIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3 text-slate-400" />}
+                Export JSON {!hasProAccess && "(Pro)"}
+            </button>
         </div>
       </div>
 
@@ -417,7 +442,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             onClick={handleShare}
             className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white py-2.5 px-4 font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
           >
-            <ShareIcon className="h-5 w-5" />
+            {hasProAccess ? <ShareIcon className="h-5 w-5" /> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
             {t('common.share_link', {defaultValue: 'Share'})}
           </button>
            <button
@@ -432,7 +457,15 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
       </div>
       
       <div className="bg-slate-50 p-6 rounded-b-2xl border-t border-slate-200">
-        <RecipeSteps config={config} />
+        <div className="mb-6 flex items-center gap-3">
+          <span className="text-lime-500">
+            <RecipeIcon className="h-6 w-6" />
+          </span>
+          <h3 className="text-xl font-bold text-slate-800">
+            Technical Method
+          </h3>
+        </div>
+        <RecipeTimeline steps={recipeSteps} />
       </div>
     </div>
   );

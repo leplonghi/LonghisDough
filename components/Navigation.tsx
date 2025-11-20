@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Page } from '../types';
+import { Page, NavLinkItem } from '../types';
 import UserMenu from './UserMenu';
 import {
   CalculatorIcon,
@@ -13,7 +13,10 @@ import {
   BeakerIcon,
   UserCircleIcon,
   ShoppingBagIcon,
+  StarIcon,
+  LockClosedIcon
 } from './IconComponents';
+import { useUser } from '../contexts/UserProvider';
 
 interface NavigationProps {
   activePage: Page;
@@ -26,9 +29,21 @@ interface HeaderComponentProps extends Omit<NavigationProps, 'activePage'> {
     handleNavigate: (page: Page) => void;
 }
 
+const ProBadge = () => (
+    <span className="ml-2 inline-flex items-center rounded bg-lime-100 px-1.5 py-0.5 text-[10px] font-bold text-lime-700 uppercase tracking-wide border border-lime-200">
+        PRO
+    </span>
+);
+
+const LockedIcon = () => (
+    <LockClosedIcon className="ml-auto h-3.5 w-3.5 text-slate-400" />
+);
+
 const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const { hasProAccess, openPaywall } = useUser();
+    const hasPro = hasProAccess;
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -42,14 +57,20 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
         };
     }, [wrapperRef]);
     
-    const handleNavigate = (page: Page) => {
-        onNavigate(page);
-        setIsOpen(false);
+    const handleNavigate = (page: Page, requiresPro: boolean = false) => {
+        if (requiresPro && !hasPro) {
+            setIsOpen(false);
+            openPaywall();
+        } else {
+            onNavigate(page);
+            setIsOpen(false);
+        }
     };
     
     const toolItems = [
-      { page: 'tools-oven-analysis' as Page, label: 'FormulaLab', icon: <FireIcon className="h-5 w-5" /> },
-      { page: 'references' as Page, label: 'Technical References', icon: <BookOpenIcon className="h-5 w-5" /> },
+      { page: 'tools-oven-analysis' as Page, label: 'FormulaLab', icon: <FireIcon className="h-5 w-5" />, requiresPro: true },
+      { page: 'references' as Page, label: 'Technical References', icon: <BookOpenIcon className="h-5 w-5" />, requiresPro: false },
+      { page: 'tools-doughbot' as Page, label: 'Dough Diagnostic', icon: <BeakerIcon className="h-5 w-5" />, requiresPro: true },
     ];
 
     return (
@@ -66,12 +87,14 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
                     {toolItems.map(item => (
                        <button
                           key={item.page}
-                          onClick={() => handleNavigate(item.page)}
+                          onClick={() => handleNavigate(item.page, item.requiresPro)}
                           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100"
                           role="menuitem"
                         >
                           <span className="text-slate-500">{item.icon}</span>
-                          <span>{item.label}</span>
+                          <span className="flex-grow text-left">{item.label}</span>
+                          {item.requiresPro && !hasPro && <LockedIcon />}
+                          {item.requiresPro && hasPro && <ProBadge />}
                         </button>
                     ))}
                 </div>
@@ -96,7 +119,7 @@ const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavig
             {/* Left Section: Logo & main links */}
             <div className="flex items-center gap-6">
               <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center">
-                <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fescuro%20FINAL%20COMLETA.png?alt=media&token=abf76ee2-4052-45c8-bd06-1ebeba2c7487" alt="DoughLabPro Logo" className="h-8 w-auto" />
+                <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fbranco%20FINAL%20COMLETA.png?alt=media&token=0f160dc9-2e99-4f59-9eaa-9640e3437161" alt="DoughLabPro Logo" className="h-8 w-auto" />
               </button>
               <nav className="flex items-center gap-1">
                   {navLinks.map(link => (
@@ -126,21 +149,33 @@ const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavig
 };
 
 const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean; setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>; }> = ({ activePage, handleNavigate, onNavigate, onOpenAuth, isMobileMenuOpen, setIsMobileMenuOpen }) => {
-    
+    const { hasProAccess, openPaywall } = useUser();
+    const hasPro = hasProAccess;
+
     const navLinks = [
-      { page: 'mylab', label: 'My Lab', icon: <BeakerIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'calculator', label: 'Calculator', icon: <CalculatorIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'styles', label: 'Styles', icon: <BookOpenIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'learn', label: 'Learn', icon: <AcademicCapIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'shop', label: 'Shop', icon: <ShoppingBagIcon className="h-6 w-6 text-slate-500" /> },
-      { page: 'profile', label: 'Profile', icon: <UserCircleIcon className="h-6 w-6 text-slate-500" /> },
+      { id: 'mylab', page: 'mylab', label: 'My Lab', icon: <BeakerIcon className="h-6 w-6 text-slate-500" /> } as any,
+      { id: 'calculator', page: 'calculator', label: 'Calculator', icon: <CalculatorIcon className="h-6 w-6 text-slate-500" /> } as any,
+      { id: 'styles', page: 'styles', label: 'Styles', icon: <BookOpenIcon className="h-6 w-6 text-slate-500" /> } as any,
+      { id: 'learn', page: 'learn', label: 'Learn', icon: <AcademicCapIcon className="h-6 w-6 text-slate-500" /> } as any,
+      { id: 'shop', page: 'shop', label: 'Shop', icon: <ShoppingBagIcon className="h-6 w-6 text-slate-500" /> } as any,
+      { id: 'tools-oven-analysis', page: 'tools-oven-analysis', label: 'FormulaLab', icon: <FireIcon className="h-6 w-6 text-slate-500" />, requiresPro: true } as any,
+      { id: 'profile', page: 'profile', label: 'Profile', icon: <UserCircleIcon className="h-6 w-6 text-slate-500" /> } as any,
     ];
+
+    const onMobileNavigate = (page: Page, requiresPro: boolean = false) => {
+        if (requiresPro && !hasPro) {
+            setIsMobileMenuOpen(false);
+            openPaywall();
+        } else {
+            handleNavigate(page);
+        }
+    }
 
     return (
         <header className="fixed top-0 left-0 w-full z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md sm:hidden transition-all duration-200 shadow-sm">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
                 <button onClick={() => handleNavigate('mylab')} aria-label="Home" className="flex flex-shrink-0 items-center">
-                    <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fescuro%20FINAL%20COMLETA.png?alt=media&token=abf76ee2-4052-45c8-bd06-1ebeba2c7487" alt="DoughLabPro Logo" className="h-8 w-auto" />
+                    <img src="https://firebasestorage.googleapis.com/v0/b/doughlabpro-app.firebasestorage.app/o/assets%2FDoughLabPro%20fbranco%20FINAL%20COMLETA.png?alt=media&token=0f160dc9-2e99-4f59-9eaa-9640e3437161" alt="DoughLabPro Logo" className="h-8 w-auto" />
                 </button>
                 <div className="flex items-center gap-2">
                     <UserMenu onNavigate={onNavigate} onOpenAuthModal={onOpenAuth} />
@@ -151,14 +186,16 @@ const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean;
             </div>
             {isMobileMenuOpen && (
                  <nav className="space-y-1 p-4 border-t border-slate-200 bg-white shadow-lg absolute w-full left-0 max-h-[80vh] overflow-y-auto">
-                    {navLinks.map(link => (
+                    {navLinks.map((link: any) => (
                         <button
-                            key={link.page}
-                            onClick={() => handleNavigate(link.page as Page)}
+                            key={link.id}
+                            onClick={() => onMobileNavigate(link.id, link.requiresPro)}
                             className="flex w-full items-center gap-3 rounded-lg p-3 text-base font-semibold text-slate-700 hover:bg-slate-100"
                         >
                             {link.icon}
-                            <span>{link.label}</span>
+                            <span className="flex-grow text-left">{link.label}</span>
+                            {link.requiresPro && !hasPro && <LockedIcon />}
+                            {link.requiresPro && hasPro && <ProBadge />}
                         </button>
                     ))}
                 </nav>

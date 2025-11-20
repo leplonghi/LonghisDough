@@ -1,8 +1,14 @@
-import app from "./config";
-// FIX: Importing from '@firebase/auth' to avoid name collision with this file ('firebase/auth.ts')
-import { getAuth } from '@firebase/auth';
 
-// Initializes Firebase Authentication and gets a reference to the service.
-const auth = app ? getAuth(app) : null;
+import { getAuth, GoogleAuthProvider, Auth } from "@firebase/auth";
+import { firebaseApp } from "./app";
 
-export default auth;
+export let auth: Auth | null = null;
+export const googleProvider = new GoogleAuthProvider();
+
+if (firebaseApp) {
+  try {
+    auth = getAuth(firebaseApp);
+  } catch (error) {
+    console.error("Failed to initialize Firebase Auth:", error);
+  }
+}

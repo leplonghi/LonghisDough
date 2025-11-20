@@ -1,3 +1,4 @@
+
 import {
   collection,
   addDoc,
@@ -10,7 +11,7 @@ import {
   orderBy,
   limit,
 } from 'firebase/firestore';
-import db from './db';
+import { db } from './db';
 import { LevainStarter, LevainFeedingLog } from '../types';
 
 const LEVAIN_STARTERS_COLLECTION = 'levainStarters';
@@ -22,7 +23,7 @@ export const createLevainStarter = async (
   starterData: Omit<LevainStarter, 'id' | 'createdAt' | 'updatedAt' | 'status'>
 ): Promise<LevainStarter> => {
   const now = Timestamp.now();
-  const docRef = await addDoc(collection(db, LEVAIN_STARTERS_COLLECTION), {
+  const docRef = await addDoc(collection(db!, LEVAIN_STARTERS_COLLECTION), {
     ...starterData,
     createdAt: now,
     updatedAt: now,
@@ -35,7 +36,7 @@ export const updateLevainStarter = async (
   levainId: string,
   updates: Partial<Omit<LevainStarter, 'id' | 'createdAt'>>
 ): Promise<void> => {
-  const docRef = doc(db, LEVAIN_STARTERS_COLLECTION, levainId);
+  const docRef = doc(db!, LEVAIN_STARTERS_COLLECTION, levainId);
   await updateDoc(docRef, {
     ...updates,
     updatedAt: Timestamp.now(),
@@ -52,7 +53,7 @@ export const rehydrateLevainStarter = async (levainId: string): Promise<void> =>
 
 export const listLevainStartersByUser = async (userId: string): Promise<LevainStarter[]> => {
   const q = query(
-    collection(db, LEVAIN_STARTERS_COLLECTION),
+    collection(db!, LEVAIN_STARTERS_COLLECTION),
     where('userId', '==', userId),
     where('status', '!=', 'arquivado')
   );
@@ -66,7 +67,7 @@ export const createFeedingLog = async (
   logData: Omit<LevainFeedingLog, 'id' | 'dateTime'>
 ): Promise<LevainFeedingLog> => {
   const now = Timestamp.now();
-  const docRef = await addDoc(collection(db, LEVAIN_FEEDING_LOGS_COLLECTION), {
+  const docRef = await addDoc(collection(db!, LEVAIN_FEEDING_LOGS_COLLECTION), {
     ...logData,
     dateTime: now,
   });
@@ -75,7 +76,7 @@ export const createFeedingLog = async (
 
 export const listFeedingLogs = async (levainId: string, logLimit: number = 50): Promise<LevainFeedingLog[]> => {
   const q = query(
-    collection(db, LEVAIN_FEEDING_LOGS_COLLECTION),
+    collection(db!, LEVAIN_FEEDING_LOGS_COLLECTION),
     where('levainId', '==', levainId),
     orderBy('dateTime', 'desc'),
     limit(logLimit)

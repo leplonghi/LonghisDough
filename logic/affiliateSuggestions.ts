@@ -1,5 +1,6 @@
+
 import { DoughConfig, RecipeStyle, FermentationTechnique } from '../types';
-import { AFFILIATE_LINKS } from '../data/affiliateLinks';
+import { SHOP_PRODUCTS } from '../data/affiliateLinks';
 
 export interface AffiliateSuggestion {
   id: string;
@@ -11,7 +12,7 @@ export interface AffiliateSuggestion {
 
 // Helper to get URL by ID
 const getLink = (id: string) => {
-  const product = AFFILIATE_LINKS.find(p => p.id === id);
+  const product = SHOP_PRODUCTS.find(p => p.id === id);
   return product ? product.url : '/shop'; // Fallback to shop root
 };
 

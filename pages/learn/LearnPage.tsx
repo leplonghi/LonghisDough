@@ -3,10 +3,10 @@ import { useTranslation } from '../../i18n';
 import { Page } from '../../types';
 import { 
     AcademicCapIcon, 
-    WrenchScrewdriverIcon,
-    BeakerIcon,
-    FireIcon,
-    QuestionMarkCircleIcon,
+    WrenchScrewdriverIcon, 
+    BeakerIcon, 
+    FireIcon, 
+    QuestionMarkCircleIcon, 
     FlourIcon
 } from '../../components/IconComponents';
 import LearnTopicCard from '../../components/learn/LearnTopicCard';
@@ -58,7 +58,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
                     {t('learn.title')}
                 </h1>
-                <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-600 dark:text-slate-300">
+                <p className="mt-4 max-w-3xl mx-auto text-lg text-slate-700 dark:text-slate-300">
                     {t('learn.subtitle')}
                 </p>
             </div>

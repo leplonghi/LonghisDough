@@ -3,10 +3,12 @@ import React, { useState, useMemo } from 'react';
 import { Page, Levain } from '../../../types';
 import { useUser } from '../../../contexts/UserProvider';
 import LevainLayout from './LevainLayout';
-import { PlusCircleIcon } from '../../../components/IconComponents';
+import { PlusCircleIcon, SparklesIcon } from '../../../components/IconComponents';
 import LevainFeedingForm from './components/LevainFeedingForm';
 import LevainProfile from './components/LevainProfile';
 import LevainInsights from './components/LevainInsights';
+import ProFeatureLock from '../../../components/ProFeatureLock';
+import LevainAssistant from './components/LevainAssistant';
 
 interface LevainDetailPageProps {
     levainId: string | null;
@@ -21,9 +23,10 @@ const DetailRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label,
 );
 
 const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigate }) => {
-    const { levains } = useUser();
+    const { levains, hasProAccess } = useUser();
     const [activeTab, setActiveTab] = useState<'summary' | 'feedings' | 'profile' | 'insights'>('summary');
     const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
+    const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
     const levain = useMemo(() => levains.find(l => l.id === levainId), [levains, levainId]);
 
@@ -56,42 +59,73 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
                     <p className="text-sm text-neutral-600">{statusText[levain.status]}</p>
                  </div>
             </div>
+            
+            <ProFeatureLock origin='levain' title="Levain Assistant (AI)" description="Ask questions about your starter's health and routine.">
+                <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm flex items-center justify-between">
+                     <div>
+                        <h3 className="font-bold text-neutral-900">Levain Assistant (AI)</h3>
+                        <p className="text-sm text-neutral-500">Ask questions about your starter's health and routine.</p>
+                     </div>
+                    <button 
+                        onClick={() => setIsAssistantOpen(true)}
+                        className="flex items-center gap-2 rounded-lg bg-indigo-100 text-indigo-700 px-4 py-2 text-sm font-bold hover:bg-indigo-200"
+                    >
+                        <SparklesIcon className="h-5 w-5" />
+                        Ask AI
+                    </button>
+                </div>
+            </ProFeatureLock>
         </div>
     );
     
-    const renderFeedings = () => (
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                 <h3 className="text-lg font-medium">Feedings</h3>
-                 <button onClick={() => setIsFeedModalOpen(true)} className="flex items-center gap-2 rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">
-                     <PlusCircleIcon className="h-5 w-5"/>
-                     Log Feeding
-                 </button>
-            </div>
-             {levain.feedingHistory.length === 0 ? (
-                <p className="text-sm text-center py-8 text-neutral-500">No feedings recorded yet.</p>
-            ) : (
-                <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                    {[...levain.feedingHistory].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(log => (
-                        <div key={log.id} className="rounded-md bg-neutral-50 p-3 text-sm">
-                            <p className="font-semibold">{new Date(log.date).toLocaleString()}</p>
-                            <div className="flex gap-4 mt-1 text-neutral-600">
-                               <span>Ratio: {log.ratio || 'N/A'}</span>
-                               <span>Flour: {log.flourType || 'N/A'}</span>
-                            </div>
-                        </div>
-                    ))}
+    const renderFeedings = () => {
+        const historyToShow = hasProAccess ? levain.feedingHistory : levain.feedingHistory.slice(0, 3);
+        return (
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium">Feedings</h3>
+                    <button onClick={() => setIsFeedModalOpen(true)} className="flex items-center gap-2 rounded-md bg-lime-500 py-1.5 px-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">
+                        <PlusCircleIcon className="h-5 w-5"/>
+                        Log Feeding
+                    </button>
                 </div>
-            )}
-        </div>
-    );
+                {levain.feedingHistory.length === 0 ? (
+                    <p className="text-sm text-center py-8 text-neutral-500">No feedings recorded yet.</p>
+                ) : (
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        {historyToShow.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(log => (
+                            <div key={log.id} className="rounded-md bg-neutral-50 p-3 text-sm">
+                                <p className="font-semibold">{new Date(log.date).toLocaleString()}</p>
+                                <div className="flex gap-4 mt-1 text-neutral-600">
+                                <span>Ratio: {log.ratio || 'N/A'}</span>
+                                <span>Flour: {log.flourType || 'N/A'}</span>
+                                </div>
+                            </div>
+                        ))}
+                        {!hasProAccess && levain.feedingHistory.length > 3 && (
+                            <ProFeatureLock origin='levain' title="Full History (Pro)" description="Unlock unlimited feeding history logs.">
+                                <div className="p-4 text-center bg-neutral-50 rounded-lg">
+                                    <p className="text-sm text-neutral-500 mb-2">Older history is hidden.</p>
+                                    <button className="text-sm font-bold text-lime-600 hover:underline">Unlock Full History</button>
+                                </div>
+                            </ProFeatureLock>
+                        )}
+                    </div>
+                )}
+            </div>
+        );
+    };
     
     const renderTabContent = () => {
         switch (activeTab) {
             case 'summary': return renderSummary();
             case 'feedings': return renderFeedings();
             case 'profile': return <LevainProfile levain={levain} />;
-            case 'insights': return <LevainInsights levain={levain} />;
+            case 'insights': return (
+                <ProFeatureLock origin='levain' title="Advanced Levain Tools (Pro)" description="Unlock multiple starters, analytics and smart reminders with DoughLabPro Pro.">
+                    <LevainInsights levain={levain} />
+                </ProFeatureLock>
+            );
             default: return null;
         }
     }
@@ -105,6 +139,11 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
                 isOpen={isFeedModalOpen}
                 onClose={() => setIsFeedModalOpen(false)}
                 levainId={levain.id}
+            />
+            <LevainAssistant
+                isOpen={isAssistantOpen}
+                onClose={() => setIsAssistantOpen(false)}
+                levain={levain}
             />
         </>
     );

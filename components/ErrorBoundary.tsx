@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import { ExclamationCircleIcon } from './IconComponents';
 
 interface Props {
@@ -9,13 +9,10 @@ interface State {
   hasError: boolean;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      hasError: false
-    };
-  }
+class ErrorBoundary extends React.Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
 
   static getDerivedStateFromError(_: Error): State {
     return { hasError: true };
@@ -36,14 +33,14 @@ class ErrorBoundary extends Component<Props, State> {
           <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-500" />
           <h1 className="mt-4 text-2xl font-bold text-slate-900">Ops! Algo deu errado.</h1>
           <p className="mt-2 text-slate-600">
-            Algo deu errado ao carregar esta parte do DoughLabPro. Atualize a página ou tente novamente. Se o erro persistir, entre em contato com o suporte.
+            Algo deu errado ao carregar esta parte do DoughLabPro. Atualize a página ou tente novamente.
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <button
               onClick={() => window.location.reload()}
               className="rounded-md bg-slate-200 py-2 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-300"
             >
-              Atualizar a Página
+              Atualizar
             </button>
             <button
               onClick={this.handleTryAgain}

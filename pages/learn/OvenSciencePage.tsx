@@ -10,7 +10,7 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300">
             {children}
         </div>
     </div>

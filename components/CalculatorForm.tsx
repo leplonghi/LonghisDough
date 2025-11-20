@@ -32,11 +32,17 @@ import {
   TrashIcon,
   CloseIcon,
   SparklesIcon,
+  WaterIcon,
+  SaltIcon,
+  OilIcon,
+  CubeIcon,
+  WrenchScrewdriverIcon,
 } from './IconComponents';
 import FormSection from './calculator/AccordionSection';
 import { useToast } from './ToastProvider';
-import { hoursBetween } from '../helpers';
+import { hoursBetween, timeSince } from '../helpers';
 import IngredientTableEditor from './calculator/IngredientTableEditor';
+import FlourBlendEditor from './calculator/FlourBlendEditor'; // New Import
 import { syncIngredientsFromConfig } from '../logic/doughMath';
 
 interface CalculatorFormProps {
@@ -50,6 +56,7 @@ interface CalculatorFormProps {
   calculatorMode: 'basic' | 'advanced';
   calculationMode: CalculationMode;
   onCalculationModeChange: (mode: CalculationMode) => void;
+  onCalculatorModeChange: (mode: 'basic' | 'advanced') => void;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
   levains: Levain[];
@@ -77,6 +84,26 @@ const ChoiceButton: React.FC<{
   </button>
 );
 
+const CompactParamCard: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  unit?: string;
+  colorClass: string;
+}> = ({ icon, label, value, unit = '%', colorClass }) => (
+  <div className="flex flex-row items-center justify-start gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 shadow-sm transition-all hover:bg-white hover:shadow-md">
+    <div className={`flex-shrink-0 rounded-full p-1.5 ${colorClass} bg-opacity-15`}>
+      {React.cloneElement(icon as React.ReactElement, { className: `h-4 w-4 ${colorClass.replace('bg-', 'text-')}` })}
+    </div>
+    <div className="flex flex-col items-start leading-tight">
+       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{label}</span>
+       <span className="text-base font-bold text-slate-800">
+        {value}<span className="text-xs font-medium text-slate-500 ml-0.5">{unit}</span>
+       </span>
+    </div>
+  </div>
+);
+
 const CalculatorForm: React.FC<CalculatorFormProps> = ({
   config,
   errors,
@@ -88,6 +115,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   calculatorMode,
   calculationMode,
   onCalculationModeChange,
+  onCalculatorModeChange,
   hasProAccess,
   onOpenPaywall,
   levains,
@@ -164,9 +192,32 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
     const { name, value } = e.target;
     if (name === 'yeastType') {
       onYeastTypeChange(value as YeastType);
+    } else if (name === 'flourId') {
+        // Legacy/Basic handler (replaced by handleFlourChange for ingredients sync)
+        onConfigChange({ [name]: value });
     } else {
       onConfigChange({ [name]: value });
     }
+  };
+  
+  const handleFlourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newFlourId = e.target.value;
+      const flourDef = FLOURS.find(f => f.id === newFlourId);
+      
+      const newConfig: Partial<DoughConfig> = { flourId: newFlourId };
+      
+      if (config.ingredients) {
+          const newIngredients = config.ingredients.map(ing => {
+              // Update the main flour ingredient
+              if (ing.role === 'flour' && ing.id === config.flourId) {
+                  return { ...ing, id: newFlourId, name: flourDef?.name || ing.name };
+              }
+              return ing;
+          });
+          newConfig.ingredients = newIngredients;
+      }
+      
+      onConfigChange(newConfig);
   };
   
   const handleResetPreset = () => {
@@ -178,6 +229,13 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const handleIngredientsUpdate = (newIngredients: IngredientConfig[]) => {
       onConfigChange({ ingredients: newIngredients });
   };
+  
+  const handleFlourBlendUpdate = (newIngredients: IngredientConfig[], mainFlourId: string) => {
+      onConfigChange({ 
+          ingredients: newIngredients,
+          flourId: mainFlourId // Keep the main flour ID in sync for legacy/environment checks
+      });
+  }
 
   const recipeStylesToShow = DOUGH_STYLE_PRESETS.filter(p => p.type === config.bakeType);
   
@@ -318,33 +376,62 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
       </FormSection>
 
       <FormSection title="Ingredients" description="Adjust the percentages of each component." icon={<FlourIcon className="h-6 w-6" />}>
+        {isBasic && (
+            <div className="mb-6">
+                <label htmlFor="flourId" className="mb-1 block text-sm font-medium text-slate-700">Flour Type</label>
+                <select 
+                    id="flourId" 
+                    name="flourId" 
+                    value={config.flourId} 
+                    onChange={handleFlourChange} 
+                    className={getSelectClasses()}
+                >
+                    {FLOURS.map((flour) => (
+                        <option key={flour.id} value={flour.id}>
+                            {flour.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        )}
+
         {isBasic ? (
-            <div className="space-y-4 rounded-lg border border-sky-200 bg-slate-50 p-4">
-              <div className="flex items-center gap-2">
-                <LockClosedIcon className="h-5 w-5 text-sky-500" />
-                <h4 className="font-semibold text-slate-700">Style Parameters (Locked)</h4>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <CompactParamCard 
+                    icon={<WaterIcon />} 
+                    label="Hydration" 
+                    value={Number(config.hydration.toFixed(1))} 
+                    colorClass="text-blue-500 bg-blue-500"
+                />
+                <CompactParamCard 
+                    icon={<SaltIcon />} 
+                    label="Salt" 
+                    value={Number(config.salt.toFixed(1))} 
+                    colorClass="text-slate-500 bg-slate-500"
+                />
+                 <CompactParamCard 
+                    icon={<OilIcon />} 
+                    label="Oil" 
+                    value={Number(config.oil.toFixed(1))} 
+                    colorClass="text-amber-500 bg-amber-500"
+                />
+                 <CompactParamCard 
+                    icon={<CubeIcon />} 
+                    label="Sugar" 
+                    value={Number((config.sugar || 0).toFixed(1))} 
+                    colorClass="text-pink-500 bg-pink-500"
+                />
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500">Hydration</span>
-                  <span className="font-bold text-slate-800">{config.hydration.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500">Salt</span>
-                  <span className="font-bold text-slate-800">{config.salt.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500">Oil/Fat</span>
-                  <span className="font-bold text-slate-800">{config.oil.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-slate-500">Sugar</span>
-                  <span className="font-bold text-slate-800">{(config.sugar || 0).toFixed(1)}%</span>
-                </div>
+              <div className="flex justify-end">
+                  <button 
+                    onClick={() => onCalculatorModeChange('advanced')}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700 hover:underline transition-colors"
+                  >
+                    <WrenchScrewdriverIcon className="h-3 w-3" />
+                    Customize parameters
+                  </button>
               </div>
-              <p className="pt-3 text-center text-xs text-slate-500 border-t border-slate-200">
-                These parameters are recommended for the selected style. Switch to Advanced Mode to edit.
-              </p>
             </div>
         ) : (
             <>
@@ -365,48 +452,93 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 </div>
                 <SliderInput label={isAnySourdough ? "Starter %" : "Yeast %"} name="yeastPercentage" value={config.yeastPercentage} onChange={handleNumberChange} min={0} max={isAnySourdough ? (isBasic ? 30 : 200) : (isBasic ? 2 : 5)} step={isAnySourdough ? 1 : 0.1} unit="%" tooltip="Percentage relative to flour." hasError={!!errors.yeastPercentage} />
             </div>
-             {config.yeastType === YeastType.USER_LEVAIN && (
-                <div className="mt-4">
-                  {levains.length > 0 ? (
-                    <>
-                      <label htmlFor="levainId" className="mb-1 block text-sm font-medium text-slate-700">Select your Levain</label>
-                      <select id="levainId" name="levainId" value={config.levainId || ''} onChange={handleSelectChange} className={getSelectClasses()}>
-                          {levains.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                      </select>
-                      {selectedLevain && (
-                        <div className="mt-2 rounded-lg bg-slate-100 p-3 text-sm text-slate-700">
-                          <p><span className="font-semibold">Using:</span> {selectedLevain.name}</p>
-                          <p><span className="font-semibold">Hydration:</span> {selectedLevain.hydration}%</p>
-                          <p><span className="font-semibold">Fed:</span> {hoursBetween(new Date().toISOString(), selectedLevain.lastFeeding).toFixed(1)} hours ago</p>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="text-center text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
-                      <p>No starter found. <a href="#/mylab/levain" className="font-semibold text-lime-600 hover:underline">Create one in My Lab.</a></p>
-                    </div>
+             
+             {isAnySourdough && (
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  {config.yeastType === YeastType.SOURDOUGH_STARTER && (
+                      <div className="flex items-start gap-3">
+                         <div className="p-2 bg-white rounded-full shadow-sm text-slate-400">
+                             <CubeIcon className="h-5 w-5" />
+                         </div>
+                         <div>
+                             <h4 className="text-sm font-bold text-slate-800">Generic Starter</h4>
+                             <p className="text-xs text-slate-600 mt-1">
+                                 Assumed Hydration: <strong>100%</strong>.
+                             </p>
+                             <p className="text-xs text-slate-500 mt-2">
+                                 To track your specific starter's hydration and feeding schedule, select <strong>"My Starter"</strong>.
+                             </p>
+                         </div>
+                      </div>
+                  )}
+                  
+                  {config.yeastType === YeastType.USER_LEVAIN && (
+                      <>
+                        {levains.length > 0 ? (
+                            <div className="space-y-3">
+                                <div>
+                                    <label htmlFor="levainId" className="block text-xs font-bold uppercase tracking-wide text-slate-500 mb-1">Selected Levain</label>
+                                    <select id="levainId" name="levainId" value={config.levainId || ''} onChange={handleSelectChange} className={getSelectClasses()}>
+                                        {levains.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                                    </select>
+                                </div>
+                                {selectedLevain && (
+                                    <div className="bg-white rounded-md border border-slate-200 p-3 shadow-sm grid grid-cols-2 gap-4">
+                                        <div>
+                                            <span className="block text-xs text-slate-500 uppercase">Hydration</span>
+                                            <span className="block text-lg font-bold text-slate-800">{selectedLevain.hydration}%</span>
+                                        </div>
+                                        <div>
+                                            <span className="block text-xs text-slate-500 uppercase">Last Fed</span>
+                                            <span className="block text-lg font-bold text-slate-800">{timeSince(selectedLevain.lastFeeding)} ago</span>
+                                        </div>
+                                        <div className="col-span-2 border-t border-slate-100 pt-2 mt-1">
+                                             <span className="block text-xs text-slate-500">Status</span>
+                                             <span className={`font-medium ${
+                                                selectedLevain.status === 'ativo' ? 'text-green-600' : 
+                                                selectedLevain.status === 'precisa_atencao' ? 'text-amber-600' : 'text-slate-600'
+                                             }`}>
+                                                {selectedLevain.status === 'ativo' ? 'Active' : selectedLevain.status === 'precisa_atencao' ? 'Needs Attention' : 'Resting'}
+                                             </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="text-center py-2">
+                                <p className="text-sm text-slate-600 mb-3">No starters found in My Lab.</p>
+                                <a href="#/mylab/levain" className="inline-flex items-center justify-center gap-2 rounded-md bg-lime-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-lime-600">
+                                    Create Levain
+                                </a>
+                            </div>
+                        )}
+                      </>
                   )}
                 </div>
              )}
            </div>
            
            {!isBasic && config.ingredients && (
+             <>
+                <div className="mt-8">
+                    <FlourBlendEditor 
+                      ingredients={config.ingredients} 
+                      mainFlourId={config.flourId} 
+                      onChange={handleFlourBlendUpdate} 
+                    />
+                </div>
                 <IngredientTableEditor 
                     ingredients={config.ingredients}
                     onChange={handleIngredientsUpdate}
+                    recipeStyle={config.recipeStyle}
                 />
+             </>
            )}
       </FormSection>
 
       {!isBasic && (
         <FormSection title="Environmental Conditions" description="Factors that influence fermentation." icon={<FireIcon className="h-6 w-6" />}>
             <div className="space-y-6">
-              <div>
-                  <label htmlFor="flourId" className="mb-1 block text-sm font-medium text-slate-700">Flour Type</label>
-                  <select id="flourId" name="flourId" value={config.flourId} onChange={handleSelectChange} className={getSelectClasses()}>
-                      {FLOURS.map((opt) => (<option key={opt.id} value={opt.id}>{opt.name}</option>))}
-                  </select>
-              </div>
               <div>
                   <label htmlFor="ambientTemperature" className="mb-1 block text-sm font-medium text-slate-700">Room Temperature</label>
                   <select id="ambientTemperature" name="ambientTemperature" value={config.ambientTemperature} onChange={handleSelectChange} className={getSelectClasses()}>

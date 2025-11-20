@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '../types';
@@ -8,7 +9,6 @@ import {
   StarIcon,
   SolidStarIcon,
   PencilIcon,
-  // FIX: Replace TooltipIcon with InfoIcon as it is not exported.
   InfoIcon,
   BatchesIcon,
   DocumentDuplicateIcon,
@@ -20,10 +20,12 @@ import {
   YeastIcon,
   ClockIcon,
   DocumentTextIcon,
+  LockClosedIcon,
 } from '../components/IconComponents';
 import { saveCommunityBatch } from '../data/communityStore';
 import { FLOURS } from '../flours-constants';
 import { exportBatchToJSON, exportBatchToPDF } from '../services/exportService';
+import ProFeatureLock from '../components/ProFeatureLock';
 
 interface BatchDetailPageProps {
   batchId: string | null;
@@ -129,7 +131,7 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
 };
 
 const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, onLoadAndNavigate }) => {
-  const { user, batches, updateBatch, addBatch, deleteBatch } = useUser();
+  const { user, batches, updateBatch, addBatch, deleteBatch, hasProAccess, openPaywall } = useUser();
   const { t } = useTranslation();
   const { addToast } = useToast();
 
@@ -158,7 +160,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     setIsEditingNotes(false);
   };
   
-  // FIX: Make function async to handle promise from updateBatch.
   const handleSave = async () => {
     if (editableBatch) {
       await updateBatch(editableBatch);
@@ -181,11 +182,13 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     }
   };
 
-  // FIX: Make function async to handle promise from addBatch.
   const handleDuplicate = async () => {
+      if(!hasProAccess) {
+          openPaywall('batch');
+          return;
+      }
       if(!editableBatch) return;
       const now = new Date().toISOString();
-      // Deep copy and update necessary fields
       const newBatchData: Omit<Batch, 'id' | 'createdAt'|'updatedAt'> = {
           ...JSON.parse(JSON.stringify(editableBatch)),
           name: `${editableBatch.name} (Cópia)`,
@@ -198,7 +201,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
       onNavigate('batch', added.id);
   };
   
-  // FIX: Make function async to handle promise from deleteBatch.
   const handleDelete = async () => {
     if(editableBatch && window.confirm(t('confirmations.delete_batch', {name: editableBatch.name}))) {
         await deleteBatch(editableBatch.id);
@@ -207,6 +209,10 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
   };
 
   const handleExportJSON = () => {
+    if (!hasProAccess) {
+        openPaywall('batch');
+        return;
+    }
     if (!editableBatch) return;
     try {
       exportBatchToJSON(editableBatch, t);
@@ -216,6 +222,10 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
   };
 
   const handleExportPDF = () => {
+    if (!hasProAccess) {
+        openPaywall('batch');
+        return;
+    }
     if (!editableBatch) return;
     try {
       exportBatchToPDF(editableBatch, t);
@@ -316,22 +326,40 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
                     ))}
                 </div>
             </div>
-            <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
-                <h3 className="font-bold text-lg mb-4">{t('batch_detail.photos_title')}</h3>
-                <div className="aspect-video w-full rounded-lg bg-slate-100 flex items-center justify-center">
-                    <PhotoIcon className="h-10 w-10 text-slate-400" />
+            
+            {/* Photos - Locked for Free */}
+            <ProFeatureLock origin="batch" title="Add photos to your batches (Pro)" description="Document crust, crumb and bake results with photos and keep them linked to each batch.">
+                <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
+                    <h3 className="font-bold text-lg mb-4">{t('batch_detail.photos_title')}</h3>
+                    <div className="aspect-video w-full rounded-lg bg-slate-100 flex items-center justify-center">
+                        <PhotoIcon className="h-10 w-10 text-slate-400" />
+                    </div>
+                    <button className="w-full mt-4 rounded-md bg-slate-200 text-slate-700 py-2 text-sm font-semibold hover:bg-slate-300">
+                        {t('common.add')} Foto
+                    </button>
                 </div>
-                <button className="w-full mt-4 rounded-md bg-slate-200 text-slate-700 py-2 text-sm font-semibold hover:bg-slate-300">
-                    {t('common.add')} Foto
-                </button>
-            </div>
+            </ProFeatureLock>
+
              <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
                 <h3 className="font-bold text-lg mb-4">{t('batch_detail.actions_title')}</h3>
                 <div className="space-y-3">
                     <button onClick={() => onLoadAndNavigate(doughConfig)} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><BatchesIcon className="h-5 w-5"/> {t('batch_detail.actions.repeat')}</button>
-                    <button onClick={handleDuplicate} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DocumentDuplicateIcon className="h-5 w-5"/> {t('batch_detail.actions.duplicate')}</button>
-                    <button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DownloadIcon className="h-5 w-5"/> {t('batch_detail.actions.export_pdf')}</button>
-                    <button onClick={handleExportJSON} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DocumentTextIcon className="h-5 w-5"/> {t('batch_detail.actions.export_json')}</button>
+                    
+                    <button onClick={handleDuplicate} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300">
+                        {hasProAccess ? <DocumentDuplicateIcon className="h-5 w-5"/> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
+                        {t('batch_detail.actions.duplicate')}
+                    </button>
+                    
+                    <button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300">
+                        {hasProAccess ? <DownloadIcon className="h-5 w-5"/> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
+                        {t('batch_detail.actions.export_pdf')}
+                    </button>
+                    
+                    <button onClick={handleExportJSON} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300">
+                        {hasProAccess ? <DocumentTextIcon className="h-5 w-5"/> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
+                        {t('batch_detail.actions.export_json')}
+                    </button>
+                    
                     <button onClick={handleDelete} className="w-full flex items-center justify-center gap-2 rounded-lg text-red-600 py-2.5 font-semibold hover:bg-red-50"><TrashIcon className="h-5 w-5"/> {t('batch_detail.actions.delete')}</button>
                 </div>
              </div>

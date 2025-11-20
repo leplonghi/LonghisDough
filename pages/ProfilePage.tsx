@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -10,10 +11,13 @@ import {
   BookmarkSquareIcon,
   BeakerIcon,
   FlourIcon,
+  ShieldCheckIcon,
+  ArrowTopRightOnSquareIcon,
 } from '../components/IconComponents';
 import { User, Gender, Oven, Page, Levain } from '../types';
 import OvenModal from '../components/OvenModal';
 import LevainModal from '../components/LevainModal';
+import AuthPlaceholder from '../components/AuthPlaceholder';
 
 interface ProfilePageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -35,6 +39,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     updateLevain,
     deleteLevain,
     setDefaultLevain,
+    isAuthenticated
   } = useUser();
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
@@ -57,12 +62,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     }
   }, [user]);
 
-  if (!user) {
-    return (
-      <div className="mx-auto max-w-4xl text-center">
-        <p>{t('profile.not_logged_in')}</p>
-      </div>
-    );
+  if (!isAuthenticated || !user) {
+    return <AuthPlaceholder />;
   }
 
   const handleInputChange = (
@@ -391,6 +392,34 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 </button>
             </div>
         </div>
+
+        {/* === SECTION: Legal === */}
+        <div className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-800">Legal</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                    onClick={() => onNavigate('terms')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
+                        <span className="font-medium text-slate-700">Terms of Use</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+                <button
+                    onClick={() => onNavigate('privacy')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
+                        <span className="font-medium text-slate-700">Privacy Policy</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+            </div>
+        </div>
+
 
         <div className="mt-10 border-t border-slate-200 pt-8">
           <button

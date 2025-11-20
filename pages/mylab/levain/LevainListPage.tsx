@@ -8,6 +8,10 @@ import LevainModal from '../../../components/LevainModal';
 import { logEvent } from '../../../services/analytics';
 import { exportLevainData, importLevainData } from '../../../services/levainDataService';
 import { useToast } from '../../../components/ToastProvider';
+import AuthPlaceholder from '../../../components/AuthPlaceholder';
+import { AFFILIATE_PLACEMENTS } from '../../../data/affiliatePlacements';
+import { AffiliateBlock } from '../../../components/AffiliateBlock';
+import { isFreeUser } from '../../../lib/subscriptions';
 
 interface LevainListPageProps {
     onNavigate: (page: Page, params?: string) => void;
@@ -15,7 +19,7 @@ interface LevainListPageProps {
 
 const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     const { t } = useTranslation();
-    const { user, levains, addLevain, importLevains: importLevainsToContext } = useUser();
+    const { user, levains, addLevain, importLevains: importLevainsToContext, hasProAccess, openPaywall, isAuthenticated } = useUser();
     const { addToast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,15 +31,25 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         }
     }, [user]);
 
-    // FIX: Changed the type of levainData to match the `onSave` prop of `LevainModal` and handle data transformation before calling `addLevain`.
+    if (!isAuthenticated) {
+        return <AuthPlaceholder />;
+    }
+
     const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | (Partial<Levain> & { id: string })) => {
-        // This component only creates levains.
         if (!('id' in levainData)) {
             const { createdAt, status, ...restOfData } = levainData;
             addLevain(restOfData as Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>);
         }
         setIsModalOpen(false);
     };
+    
+    const handleAddLevainClick = () => {
+        if (!hasProAccess && levains.length >= 1) {
+            openPaywall('levain');
+            return;
+        }
+        setIsModalOpen(true);
+    }
     
     const formatTimeSince = (dateString: string) => {
         if (!dateString) return 'never';
@@ -103,6 +117,9 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         return <div className="p-8 text-center">Loading...</div>;
     }
 
+    const free = isFreeUser(user);
+    const placement = AFFILIATE_PLACEMENTS.find(p => p.context === "levain_basic");
+
     return (
         <>
         <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
@@ -117,7 +134,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                 </div>
                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleAddLevainClick}
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md transition-all hover:bg-lime-600"
                     >
                         <PlusCircleIcon className="h-5 w-5"/>
@@ -145,7 +162,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                         Create your first starter and track everything—feeding, routine, observations, and usage in recipes.
                     </p>
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleAddLevainClick}
                         className="mt-6 rounded-md bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600"
                     >
                         Create Levain
@@ -177,6 +194,13 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                     )})}
                 </div>
             )}
+
+            {free && placement && (
+                <div className="mt-8">
+                    <AffiliateBlock placement={placement} />
+                </div>
+            )}
+
         </div>
         <LevainModal 
             isOpen={isModalOpen}

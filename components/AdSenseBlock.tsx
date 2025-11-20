@@ -1,5 +1,8 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../i18n';
+import { useUser } from '../contexts/UserProvider';
+import { isFreeUser } from '../lib/subscriptions';
 
 declare global {
   interface Window {
@@ -9,12 +12,15 @@ declare global {
 
 const AdSenseBlock: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useUser();
   const adRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   // This effect sets up the IntersectionObserver to detect when the ad block
   // is visible in the viewport.
   useEffect(() => {
+    if (!isFreeUser(user)) return; // Don't observe if Pro
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -36,11 +42,11 @@ const AdSenseBlock: React.FC = () => {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [user]);
 
   // This effect triggers the AdSense push call only once the component becomes visible.
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && isFreeUser(user)) {
       try {
         if (typeof window !== 'undefined') {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -49,7 +55,10 @@ const AdSenseBlock: React.FC = () => {
         console.error('AdSense push error:', e);
       }
     }
-  }, [isVisible]);
+  }, [isVisible, user]);
+
+  // If user is Pro, do not render anything
+  if (!isFreeUser(user)) return null;
 
   return (
     <div

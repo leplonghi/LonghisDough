@@ -59,8 +59,16 @@
       
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #ffffff;
+        background-color: #f8fafc; /* slate-50 */
         color: #0f172a;
+      }
+
+      /* Pro Lock Effect */
+      .pro-locked {
+        filter: blur(3px);
+        opacity: 0.5;
+        pointer-events: none;
+        user-select: none;
       }
       
       /* Custom styles for the range input thumb */
@@ -114,7 +122,8 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0",
     "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
-    "@firebase/auth": "https://aistudiocdn.com/@firebase/auth@^1.11.1"
+    "@firebase/auth": "https://aistudiocdn.com/@firebase/auth@^1.11.1",
+    "@firebase/app": "https://aistudiocdn.com/@firebase/app@^0.14.6"
   }
 }
 </script>

@@ -1,4 +1,3 @@
-
 import React, {
   useState,
   useEffect,
@@ -15,28 +14,19 @@ import {
   DoughConfig,
   DoughResult,
   BakeType,
-  RecipeStyle,
   YeastType,
   FermentationTechnique,
   Unit,
   UnitSystem,
-  Batch,
   BatchStatus,
   ProRecipe,
   FormErrors,
-  User,
-  Oven,
   Page,
   PrimaryPage,
-  AmbientTemperature,
   FlourDefinition,
   CalculationMode,
-  Levain,
-  FeedingEvent,
-  DoughStyleDefinition,
 } from './types';
 import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
-import { STYLES_DATA, getStyleById } from './data/stylesData';
 import { PaywallModal } from './components/PaywallModal';
 import AuthModal from './components/AuthModal';
 import ProfilePage from './pages/ProfilePage';
@@ -129,7 +119,7 @@ import MethodsPage from './pages/learn/MethodsPage';
 import CriticalIngredientsPage from './pages/learn/CriticalIngredientsPage';
 import OvensHeatPage from './pages/learn/OvensHeatPage';
 import TroubleshootingGuidePage from './pages/learn/TroubleshootingGuidePage';
-import { FirebaseAuthProvider } from './contexts/FirebaseAuthProvider';
+import { AuthProvider } from './contexts/AuthContext';
 import LevainListPage from './pages/mylab/levain/LevainListPage';
 import LevainDetailPage from './pages/mylab/levain/LevainDetailPage';
 import LevainOnboardingModal from './components/onboarding/LevainOnboardingModal';
@@ -141,6 +131,8 @@ import { calculateDoughUniversal, syncIngredientsFromConfig } from './logic/doug
 import { I18nProvider } from './i18n';
 import ShopPage from './pages/ShopPage';
 import CommunityPage from './pages/CommunityPage';
+import ProActivatedPage from './pages/pro/ProActivatedPage';
+import AuthPlaceholder from './components/AuthPlaceholder';
 
 
 // --- Placeholder Pages ---
@@ -197,7 +189,7 @@ function AppContent() {
   const [route, setRoute] = useState<Page>('mylab');
   const [routeParams, setRouteParams] = useState<string | null>(null);
 
-  const { user, grantSessionProAccess, hasProAccess, preferredFlourId, ovens, batches, addBatch, createDraftBatch, levains } = useUser();
+  const { user, grantSessionProAccess, hasProAccess, preferredFlourId, ovens, batches, addBatch, createDraftBatch, levains, isPaywallOpen, closePaywall, openPaywall, paywallOrigin, isAuthenticated } = useUser();
   
   // Last batch calculation
   const lastBatch = useMemo(() => {
@@ -214,6 +206,13 @@ function AppContent() {
       return 'basic';
     }
   });
+
+  // Ensure free users stay in basic mode
+  useEffect(() => {
+    if (!hasProAccess && calculatorMode === 'advanced') {
+        setCalculatorMode('basic');
+    }
+  }, [hasProAccess, calculatorMode]);
 
   useEffect(() => {
     try {
@@ -240,7 +239,6 @@ function AppContent() {
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(UnitSystem.METRIC);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
@@ -271,16 +269,23 @@ function AppContent() {
     if (window.location.hash !== newHash) {
         window.location.hash = newHash;
     } else {
-        // Handle manual setRoute for same-hash navigation if needed, 
-        // or simply rely on hash change listener. 
-        // For safety, we force the state update if the hash matches but state differs.
         const hash = (page as string) + (params ? `/${params}` : '');
         const parts = hash.split('?')[0].split('/');
         
-        // Consistent route parsing logic (mirrored from hashchange listener)
+        // Routing Logic for Specific Modules
         if (page === 'styles' && params) {
-            setRoute('styles/detail');
-            setRouteParams(params);
+            // This captures #/styles/:slug
+            // Could be 'styles/detail' or just 'styles' depending on how we want to map it
+            // If params exists and page is 'styles', we assume it's the detail page.
+            // However, if params is 'custom', 'favorites' etc it's handled in handleHashChange.
+            // But navigate('styles', 'custom') should work.
+            if (['custom', 'favorites', 'community', 'coming-next'].includes(params)) {
+                setRoute(`styles/${params}` as Page);
+                setRouteParams(null);
+            } else {
+                 setRoute('styles/detail');
+                 setRouteParams(params);
+            }
         } else if ((parts[0] === 'batch') && parts.length > 1) {
             setRoute(parts[0] as Page);
             setRouteParams(parts[1]);
@@ -311,13 +316,25 @@ function AppContent() {
       
       const parts = hash.split('?')[0].split('/');
       
-      // Specific route handling
       if ((parts[0] === 'batch') && parts.length > 1) {
           setRoute(parts[0] as Page);
           setRouteParams(parts[1]);
-      } else if (hash.startsWith('styles/') && parts.length > 1) {
-          setRoute('styles/detail');
-          setRouteParams(parts[1]);
+      } else if (hash.startsWith('styles')) {
+          // styles/custom, styles/community, styles/favorites
+          if (parts.length > 1) {
+              if(['custom', 'community', 'favorites', 'coming-next'].includes(parts[1])) {
+                   setRoute(`styles/${parts[1]}` as Page);
+                   setRouteParams(null);
+              } else {
+                   // styles/:slug -> detail page
+                   setRoute('styles/detail');
+                   setRouteParams(parts[1]);
+              }
+          } else {
+              setRoute('styles');
+              setRouteParams(null);
+          }
+
       } else if (hash.startsWith('mylab/levain/') && parts.length > 2) {
           setRoute('mylab/levain/detail');
           setRouteParams(parts[2]);
@@ -533,41 +550,10 @@ function AppContent() {
     const merged = { ...config, ...configToLoad };
     merged.ingredients = syncIngredientsFromConfig(merged);
     setConfig(merged);
-    addToast(`Style "${configToLoad.recipeStyle || 'Preset'}" loaded.`, 'info');
+    setCalculatorMode('advanced'); // Always set to advanced when loading custom styles
+    addToast(`Style loaded into calculator.`, 'info');
     navigate('calculator');
   }, [navigate, config]);
-
-  // Handle loading a Data-Driven Style Module
-  const handleLoadStyleFromModule = useCallback((style: DoughStyleDefinition) => {
-      const newDoughConfig: Partial<DoughConfig> = {
-        // We might need a way to map Categories to BakeType more robustly, 
-        // but for now Pizza -> PIZZAS works for most cases.
-        bakeType: style.category === 'Pizza' ? BakeType.PIZZAS : 
-                  style.category === 'Pão' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
-        
-        // Set the base style name for display in calculator
-        baseStyleName: style.name,
-
-        // We keep the hydration/salt/oil from the style definition
-        hydration: style.technical.hydration,
-        salt: style.technical.salt,
-        oil: style.technical.oil,
-        sugar: style.technical.sugar,
-        bakingTempC: style.technical.bakingTempC,
-        fermentationTechnique: style.technical.fermentationTechnique,
-        
-        // Force ingredients list from the style definition for accuracy
-        ingredients: style.ingredients.map(ing => ({...ing, manualOverride: false})),
-        
-        // Reset specific calculator states
-        stylePresetId: undefined // It's a custom load effectively
-      };
-
-      // Switch to advanced mode to show all parameters from the style
-      setCalculatorMode('advanced');
-
-      handleLoadAndNavigate(newDoughConfig);
-  }, [handleLoadAndNavigate]);
 
 
   const handleCreateDraftAndNavigate = useCallback(async () => {
@@ -576,6 +562,14 @@ function AppContent() {
   }, [createDraftBatch, navigate]);
 
   const renderPage = () => {
+    // Public Routes that don't require auth
+    const publicRoutes = ['landing', 'help', 'settings', 'legal', 'settings/language', 'settings/theme'];
+    const isPublicRoute = publicRoutes.some(r => route.startsWith(r));
+    
+    if (!isAuthenticated && !isPublicRoute) {
+        return <AuthPlaceholder />;
+    }
+
     const defaultOven = ovens.find(o => o.isDefault) || (ovens.length > 0 ? ovens[0] : undefined);
     const selectedFlour = FLOURS.find(f => f.id === config.flourId);
     
@@ -590,10 +584,7 @@ function AppContent() {
         return <ConsistencyDetailPage seriesId={routeParams} onNavigate={navigate} />;
     }
     if (route === 'styles/detail' && routeParams) {
-        const style = getStyleById(routeParams);
-        if (style) {
-             return <StyleDetailPage style={style} onLoadAndNavigate={handleLoadStyleFromModule} onBack={() => navigate('styles')} />;
-        }
+         return <StyleDetailPage slug={routeParams} onLoadAndNavigate={handleLoadAndNavigate} onBack={() => navigate('styles')} onNavigate={navigate} />;
     }
 
     switch (route) {
@@ -639,6 +630,8 @@ function AppContent() {
             onNavigateHome={() => navigate('mylab')}
           />
         );
+      case 'pro/activated':
+        return <ProActivatedPage onNavigate={navigate} />;
       case 'learn':
         return <LearnPage onNavigate={navigate} />;
       case 'learn/fundamentals':
@@ -782,7 +775,13 @@ function AppContent() {
       case 'landing':
         return <LandingPage />;
       case 'styles':
-        return <DoughStylesPage onNavigateToDetail={(id) => navigate('styles', id)} />;
+        return <DoughStylesPage onNavigateToDetail={(slug) => navigate('styles', slug)} />;
+      // These will fall into DoughStylesPage with params via hash logic above, but explict mapping for safety
+      case 'styles/custom':
+      case 'styles/community':
+      case 'styles/favorites':
+      case 'styles/coming-next':
+          return <DoughStylesPage onNavigateToDetail={(slug) => navigate('styles', slug)} />;
       case 'tools-oven-analysis':
         return <OvenAnalysisPage />;
       case 'shop':
@@ -809,7 +808,7 @@ function AppContent() {
             calculatorMode={calculatorMode}
             onCalculatorModeChange={onCalculatorModeChange}
             hasProAccess={hasProAccess}
-            onOpenPaywall={() => setIsPaywallModalOpen(true)}
+            onOpenPaywall={() => openPaywall('calculator')}
           />
         );
       case 'flours':
@@ -828,7 +827,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 transition-colors duration-300 flex flex-col">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 transition-colors duration-300 flex flex-col">
       <Navigation
         activePage={route as PrimaryPage}
         onNavigate={navigate}
@@ -870,12 +869,13 @@ function AppContent() {
 
 
       <PaywallModal
-        isOpen={isPaywallModalOpen}
-        onClose={() => setIsPaywallModalOpen(false)}
+        isOpen={isPaywallOpen}
+        onClose={closePaywall}
         onNavigateToPlans={() => {
-          setIsPaywallModalOpen(false);
+          closePaywall();
           navigate('plans');
         }}
+        origin={paywallOrigin}
       />
       <AuthModal
         isOpen={isAuthModalOpen}
@@ -889,7 +889,7 @@ function AppContent() {
 
 function App() {
   return (
-      <FirebaseAuthProvider>
+      <AuthProvider>
         <ToastProvider>
          <I18nProvider>
            <UserProvider>
@@ -897,7 +897,7 @@ function App() {
            </UserProvider>
          </I18nProvider>
         </ToastProvider>
-      </FirebaseAuthProvider>
+      </AuthProvider>
   );
 }
 

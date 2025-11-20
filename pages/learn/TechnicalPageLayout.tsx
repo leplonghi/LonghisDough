@@ -2,6 +2,11 @@
 import React, { useMemo } from 'react';
 import { BookOpenIcon, ExternalLinkIcon, ShoppingBagIcon } from '../../components/IconComponents';
 import { getAffiliateSuggestionsForTopic } from '../../logic/affiliateSuggestions';
+import { useUser } from '../../contexts/UserProvider';
+import { isFreeUser } from '../../lib/subscriptions';
+import { AFFILIATE_PLACEMENTS } from '../../data/affiliatePlacements';
+import { AffiliateBlock } from '../../components/AffiliateBlock';
+import ProFeatureLock from '../../components/ProFeatureLock';
 
 interface TechnicalPageLayoutProps {
   title: string;
@@ -12,6 +17,12 @@ interface TechnicalPageLayoutProps {
 
 const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtitle, children, showReferencesSection = false }) => {
   const suggestion = useMemo(() => getAffiliateSuggestionsForTopic(title), [title]);
+  const { user } = useUser();
+  const free = isFreeUser(user);
+
+  const placement = AFFILIATE_PLACEMENTS.find(
+    (p) => p.context === "learn_article_footer"
+  );
 
   return (
     <div className="mx-auto max-w-4xl animate-[fadeIn_0.5s_ease-in-out]">
@@ -19,18 +30,18 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
         <div className="text-center sm:text-left">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
           {subtitle && (
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-slate-700">
               {subtitle}
             </p>
           )}
         </div>
 
-        <div className="prose mt-8 max-w-none text-slate-600">
+        <div className="prose mt-8 max-w-none text-slate-700">
           {children}
         </div>
         
-        {/* Contextual Shop Suggestion */}
-        {suggestion && (
+        {/* Contextual Shop Suggestion - Only for Free Users */}
+        {suggestion && free && (
              <div className="mt-12 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 p-6">
                 <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 rounded-full bg-white p-2 shadow-sm text-lime-500">
@@ -51,16 +62,26 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                 </a>
             </div>
         )}
+        
+        {/* Ad Block */}
+        {free && placement && (
+             <AffiliateBlock placement={placement} />
+        )}
 
         {showReferencesSection && (
-          <div className="mt-12 border-t border-slate-200 pt-8">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
-                <BookOpenIcon className="h-6 w-6 text-lime-500" />
-                <span>Technical References</span>
-            </h2>
-            <p className="mt-4 text-sm text-slate-500 italic">
-                The technical references on this page are based on verifiable sources (AVPN, King Arthur Baking, Serious Eats, scientific literature, etc.). No data is fabricated.
-            </p>
+          <div className="mt-12 border-t border-slate-200 pt-8 relative">
+            {free && (
+                 <ProFeatureLock origin="learn" className="absolute inset-0 z-10" title="Advanced References (Pro)" description="Access deep technical breakdowns and verifiable sources with Pro." />
+            )}
+            <div className={free ? 'blur-[2px]' : ''}>
+                <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+                    <BookOpenIcon className="h-6 w-6 text-lime-500" />
+                    <span>Technical References</span>
+                </h2>
+                <p className="mt-4 text-sm text-slate-500 italic">
+                    The technical references on this page are based on verifiable sources (AVPN, King Arthur Baking, Serious Eats, scientific literature, etc.). No data is fabricated.
+                </p>
+            </div>
           </div>
         )}
       </div>

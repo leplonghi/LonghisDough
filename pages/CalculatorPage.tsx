@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useRef } from 'react';
 import CalculatorForm from '../components/CalculatorForm';
 import { ResultsDisplay } from '../components/ResultsDisplay';
@@ -23,6 +22,9 @@ import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import { InfoIcon } from '../components/IconComponents';
 import OnboardingTooltip from '../components/onboarding/OnboardingTooltip';
+import { AFFILIATE_PLACEMENTS } from '../data/affiliatePlacements';
+import { AffiliateBlock } from '../components/AffiliateBlock';
+import { isFreeUser } from '../lib/subscriptions';
 
 
 interface CalculatorPageProps {
@@ -53,7 +55,7 @@ interface CalculatorPageProps {
 
 const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
   const { t } = useTranslation();
-  const { levains } = useUser();
+  const { levains, user } = useUser();
 
   // Refs for onboarding targets
   const formRef = useRef<HTMLDivElement>(null);
@@ -97,12 +99,26 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
       );
   };
 
+  // Affiliate Logic
+  const free = isFreeUser(user);
+  const hydrationPlacement = AFFILIATE_PLACEMENTS.find(
+    (p) => p.context === "calculator_hydration"
+  );
+  const highHydrationPlacement = AFFILIATE_PLACEMENTS.find(
+    (p) => p.context === "calculator_highHydrationTools"
+  );
+
   return (
     <>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
         <div className="lg:sticky lg:top-24 space-y-6" ref={formRef}>
           <div className="flex items-center justify-center gap-2">
-            <UiModeToggle mode={props.calculatorMode} onModeChange={props.onCalculatorModeChange} />
+            <UiModeToggle 
+              mode={props.calculatorMode} 
+              onModeChange={props.onCalculatorModeChange} 
+              hasProAccess={props.hasProAccess}
+              onOpenPaywall={props.onOpenPaywall}
+            />
             <div className="group relative">
                 <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
                 <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-3 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100">
@@ -117,7 +133,7 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             inputRefs={{numPizzas: numPizzasRef}}
           />
         </div>
-        <div ref={resultsRef}>
+        <div ref={resultsRef} className="space-y-6">
           <ResultsDisplay
             results={props.results}
             config={props.config}
@@ -134,6 +150,15 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             saveButtonRef={saveButtonRef}
             onboardingStep={props.onboardingState?.step}
           />
+
+          {/* Contextual Ads for Free Users */}
+          {free && hydrationPlacement && (
+            <AffiliateBlock placement={hydrationPlacement} />
+          )}
+
+          {free && props.config.hydration >= 70 && highHydrationPlacement && (
+            <AffiliateBlock placement={highHydrationPlacement} />
+          )}
         </div>
       </div>
       {props.onboardingState && renderOnboardingTooltip()}
