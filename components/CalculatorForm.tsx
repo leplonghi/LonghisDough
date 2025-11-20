@@ -11,6 +11,7 @@ import {
   CalculationMode,
   Levain,
   IngredientConfig,
+  DoughResult,
 } from '../types';
 import {
   YEAST_OPTIONS,
@@ -64,6 +65,7 @@ interface CalculatorFormProps {
   inputRefs: {
     numPizzas: React.Ref<HTMLInputElement>;
   };
+  results: DoughResult | null; // Added results to props
 }
 
 const ChoiceButton: React.FC<{
@@ -121,6 +123,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   levains,
   selectedLevain,
   inputRefs,
+  results, // Deconstruct results
 }) => {
   const { addToast } = useToast();
   const isBasic = calculatorMode === 'basic';
@@ -531,6 +534,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     ingredients={config.ingredients}
                     onChange={handleIngredientsUpdate}
                     recipeStyle={config.recipeStyle}
+                    totalFlourWeight={results ? results.totalFlour : 0}
                 />
              </>
            )}

@@ -101,6 +101,7 @@ export interface FlourDefinition {
 }
 
 export type Unit = 'g' | 'oz' | 'volume';
+export type IngredientUnit = '%' | 'g' | 'kg' | 'oz' | 'lb' | 'ml' | 'l' | 'cup' | 'tbsp' | 'tsp';
 
 export enum UnitSystem {
   METRIC = 'METRIC',
@@ -117,6 +118,7 @@ export interface IngredientConfig {
   densityKey?: string; // for volume conversion
   role?: 'flour' | 'water' | 'salt' | 'fat' | 'sugar' | 'yeast' | 'starter' | 'other';
   manualOverride?: boolean; // If true, sliders won't update this ingredient
+  selectedUnit?: IngredientUnit; // The unit selected by the user in the calculator
 }
 
 export interface CustomIngredientDefinition {
@@ -185,6 +187,7 @@ export interface DoughResult {
       weight: number;
       role?: string;
       bakerPercentage: number;
+      selectedUnit?: IngredientUnit;
   }>;
 }
 

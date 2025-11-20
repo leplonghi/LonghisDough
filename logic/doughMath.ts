@@ -171,7 +171,8 @@ export const calculateDoughUniversal = (
         name: ing.name,
         weight: totalFlourBase * (ing.bakerPercentage / 100),
         role: ing.role,
-        bakerPercentage: ing.bakerPercentage
+        bakerPercentage: ing.bakerPercentage,
+        selectedUnit: ing.selectedUnit
     }));
 
     // Map to DoughResult structure for UI Compatibility

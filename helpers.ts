@@ -1,4 +1,5 @@
-import { UnitSystem, ToppingSizeProfile, YeastType } from './types';
+
+import { UnitSystem, ToppingSizeProfile, YeastType, IngredientUnit } from './types';
 import { YEAST_EQUIVALENCIES } from './constants';
 
 // Grams per cup for key ingredients.
@@ -17,9 +18,100 @@ export const INGREDIENT_DENSITIES: {
   rye: { us: 102, metric: 110 },
 };
 
+// Fallback density if key not found (assume water/1.0)
+const DEFAULT_DENSITY = { us: 236.59, metric: 250 };
+
 // Standard volumetric conversions
 const TBSP_PER_CUP = 16;
 const TSP_PER_CUP = 48;
+
+/**
+ * Helper to retrieve density based on a rough ID match
+ */
+export function getIngredientDensity(id: string): { us: number; metric: number } {
+    const key = id.toLowerCase();
+    if (key.includes('flour')) return INGREDIENT_DENSITIES.flour;
+    if (key.includes('water')) return INGREDIENT_DENSITIES.water;
+    if (key.includes('salt')) return INGREDIENT_DENSITIES.salt;
+    if (key.includes('oil') || key.includes('olive') || key.includes('fat')) return INGREDIENT_DENSITIES.oil;
+    if (key.includes('sugar') || key.includes('honey')) return INGREDIENT_DENSITIES.sugar;
+    if (key.includes('yeast') || key.includes('levain') || key.includes('starter')) return INGREDIENT_DENSITIES.yeast;
+    
+    // Try direct lookup
+    if (INGREDIENT_DENSITIES[key]) return INGREDIENT_DENSITIES[key];
+
+    return DEFAULT_DENSITY;
+}
+
+/**
+ * Converts a value in a specific unit to Grams.
+ */
+export function convertToGrams(
+    value: number, 
+    unit: IngredientUnit, 
+    ingredientId: string,
+    unitSystem: UnitSystem
+): number {
+    if (unit === 'g') return value;
+    if (unit === 'kg') return value * 1000;
+    if (unit === 'oz') return value * 28.3495;
+    if (unit === 'lb') return value * 453.592;
+    if (unit === '%') return value; // Cannot convert % to grams without context, calling code must handle
+    
+    // Volumetric
+    const density = getIngredientDensity(ingredientId);
+    const gramsPerCup = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
+
+    if (unit === 'cup') return value * gramsPerCup;
+    if (unit === 'tbsp') return value * (gramsPerCup / TBSP_PER_CUP);
+    if (unit === 'tsp') return value * (gramsPerCup / TSP_PER_CUP);
+    
+    // Liquid specific (assume density ~1 for ml/l if not water/oil, but we use density map)
+    // Actually, density map is "grams per cup".
+    // Metric Cup = 250ml.
+    // Grams per ml = gramsPerCup / 250 (Metric) or gramsPerCup / 236.59 (US)
+    // Ideally simply: 1ml water = 1g. 1ml oil = 0.92g.
+    // Let's derive density ratio from the map relative to water.
+    const waterDensity = unitSystem === UnitSystem.METRIC ? INGREDIENT_DENSITIES.water.metric : INGREDIENT_DENSITIES.water.us;
+    const specificGravity = gramsPerCup / waterDensity;
+
+    if (unit === 'ml') return value * specificGravity;
+    if (unit === 'l') return value * 1000 * specificGravity;
+
+    return value;
+}
+
+/**
+ * Converts a value in Grams to a specific unit.
+ */
+export function convertFromGrams(
+    grams: number, 
+    targetUnit: IngredientUnit, 
+    ingredientId: string,
+    unitSystem: UnitSystem
+): number {
+    if (targetUnit === 'g') return grams;
+    if (targetUnit === 'kg') return grams / 1000;
+    if (targetUnit === 'oz') return grams / 28.3495;
+    if (targetUnit === 'lb') return grams / 453.592;
+    if (targetUnit === '%') return 0; // Context needed
+
+    const density = getIngredientDensity(ingredientId);
+    const gramsPerCup = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
+    
+    if (targetUnit === 'cup') return grams / gramsPerCup;
+    if (targetUnit === 'tbsp') return grams / (gramsPerCup / TBSP_PER_CUP);
+    if (targetUnit === 'tsp') return grams / (gramsPerCup / TSP_PER_CUP);
+
+    const waterDensity = unitSystem === UnitSystem.METRIC ? INGREDIENT_DENSITIES.water.metric : INGREDIENT_DENSITIES.water.us;
+    const specificGravity = gramsPerCup / waterDensity;
+
+    if (targetUnit === 'ml') return grams / specificGravity;
+    if (targetUnit === 'l') return (grams / specificGravity) / 1000;
+
+    return grams;
+}
+
 
 /**
  * Converts a decimal number to a string with a common fraction character.

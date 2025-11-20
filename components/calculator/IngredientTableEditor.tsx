@@ -1,24 +1,35 @@
 
 import React, { useState, useMemo } from 'react';
-import { IngredientConfig, RecipeStyle } from '../../types';
+import { IngredientConfig, RecipeStyle, IngredientUnit, UnitSystem } from '../../types';
 import { TrashIcon, DocumentDuplicateIcon, PlusCircleIcon, BeakerIcon, CubeIcon, LightBulbIcon, InfoIcon } from '../IconComponents';
 import { useTranslation } from '../../i18n';
 import { ADDITIONAL_INGREDIENTS_LIBRARY, AdditionalIngredientDef } from '../../data/additionalIngredients';
 import { useUser } from '../../contexts/UserProvider';
+import { convertToGrams, convertFromGrams } from '../../helpers';
 
 interface IngredientTableEditorProps {
   ingredients: IngredientConfig[];
   onChange: (updatedIngredients: IngredientConfig[]) => void;
   recipeStyle: RecipeStyle;
+  totalFlourWeight: number; // Needed for accurate conversion between % and absolute
 }
 
 // IDs of ingredients that are controlled by the main sliders
 const STANDARD_SLIDER_IDS = ['base-flour', 'water', 'salt', 'oil', 'sugar', 'yeast', 'levain'];
 
-const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredients, onChange, recipeStyle }) => {
+// Helper function to calculate Baker's Percentage from an absolute amount
+const calculateBakerPercentage = (amountGrams: number, totalFlour: number): number => {
+    if (totalFlour <= 0) return 0;
+    return (amountGrams / totalFlour) * 100;
+};
+
+const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredients, onChange, recipeStyle, totalFlourWeight }) => {
   const { t } = useTranslation();
   const { customIngredientLibrary, addCustomIngredient } = useUser();
   const [showSuggestions, setShowSuggestions] = useState(true);
+  // Assuming metric for calculations, but this could be context-aware if UnitSystem was passed.
+  // For consistency in logic, we use Metric base but allow US units via conversion helpers.
+  const unitSystem = UnitSystem.METRIC; 
 
   // Filter to show only ingredients NOT controlled by the main sliders AND not flours (managed by Blend Editor)
   const customIngredients = ingredients.filter(ing => 
@@ -33,7 +44,6 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
   }, [recipeStyle]);
   
   // Combined list for Autocomplete (Validated Library + User Custom Library)
-  // Use a Map to dedup by name if necessary
   const allAutoCompleteOptions = useMemo(() => {
       const options = new Map<string, { name: string, type: 'solid' | 'liquid' }>();
       
@@ -42,7 +52,6 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
       
       return Array.from(options.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [customIngredientLibrary]);
-
 
   const handleUpdate = (id: string, field: keyof IngredientConfig, value: any) => {
     const updated = ingredients.map((ing) => {
@@ -62,6 +71,31 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
       return ing;
     });
     onChange(updated);
+  };
+
+  // Specific handler for changing units or amounts
+  const handleAmountChange = (ing: IngredientConfig, newAmount: number, unit: IngredientUnit) => {
+      if (unit === '%') {
+          // Direct percentage update
+          handleUpdate(ing.id, 'bakerPercentage', newAmount);
+      } else {
+          // Absolute value update -> convert to grams -> convert to percentage
+          const grams = convertToGrams(newAmount, unit, ing.id, unitSystem);
+          const newPct = calculateBakerPercentage(grams, totalFlourWeight);
+          // Update both the percentage (for logic) and selectedUnit (for display persistence)
+          const updated = ingredients.map(i => 
+              i.id === ing.id ? { ...i, bakerPercentage: newPct, selectedUnit: unit, manualOverride: true } : i
+          );
+          onChange(updated);
+      }
+  };
+
+  const handleUnitChange = (ing: IngredientConfig, newUnit: IngredientUnit) => {
+      // Just update the preferred unit. The value input will re-render based on the new unit relative to the *current* percentage.
+      const updated = ingredients.map(i => 
+          i.id === ing.id ? { ...i, selectedUnit: newUnit, manualOverride: true } : i
+      );
+      onChange(updated);
   };
 
   const handleRemove = (id: string) => {
@@ -94,6 +128,7 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
       bakerPercentage: 0,
       role: 'other',
       manualOverride: true,
+      selectedUnit: '%', // Default
     };
     onChange([...ingredients, newItem]);
   };
@@ -111,13 +146,13 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
           type: suggestion.type,
           bakerPercentage: suggestion.defaultPercentage,
           role: 'other',
-          manualOverride: true
+          manualOverride: true,
+          selectedUnit: '%',
       };
       onChange([...ingredients, newItem]);
   };
 
   // Auto-save new ingredients to user library when they lose focus or change name
-  // Only save if it has a name and isn't already in the library
   const handleBlurName = (ing: IngredientConfig) => {
       if (ing.name && ing.name.trim() !== '') {
           const exists = allAutoCompleteOptions.some(opt => opt.name.toLowerCase() === ing.name.toLowerCase());
@@ -127,6 +162,17 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
       }
   };
 
+  // Helper to get display value for input based on current unit
+  const getDisplayValue = (ing: IngredientConfig): string => {
+      const unit = ing.selectedUnit || '%';
+      if (unit === '%') return ing.bakerPercentage.toFixed(2).replace(/\.?0+$/, '');
+      
+      // Convert % to grams first: (pct/100) * totalFlour
+      const currentGrams = (ing.bakerPercentage / 100) * totalFlourWeight;
+      // Then grams to unit
+      const val = convertFromGrams(currentGrams, unit, ing.id, unitSystem);
+      return val.toFixed(2).replace(/\.?0+$/, '');
+  };
 
   return (
     <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
@@ -188,13 +234,13 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                     Ingredient
                 </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 w-24">
                     Type
                 </th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
-                    %
+                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500 w-40">
+                    Amount
                 </th>
-                <th scope="col" className="relative px-4 py-3">
+                <th scope="col" className="relative px-4 py-3 w-20">
                     <span className="sr-only">Actions</span>
                 </th>
                 </tr>
@@ -211,7 +257,7 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
                         onChange={(e) => handleUpdate(ing.id, 'name', e.target.value)}
                         onBlur={() => handleBlurName(ing)}
                         className="block w-full rounded-md border-slate-300 p-1.5 text-sm focus:border-lime-500 focus:ring-lime-500"
-                        placeholder="Ingredient Name"
+                        placeholder="Name"
                         />
                         <datalist id="ingredient-options">
                             {allAutoCompleteOptions.map(opt => (
@@ -220,36 +266,46 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
                         </datalist>
                     </td>
                     <td className="px-4 py-2">
-                        <div className="relative">
-                            <select
+                         <select
                             value={ing.type}
                             onChange={(e) => handleUpdate(ing.id, 'type', e.target.value)}
-                            className="block w-full appearance-none rounded-md border-slate-300 py-1.5 pl-8 pr-8 text-sm focus:border-lime-500 focus:ring-lime-500"
-                            >
+                            className="block w-full rounded-md border-slate-300 p-1.5 text-sm focus:border-lime-500 focus:ring-lime-500"
+                        >
                             <option value="solid">Solid</option>
                             <option value="liquid">Liquid</option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2 text-slate-400">
-                                {ing.type === 'liquid' ? <BeakerIcon className="h-4 w-4" /> : <CubeIcon className="h-4 w-4" />}
-                            </div>
-                        </div>
+                        </select>
                     </td>
                     <td className="px-4 py-2">
                         <div className="flex items-center justify-end gap-1">
                             <input
-                            type="number"
-                            value={ing.bakerPercentage}
-                            onChange={(e) => {
-                                const val = parseFloat(e.target.value);
-                                if (!isNaN(val) && val >= 0) {
-                                    handleUpdate(ing.id, 'bakerPercentage', val);
-                                }
-                            }}
-                            step="0.1"
-                            min="0"
-                            className="block w-20 rounded-md border-slate-300 p-1.5 text-right text-sm font-semibold focus:border-lime-500 focus:ring-lime-500"
+                                type="number"
+                                value={getDisplayValue(ing)}
+                                onChange={(e) => {
+                                    const val = parseFloat(e.target.value);
+                                    if (!isNaN(val) && val >= 0) {
+                                        handleAmountChange(ing, val, ing.selectedUnit || '%');
+                                    }
+                                }}
+                                step="0.1"
+                                min="0"
+                                className="block w-20 rounded-md border-slate-300 p-1.5 text-right text-sm font-semibold focus:border-lime-500 focus:ring-lime-500"
                             />
-                            <span className="text-slate-500">%</span>
+                             <select
+                                value={ing.selectedUnit || '%'}
+                                onChange={(e) => handleUnitChange(ing, e.target.value as IngredientUnit)}
+                                className="block w-16 rounded-md border-slate-300 p-1.5 text-sm focus:border-lime-500 focus:ring-lime-500 bg-slate-50"
+                            >
+                                <option value="%">%</option>
+                                <option value="g">g</option>
+                                <option value="kg">kg</option>
+                                <option value="ml">ml</option>
+                                <option value="l">l</option>
+                                <option value="cup">cup</option>
+                                <option value="tbsp">tbsp</option>
+                                <option value="tsp">tsp</option>
+                                <option value="oz">oz</option>
+                                <option value="lb">lb</option>
+                            </select>
                         </div>
                     </td>
                     <td className="px-4 py-2 text-right">
@@ -278,9 +334,11 @@ const IngredientTableEditor: React.FC<IngredientTableEditorProps> = ({ ingredien
         </div>
       )}
 
-      <div className="mt-2 flex justify-between items-center text-xs text-slate-500">
-         <span className="flex items-center gap-1"><InfoIcon className="h-3 w-3"/> New ingredients are automatically saved to your library.</span>
-         <span>* Base flour is 100%.</span>
+      <div className="mt-2 flex justify-between items-start sm:items-center text-xs text-slate-500 flex-col sm:flex-row gap-2">
+         <span className="flex items-center gap-1"><InfoIcon className="h-3 w-3"/> New ingredients save to your library.</span>
+         <span className="text-right">
+             * Amounts auto-convert based on total flour ({totalFlourWeight.toFixed(0)}g).
+         </span>
       </div>
     </div>
   );
