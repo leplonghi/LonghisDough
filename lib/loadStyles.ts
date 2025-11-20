@@ -2,7 +2,7 @@
 import { OFFICIAL_STYLES } from '../data/officialStyles';
 import { DoughStyle, DoughCategory } from '../types';
 
-// The TS file already exports an array, but we cast it to ensure type alignment
+// Use the TS constant directly. Casting to ensure it matches the interface.
 const styles: DoughStyle[] = OFFICIAL_STYLES as unknown as DoughStyle[];
 
 export function loadAllStyles(): DoughStyle[] {

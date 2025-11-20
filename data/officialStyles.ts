@@ -1,3 +1,4 @@
+import { DoughStyle } from '../types';
 
 export const OFFICIAL_STYLES: any[] = [
   {
@@ -54,7 +55,11 @@ export const OFFICIAL_STYLES: any[] = [
       "hydration": 62,
       "salt": 2.8,
       "fat": 0,
-      "sugar": 0
+      "sugar": 0,
+      "recipeStyle": "NEAPOLITAN",
+      "category": "Pizza",
+      "fermentationTechnique": "DIRECT",
+      "bakingTempC": 450
     }
   },
 
@@ -108,7 +113,11 @@ export const OFFICIAL_STYLES: any[] = [
     "recommendedItems": [],
     "defaultPreset": {
       "hydration": 75,
-      "salt": 2.2
+      "salt": 2.2,
+      "recipeStyle": "COUNTRY_LOAF",
+      "category": "Pão",
+      "fermentationTechnique": "DIRECT",
+      "bakingTempC": 245
     }
   },
 
@@ -162,7 +171,11 @@ export const OFFICIAL_STYLES: any[] = [
     "recommendedItems": [],
     "defaultPreset": {
       "hydration": 50,
-      "salt": 1.8
+      "salt": 1.8,
+      "recipeStyle": "PATE_SUCREE", // Using generic sweet style as fallback
+      "category": "Doce",
+      "fermentationTechnique": "DIRECT",
+      "bakingTempC": 170
     }
   },
 
@@ -213,7 +226,11 @@ export const OFFICIAL_STYLES: any[] = [
     "recommendedItems": [],
     "defaultPreset": {
       "hydration": 65,
-      "salt": 1.8
+      "salt": 1.8,
+      "recipeStyle": "SANDWICH_LOAF",
+      "category": "Pão",
+      "fermentationTechnique": "DIRECT",
+      "bakingTempC": 180
     }
   },
   {

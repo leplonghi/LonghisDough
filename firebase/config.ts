@@ -1,5 +1,6 @@
 
 const getEnv = (key: string) => {
+  // Safe check for Vite environment
   try {
     // @ts-ignore
     if (typeof import.meta !== 'undefined' && import.meta.env) {
@@ -10,9 +11,10 @@ const getEnv = (key: string) => {
     // ignore
   }
   
+  // Safe check for Process environment (Node/Webpack)
   try {
     // @ts-ignore
-    if (typeof process !== 'undefined' && process.env) {
+    if (typeof process !== 'undefined' && process && process.env) {
       // @ts-ignore
       return process.env[key];
     }
