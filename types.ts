@@ -280,7 +280,7 @@ export interface Levain {
 }
 
 export type GoalStatus = "ativo" | "concluido";
-export type GoalTargetType = "estilo" | "hidratação" | "frequência" | "levain";
+export type GoalTargetType = "style" | "hydration" | "frequency" | "levain";
 
 export interface Goal {
   id: string;
@@ -294,7 +294,7 @@ export interface Goal {
   targetValue: string | number;
 }
 
-export type TestSeriesVariable = "hidratação" | "farinha" | "tempo_fermentacao" | "outro";
+export type TestSeriesVariable = "hydration" | "flour" | "fermentation_time" | "other";
 
 export interface TestSeries {
   id: string;
@@ -359,9 +359,11 @@ export interface UserContextType {
   updateTestSeries: (series: Partial<TestSeries> & { id: string }) => void;
   deleteTestSeries: (id: string) => void;
   attachBakeToSeries: (seriesId: string, bakeId: string) => void;
+  customIngredientLibrary?: IngredientConfig[];
+  addCustomIngredient?: (ing: IngredientConfig) => void;
 }
 
-export type Locale = 'en' | 'pt' | 'es';
+export type Locale = 'en';
 
 export type FormErrors = {
   [key in keyof Partial<DoughConfig>]: string | null;
@@ -472,7 +474,9 @@ export type Page =
   | 'shop'
   | 'community'
   | `community/${string}`
-  | 'pro/activated';
+  | 'pro/activated'
+  | 'toppings'
+  | 'tools-pantry-pizza';
 
 
 export interface NavLinkItem {
@@ -515,7 +519,7 @@ export interface DoughStylePreset {
 export interface DoughStyleDefinition {
     id: string;
     name: string;
-    category: 'Pizza' | 'Pão' | 'Doce' | 'Outros';
+    category: 'Pizza' | 'Bread' | 'Pastry' | 'Other';
     country: string;
     year?: string;
     description: string;
@@ -526,7 +530,7 @@ export interface DoughStyleDefinition {
         salt: number;
         oil: number;
         sugar: number;
-        fermentation: string; // description e.g. "Longa maturação a frio"
+        fermentation: string; // description e.g. "Long cold fermentation"
         fermentationTechnique: FermentationTechnique;
         bakingTempC: number;
     };
@@ -593,7 +597,7 @@ export interface ReferenceItem {
   id: string;
   source: string;
   title: string;
-  type: 'Livro' | 'Site' | 'Guia Técnico' | 'Regulamento Oficial' | 'Comunidade';
+  type: 'Book' | 'Website' | 'Technical Guide' | 'Standard' | 'Community';
   link: string;
   summary: string;
   tags: string[];
@@ -801,7 +805,7 @@ export interface PizzaRecipe {
     tempC: number;
   };
   sauce: {
-    type: 'Tomate' | 'Branco' | 'Pesto' | 'Nenhum' | 'Outro';
+    type: 'Tomato' | 'White' | 'Pesto' | 'None' | 'Other';
     grams: number;
   };
   toppings: {

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { TestSeries, TestSeriesVariable } from '../../types';
-import { CloseIcon } from '../IconComponents';
+import { TestSeries, TestSeriesVariable } from '@/types';
+import { CloseIcon } from '@/components/ui/Icons';
 
 interface ConsistencySeriesModalProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface ConsistencySeriesModalProps {
 const DEFAULT_STATE = {
     name: '',
     description: '',
-    variable: 'hidratação' as TestSeriesVariable,
+    variable: 'hydration' as TestSeriesVariable,
     steps: '', // will be a string in the form "60, 65, 70"
 };
 
@@ -69,10 +69,10 @@ const ConsistencySeriesModal: React.FC<ConsistencySeriesModalProps> = ({ isOpen,
     };
 
     const variableOptions: { value: TestSeriesVariable; label: string }[] = [
-        { value: 'hidratação', label: 'Hydration (%)' },
-        { value: 'farinha', label: 'Flour Type' },
-        { value: 'tempo_fermentacao', label: 'Fermentation Time (h)' },
-        { value: 'outro', label: 'Other' },
+        { value: 'hydration', label: 'Hydration (%)' },
+        { value: 'flour', label: 'Flour Type' },
+        { value: 'fermentation_time', label: 'Fermentation Time (h)' },
+        { value: 'other', label: 'Other' },
     ];
 
     return (

@@ -1,7 +1,6 @@
-
 import React, { useMemo, useState, useRef } from 'react';
-import CalculatorForm from '../components/CalculatorForm';
-import { ResultsDisplay } from '../components/ResultsDisplay';
+import CalculatorForm from '@/components/CalculatorForm';
+import { ResultsDisplay } from '@/components/ResultsDisplay';
 import {
   DoughConfig,
   DoughResult,
@@ -17,12 +16,12 @@ import {
   CalculationMode,
   Levain,
   OnboardingState,
-} from '../types';
-import UiModeToggle from '../components/calculator/UiModeToggle';
-import { useUser } from '../contexts/UserProvider';
-import { useTranslation } from '../i18n';
-import { InfoIcon } from '../components/IconComponents';
-import OnboardingTooltip from '../components/onboarding/OnboardingTooltip';
+} from '@/types';
+import UiModeToggle from '@/components/calculator/UiModeToggle';
+import { useUser } from '@/contexts/UserProvider';
+import { useTranslation } from '@/i18n';
+import { InfoIcon } from '@/components/ui/Icons';
+import OnboardingTooltip from '@/components/onboarding/OnboardingTooltip';
 
 
 interface CalculatorPageProps {

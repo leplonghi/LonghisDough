@@ -1,16 +1,15 @@
-
 import React, { useMemo } from 'react';
-import { Page, LevainStatus } from '../types';
-import { useUser } from '../contexts/UserProvider';
-import { useTranslation } from '../i18n';
-import { timeSince } from '../helpers';
+import { Page, LevainStatus } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
+import { useTranslation } from '@/i18n';
+import { timeSince } from '@/helpers';
 import MyLabLayout from './mylab/MyLabLayout';
 import { 
     BeakerIcon,
     BatchesIcon,
     PlusCircleIcon,
     ArrowTopRightOnSquareIcon
-} from '../components/IconComponents';
+} from '@/components/ui/Icons';
 
 interface MyLabPageProps {
     onNavigate: (page: Page, params?: string) => void;

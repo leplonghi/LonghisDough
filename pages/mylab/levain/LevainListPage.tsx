@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Levain, Page } from '../../../types';
-import { useTranslation } from '../../../i18n';
-import { BeakerIcon, PlusCircleIcon, DownloadIcon, ShareIcon } from '../../../components/IconComponents';
-import { useUser } from '../../../contexts/UserProvider';
-import LevainModal from '../../../components/LevainModal';
-import { logEvent } from '../../../services/analytics';
-import { exportLevainData, importLevainData } from '../../../services/levainDataService';
-import { useToast } from '../../../components/ToastProvider';
+import { Levain, Page } from '@/types';
+import { useTranslation } from '@/i18n';
+import { BeakerIcon, PlusCircleIcon, DownloadIcon, ShareIcon } from '@/components/ui/Icons';
+import { useUser } from '@/contexts/UserProvider';
+import LevainModal from '@/components/LevainModal';
+import { logEvent } from '@/services/analytics';
+import { exportLevainData, importLevainData } from '@/services/levainDataService';
+import { useToast } from '@/components/ToastProvider';
 
 interface LevainListPageProps {
     onNavigate: (page: Page, params?: string) => void;

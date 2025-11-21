@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { Page } from '../../types';
+import { Page } from '@/types';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import LearnTopicCard from '../../components/learn/LearnTopicCard';
-import { SparklesIcon, BeakerIcon, CubeIcon, FermentationIcon, WaterIcon, SaltIcon, OilIcon } from '../../components/IconComponents';
+import LearnTopicCard from '@/components/learn/LearnTopicCard';
+import { SparklesIcon, BeakerIcon, CubeIcon, FermentationIcon, WaterIcon, SaltIcon, OilIcon } from '@/components/ui/Icons';
 
 interface FundamentalsPageProps {
   onNavigate: (page: Page) => void;
@@ -10,20 +11,20 @@ interface FundamentalsPageProps {
 
 const FundamentalsPage: React.FC<FundamentalsPageProps> = ({ onNavigate }) => {
     const topics = [
-        { page: 'learn/oven-spring', title: 'Oven Spring', description: 'A ciência da expansão inicial da massa no forno.', icon: <SparklesIcon className="h-8 w-8" /> },
-        { page: 'learn/fermentation-biochemistry', title: 'Bioquímica da Fermentação', description: 'Leveduras, bactérias, ácidos e a criação de sabor.', icon: <BeakerIcon className="h-8 w-8" /> },
-        { page: 'learn/crumb-structure', title: 'Estrutura Interna (Crumb)', description: 'Como se formam os alvéolos e a textura do miolo.', icon: <CubeIcon className="h-8 w-8" /> },
-        { page: 'learn/dough-aging', title: 'Envelhecimento da Massa', description: 'Entenda a retrogradação do amido e a maturação sensorial.', icon: <FermentationIcon className="h-8 w-8" /> },
-        { page: 'learn/sugars-malts-enzymes', title: 'Açúcares e Enzimas', description: 'Como açúcares, maltes e enzimas influenciam fermentação, cor e sabor.', icon: <SparklesIcon className="h-8 w-8" /> },
-        { page: 'learn/water', title: 'Água na Massa', description: 'A ciência da dureza, minerais e o impacto da água na estrutura do glúten.', icon: <WaterIcon className="h-8 w-8" /> },
-        { page: 'learn/salt', title: 'O Papel do Sal', description: 'Funções químicas e estruturais do sal, muito além do sabor.', icon: <SaltIcon className="h-8 w-8" /> },
-        { page: 'learn/fats', title: 'Gorduras na Massa', description: 'O impacto de óleos e gorduras na maciez, estrutura e textura.', icon: <OilIcon className="h-8 w-8" /> },
+        { page: 'learn/oven-spring', title: 'Oven Spring', description: 'The science of the initial dough expansion in the oven.', icon: <SparklesIcon className="h-8 w-8" /> },
+        { page: 'learn/fermentation-biochemistry', title: 'Fermentation Biochemistry', description: 'Yeast, bacteria, acids, and flavor creation.', icon: <BeakerIcon className="h-8 w-8" /> },
+        { page: 'learn/crumb-structure', title: 'Crumb Structure', description: 'How alveoli form and the texture of the crumb.', icon: <CubeIcon className="h-8 w-8" /> },
+        { page: 'learn/dough-aging', title: 'Dough Aging', description: 'Understand starch retrogradation and sensory maturation.', icon: <FermentationIcon className="h-8 w-8" /> },
+        { page: 'learn/sugars-malts-enzymes', title: 'Sugars & Enzymes', description: 'How sugars, malts, and enzymes influence fermentation, color, and taste.', icon: <SparklesIcon className="h-8 w-8" /> },
+        { page: 'learn/water', title: 'Water in Dough', description: 'The science of hardness, minerals, and the impact of water on gluten structure.', icon: <WaterIcon className="h-8 w-8" /> },
+        { page: 'learn/salt', title: 'The Role of Salt', description: 'Chemical and structural functions of salt, far beyond flavor.', icon: <SaltIcon className="h-8 w-8" /> },
+        { page: 'learn/fats', title: 'Fats in Dough', description: 'The impact of oils and fats on softness, structure, and texture.', icon: <OilIcon className="h-8 w-8" /> },
     ];
 
     return (
         <TechnicalPageLayout
-            title="Fundamentos da Massa"
-            subtitle="A ciência do glúten, hidratação, fermentação e os ingredientes que formam a base de tudo."
+            title="Dough Fundamentals"
+            subtitle="The science of gluten, hydration, fermentation, and the ingredients that form the foundation."
         >
             <div className="not-prose grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {topics.map(topic => (

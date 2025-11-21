@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { Page } from '../../types';
+import { Page } from '@/types';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import LearnTopicCard from '../../components/learn/LearnTopicCard';
-import { SunIcon, WrenchScrewdriverIcon, CubeIcon, SparklesIcon, FireIcon, BeakerIcon, ShieldCheckIcon } from '../../components/IconComponents';
+import LearnTopicCard from '@/components/learn/LearnTopicCard';
+import { SunIcon, WrenchScrewdriverIcon, CubeIcon, SparklesIcon, FireIcon, BeakerIcon, ShieldCheckIcon } from '@/components/ui/Icons';
 
 interface MethodsPageProps {
   onNavigate: (page: Page) => void;

@@ -1,6 +1,7 @@
+
 import React from 'react';
-import { useUser } from '../../contexts/UserProvider';
-import { UserCircleIcon, ShieldCheckIcon } from '../IconComponents';
+import { useUser } from '@/contexts/UserProvider';
+import { UserCircleIcon, ShieldCheckIcon } from '@/components/ui/Icons';
 
 const CommunityProfileSidebar: React.FC = () => {
     const { user } = useUser();

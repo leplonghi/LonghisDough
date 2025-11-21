@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
-import { Batch } from '../../types';
-import { useUser } from '../../contexts/UserProvider';
-import { useTranslation } from '../../i18n';
-import { HeartIcon, ChatBubbleLeftEllipsisIcon, DocumentDuplicateIcon, YeastIcon, PhotoIcon, BookmarkSquareIcon, CalculatorIcon } from '../IconComponents';
+import { Batch } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
+import { useTranslation } from '@/i18n';
+import { HeartIcon, ChatBubbleLeftEllipsisIcon, DocumentDuplicateIcon, YeastIcon, PhotoIcon, BookmarkSquareIcon, CalculatorIcon } from '@/components/ui/Icons';
 
 interface CommunityPostCardProps {
     batch: Batch;

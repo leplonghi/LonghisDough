@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LightBulbIcon } from '../IconComponents';
-import { EnvironmentAdvice as EnvironmentAdjustmentsType } from '../../types';
+import { LightBulbIcon } from '@/components/ui/Icons';
+import { EnvironmentAdvice as EnvironmentAdjustmentsType } from '@/types';
 
 interface EnvironmentAdjustmentsProps {
     adjustments: EnvironmentAdjustmentsType;

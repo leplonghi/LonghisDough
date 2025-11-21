@@ -133,7 +133,6 @@ export const getSmartAdjustments = (
   }
   
   // --- Rule 5: Baking Surface ---
-// FIX: This comparison appears to be unintentional because the types 'BakeType' and '"PIZZA"' have no overlap. Changed to use BakeType.PIZZAS enum member.
   if(oven && config.bakeType === BakeType.PIZZAS) {
       if(oven.maxTemperature <= 300 && !oven.hasSteel) {
           result.messages.push("For home ovens (up to 300°C), a 'baking steel' is superior to a stone as it transfers heat faster, resulting in a crispier base.");

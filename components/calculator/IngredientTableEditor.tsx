@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { IngredientConfig } from '../../types';
-import { TrashIcon, DocumentDuplicateIcon, PlusCircleIcon, BeakerIcon, CubeIcon } from '../IconComponents';
-import { useTranslation } from '../../i18n';
+import { IngredientConfig } from '@/types';
+import { TrashIcon, DocumentDuplicateIcon, PlusCircleIcon, BeakerIcon, CubeIcon } from '@/components/ui/Icons';
+import { useTranslation } from '@/i18n';
 
 interface IngredientTableEditorProps {
   ingredients: IngredientConfig[];

@@ -13,7 +13,7 @@ interface GoalModalProps {
 const DEFAULT_STATE = {
     title: '',
     description: '',
-    targetType: 'estilo' as GoalTargetType,
+    targetType: 'style' as GoalTargetType,
     targetValue: '',
 };
 
@@ -49,7 +49,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ isOpen, onClose, onSave, goalToEd
         
         const dataToSave = {
             ...formData,
-            targetValue: formData.targetType === 'hidratação' ? Number(formData.targetValue) : formData.targetValue,
+            targetValue: formData.targetType === 'hydration' ? Number(formData.targetValue) : formData.targetValue,
         };
 
         if (goalToEdit) {
@@ -60,9 +60,9 @@ const GoalModal: React.FC<GoalModalProps> = ({ isOpen, onClose, onSave, goalToEd
     };
 
     const targetTypeOptions = [
-        { value: 'estilo', label: 'Style' },
-        { value: 'hidratação', label: 'Hydration' },
-        { value: 'frequência', label: 'Frequency' },
+        { value: 'style', label: 'Style' },
+        { value: 'hydration', label: 'Hydration' },
+        { value: 'frequency', label: 'Frequency' },
         { value: 'levain', label: 'Levain' },
     ];
 
@@ -104,7 +104,7 @@ const GoalModal: React.FC<GoalModalProps> = ({ isOpen, onClose, onSave, goalToEd
                         <div>
                             <label className="block text-sm font-medium text-slate-700">Target Value</label>
                             <input 
-                                type={formData.targetType === 'hidratação' ? 'number' : 'text'}
+                                type={formData.targetType === 'hydration' ? 'number' : 'text'}
                                 name="targetValue"
                                 value={formData.targetValue}
                                 onChange={handleChange} 

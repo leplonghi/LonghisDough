@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { AutoStyleInsightsResult } from '../../types';
-import { LightBulbIcon, StarIcon, SparklesIcon } from '../IconComponents';
+import { AutoStyleInsightsResult } from '@/types';
+import { LightBulbIcon, StarIcon, SparklesIcon } from '@/components/ui/Icons';
 
 interface AutoStyleInsightsProps {
     insights: AutoStyleInsightsResult;

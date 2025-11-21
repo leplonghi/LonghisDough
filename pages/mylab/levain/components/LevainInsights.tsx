@@ -1,8 +1,8 @@
 
 import React, { useMemo } from 'react';
-import { Levain } from '../../../../types';
-import { hoursBetween } from '../../../../helpers';
-import { ClockIcon, FireIcon, SparklesIcon, ChartBarIcon } from '../../../../components/IconComponents';
+import { Levain } from '@/types';
+import { hoursBetween } from '@/helpers';
+import { ClockIcon, FireIcon, SparklesIcon, ChartBarIcon } from '@/components/ui/Icons';
 
 interface LevainInsightsProps {
     levain: Levain;

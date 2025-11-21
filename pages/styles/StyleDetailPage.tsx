@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DoughStyleDefinition } from '../../types';
+import { DoughStyleDefinition } from '@/types';
 import { 
     CalculatorIcon, 
     BookOpenIcon, 
@@ -10,10 +10,9 @@ import {
     ClockIcon,
     ShoppingBagIcon,
     ExternalLinkIcon,
-} from '../../components/IconComponents';
-// Removed getRecommendedProductsForStyle import as we are hardcoding the new logic structure
-import { AFFILIATE_LINKS } from '../../data/affiliateLinks';
-import ProFeatureLock from '../../components/ProFeatureLock';
+} from '@/components/ui/Icons';
+import { AFFILIATE_LINKS } from '@/data/affiliateLinks';
+import ProFeatureLock from '@/components/ui/ProFeatureLock';
 
 interface StyleDetailPageProps {
   style: DoughStyleDefinition;

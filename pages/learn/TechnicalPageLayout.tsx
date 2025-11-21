@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { BookOpenIcon, ExternalLinkIcon, ShoppingBagIcon } from '../../components/IconComponents';
-import { getAffiliateSuggestionsForTopic } from '../../logic/affiliateSuggestions';
+import { BookOpenIcon, ExternalLinkIcon, ShoppingBagIcon } from '@/components/ui/Icons';
+import { getAffiliateSuggestionsForTopic } from '@/logic/affiliateSuggestions';
 
 interface TechnicalPageLayoutProps {
   title: string;

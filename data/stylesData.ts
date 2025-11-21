@@ -1,3 +1,4 @@
+
 import { DoughStyleDefinition, FermentationTechnique } from '../types';
 
 export const STYLES_DATA: DoughStyleDefinition[] = [
@@ -62,7 +63,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'focaccia_genovese',
     name: 'Focaccia Genovese',
-    category: 'Pão',
+    category: 'Bread',
     country: 'Italy',
     year: 'Ancient',
     description: 'Flatbread, oily, with characteristic dimples and a salty crust.',
@@ -91,7 +92,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'brioche_classico',
     name: 'French Brioche',
-    category: 'Doce',
+    category: 'Pastry',
     country: 'France',
     year: '17th Century',
     description: 'Enriched dough, buttery, soft, and golden. The pinnacle of viennoiserie.',

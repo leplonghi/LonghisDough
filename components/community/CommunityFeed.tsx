@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { Batch, DoughConfig, Page } from '../../types';
+import { Batch, DoughConfig, Page } from '@/types';
 import CommunityPostCard from './CommunityPostCard';
 import CommunityPostCardSkeleton from './CommunityPostCardSkeleton';
-import { useTranslation } from '../../i18n';
+import { useTranslation } from '@/i18n';
 
 interface CommunityFeedProps {
     batches: Batch[];

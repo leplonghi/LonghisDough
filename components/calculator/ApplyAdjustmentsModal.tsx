@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { AdjustmentChange } from '../../logic/applySmartAdjustments';
-import { CloseIcon, SparklesIcon } from '../IconComponents';
-import { FLOURS } from '../../flours-constants';
-import { DOUGH_STYLE_PRESETS } from '../../constants';
+import { AdjustmentChange } from '@/logic/applySmartAdjustments';
+import { CloseIcon, SparklesIcon } from '@/components/ui/Icons';
+import { FLOURS } from '@/flours-constants';
+import { DOUGH_STYLE_PRESETS } from '@/constants';
 
 
 interface ApplyAdjustmentsModalProps {

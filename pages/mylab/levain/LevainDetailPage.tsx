@@ -1,13 +1,12 @@
-
 import React, { useState, useMemo } from 'react';
-import { Page, Levain } from '../../../types';
-import { useUser } from '../../../contexts/UserProvider';
+import { Page, Levain } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
 import LevainLayout from './LevainLayout';
-import { PlusCircleIcon, SparklesIcon } from '../../../components/IconComponents';
+import { PlusCircleIcon, SparklesIcon } from '@/components/ui/Icons';
 import LevainFeedingForm from './components/LevainFeedingForm';
 import LevainProfile from './components/LevainProfile';
 import LevainInsights from './components/LevainInsights';
-import ProFeatureLock from '../../../components/ProFeatureLock';
+import ProFeatureLock from '@/components/ui/ProFeatureLock';
 import LevainAssistant from './components/LevainAssistant';
 
 interface LevainDetailPageProps {

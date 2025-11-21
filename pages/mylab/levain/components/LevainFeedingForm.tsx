@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { useUser } from '../../../../contexts/UserProvider';
-import { useToast } from '../../../../components/ToastProvider';
-import { CloseIcon, FlourIcon, WaterIcon, FireIcon, WeightIcon, ClockIcon } from '../../../../components/IconComponents';
+import { useUser } from '@/contexts/UserProvider';
+import { useToast } from '@/components/ToastProvider';
+import { CloseIcon, FlourIcon, WaterIcon, FireIcon, WeightIcon, ClockIcon } from '@/components/ui/Icons';
 
 interface LevainFeedingFormProps {
   isOpen: boolean;

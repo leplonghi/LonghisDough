@@ -1,10 +1,11 @@
+
 import React, { useState, useMemo } from 'react';
-import { PhotoIcon, ExclamationCircleIcon } from '../IconComponents';
-import { OVEN_TYPE_OPTIONS } from '../../constants';
-import { useUser } from '../../contexts/UserProvider';
-import { getLastSavedConfig } from '../../logic/mylabSelectors';
-import { useToast } from '../ToastProvider';
-import { blobToBase64 } from '../../helpers';
+import { PhotoIcon, ExclamationCircleIcon } from '@/components/ui/Icons';
+import { OVEN_TYPE_OPTIONS } from '@/constants';
+import { useUser } from '@/contexts/UserProvider';
+import { getLastSavedConfig } from '@/logic/mylabSelectors';
+import { useToast } from '@/components/ToastProvider';
+import { blobToBase64 } from '@/helpers';
 
 const MAX_DESC_LENGTH = 600;
 

@@ -1,9 +1,9 @@
 
 import React, { useState, useMemo } from 'react';
-import { Page, TestSeries, Batch } from '../../types';
+import { Page, TestSeries, Batch } from '@/types';
 import MyLabLayout from './MyLabLayout';
-import { useUser } from '../../contexts/UserProvider';
-import { FlaskIcon, SparklesIcon, BatchesIcon, PlusCircleIcon } from '../../components/IconComponents';
+import { useUser } from '@/contexts/UserProvider';
+import { FlaskIcon, SparklesIcon, BatchesIcon, PlusCircleIcon } from '@/components/ui/Icons';
 
 interface ConsistencyDetailPageProps {
   seriesId: string | null;

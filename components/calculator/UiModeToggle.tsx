@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { useTranslation } from '../../i18n';
+import { useTranslation } from '@/i18n';
 
 interface UiModeToggleProps {
   mode: 'basic' | 'advanced';

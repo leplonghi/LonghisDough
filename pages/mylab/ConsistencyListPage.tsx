@@ -1,11 +1,11 @@
 
 import React, { useState, useMemo } from 'react';
-import { Page, TestSeries } from '../../types';
+import { Page, TestSeries } from '@/types';
 import MyLabLayout from './MyLabLayout';
-import { useUser } from '../../contexts/UserProvider';
-import { useTranslation } from '../../i18n';
-import { FlaskIcon, PlusCircleIcon } from '../../components/IconComponents';
-import ConsistencySeriesModal from '../../components/mylab/ConsistencySeriesModal';
+import { useUser } from '@/contexts/UserProvider';
+import { useTranslation } from '@/i18n';
+import { FlaskIcon, PlusCircleIcon } from '@/components/ui/Icons';
+import ConsistencySeriesModal from '@/components/mylab/ConsistencySeriesModal';
 
 const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) => void }> = ({ onNavigate }) => {
     const { testSeries, addTestSeries, updateTestSeries } = useUser();

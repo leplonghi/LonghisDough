@@ -22,7 +22,7 @@ function suggestGoalsFromHistory(userHistory: any[]): SuggestedGoal[] {
         suggestions.push({
             title: "Increase hydration to 75%",
             description: "You've done several bakes. How about a high hydration challenge for a more open crumb?",
-            targetType: 'hidratação',
+            targetType: 'hydration',
             targetValue: 75
         });
     }
@@ -30,14 +30,14 @@ function suggestGoalsFromHistory(userHistory: any[]): SuggestedGoal[] {
     suggestions.push({
         title: "Master a new style: Focaccia",
         description: "Explore the complexities of high-hydration Focaccia.",
-        targetType: 'estilo',
+        targetType: 'style',
         targetValue: 'FOCACCIA'
     });
 
     suggestions.push({
         title: "Bake 4 times next month",
         description: "Maintain consistency in your practice to accelerate learning.",
-        targetType: 'frequência',
+        targetType: 'frequency',
         targetValue: '4_per_month'
     });
 

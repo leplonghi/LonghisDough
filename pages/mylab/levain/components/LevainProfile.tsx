@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { Levain } from '../../../../types';
-import { useUser } from '../../../../contexts/UserProvider';
-import { useToast } from '../../../../components/ToastProvider';
+import { Levain } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
+import { useToast } from '@/components/ToastProvider';
 
 interface LevainProfileProps {
     levain: Levain;

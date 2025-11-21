@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { Page } from '../../types';
+import { Page } from '@/types';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import LearnTopicCard from '../../components/learn/LearnTopicCard';
-import { QuestionMarkCircleIcon } from '../../components/IconComponents';
+import LearnTopicCard from '@/components/learn/LearnTopicCard';
+import { QuestionMarkCircleIcon } from '@/components/ui/Icons';
 
 interface TroubleshootingGuidePageProps {
   onNavigate: (page: Page) => void;

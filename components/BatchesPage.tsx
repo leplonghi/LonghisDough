@@ -1,23 +1,17 @@
 import React from 'react';
-import { useTranslation } from '../i18n';
+import { useTranslation } from '@/i18n';
 import {
-// FIX: Add missing import for BatchesIcon
   BatchesIcon,
-// FIX: Add missing import for CalculatorIcon
   CalculatorIcon,
   StarIcon,
   SolidStarIcon,
-// FIX: Add missing import for TrashIcon
   TrashIcon,
-// FIX: Add missing import for DocumentDuplicateIcon
   DocumentDuplicateIcon,
-// FIX: Add missing import for PizzaSliceIcon
   PizzaSliceIcon,
   RecipeIcon,
-} from './IconComponents';
-import { DoughConfig, Page, Batch, BakeType } from '../types';
-// FIX: Corrected the import path for the useUser hook.
-import { useUser } from '../contexts/UserProvider';
+} from '@/components/ui/Icons';
+import { DoughConfig, Page, Batch, BakeType } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
 
 interface LabPageProps {
   onLoadAndNavigate: (config: DoughConfig) => void;

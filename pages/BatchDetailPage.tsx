@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../contexts/UserProvider';
-import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '../types';
-import { useTranslation } from '../i18n';
-import { useToast } from '../components/ToastProvider';
+import { useUser } from '@/contexts/UserProvider';
+import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
+import { useTranslation } from '@/i18n';
+import { useToast } from '@/components/ToastProvider';
 import {
   SaveIcon,
   StarIcon,
   SolidStarIcon,
   PencilIcon,
-  // FIX: Replace TooltipIcon with InfoIcon as it is not exported.
   InfoIcon,
   BatchesIcon,
   DocumentDuplicateIcon,
@@ -20,10 +19,10 @@ import {
   YeastIcon,
   ClockIcon,
   DocumentTextIcon,
-} from '../components/IconComponents';
-import { saveCommunityBatch } from '../data/communityStore';
-import { FLOURS } from '../flours-constants';
-import { exportBatchToJSON, exportBatchToPDF } from '../services/exportService';
+} from '@/components/ui/Icons';
+import { saveCommunityBatch } from '@/data/communityStore';
+import { FLOURS } from '@/flours-constants';
+import { exportBatchToJSON, exportBatchToPDF } from '@/services/exportService';
 
 interface BatchDetailPageProps {
   batchId: string | null;
@@ -158,7 +157,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     setIsEditingNotes(false);
   };
   
-  // FIX: Make function async to handle promise from updateBatch.
   const handleSave = async () => {
     if (editableBatch) {
       await updateBatch(editableBatch);
@@ -181,7 +179,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     }
   };
 
-  // FIX: Make function async to handle promise from addBatch.
   const handleDuplicate = async () => {
       if(!editableBatch) return;
       const now = new Date().toISOString();
@@ -198,7 +195,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
       onNavigate('batch', added.id);
   };
   
-  // FIX: Make function async to handle promise from deleteBatch.
   const handleDelete = async () => {
     if(editableBatch && window.confirm(t('confirmations.delete_batch', {name: editableBatch.name}))) {
         await deleteBatch(editableBatch.id);

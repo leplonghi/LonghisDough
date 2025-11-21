@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { DoughConfig } from '../../types';
-import * as customPresets from '../../logic/customPresets';
-import { TrashIcon, BookmarkSquareIcon } from '../IconComponents';
-import { useToast } from '../ToastProvider';
+import { DoughConfig } from '@/types';
+import * as customPresets from '@/logic/customPresets';
+import { TrashIcon, BookmarkSquareIcon } from '@/components/ui/Icons';
+import { useToast } from '@/components/ToastProvider';
 
 interface CustomPresetsManagerProps {
   currentConfig: DoughConfig;

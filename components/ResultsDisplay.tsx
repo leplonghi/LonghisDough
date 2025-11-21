@@ -1,255 +1,91 @@
-import React, { useState, forwardRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import {
-  DoughConfig,
   DoughResult,
+  DoughConfig,
   Unit,
   UnitSystem,
-  YeastType,
   FlourDefinition,
   CalculationMode,
-  FermentationTechnique
-} from '../types';
+} from '@/types';
+import { gramsToVolume } from '@/helpers';
 import {
-  FlourIcon,
-  WaterIcon,
-  SaltIcon,
-  OilIcon,
-  YeastIcon,
-  WeightIcon,
-  RecipeIcon,
+  DocumentDuplicateIcon,
   ShareIcon,
-  InfoIcon,
-  BatchesIcon,
-  CubeIcon,
-  ShoppingBagIcon,
-  ExternalLinkIcon,
   DownloadIcon,
-  DocumentTextIcon,
-  LockClosedIcon
-} from './IconComponents';
-import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
-import { useTranslation } from '../i18n';
-import { useToast } from './ToastProvider';
-import { getAffiliateSuggestionsForConfig, AffiliateSuggestion } from '../logic/affiliateSuggestions';
-import { useUser } from '../contexts/UserProvider';
-
-// Inform TypeScript that these libraries are available on the window object
-declare global {
-  interface Window {
-    jspdf: any;
-    html2canvas: any;
-  }
-}
+  BatchesIcon,
+  LockClosedIcon,
+  BeakerIcon,
+} from '@/components/ui/Icons';
+import { useToast } from '@/components/ToastProvider';
+import { useTranslation } from '@/i18n';
+import { exportBatchToJSON, exportBatchToPDF } from '@/services/exportService';
 
 interface ResultsDisplayProps {
   results: DoughResult | null;
   config: DoughConfig;
   unit: Unit;
-  unitSystem: UnitSystem;
   onUnitChange: (unit: Unit) => void;
-  hasProAccess: boolean;
-  onOpenPaywall: (origin?: string) => void;
+  unitSystem: UnitSystem;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onStartBatch: () => void;
   selectedFlour?: FlourDefinition;
   calculatorMode: 'basic' | 'advanced';
   calculationMode: CalculationMode;
+  hasProAccess: boolean;
+  onOpenPaywall: (origin: any) => void;
   saveButtonRef?: React.Ref<HTMLButtonElement>;
   onboardingStep?: number;
 }
 
-const ResultRow: React.FC<{
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  note?: string;
-  isTotal?: boolean;
-  tooltip?: string;
-}> = ({ icon, label, value, note, isTotal = false, tooltip }) => (
-  <div
-    className={`flex items-center justify-between ${
-      isTotal
-        ? 'mt-4 rounded-lg bg-lime-50 p-3 sm:p-4'
-        : 'border-b border-slate-200 py-3 sm:py-4'
-    }`}
-  >
-    <div className="flex items-center pr-4">
-      <span className="mr-3 flex-shrink-0 text-lime-500 sm:mr-4">
-        {icon}
-      </span>
-      <div>
-        <div className="flex items-center gap-2">
-          <span
-            className={`font-medium ${
-              isTotal
-                ? 'text-lg font-bold text-slate-900'
-                : 'text-slate-700'
-            }`}
-          >
-            {label}
-          </span>
-          {tooltip && (
-            <div className="group relative flex items-center">
-              <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
-              <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100">
-                {tooltip}
-                <svg
-                  className="absolute left-0 top-full h-2 w-full text-slate-800"
-                  x="0px"
-                  y="0px"
-                  viewBox="0 0 255 255"
-                  xmlSpace="preserve"
-                >
-                  <polygon
-                    className="fill-current"
-                    points="0,0 127.5,127.5 255,0"
-                  />
-                </svg>
-              </span>
-            </div>
-          )}
-        </div>
-        {note && (
-          <p className="mt-0.5 text-xs text-slate-500">
-            {note}
-          </p>
-        )}
-      </div>
-    </div>
-    <span
-      className={`flex-shrink-0 text-right font-semibold ${
-        isTotal
-          ? 'text-xl font-bold text-slate-900 sm:text-2xl'
-          : 'text-base text-slate-800 sm:text-lg'
-      }`}
-    >
-      {value}
-    </span>
-  </div>
-);
-
-const RecipeSteps: React.FC<{
-  config: DoughConfig;
-}> = ({ config }) => {
-  const { t } = useTranslation();
-  
-    const getSteps = () => {
-        const techniqueKey = config.fermentationTechnique === FermentationTechnique.DIRECT ? 'generic_direct' : 'generic_indirect';
-        return (
-            <div className="space-y-4 text-slate-600 text-sm" dangerouslySetInnerHTML={{ 
-                __html: t(`results.steps.${techniqueKey}.step1`, { defaultValue: "Mix ingredients..." }) 
-            }} />
-        );
-    }
-
-  return (
-    <div className="mt-10">
-      <div className="mb-4 flex items-center gap-3">
-        <span className="text-lime-500">
-          <RecipeIcon className="h-6 w-6" />
-        </span>
-        <h3 className="text-xl font-bold text-slate-800">
-          {t('results.steps.title')}
-        </h3>
-      </div>
-      <div className="space-y-6">
-        {getSteps()}
-      </div>
-    </div>
-  );
-};
-
-const SuggestionsBlock: React.FC<{ config: DoughConfig }> = ({ config }) => {
-  const [suggestions, setSuggestions] = useState<AffiliateSuggestion[]>([]);
-
-  useEffect(() => {
-    const s = getAffiliateSuggestionsForConfig(config);
-    setSuggestions(s);
-  }, [config]);
-
-  if (suggestions.length === 0) return null;
-
-  return (
-    <div className="mt-8 border-t border-slate-200 pt-6">
-      <h4 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
-        <ShoppingBagIcon className="h-4 w-4" />
-        Technical Suggestions
-      </h4>
-      <div className="space-y-3">
-        {suggestions.map((sug) => (
-          <div key={sug.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div>
-              <p className="font-semibold text-slate-800 text-sm">{sug.title}</p>
-              <p className="text-xs text-slate-600 mt-1">{sug.description}</p>
-            </div>
-            <a
-              href={sug.linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 inline-flex items-center justify-center gap-1 rounded-md bg-white border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-lime-600 transition-colors"
-            >
-              View in Shop <ExternalLinkIcon className="h-3 w-3" />
-            </a>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-
-export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   results,
   config,
   unit,
   onUnitChange,
   unitSystem,
+  onStartBatch,
   hasProAccess,
   onOpenPaywall,
-  onConfigChange,
-  onStartBatch,
-  calculatorMode,
-  calculationMode,
   saveButtonRef,
-  onboardingStep,
-}, ref) => {
-  const { t } = useTranslation();
+}) => {
   const { addToast } = useToast();
-  const GRAMS_TO_OUNCES = 0.035274;
+  const { t } = useTranslation();
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  const volumeUnits = {
-    cups: t('units.cups'),
-    tbsp: t('units.tbsp'),
-    tsp: t('units.tsp'),
-  };
+  if (!results) {
+    return null;
+  }
 
-  const getConversionTooltip = (
-    ingredient: keyof typeof INGREDIENT_DENSITIES,
-  ): string => {
-    const density = INGREDIENT_DENSITIES[ingredient];
-    const grams = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
-    const systemName = unitSystem === UnitSystem.METRIC ? t('form.metric') : t('form.us_customary');
-
-    return t('results.conversion_tooltip', { ingredient: t(`results.ingredients.${ingredient}`), system: systemName, grams: grams.toFixed(0) });
-  };
-
-  const formatWeight = (
-    valueInGrams: number,
-    precision: { g: number; oz: number } = { g: 1, oz: 2 },
-  ) => {
-    if (unit === 'oz') {
-      const valueInOunces = valueInGrams * GRAMS_TO_OUNCES;
-      return `${valueInOunces.toFixed(precision.oz)} ${t('units.oz')}`;
-    }
+  const displayValue = (grams: number) => {
     if (unit === 'volume') {
-        return `${valueInGrams.toFixed(precision.g)} ${t('units.g')}`;
+      // This is handled per row, passing ingredient name
+      return grams.toFixed(0) + 'g'; // Fallback
     }
-    return `${valueInGrams.toFixed(precision.g)} ${t('units.g')}`;
+    if (unit === 'oz') {
+      return (grams * 0.035274).toFixed(2) + ' oz';
+    }
+    return grams.toFixed(1) + 'g';
   };
 
-  const formatVolume = (ingredient: string, grams: number) => {
-      if (unit !== 'volume') return null;
-      return gramsToVolume(ingredient, grams, volumeUnits, unitSystem);
+  const displayIngredient = (
+    nameKey: string,
+    grams: number,
+    ingredientId: string
+  ) => {
+    if (unit === 'volume') {
+      // Map internal IDs to density keys
+      let densityKey = ingredientId;
+      if (ingredientId === 'base-flour') densityKey = 'flour';
+      // Add more mappings if needed
+      
+      return gramsToVolume(
+        densityKey,
+        grams,
+        { cups: 'cups', tbsp: 'tbsp', tsp: 'tsp' },
+        unitSystem
+      );
+    }
+    return displayValue(grams);
   };
 
   const handleShare = async () => {
@@ -260,7 +96,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     try {
         const url = window.location.href;
         await navigator.clipboard.writeText(url);
-        addToast("Link copied to clipboard!", "success");
+        addToast(t('results.share_link', {defaultValue: 'Link copied!'}), "success");
     } catch (e) {
         addToast(t('results.share_error'), "error");
     }
@@ -271,8 +107,19 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         onOpenPaywall('calculator');
         return;
     }
-    // Implementation for PDF export would go here
-    addToast("Exporting PDF...", "info");
+    try {
+        const batchMock: any = {
+            name: 'Calculator Export',
+            createdAt: new Date().toISOString(),
+            doughConfig: config,
+            doughResult: results,
+            notes: config.notes,
+        };
+        exportBatchToPDF(batchMock, t);
+        addToast(t('results.export_pdf_aria', {defaultValue: 'Exporting PDF...'}), "info");
+    } catch (e) {
+        addToast("Export failed", "error");
+    }
   };
 
   const handleExportJSON = () => {
@@ -280,205 +127,177 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         onOpenPaywall('calculator');
         return;
     }
-     // Implementation for JSON export
-     addToast("Exporting JSON...", "info");
+     try {
+        const batchMock: any = {
+            name: 'Calculator Export',
+            createdAt: new Date().toISOString(),
+            doughConfig: config,
+            doughResult: results,
+            notes: config.notes,
+        };
+        exportBatchToJSON(batchMock, t);
+        addToast(t('results.export_json_aria', {defaultValue: 'Exporting JSON...'}), "info");
+     } catch (e) {
+         addToast("Export failed", "error");
+     }
   };
 
-  if (!results) {
-      return null;
-  }
-
-  const ingredients = results.finalDough || results;
-  const flourWeight = 'flour' in ingredients ? ingredients.flour : ingredients.totalFlour;
-  const waterWeight = 'water' in ingredients ? ingredients.water : ingredients.totalWater;
-  const saltWeight = 'salt' in ingredients ? ingredients.salt : ingredients.totalSalt;
-  const oilWeight = 'oil' in ingredients ? ingredients.oil : ingredients.totalOil;
-  const sugarWeight = 'sugar' in ingredients ? ingredients.sugar : ingredients.totalSugar;
-  const yeastWeight = 'yeast' in ingredients ? ingredients.yeast : ingredients.totalYeast;
-
-  const yeastLabel = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType)
-    ? t('results.notes.starter')
-    : t('results.notes.yeast');
+  const renderRow = (label: string, grams: number, ingredientId: string, subtext?: string) => (
+    <div className="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">
+      <div>
+        <p className="font-medium text-slate-700">{label}</p>
+        {subtext && <p className="text-xs text-slate-400">{subtext}</p>}
+      </div>
+      <span className="font-mono font-semibold text-slate-900">
+        {displayIngredient(label, grams, ingredientId)}
+      </span>
+    </div>
+  );
 
   return (
-    <div ref={ref} className="rounded-2xl bg-white shadow-xl ring-1 ring-slate-200/60">
-      <div className="border-b border-slate-100 p-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              {t('results.title')}
-            </h2>
-            {config.numPizzas > 0 && (
-                <p className="mt-1 text-sm text-slate-500">
-                 {config.bakeType === 'BREADS_SAVORY' 
-                    ? t('results.summary_bread', { count: config.numPizzas, weight: config.doughBallWeight })
-                    : t('results.summary_pizza', { count: config.numPizzas, weight: config.doughBallWeight })
-                 }
-                </p>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2 rounded-lg bg-slate-100 p-1">
-            {(['g', 'oz', 'volume'] as Unit[]).map((u) => (
-              <button
-                key={u}
-                onClick={() => onUnitChange(u)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
-                  unit === u
-                    ? 'bg-white text-lime-600 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {t(`units.${u}`)}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        <div className="mt-4 flex gap-2">
-            <button 
-                onClick={handleExportPDF} 
-                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
-            >
-                {hasProAccess ? <DownloadIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3" />}
-                PDF
-            </button>
-            <button 
-                onClick={handleExportJSON} 
-                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
-            >
-                {hasProAccess ? <DocumentTextIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3" />}
-                JSON
-            </button>
+    <div ref={resultRef} className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 animate-[fadeIn_0.3s_ease-out]">
+      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+        <h2 className="text-xl font-bold text-slate-900">{t('results.title')}</h2>
+        <div className="flex rounded-lg bg-slate-100 p-1">
+          <button
+            onClick={() => onUnitChange('g')}
+            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+              unit === 'g' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            g
+          </button>
+          <button
+            onClick={() => onUnitChange('oz')}
+            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+              unit === 'oz' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            oz
+          </button>
+          <button
+            onClick={() => onUnitChange('volume')}
+            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+              unit === 'volume' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            Vol
+          </button>
         </div>
       </div>
 
-      <div className="p-6">
-        {results.preferment && (
-            <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-100">
-                <h3 className="text-sm font-bold uppercase tracking-wide text-amber-800 mb-3">
-                    {t('results.preferment_title', { technique: config.fermentationTechnique })}
-                </h3>
-                <ResultRow
-                    icon={<FlourIcon className="h-5 w-5" />}
-                    label={t('results.flour')}
-                    value={unit === 'volume' ? formatVolume('flour', results.preferment.flour) || '' : formatWeight(results.preferment.flour)}
-                    note={unit === 'volume' ? formatWeight(results.preferment.flour) : undefined}
-                />
-                <ResultRow
-                    icon={<WaterIcon className="h-5 w-5" />}
-                    label={t('results.water')}
-                    value={unit === 'volume' ? formatVolume('water', results.preferment.water) || '' : formatWeight(results.preferment.water)}
-                    note={unit === 'volume' ? formatWeight(results.preferment.water) : undefined}
-                />
-                {results.preferment.yeast > 0 && (
-                    <ResultRow
-                        icon={<YeastIcon className="h-5 w-5" />}
-                        label={t('results.yeast')}
-                        value={unit === 'volume' ? formatVolume('yeast', results.preferment.yeast) || '' : formatWeight(results.preferment.yeast, { g: 2, oz: 3 })}
-                        note={unit === 'volume' ? formatWeight(results.preferment.yeast, { g: 2, oz: 3 }) : undefined}
-                    />
-                )}
+      {/* Summary Cards */}
+      <div className="mb-8 grid grid-cols-2 gap-4">
+        <div className="rounded-xl bg-lime-50 p-4 text-center">
+          <p className="text-xs font-bold uppercase tracking-wider text-lime-700">{t('results.total_dough')}</p>
+          <p className="mt-1 text-2xl font-extrabold text-lime-800">{displayValue(results.totalDough)}</p>
+        </div>
+        {config.numPizzas > 1 && (
+            <div className="rounded-xl bg-sky-50 p-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-sky-700">{t('results.single_ball')}</p>
+            <p className="mt-1 text-2xl font-extrabold text-sky-800">{displayValue(results.totalDough / config.numPizzas)}</p>
             </div>
         )}
+      </div>
 
-        <div className="space-y-1">
-           {results.preferment && <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500 mb-2 mt-4">{t('results.final_dough_title')}</h3>}
-           
-          <ResultRow
-            icon={<FlourIcon className="h-6 w-6" />}
-            label={t('results.flour')}
-            value={unit === 'volume' ? formatVolume('flour', flourWeight) || '' : formatWeight(flourWeight)}
-            note={unit === 'volume' ? formatWeight(flourWeight) : t('results.notes.flour')}
-            tooltip={unit === 'volume' ? getConversionTooltip('flour') : undefined}
-          />
-
-          <ResultRow
-            icon={<WaterIcon className="h-6 w-6" />}
-            label={t('results.water')}
-            value={unit === 'volume' ? formatVolume('water', waterWeight) || '' : formatWeight(waterWeight)}
-            note={unit === 'volume' ? formatWeight(waterWeight) : t('results.notes.water', { hydration: config.hydration })}
-            tooltip={unit === 'volume' ? getConversionTooltip('water') : undefined}
-          />
-
-          <ResultRow
-            icon={<SaltIcon className="h-6 w-6" />}
-            label={t('results.salt')}
-            value={unit === 'volume' ? formatVolume('salt', saltWeight) || '' : formatWeight(saltWeight, { g: 1, oz: 2 })}
-            note={unit === 'volume' ? formatWeight(saltWeight, { g: 1, oz: 2 }) : t('results.notes.salt', { salt: config.salt })}
-            tooltip={unit === 'volume' ? getConversionTooltip('salt') : undefined}
-          />
-
-          {oilWeight > 0 && (
-            <ResultRow
-              icon={<OilIcon className="h-6 w-6" />}
-              label={t('results.oil')}
-              value={unit === 'volume' ? formatVolume('oil', oilWeight) || '' : formatWeight(oilWeight, { g: 1, oz: 2 })}
-              note={unit === 'volume' ? formatWeight(oilWeight, { g: 1, oz: 2 }) : t('results.notes.oil', { oil: config.oil })}
-              tooltip={unit === 'volume' ? getConversionTooltip('oil') : undefined}
-            />
-          )}
-
-          {sugarWeight > 0 && (
-            <ResultRow
-              icon={<CubeIcon className="h-6 w-6" />}
-              label={t('results.sugar')}
-              value={unit === 'volume' ? formatVolume('sugar', sugarWeight) || '' : formatWeight(sugarWeight, { g: 1, oz: 2 })}
-              note={unit === 'volume' ? formatWeight(sugarWeight, { g: 1, oz: 2 }) : undefined}
-              tooltip={unit === 'volume' ? getConversionTooltip('sugar') : undefined}
-            />
-          )}
-
-          {yeastWeight > 0 && (
-            <ResultRow
-              icon={<YeastIcon className="h-6 w-6" />}
-              label={yeastLabel}
-              value={unit === 'volume' ? formatVolume('yeast', yeastWeight) || '' : formatWeight(yeastWeight, { g: 2, oz: 3 })}
-              note={unit === 'volume' ? formatWeight(yeastWeight, { g: 2, oz: 3 }) : undefined}
-              tooltip={unit === 'volume' ? getConversionTooltip('yeast') : undefined}
-            />
-          )}
-
-          <ResultRow
-            icon={<WeightIcon className="h-6 w-6" />}
-            label={t('results.total_dough')}
-            value={formatWeight(results.totalDough, { g: 0, oz: 1 })}
-            isTotal
-          />
+      {/* Pre-ferment Section */}
+      {results.preferment && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="mb-3 flex items-center gap-2 border-b border-amber-200 pb-2 text-amber-800">
+            <BeakerIcon className="h-5 w-5" />
+            <h3 className="font-bold text-sm uppercase tracking-wide">
+                {t(`form.${config.fermentationTechnique.toLowerCase()}`, { defaultValue: 'Preferment' })}
+            </h3>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+                <span>{t('results.flour')}</span>
+                <span className="font-mono font-bold">{displayIngredient('Flour', results.preferment.flour, 'flour')}</span>
+            </div>
+            <div className="flex justify-between">
+                <span>{t('results.water')}</span>
+                <span className="font-mono font-bold">{displayIngredient('Water', results.preferment.water, 'water')}</span>
+            </div>
+            {results.preferment.yeast > 0 && (
+                <div className="flex justify-between">
+                    <span>{t('results.yeast')}</span>
+                    <span className="font-mono font-bold">{displayIngredient('Yeast', results.preferment.yeast, 'yeast')}</span>
+                </div>
+            )}
+          </div>
         </div>
+      )}
 
-        {unit === 'volume' && (
-          <p className="mt-4 text-center text-xs text-slate-500">
-             {t('results.unit_system_display', { system: unitSystem === UnitSystem.METRIC ? t('form.metric') : t('form.us_customary') })}
-          </p>
+      {/* Final Dough / Main Ingredients */}
+      <div className="space-y-1 mb-8">
+        <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+            {results.preferment ? t('results.final_dough_title') : t('results.ingredients_title', {defaultValue: 'Ingredients'})}
+        </h3>
+        
+        {results.finalDough ? (
+            <>
+                {renderRow(t('results.flour'), results.finalDough.flour, 'flour')}
+                {renderRow(t('results.water'), results.finalDough.water, 'water')}
+                {renderRow(t('results.salt'), results.finalDough.salt, 'salt', `${config.salt}%`)}
+                {results.finalDough.yeast > 0 && renderRow(t('results.yeast'), results.finalDough.yeast, 'yeast')}
+                {results.finalDough.oil > 0 && renderRow(t('results.oil'), results.finalDough.oil, 'oil', `${config.oil}%`)}
+                {results.finalDough.sugar > 0 && renderRow(t('results.sugar'), results.finalDough.sugar, 'sugar', `${config.sugar}%`)}
+            </>
+        ) : (
+            <>
+                {renderRow(t('results.flour'), results.totalFlour, 'flour')}
+                {renderRow(t('results.water'), results.totalWater, 'water', `${config.hydration}%`)}
+                {renderRow(t('results.salt'), results.totalSalt, 'salt', `${config.salt}%`)}
+                {results.totalYeast > 0 && renderRow(t('results.yeast'), results.totalYeast, 'yeast', `${config.yeastPercentage}%`)}
+                {results.totalOil > 0 && renderRow(t('results.oil'), results.totalOil, 'oil', `${config.oil}%`)}
+                {results.totalSugar > 0 && renderRow(t('results.sugar'), results.totalSugar, 'sugar', `${config.sugar}%`)}
+            </>
         )}
         
-        <SuggestionsBlock config={config} />
-
-        <div className="mt-8 grid grid-cols-2 gap-3">
-          <button
-            onClick={handleShare}
-            className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white py-2.5 px-4 font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-          >
-            {hasProAccess ? <ShareIcon className="h-5 w-5" /> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
-            {t('common.share_link', {defaultValue: 'Share'})}
-          </button>
-           <button
-            onClick={onStartBatch}
-            ref={saveButtonRef}
-            className="flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-2.5 px-4 font-semibold text-white shadow-sm transition-colors hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
-          >
-            <BatchesIcon className="h-5 w-5" />
-            {t('footer.start_batch')}
-          </button>
-        </div>
+        {/* Custom/Other ingredients from Universal model */}
+        {results.ingredientWeights?.filter(i => i.role === 'other').map(ing => (
+             renderRow(ing.name, ing.weight, ing.id, `${ing.bakerPercentage}%`)
+        ))}
       </div>
-      
-      <div className="bg-slate-50 p-6 rounded-b-2xl border-t border-slate-200">
-        <RecipeSteps config={config} />
+
+      {/* Actions */}
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={onStartBatch}
+          ref={saveButtonRef}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-lime-500 py-3.5 text-base font-bold text-white shadow-lg shadow-lime-200 transition-all hover:bg-lime-600 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm"
+        >
+          <BatchesIcon className="h-5 w-5" />
+          {t('diary_page.new_batch')}
+        </button>
+
+        <div className="grid grid-cols-3 gap-3">
+            <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+            >
+                <ShareIcon className="h-4 w-4" />
+                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                Share
+            </button>
+            <button
+                onClick={handleExportPDF}
+                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+            >
+                <DownloadIcon className="h-4 w-4" />
+                PDF
+                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+            </button>
+            <button
+                onClick={handleExportJSON}
+                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+            >
+                <DocumentDuplicateIcon className="h-4 w-4" />
+                JSON
+                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+            </button>
+        </div>
       </div>
     </div>
   );
-});
-
-ResultsDisplay.displayName = 'ResultsDisplay';
+};

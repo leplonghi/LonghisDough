@@ -1,3 +1,4 @@
+
 import {
   EnvironmentInput,
   EnvironmentAdvice,
@@ -42,16 +43,16 @@ export function getEnvironmentAdjustments(
       flourTemperatureC,
     );
     advice.notes.push(
-      `Para atingir a temperatura ideal da massa (~${targetDDT}°C), a água deve estar em torno de ${advice.recommendedWaterTempC.toFixed(0)}°C.`
+      `To reach the ideal dough temperature (~${targetDDT}°C), the water should be around ${advice.recommendedWaterTempC.toFixed(0)}°C.`
     );
      if (ambientTemperatureC > 26) {
-        advice.notes.push("Ambiente quente: use água mais fria para atingir a DDT.");
+        advice.notes.push("Hot environment: use cooler water to hit DDT.");
     } else if (ambientTemperatureC < 20) {
-        advice.notes.push("Ambiente frio: água ligeiramente mais quente ajuda a atingir a DDT.");
+        advice.notes.push("Cold environment: slightly warmer water helps hit DDT.");
     }
   } else {
     advice.notes.push(
-      'Informe a temperatura da farinha para um cálculo preciso da temperatura da água (DDT).',
+      'Enter flour temperature for an accurate water temperature (DDT) calculation.',
     );
   }
 
@@ -61,7 +62,7 @@ export function getEnvironmentAdjustments(
     surfaceType === 'steel'
   ) {
     advice.warnings.push(
-      `CUIDADO: Usar uma chapa de aço em fornos de altíssima temperatura (>400°C) pode queimar a base da pizza muito rapidamente. Recomenda-se uma pedra de argila (biscotto).`
+      `WARNING: Using a baking steel in extremely hot ovens (>400°C) can burn the pizza base very quickly. A clay stone (biscotto) is recommended.`
     );
     advice.recommendedSurfaceOverride = 'biscotto';
   }
@@ -71,7 +72,7 @@ export function getEnvironmentAdjustments(
     !surfaceType && styleId && ![RecipeStyle.DETROIT, RecipeStyle.FOCACCIA, RecipeStyle.PAN_PIZZA].includes(styleId)
   ) {
     advice.notes.push(
-      `DICA: Para fornos domésticos, uma chapa de aço ("baking steel") é a melhor superfície para uma base mais crocante, pois transfere calor mais rápido que a pedra.`
+      `TIP: For home ovens, a "baking steel" is the best surface for a crispier base, as it transfers heat faster than stone.`
     );
     advice.recommendedSurfaceOverride = 'steel';
   }
@@ -83,13 +84,13 @@ export function getEnvironmentAdjustments(
         advice.recommendedBakeTimeSeconds = [60, 90];
         advice.recommendedSurfaceOverride = 'biscotto';
         advice.flags?.push('STRICT_AVPN');
-        advice.notes.push("AVPN: Forno a 485°C, 60-90s, sem gordura/açúcar na massa.");
+        advice.notes.push("AVPN: Oven at 485°C, 60-90s, no oil/sugar in dough.");
     } else if (ovenType === 'gas_home' || ovenType === 'electric_home') {
         advice.recommendedBakeTempC = 290; // Max safe temp for home ovens
         advice.recommendedBakeTimeSeconds = [360, 480]; // 6-8 min
         advice.recommendedSurfaceOverride = 'steel';
         advice.flags?.push('HOME_OVEN_COMPROMISE');
-        advice.warnings.push("ALERTA: É um desafio replicar a pizza napolitana em forno doméstico. Este é um perfil adaptado.");
+        advice.warnings.push("WARNING: Replicating Neapolitan pizza in a home oven is challenging. This is an adapted profile.");
     }
   }
 
@@ -105,9 +106,9 @@ export function getEnvironmentAdjustments(
 
   // 4. Ambient temperature warnings for fermentation
   if (ambientTemperatureC >= 28) { // HOT_AMBIENT_MIN
-      advice.notes.push("Ambiente quente acelera a fermentação; considere diminuir o tempo de bulk ou reduzir a quantidade de fermento.");
+      advice.notes.push("Hot environment accelerates fermentation; consider reducing bulk time or yeast amount.");
   } else if (ambientTemperatureC <= 18) { // COLD_AMBIENT_MAX
-      advice.notes.push("Ambiente frio retarda a fermentação; considere aumentar o tempo de bulk para atingir o volume desejado.");
+      advice.notes.push("Cold environment slows fermentation; consider increasing bulk time to reach desired volume.");
   }
 
   return advice;

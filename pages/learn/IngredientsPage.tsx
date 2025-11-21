@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useTranslation } from '../../i18n';
-import { Page } from '../../types';
+import { useTranslation } from '@/i18n';
+import { Page } from '@/types';
 import { 
     AcademicCapIcon, 
     CubeIcon,
@@ -14,7 +14,7 @@ import {
     FireIcon,
     OilIcon,
     FlourIcon,
-} from '../../components/IconComponents';
+} from '@/components/ui/Icons';
 
 interface IngredientsPageProps {
   onNavigate: (page: Page) => void;

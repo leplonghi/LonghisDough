@@ -1,19 +1,17 @@
-
 import React, {
   useState,
   useEffect,
   useCallback,
   useMemo,
   useRef,
+  Suspense,
 } from 'react';
-import CalculatorPage from './pages/CalculatorPage';
-import Navigation from './components/Navigation';
-import Footer from './components/Footer';
-import BatchDetailPage from './pages/BatchDetailPage';
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 import {
   DoughConfig,
-  DoughResult,
   BakeType,
   YeastType,
   FermentationTechnique,
@@ -24,117 +22,119 @@ import {
   FormErrors,
   Page,
   PrimaryPage,
-  FlourDefinition,
   CalculationMode,
   DoughStyleDefinition,
-} from './types';
-import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from './constants';
-import { STYLES_DATA, getStyleById } from './data/stylesData';
-import { PaywallModal } from './components/PaywallModal';
-import AuthModal from './components/AuthModal';
-import ProfilePage from './pages/ProfilePage';
-import PlansPage from './components/PlansPage';
-import LearnPage from './pages/learn/LearnPage';
-import ReferencesPage from './pages/ReferencesPage';
-import { FLOURS } from './flours-constants';
-import MyLabPage from './pages/MyLabPage';
-import LevainManagerPage from './pages/LevainManagerPage';
-import { ToastProvider, useToast } from './components/ToastProvider';
-import { UserProvider, useUser } from './contexts/UserProvider';
-import AssistantPage from './components/AssistantPage';
-import FloatingActionButton from './components/FloatingActionButton';
-import { OvenAnalysisPage } from './pages/OvenAnalysisPage';
-import DoughStylesPage from './pages/styles/DoughStylesPage';
-import { StyleDetailPage } from './pages/styles/StyleDetailPage';
-import SettingsPage from './pages/SettingsPage';
-import LanguagePage from './pages/settings/LanguagePage';
-import TermsPage from './pages/legal/TermsPage';
-import PrivacyPage from './pages/legal/PrivacyPage';
-import CookiesPage from './pages/legal/CookiesPage';
-import EulaPage from './pages/legal/EulaPage';
-import IpPage from './pages/legal/IpPage';
-import ContactPage from './pages/legal/ContactPage';
-import LegalIndexPage from './pages/legal/LegalIndexPage';
-import TechniquesPage from './pages/learn/TechniquesPage';
-import FermentationPage from './pages/learn/FermentationPage';
-import DoughSciencePage from './pages/learn/DoughSciencePage';
-import TroubleshootingPage from './pages/learn/TroubleshootingPage';
-import IngredientsPage from './pages/learn/IngredientsPage';
-import ChemistryLibraryPage from './pages/learn/ChemistryLibraryPage';
-import StyleGuidePage from './pages/learn/StyleGuidePage';
-import GlossaryPage from './pages/learn/GlossaryPage';
-import CheesesPage from './pages/learn/ingredients/CheesesPage';
-import MeatsPage from './pages/learn/ingredients/MeatsPage';
-import VegetablesPage from './pages/learn/ingredients/VegetablesPage';
-import SaucesPage from './pages/learn/ingredients/SaucesPage';
-import OilsSpicesPage from './pages/learn/ingredients/OilsSpicesPage';
-import OilsPage from './pages/learn/ingredients/OilsPage';
-import ClassicCombosPage from './pages/learn/ingredients/ClassicCombosPage';
-import BoldCombosPage from './pages/learn/ingredients/BoldCombosPage';
-import SensoryGuidePage from './pages/learn/SensoryGuidePage';
-import PairingToolPage from './pages/learn/ingredients/PairingToolPage';
-import ReadyToppingsPage from './pages/learn/ingredients/ReadyToppingsPage';
-import MeuLabReceitasPage from './pages/mylab/MeuLabReceitasPage';
-import MeuLabLevainPetPage from './pages/mylab/MeuLabLevainPetPage';
-import ErrorBoundary from './components/ErrorBoundary';
-import OvenSciencePage from './pages/learn/OvenSciencePage';
-import IngredientsFloursPage from './pages/learn/ingredients/FloursPage';
-import YeastsPage from './pages/learn/ingredients/YeastsPage';
-import PrefermentsPage from './pages/learn/PrefermentsPage';
-import TemperatureControlPage from './pages/learn/TemperatureControlPage';
-import StoragePage from './pages/learn/StoragePage';
-import HygieneSafetyPage from './pages/learn/HygieneSafetyPage';
-import EquipmentPage from './pages/learn/EquipmentPage';
-import OvenSpringPage from './pages/learn/OvenSpringPage';
-import FermentationBiochemistryPage from './pages/learn/FermentationBiochemistryPage';
-import CrumbStructurePage from './pages/learn/CrumbStructurePage';
-import DoughAgingPage from './pages/learn/DoughAgingPage';
-import AmbientVsColdFermentationPage from './pages/learn/AmbientVsColdFermentationPage';
-import MixingTechniquesPage from './pages/learn/MixingTechniquesPage';
-import BallingTechniquePage from './pages/learn/BallingTechniquePage';
-import SensoryMaturationPage from './pages/learn/SensoryMaturationPage';
-import ParbakingPage from './pages/learn/ParbakingPage';
-import WaterPage from './pages/learn/WaterPage';
-import SaltPage from './pages/learn/SaltPage';
-import SugarsPage from './pages/learn/SugarsPage';
-import FatsPage from './pages/learn/FatsPage';
-import TomatoPreservationPage from './pages/learn/TomatoPreservationPage';
-import WhiteSaucesPage from './pages/learn/WhiteSaucesPage';
-import SpecialSaucesPage from './pages/learn/SpecialSaucesPage';
-import LowMoistureCheesesPage from './pages/learn/LowMoistureCheesesPage';
-import SmokedCheesesPage from './pages/learn/SmokedCheesesPage';
-import CuredMeatsPage from './pages/learn/CuredMeatsPage';
-import SmokedAromaticsPage from './pages/learn/SmokedAromaticsPage';
-import WaterRichVegetablesPage from './pages/learn/WaterRichVegetablesPage';
-import CaramelizableVegetablesPage from './pages/learn/CaramelizableVegetablesPage';
-import RegionalCombosPage from './pages/learn/RegionalCombosPage';
-import SensoryProfilesPage from './pages/learn/SensoryProfilesPage';
-import MeuLabFornadasPage from './pages/mylab/MeuLabFornadasPage';
-import MeuLabFarinhasPage from './pages/mylab/MeuLabFarinhasPage';
-import MeuLabMassasPage from './pages/mylab/MeuLabMassasPage';
-import MeuLabDiarioSensorialPage from './pages/mylab/MeuLabDiarioSensorialPage';
-import MeuLabComparacoesPage from './pages/mylab/MeuLabComparacoesPage';
-import MeuLabInsightsPage from './pages/mylab/MeuLabInsightsPage';
-import TimelinePage from './pages/mylab/TimelinePage';
-import ObjectivesPage from './pages/mylab/ObjectivesPage';
-import FundamentalsPage from './pages/learn/FundamentalsPage';
-import MethodsPage from './pages/learn/MethodsPage';
-import CriticalIngredientsPage from './pages/learn/CriticalIngredientsPage';
-import OvensHeatPage from './pages/learn/OvensHeatPage';
-import TroubleshootingGuidePage from './pages/learn/TroubleshootingGuidePage';
-import { AuthProvider } from './contexts/AuthContext';
-import LevainListPage from './pages/mylab/levain/LevainListPage';
-import LevainDetailPage from './pages/mylab/levain/LevainDetailPage';
-import LevainOnboardingModal from './components/onboarding/LevainOnboardingModal';
-import { logEvent } from './services/analytics';
-import CompareReceitasPage from './pages/mylab/CompareReceitasPage';
-import ConsistencyListPage from './pages/mylab/ConsistencyListPage';
-import ConsistencyDetailPage from './pages/mylab/ConsistencyDetailPage';
-import { calculateDoughUniversal, syncIngredientsFromConfig } from './logic/doughMath';
-import { I18nProvider } from './i18n';
-import ShopPage from './pages/ShopPage';
-import CommunityPage from './pages/CommunityPage';
-import ProActivatedPage from './pages/pro/ProActivatedPage';
+} from '@/types';
+import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from '@/constants';
+import { STYLES_DATA, getStyleById } from '@/data/stylesData';
+import { PaywallModal } from '@/components/PaywallModal';
+import AuthModal from '@/components/AuthModal';
+import { FLOURS } from '@/flours-constants';
+import { ToastProvider, useToast } from '@/components/ToastProvider';
+import { UserProvider, useUser } from '@/contexts/UserProvider';
+import FloatingActionButton from '@/components/ui/FloatingActionButton';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
+import { AuthProvider } from '@/contexts/AuthContext';
+import LevainOnboardingModal from '@/components/onboarding/LevainOnboardingModal';
+import { logEvent } from '@/services/analytics';
+import { calculateDoughUniversal, syncIngredientsFromConfig } from '@/logic/doughMath';
+import { I18nProvider } from '@/i18n';
+
+// Lazy Load Pages
+const CalculatorPage = React.lazy(() => import('@/pages/CalculatorPage'));
+const BatchDetailPage = React.lazy(() => import('@/pages/BatchDetailPage'));
+const ProfilePage = React.lazy(() => import('@/pages/ProfilePage'));
+const PlansPage = React.lazy(() => import('@/components/PlansPage'));
+const LearnPage = React.lazy(() => import('@/pages/learn/LearnPage'));
+const ReferencesPage = React.lazy(() => import('@/pages/ReferencesPage'));
+const MyLabPage = React.lazy(() => import('@/pages/MyLabPage'));
+const AssistantPage = React.lazy(() => import('@/components/AssistantPage'));
+const OvenAnalysisPage = React.lazy(() => import('@/pages/OvenAnalysisPage'));
+const DoughStylesPage = React.lazy(() => import('@/pages/styles/DoughStylesPage'));
+const StyleDetailPage = React.lazy(() => import('@/pages/styles/StyleDetailPage').then(module => ({ default: module.StyleDetailPage })));
+const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
+const LanguagePage = React.lazy(() => import('@/pages/settings/LanguagePage'));
+const TermsPage = React.lazy(() => import('@/pages/legal/TermsPage'));
+const PrivacyPage = React.lazy(() => import('@/pages/legal/PrivacyPage'));
+const CookiesPage = React.lazy(() => import('@/pages/legal/CookiesPage'));
+const EulaPage = React.lazy(() => import('@/pages/legal/EulaPage'));
+const IpPage = React.lazy(() => import('@/pages/legal/IpPage'));
+const ContactPage = React.lazy(() => import('@/pages/legal/ContactPage'));
+const LegalIndexPage = React.lazy(() => import('@/pages/legal/LegalIndexPage'));
+const TechniquesPage = React.lazy(() => import('@/pages/learn/TechniquesPage'));
+const FermentationPage = React.lazy(() => import('@/pages/learn/FermentationPage'));
+const DoughSciencePage = React.lazy(() => import('@/pages/learn/DoughSciencePage'));
+const TroubleshootingPage = React.lazy(() => import('@/pages/learn/TroubleshootingPage'));
+const IngredientsPage = React.lazy(() => import('@/pages/learn/IngredientsPage'));
+const ChemistryLibraryPage = React.lazy(() => import('@/pages/learn/ChemistryLibraryPage'));
+const StyleGuidePage = React.lazy(() => import('@/pages/learn/StyleGuidePage'));
+const GlossaryPage = React.lazy(() => import('@/pages/learn/GlossaryPage'));
+const CheesesPage = React.lazy(() => import('@/pages/learn/ingredients/CheesesPage'));
+const MeatsPage = React.lazy(() => import('@/pages/learn/ingredients/MeatsPage'));
+const VegetablesPage = React.lazy(() => import('@/pages/learn/ingredients/VegetablesPage'));
+const SaucesPage = React.lazy(() => import('@/pages/learn/ingredients/SaucesPage'));
+const OilsSpicesPage = React.lazy(() => import('@/pages/learn/ingredients/OilsSpicesPage'));
+const OilsPage = React.lazy(() => import('@/pages/learn/ingredients/OilsPage'));
+const ClassicCombosPage = React.lazy(() => import('@/pages/learn/ingredients/ClassicCombosPage'));
+const BoldCombosPage = React.lazy(() => import('@/pages/learn/ingredients/BoldCombosPage'));
+const SensoryGuidePage = React.lazy(() => import('@/pages/learn/SensoryGuidePage'));
+const PairingToolPage = React.lazy(() => import('@/pages/learn/ingredients/PairingToolPage'));
+const ReadyToppingsPage = React.lazy(() => import('@/pages/learn/ingredients/ReadyToppingsPage'));
+const MeuLabReceitasPage = React.lazy(() => import('@/pages/mylab/MeuLabReceitasPage'));
+const MeuLabLevainPetPage = React.lazy(() => import('@/pages/mylab/MeuLabLevainPetPage'));
+const OvenSciencePage = React.lazy(() => import('@/pages/learn/OvenSciencePage'));
+const IngredientsFloursPage = React.lazy(() => import('@/pages/learn/ingredients/FloursPage'));
+const YeastsPage = React.lazy(() => import('@/pages/learn/ingredients/YeastsPage'));
+const PrefermentsPage = React.lazy(() => import('@/pages/learn/PrefermentsPage'));
+const TemperatureControlPage = React.lazy(() => import('@/pages/learn/TemperatureControlPage'));
+const StoragePage = React.lazy(() => import('@/pages/learn/StoragePage'));
+const HygieneSafetyPage = React.lazy(() => import('@/pages/learn/HygieneSafetyPage'));
+const EquipmentPage = React.lazy(() => import('@/pages/learn/EquipmentPage'));
+const OvenSpringPage = React.lazy(() => import('@/pages/learn/OvenSpringPage'));
+const FermentationBiochemistryPage = React.lazy(() => import('@/pages/learn/FermentationBiochemistryPage'));
+const CrumbStructurePage = React.lazy(() => import('@/pages/learn/CrumbStructurePage'));
+const DoughAgingPage = React.lazy(() => import('@/pages/learn/DoughAgingPage'));
+const AmbientVsColdFermentationPage = React.lazy(() => import('@/pages/learn/AmbientVsColdFermentationPage'));
+const MixingTechniquesPage = React.lazy(() => import('@/pages/learn/MixingTechniquesPage'));
+const BallingTechniquePage = React.lazy(() => import('@/pages/learn/BallingTechniquePage'));
+const SensoryMaturationPage = React.lazy(() => import('@/pages/learn/SensoryMaturationPage'));
+const ParbakingPage = React.lazy(() => import('@/pages/learn/ParbakingPage'));
+const WaterPage = React.lazy(() => import('@/pages/learn/WaterPage'));
+const SaltPage = React.lazy(() => import('@/pages/learn/SaltPage'));
+const SugarsPage = React.lazy(() => import('@/pages/learn/SugarsPage'));
+const FatsPage = React.lazy(() => import('@/pages/learn/FatsPage'));
+const TomatoPreservationPage = React.lazy(() => import('@/pages/learn/TomatoPreservationPage'));
+const WhiteSaucesPage = React.lazy(() => import('@/pages/learn/WhiteSaucesPage'));
+const SpecialSaucesPage = React.lazy(() => import('@/pages/learn/SpecialSaucesPage'));
+const LowMoistureCheesesPage = React.lazy(() => import('@/pages/learn/LowMoistureCheesesPage'));
+const SmokedCheesesPage = React.lazy(() => import('@/pages/learn/SmokedCheesesPage'));
+const CuredMeatsPage = React.lazy(() => import('@/pages/learn/CuredMeatsPage'));
+const SmokedAromaticsPage = React.lazy(() => import('@/pages/learn/SmokedAromaticsPage'));
+const WaterRichVegetablesPage = React.lazy(() => import('@/pages/learn/WaterRichVegetablesPage'));
+const CaramelizableVegetablesPage = React.lazy(() => import('@/pages/learn/CaramelizableVegetablesPage'));
+const RegionalCombosPage = React.lazy(() => import('@/pages/learn/RegionalCombosPage'));
+const SensoryProfilesPage = React.lazy(() => import('@/pages/learn/SensoryProfilesPage'));
+const MeuLabFornadasPage = React.lazy(() => import('@/pages/mylab/MeuLabFornadasPage'));
+const MeuLabFarinhasPage = React.lazy(() => import('@/pages/mylab/MeuLabFarinhasPage'));
+const MeuLabMassasPage = React.lazy(() => import('@/pages/mylab/MeuLabMassasPage'));
+const MeuLabDiarioSensorialPage = React.lazy(() => import('@/pages/mylab/MeuLabDiarioSensorialPage'));
+const MeuLabComparacoesPage = React.lazy(() => import('@/pages/mylab/MeuLabComparacoesPage'));
+const MeuLabInsightsPage = React.lazy(() => import('@/pages/mylab/MeuLabInsightsPage'));
+const TimelinePage = React.lazy(() => import('@/pages/mylab/TimelinePage'));
+const ObjectivesPage = React.lazy(() => import('@/pages/mylab/ObjectivesPage'));
+const FundamentalsPage = React.lazy(() => import('@/pages/learn/FundamentalsPage'));
+const MethodsPage = React.lazy(() => import('@/pages/learn/MethodsPage'));
+const CriticalIngredientsPage = React.lazy(() => import('@/pages/learn/CriticalIngredientsPage'));
+const OvensHeatPage = React.lazy(() => import('@/pages/learn/OvensHeatPage'));
+const TroubleshootingGuidePage = React.lazy(() => import('@/pages/learn/TroubleshootingGuidePage'));
+const LevainListPage = React.lazy(() => import('@/pages/mylab/levain/LevainListPage'));
+const LevainDetailPage = React.lazy(() => import('@/pages/mylab/levain/LevainDetailPage'));
+const CompareReceitasPage = React.lazy(() => import('@/pages/mylab/CompareReceitasPage'));
+const ConsistencyListPage = React.lazy(() => import('@/pages/mylab/ConsistencyListPage'));
+const ConsistencyDetailPage = React.lazy(() => import('@/pages/mylab/ConsistencyDetailPage'));
+const ShopPage = React.lazy(() => import('@/pages/ShopPage'));
+const CommunityPage = React.lazy(() => import('@/pages/CommunityPage'));
+const ProActivatedPage = React.lazy(() => import('@/pages/pro/ProActivatedPage'));
 
 
 // --- Placeholder Pages ---
@@ -529,7 +529,7 @@ function AppContent() {
   const handleLoadStyleFromModule = useCallback((style: DoughStyleDefinition) => {
       const newDoughConfig: Partial<DoughConfig> = {
         bakeType: style.category === 'Pizza' ? BakeType.PIZZAS : 
-                  style.category === 'Pão' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
+                  style.category === 'Bread' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
         baseStyleName: style.name,
         hydration: style.technical.hydration,
         salt: style.technical.salt,
@@ -759,7 +759,7 @@ function AppContent() {
       case 'landing':
         return <LandingPage />;
       case 'styles':
-        return <DoughStylesPage onNavigateToDetail={(id) => navigate('styles', id)} />;
+        return <DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
       case 'tools-oven-analysis':
         return <OvenAnalysisPage />;
       case 'shop':
@@ -814,16 +814,21 @@ function AppContent() {
 
       <main className="flex-grow container mx-auto px-4 py-8 md:py-10 mt-20">
         {isAssistantOpen ? (
-          <AssistantPage 
-            config={config} 
-            results={results} 
-            defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
-            selectedFlour={FLOURS.find(f => f.id === config.flourId)}
-            lastBatch={lastBatch}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <AssistantPage 
+              config={config} 
+              results={results} 
+              defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
+              selectedFlour={FLOURS.find(f => f.id === config.flourId)}
+              lastBatch={lastBatch}
+              t={(key, replacements) => key} // Simple mock t function for assistant page if needed
+            />
+          </Suspense>
         ) : (
           <ErrorBoundary>
-            {renderPage()}
+            <Suspense fallback={<LoadingSpinner />}>
+              {renderPage()}
+            </Suspense>
           </ErrorBoundary>
         )}
       </main>

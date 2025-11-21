@@ -1,13 +1,12 @@
 
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { DoughConfig, Page, Batch, CommunityBatch, BatchStatus } from '../../types';
-import CommunityFeed from '../../components/community/CommunityFeed';
-import CommunityProfileSidebar from '../../components/community/CommunityProfileSidebar';
-import { useTranslation } from '../../i18n';
-import CommunityCreatePost from '../../components/community/CommunityCreatePost';
-import { FeedIcon } from '../../components/IconComponents';
-import { getAllCommunityBatches } from '../../data/communityStore';
+import { DoughConfig, Page, Batch, CommunityBatch, BatchStatus } from '@/types';
+import CommunityFeed from '@/components/community/CommunityFeed';
+import CommunityProfileSidebar from '@/components/community/CommunityProfileSidebar';
+import { useTranslation } from '@/i18n';
+import CommunityCreatePost from '@/components/community/CommunityCreatePost';
+import { FeedIcon } from '@/components/ui/Icons';
+import { getAllCommunityBatches } from '@/data/communityStore';
 
 interface CommunityPageProps {
   onLoadInspiration: (config: Partial<DoughConfig>) => void;

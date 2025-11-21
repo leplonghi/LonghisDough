@@ -1,10 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChatMessage, Levain } from '../../../../types';
-import { askLevainAssistant } from '../../../../ai/assistantClient';
-// FIX: Add missing icon imports
-import { SparklesIcon, UserCircleIcon, SpinnerIcon, CloseIcon } from '../../../../components/IconComponents';
-import { useTranslation } from '../../../../i18n';
+import { ChatMessage, Levain } from '@/types';
+import { askLevainAssistant } from '@/ai/assistantClient';
+import { SparklesIcon, UserCircleIcon, SpinnerIcon, CloseIcon } from '@/components/ui/Icons';
+import { useTranslation } from '@/i18n';
 
 interface LevainAssistantProps {
   isOpen: boolean;

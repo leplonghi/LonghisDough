@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { Page } from '../../types';
+import { Page } from '@/types';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import LearnTopicCard from '../../components/learn/LearnTopicCard';
-import { FireIcon, WrenchScrewdriverIcon } from '../../components/IconComponents';
+import LearnTopicCard from '@/components/learn/LearnTopicCard';
+import { FireIcon, WrenchScrewdriverIcon } from '@/components/ui/Icons';
 
 interface OvensHeatPageProps {
   onNavigate: (page: Page) => void;

@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
-import { Page } from '../../types';
-import { BeakerIcon, BookOpenIcon, ChartBarIcon, ClockIcon, DocumentDuplicateIcon, FlourIcon, SparklesIcon, FlaskIcon } from '../../components/IconComponents';
+import { Page } from '@/types';
+import { BeakerIcon, BookOpenIcon, ChartBarIcon, ClockIcon, DocumentDuplicateIcon, FlourIcon, SparklesIcon, FlaskIcon } from '@/components/ui/Icons';
 
 interface MyLabLayoutProps {
   children: ReactNode;
