@@ -1,4 +1,3 @@
-
 import React, { useMemo, ReactNode } from 'react';
 import { Page, Batch, Levain } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -94,7 +93,7 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
         origin='mylab' 
         featureName="Full Activity Timeline" 
         description="Pro users track everything — hydration, fermentation, bake outcomes. See your entire baking journey in one place."
-        className="min-h-[300px] flex items-center justify-center"
+        className="min-h-[18.75rem] flex items-center justify-center"
       >
           {timelineEvents.length === 0 ? (
             <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center filter blur-sm pointer-events-none select-none opacity-60">

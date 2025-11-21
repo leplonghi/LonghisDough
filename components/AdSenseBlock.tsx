@@ -60,8 +60,7 @@ const AdSenseBlock: React.FC = () => {
         {t('ads.advertisement')}
       </span>
       <ins
-        className="adsbygoogle"
-        style={{ display: 'block', marginTop: '8px', minHeight: '100px' }}
+        className="adsbygoogle block mt-2 min-h-[6.25rem]"
         data-ad-client="ca-pub-8653595934786167"
         data-ad-slot="2172740239"
         data-ad-format="auto"

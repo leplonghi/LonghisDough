@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage, Levain } from '@/types';
 import { askLevainAssistant } from '@/ai/assistantClient';
@@ -98,7 +97,7 @@ const LevainAssistant: React.FC<LevainAssistantProps> = ({ isOpen, onClose, leva
       aria-modal="true"
     >
       <div
-        className="relative mx-4 flex flex-col w-full max-w-2xl h-[80vh] max-h-[700px] rounded-2xl bg-white shadow-xl"
+        className="relative mx-4 flex flex-col w-full max-w-2xl h-[80vh] max-h-[43.75rem] rounded-2xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex-shrink-0 p-4 border-b border-slate-200 flex items-center justify-between">

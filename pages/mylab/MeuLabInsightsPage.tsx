@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -36,7 +35,7 @@ const MeuLabInsightsPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ on
                 origin="mylab" 
                 featureName="Advanced Dough Analytics"
                 description="Advanced dough analytics live here. Pro users track everything — hydration, fermentation, bake outcomes. Unlock advanced dough science with Pro."
-                className="min-h-[400px] flex items-center justify-center"
+                className="min-h-[25rem] flex items-center justify-center"
             >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-sm pointer-events-none select-none opacity-60">
                     <InsightCard

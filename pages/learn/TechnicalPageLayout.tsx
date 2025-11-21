@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { BookOpenIcon, ExternalLinkIcon, ShoppingBagIcon, StarIcon } from '@/components/ui/Icons';
 import { getAffiliateSuggestionsForTopic } from '@/logic/affiliateSuggestions';
@@ -24,7 +23,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
         <div className="text-center sm:text-left">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
           {subtitle && (
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-slate-700 dark:text-slate-300">
               {subtitle}
             </p>
           )}
@@ -32,14 +31,14 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
 
         {showTeaser ? (
             <div className="relative">
-                <div className="prose mt-8 max-w-none text-slate-600 h-[300px] overflow-hidden relative">
+                <div className="prose mt-8 max-w-none text-slate-700 dark:text-slate-300 h-[18.75rem] overflow-hidden relative leading-relaxed">
                     {children}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white pointer-events-none"></div>
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex justify-center pb-8 z-10">
                      <div className="text-center bg-white/90 p-6 rounded-xl border border-slate-200 shadow-lg backdrop-blur-sm max-w-md">
                         <h3 className="font-bold text-slate-900 text-lg mb-2">Upgrade to Pro to unlock the full advanced dough theory library.</h3>
-                        <p className="text-slate-500 text-sm mb-4">Serious bakers choose Pro for deeper knowledge.</p>
+                        <p className="text-slate-600 text-sm mb-4">Serious bakers choose Pro for deeper knowledge.</p>
                         <button
                             onClick={() => openPaywall('learn')}
                             className="bg-lime-500 text-white font-bold py-2 px-6 rounded-full hover:bg-lime-600 transition-colors flex items-center justify-center gap-2 mx-auto shadow-md"
@@ -51,7 +50,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                 </div>
             </div>
         ) : (
-            <div className="prose mt-8 max-w-none text-slate-600">
+            <div className="prose mt-8 max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                 {children}
             </div>
         )}
@@ -97,7 +96,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
 
         {showReferencesSection && !showTeaser && (
           <div className="mt-12 border-t border-slate-200 pt-8">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
                 <BookOpenIcon className="h-6 w-6 text-lime-500" />
                 <span>Technical References</span>
             </h2>

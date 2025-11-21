@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Levain, Page } from '@/types';
 import { useTranslation } from '@/i18n';
@@ -186,7 +185,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                     {!hasProAccess && levains.length >= 1 && (
                         <button
                             onClick={() => openPaywall('levain')}
-                            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-lime-200 bg-lime-50/50 p-6 shadow-sm transition-all hover:bg-lime-50 hover:border-lime-300 hover:shadow-md group h-full min-h-[180px]"
+                            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-lime-200 bg-lime-50/50 p-6 shadow-sm transition-all hover:bg-lime-50 hover:border-lime-300 hover:shadow-md group h-full min-h-[11.25rem]"
                         >
                             <div className="p-3 bg-lime-100 rounded-full text-lime-600 mb-3 group-hover:scale-110 transition-transform">
                                 <PlusCircleIcon className="h-8 w-8" />
