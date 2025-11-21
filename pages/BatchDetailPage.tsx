@@ -26,6 +26,7 @@ import { saveCommunityBatch } from '../data/communityStore';
 import { FLOURS } from '../flours-constants';
 import { exportBatchToJSON, exportBatchToPDF } from '../services/exportService';
 import ProFeatureLock from '../components/ProFeatureLock';
+import { isFreeUser } from '../lib/permissions'; // Corrigido para lib/permissions
 
 interface BatchDetailPageProps {
   batchId: string | null;
@@ -178,7 +179,8 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
           };
           saveCommunityBatch(communityVersion);
       }
-      addToast(t('info.update_success'), 'success');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: t('info.update_success'), type: 'success'});
     }
   };
 
@@ -197,7 +199,8 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
           isPublic: false,
       };
       const added = await addBatch(newBatchData);
-      addToast(`Fornada "${editableBatch.name}" duplicada.`, 'success');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: `Fornada "${editableBatch.name}" duplicada.`, type: 'success'});
       onNavigate('batch', added.id);
   };
   
@@ -217,7 +220,8 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     try {
       exportBatchToJSON(editableBatch, t);
     } catch (e) {
-      addToast('Não foi possível exportar agora. Tente novamente em instantes.', 'error');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Não foi possível exportar agora. Tente novamente em instantes.', type: 'error'});
     }
   };
 
@@ -230,7 +234,8 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     try {
       exportBatchToPDF(editableBatch, t);
     } catch (e) {
-      addToast('Não foi possível exportar agora. Tente novamente em instantes.', 'error');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Não foi possível exportar agora. Tente novamente em instantes.', type: 'error'});
     }
   };
 

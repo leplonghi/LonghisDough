@@ -1,3 +1,4 @@
+
 import { Batch, MyLabEnvironmentSettings, Suggestion } from '../types';
 
 /**
@@ -61,7 +62,7 @@ export const saveEnvironmentSettings = (settings: MyLabEnvironmentSettings): voi
  */
 export function getTodaySuggestion(
   environment?: MyLabEnvironmentSettings | null,
-  batches?: Batch[]
+  batches?: Batch[] // TODO: Use batches for more intelligent suggestions based on user history
 ): Suggestion | null {
   if (environment?.ambientTempC && environment.ambientTempC > 27) {
     return {

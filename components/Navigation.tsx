@@ -13,10 +13,11 @@ import {
   BeakerIcon,
   UserCircleIcon,
   ShoppingBagIcon,
-  StarIcon,
   LockClosedIcon
 } from './IconComponents';
 import { useUser } from '../contexts/UserProvider';
+import { ProBadge } from './ProBadge'; // Use the ProBadge component
+import { isFreeUser } from '../lib/permissions'; // Corrigido para lib/permissions
 
 interface NavigationProps {
   activePage: Page;
@@ -29,11 +30,12 @@ interface HeaderComponentProps extends Omit<NavigationProps, 'activePage'> {
     handleNavigate: (page: Page) => void;
 }
 
-const ProBadge = () => (
-    <span className="ml-2 inline-flex items-center rounded bg-lime-100 px-1.5 py-0.5 text-[10px] font-bold text-lime-700 uppercase tracking-wide border border-lime-200">
-        PRO
-    </span>
-);
+// Replaced inline span with imported ProBadge component
+// const ProBadge = () => (
+//     <span className="ml-2 inline-flex items-center rounded bg-lime-100 px-1.5 py-0.5 text-[10px] font-bold text-lime-700 uppercase tracking-wide border border-lime-200">
+//         PRO
+//     </span>
+// );
 
 const LockedIcon = () => (
     <LockClosedIcon className="ml-auto h-3.5 w-3.5 text-slate-400" />
@@ -42,7 +44,7 @@ const LockedIcon = () => (
 const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const { hasProAccess, openPaywall } = useUser();
+    const { hasProAccess, openPaywall, user } = useUser(); // Adicionado user para isFreeUser
     const hasPro = hasProAccess;
 
     useEffect(() => {
@@ -60,7 +62,8 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
     const handleNavigate = (page: Page, requiresPro: boolean = false) => {
         if (requiresPro && !hasPro) {
             setIsOpen(false);
-            openPaywall();
+            // Fix: Argument of type '"tools"' is not assignable to parameter of type 'PaywallOrigin'.
+            openPaywall('tools'); // Adicionado origin
         } else {
             onNavigate(page);
             setIsOpen(false);
@@ -165,7 +168,8 @@ const MobileHeader: React.FC<HeaderComponentProps & { isMobileMenuOpen: boolean;
     const onMobileNavigate = (page: Page, requiresPro: boolean = false) => {
         if (requiresPro && !hasPro) {
             setIsMobileMenuOpen(false);
-            openPaywall();
+            // Fix: Argument of type '"mobile-nav"' is not assignable to parameter of type 'PaywallOrigin'.
+            openPaywall('mobile-nav'); // Adicionado origin
         } else {
             handleNavigate(page);
         }

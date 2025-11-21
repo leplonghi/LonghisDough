@@ -11,7 +11,7 @@ import { useToast } from '../../../components/ToastProvider';
 import AuthPlaceholder from '../../../components/AuthPlaceholder';
 import { AFFILIATE_PLACEMENTS } from '../../../data/affiliatePlacements';
 import { AffiliateBlock } from '../../../components/AffiliateBlock';
-import { isFreeUser } from '../../../lib/subscriptions';
+import { isFreeUser } from '../../../lib/permissions'; // Corrigido para lib/permissions
 
 interface LevainListPageProps {
     onNavigate: (page: Page, params?: string) => void;
@@ -27,7 +27,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
 
     useEffect(() => {
         if (user) {
-            logEvent('levain_pet_opened', { userId: user.email });
+            logEvent({ name: 'levain_pet_opened', params: { userId: user.email } });
         }
     }, [user]);
 
@@ -78,7 +78,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        addToast('Data exported successfully.', 'success');
+        addToast({message: 'Data exported successfully.', type: 'success'});
     };
 
     const handleImportClick = () => {
@@ -95,10 +95,10 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
             if (typeof text === 'string') {
                 const result = importLevainData(text);
                 if (result.error) {
-                    addToast(result.error, 'error');
+                    addToast({message: result.error, type: 'error'});
                 } else {
                     importLevainsToContext(result.newLevains);
-                    addToast('Levain Pet data imported successfully.', 'success');
+                    addToast({message: 'Levain Pet data imported successfully.', type: 'success'});
                 }
             }
         };

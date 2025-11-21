@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useRef } from 'react';
 import CalculatorForm from '../components/CalculatorForm';
 import { ResultsDisplay } from '../components/ResultsDisplay';
@@ -24,7 +25,8 @@ import { InfoIcon } from '../components/IconComponents';
 import OnboardingTooltip from '../components/onboarding/OnboardingTooltip';
 import { AFFILIATE_PLACEMENTS } from '../data/affiliatePlacements';
 import { AffiliateBlock } from '../components/AffiliateBlock';
-import { isFreeUser } from '../lib/subscriptions';
+// Fix: Corrected the import path for the `isFreeUser` function.
+import { isFreeUser } from '../lib/permissions';
 
 
 interface CalculatorPageProps {
@@ -113,12 +115,7 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
         <div className="lg:sticky lg:top-24 space-y-6" ref={formRef}>
           <div className="flex items-center justify-center gap-2">
-            <UiModeToggle 
-              mode={props.calculatorMode} 
-              onModeChange={props.onCalculatorModeChange} 
-              hasProAccess={props.hasProAccess}
-              onOpenPaywall={props.onOpenPaywall}
-            />
+            <UiModeToggle mode={props.calculatorMode} onModeChange={props.onCalculatorModeChange} />
             <div className="group relative">
                 <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
                 <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-72 -translate-x-1/2 rounded-md bg-slate-800 p-3 text-xs text-white opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100">

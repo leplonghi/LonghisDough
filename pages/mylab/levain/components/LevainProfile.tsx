@@ -24,7 +24,8 @@ const LevainProfile: React.FC<LevainProfileProps> = ({ levain }) => {
             notificationEnabled,
             idealFeedingIntervalHours,
         });
-        addToast("Changes saved successfully.", "success");
+        // FIX: Changed addToast call to conform to new signature
+        addToast({message: "Changes saved successfully.", type: "success"});
     };
 
     return (

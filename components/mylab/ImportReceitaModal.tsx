@@ -26,7 +26,8 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
     } else {
       setSelectedFile(null);
       if(file) {
-        addToast('Please select a valid .json file.', 'error');
+        // FIX: Changed addToast call to conform to new signature
+        addToast({message: 'Please select a valid .json file.', type: 'error'});
       }
     }
   };
@@ -46,18 +47,21 @@ const ImportReceitaModal: React.FC<ImportReceitaModalProps> = ({ isOpen, onClose
 
   const handleImport = async () => {
     if (!selectedFile) {
-      addToast('No file selected.', 'error');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'No file selected.', type: 'error'});
       return;
     }
     setIsLoading(true);
     try {
       const newBatchData = await importReceitaFromJSON(selectedFile);
       addBatch(newBatchData);
-      addToast('Recipe imported successfully.', 'success');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Recipe imported successfully.', type: 'success'});
       handleClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
-      addToast(errorMessage, 'error');
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: errorMessage, type: 'error'});
       setIsLoading(false);
     }
   };

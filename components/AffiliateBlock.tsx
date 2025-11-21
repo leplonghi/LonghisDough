@@ -4,7 +4,7 @@ import { AFFILIATE_LINKS } from '../data/affiliateLinks';
 import type { AffiliatePlacement } from '../data/affiliatePlacements';
 import { ExternalLinkIcon, ShoppingBagIcon } from './IconComponents';
 import { useUser } from '../contexts/UserProvider';
-import { isFreeUser } from '../lib/subscriptions';
+import { isFreeUser } from '../lib/permissions'; // Corrigido para lib/permissions
 
 type Props = {
   placement: AffiliatePlacement;

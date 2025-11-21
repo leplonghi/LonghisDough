@@ -2,26 +2,26 @@
 import { RecipeStyle, YeastType, ProRecipe, BakeType, FermentationTechnique, AmbientTemperature, OvenType, DoughStylePreset, AdviceOvenType, SurfaceType, InspirationBatch, DoughConfig } from './types';
 
 export const YEAST_OPTIONS = [
-  { value: YeastType.IDY, labelKey: 'Instant Dry Yeast (IDY)' },
-  { value: YeastType.ADY, labelKey: 'Active Dry Yeast (ADY)' },
-  { value: YeastType.FRESH, labelKey: 'Fresh Yeast' },
-  { value: YeastType.SOURDOUGH_STARTER, labelKey: 'Sourdough Starter (Levain)' },
-  { value: YeastType.USER_LEVAIN, labelKey: 'My Starter' },
+  { value: YeastType.IDY, labelKey: 'form.yeast_idy' },
+  { value: YeastType.ADY, labelKey: 'form.yeast_ady' },
+  { value: YeastType.FRESH, labelKey: 'form.yeast_fresh' },
+  { value: YeastType.SOURDOUGH_STARTER, labelKey: 'form.yeast_sourdough_starter' },
+  { value: YeastType.USER_LEVAIN, labelKey: 'form.yeast_user_levain' },
 ];
 
 export const AMBIENT_TEMPERATURE_OPTIONS = [
-  { value: AmbientTemperature.COLD, labelKey: 'Cold (< 18°C)' },
-  { value: AmbientTemperature.MILD, labelKey: 'Mild (18-24°C)' },
-  { value: AmbientTemperature.HOT, labelKey: 'Hot (> 24°C)' },
+  { value: AmbientTemperature.COLD, labelKey: 'form.temp_cold' },
+  { value: AmbientTemperature.MILD, labelKey: 'form.temp_mild' },
+  { value: AmbientTemperature.HOT, labelKey: 'form.temp_hot' },
 ];
 
 export const OVEN_TYPE_OPTIONS = [
-    { value: OvenType.GAS, labelKey: 'Gas Oven' },
-    { value: OvenType.ELECTRIC, labelKey: 'Electric Oven' },
-    { value: OvenType.WOOD, labelKey: 'Wood-fired Oven' },
-    { value: OvenType.OONI, labelKey: 'Portable Oven (e.g. Ooni)' },
-    { value: OvenType.STONE_OVEN, labelKey: 'Stone Oven' },
-    { value: OvenType.OTHER, labelKey: 'Other' },
+    { value: OvenType.GAS, labelKey: 'profile.ovens.types.gas' },
+    { value: OvenType.ELECTRIC, labelKey: 'profile.ovens.types.electric' },
+    { value: OvenType.WOOD, labelKey: 'profile.ovens.types.wood' },
+    { value: OvenType.OONI, labelKey: 'profile.ovens.types.ooni' },
+    { value: OvenType.STONE_OVEN, labelKey: 'profile.ovens.types.stone_oven' },
+    { value: OvenType.OTHER, labelKey: 'profile.ovens.types.other' },
 ]
 
 export const DOUGH_WEIGHT_RANGES: { [key in RecipeStyle]?: string } = {
@@ -95,14 +95,6 @@ export const DOUGH_STYLE_PRESETS: DoughStylePreset[] = [
 ];
 
 
-export const YEAST_EQUIVALENCIES = {
-  // Base is Instant Dry Yeast (IDY)
-  IDY_TO_ADY: 1.25, // Use 25% more ADY than IDY
-  IDY_TO_FRESH: 3.0,  // Use 3x more Fresh Yeast than IDY
-  ADY_TO_IDY: 1 / 1.25, // 0.8
-  FRESH_TO_IDY: 1 / 3.0, // 0.333
-};
-
 export const ENVIRONMENT_TEMPERATURE_GUIDELINES = {
     [AmbientTemperature.COLD]: {
         yeastAdjustment: 1.25, // Suggest ~25% more yeast
@@ -146,6 +138,7 @@ export const PRO_RECIPES: ProRecipe[] = [
         hydration: 65,
         salt: 2.2,
         oil: 2,
+        sugar: 1,
         fermentationTechnique: FermentationTechnique.DIRECT,
         yeastType: YeastType.IDY,
         yeastPercentage: 0.4,

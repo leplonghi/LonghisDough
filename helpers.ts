@@ -1,6 +1,15 @@
 
-import { UnitSystem, ToppingSizeProfile, YeastType, IngredientUnit } from './types';
-import { YEAST_EQUIVALENCIES } from './constants';
+import { UnitSystem, ToppingSizeProfile, YeastType } from './types';
+// YEAST_EQUIVALENCIES now defined here, removed from constants.ts
+export const YEAST_EQUIVALENCIES = {
+  // Base is Instant Dry Yeast (IDY)
+  IDY_TO_ADY: 1.25, // Use 25% more ADY than IDY
+  IDY_TO_FRESH: 3.0,  // Use 3x more Fresh Yeast than IDY
+  ADY_TO_IDY: 1 / 1.25, // 0.8
+  FRESH_TO_IDY: 1 / 3.0, // 0.333
+};
+
+export const GRAMS_TO_OUNCES = 0.035274; // Centralized constant, 1 gram = 0.035274 ounces
 
 // Grams per cup for key ingredients.
 // US Customary cup is ~236.59mL. Metric cup is 250mL.
@@ -18,100 +27,9 @@ export const INGREDIENT_DENSITIES: {
   rye: { us: 102, metric: 110 },
 };
 
-// Fallback density if key not found (assume water/1.0)
-const DEFAULT_DENSITY = { us: 236.59, metric: 250 };
-
 // Standard volumetric conversions
 const TBSP_PER_CUP = 16;
 const TSP_PER_CUP = 48;
-
-/**
- * Helper to retrieve density based on a rough ID match
- */
-export function getIngredientDensity(id: string): { us: number; metric: number } {
-    const key = id.toLowerCase();
-    if (key.includes('flour')) return INGREDIENT_DENSITIES.flour;
-    if (key.includes('water')) return INGREDIENT_DENSITIES.water;
-    if (key.includes('salt')) return INGREDIENT_DENSITIES.salt;
-    if (key.includes('oil') || key.includes('olive') || key.includes('fat')) return INGREDIENT_DENSITIES.oil;
-    if (key.includes('sugar') || key.includes('honey')) return INGREDIENT_DENSITIES.sugar;
-    if (key.includes('yeast') || key.includes('levain') || key.includes('starter')) return INGREDIENT_DENSITIES.yeast;
-    
-    // Try direct lookup
-    if (INGREDIENT_DENSITIES[key]) return INGREDIENT_DENSITIES[key];
-
-    return DEFAULT_DENSITY;
-}
-
-/**
- * Converts a value in a specific unit to Grams.
- */
-export function convertToGrams(
-    value: number, 
-    unit: IngredientUnit, 
-    ingredientId: string,
-    unitSystem: UnitSystem
-): number {
-    if (unit === 'g') return value;
-    if (unit === 'kg') return value * 1000;
-    if (unit === 'oz') return value * 28.3495;
-    if (unit === 'lb') return value * 453.592;
-    if (unit === '%') return value; // Cannot convert % to grams without context, calling code must handle
-    
-    // Volumetric
-    const density = getIngredientDensity(ingredientId);
-    const gramsPerCup = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
-
-    if (unit === 'cup') return value * gramsPerCup;
-    if (unit === 'tbsp') return value * (gramsPerCup / TBSP_PER_CUP);
-    if (unit === 'tsp') return value * (gramsPerCup / TSP_PER_CUP);
-    
-    // Liquid specific (assume density ~1 for ml/l if not water/oil, but we use density map)
-    // Actually, density map is "grams per cup".
-    // Metric Cup = 250ml.
-    // Grams per ml = gramsPerCup / 250 (Metric) or gramsPerCup / 236.59 (US)
-    // Ideally simply: 1ml water = 1g. 1ml oil = 0.92g.
-    // Let's derive density ratio from the map relative to water.
-    const waterDensity = unitSystem === UnitSystem.METRIC ? INGREDIENT_DENSITIES.water.metric : INGREDIENT_DENSITIES.water.us;
-    const specificGravity = gramsPerCup / waterDensity;
-
-    if (unit === 'ml') return value * specificGravity;
-    if (unit === 'l') return value * 1000 * specificGravity;
-
-    return value;
-}
-
-/**
- * Converts a value in Grams to a specific unit.
- */
-export function convertFromGrams(
-    grams: number, 
-    targetUnit: IngredientUnit, 
-    ingredientId: string,
-    unitSystem: UnitSystem
-): number {
-    if (targetUnit === 'g') return grams;
-    if (targetUnit === 'kg') return grams / 1000;
-    if (targetUnit === 'oz') return grams / 28.3495;
-    if (targetUnit === 'lb') return grams / 453.592;
-    if (targetUnit === '%') return 0; // Context needed
-
-    const density = getIngredientDensity(ingredientId);
-    const gramsPerCup = unitSystem === UnitSystem.METRIC ? density.metric : density.us;
-    
-    if (targetUnit === 'cup') return grams / gramsPerCup;
-    if (targetUnit === 'tbsp') return grams / (gramsPerCup / TBSP_PER_CUP);
-    if (targetUnit === 'tsp') return grams / (gramsPerCup / TSP_PER_CUP);
-
-    const waterDensity = unitSystem === UnitSystem.METRIC ? INGREDIENT_DENSITIES.water.metric : INGREDIENT_DENSITIES.water.us;
-    const specificGravity = gramsPerCup / waterDensity;
-
-    if (targetUnit === 'ml') return grams / specificGravity;
-    if (targetUnit === 'l') return (grams / specificGravity) / 1000;
-
-    return grams;
-}
-
 
 /**
  * Converts a decimal number to a string with a common fraction character.
@@ -273,9 +191,14 @@ export function convertYeast(amount: number, from: YeastType, to: YeastType): nu
  * @param ddt Desired Dough Temperature in Celsius.
  * @param ambientTemp Ambient temperature in Celsius.
  * @param flourTemp Flour temperature in Celsius.
- * @returns The required water temperature in Celsius.
+ * @returns The required water temperature in Celsius. Returns 0 if inputs are invalid.
  */
 export function calculateWaterTempDDT(ddt: number, ambientTemp: number, flourTemp: number): number {
+    // Defensively handle potential NaN or non-numeric inputs
+    if (isNaN(ddt) || isNaN(ambientTemp) || isNaN(flourTemp)) {
+        console.warn("Invalid input for DDT calculation. Returning 0.");
+        return 0;
+    }
     // Using the user-provided simplified formula: ((DDT - 1) * 3) - ambient - flour
     // This is a non-standard heuristic, but we'll implement it as requested.
     // A note could be added in the UI that this is an estimate.
@@ -311,22 +234,23 @@ export function blobToBase64(blob: Blob): Promise<string> {
 /**
  * Formats a date string into a concise "time since" string.
  * @param dateString ISO date string
+ * @param t Translation function for locale-specific formatting
  * @returns A string like "2d", "5h", "10min"
  */
-export function timeSince(dateString: string): string {
-    if (!dateString) return 'nunca';
+export function timeSince(dateString: string, t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string): string {
+    if (!dateString) return t('levain_pet.time_since.never');
     const seconds = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return `${Math.floor(interval)} anos`;
+    if (interval > 1) return t('levain_pet.time_since.years', { count: Math.floor(interval) });
     interval = seconds / 2592000;
-    if (interval > 1) return `${Math.floor(interval)} meses`;
+    if (interval > 1) return t('levain_pet.time_since.months', { count: Math.floor(interval) });
     interval = seconds / 86400;
-    if (interval > 1) return `${Math.floor(interval)}d`;
+    if (interval > 1) return t('levain_pet.time_since.days', { count: Math.floor(interval) });
     interval = seconds / 3600;
-    if (interval > 1) return `${Math.floor(interval)}h`;
+    if (interval > 1) return t('levain_pet.time_since.hours', { count: Math.floor(interval) });
     interval = seconds / 60;
-    if (interval > 1) return `${Math.floor(interval)}min`;
-    return `${Math.floor(seconds)}s`;
+    if (interval > 1) return t('levain_pet.time_since.minutes', { count: Math.floor(interval) });
+    return t('levain_pet.time_since.seconds', { count: Math.floor(seconds) });
 }
 
 // Add polyfill for randomUUID if it doesn't exist

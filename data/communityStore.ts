@@ -1,3 +1,4 @@
+
 import { CommunityBatch, BakeType, DoughConfig, AmbientTemperature, FermentationTechnique, YeastType, RecipeStyle } from '../types';
 import { DOUGH_STYLE_PRESETS } from '../constants';
 
@@ -22,8 +23,7 @@ export function seedDefaultCommunityBatchesIfEmpty() {
             oil: preset.defaultOil,
             sugar: preset.defaultSugar || 0,
             recipeStyle: preset.recipeStyle,
-// FIX: Corrected BakeType.PIZZA to BakeType.PIZZAS and BakeType.BREAD to BakeType.BREADS_SAVORY.
-            bakeType: preset.type,
+            bakeType: preset.type, // Corrected BakeType usage
             stylePresetId: preset.id,
             flourId: preset.preferredFlourProfileId || 'generic_all_purpose',
             ambientTemperature: AmbientTemperature.MILD,

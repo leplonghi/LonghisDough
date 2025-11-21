@@ -1,537 +1,454 @@
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { 
-  UserContextType, 
-  User, 
-  Oven, 
-  Levain, 
-  Batch, 
-  Goal, 
-  TestSeries, 
-  CustomIngredientDefinition, 
-  DoughConfig,
-  DoughStyle,
-  BakeType,
-  FermentationTechnique,
-  BatchStatus,
-  LevainStatus,
-  FeedingEvent,
-  PaywallOrigin,
-  LevainStarter
-} from '../types';
-import { useAuth } from './AuthContext';
+import React, { useState, useEffect, useCallback, createContext, useContext, ReactNode, useMemo } from 'react';
+import { User, Oven, Batch, Levain, FeedingEvent, UserContextType, BatchStatus, LevainStatus, Goal, TestSeries, PaywallOrigin, CustomIngredientDefinition, DoughStyleDefinition, BakeType, RecipeStyle, DoughConfig, YeastType, AmbientTemperature } from '../types';
+import { useToast } from '../components/ToastProvider';
 import { DEFAULT_CONFIG } from '../constants';
+import { hoursBetween } from '../helpers';
 import { logEvent } from '../services/analytics';
-
-// Firestore Stores
-import { 
-    createBatchInFirestore, 
-    updateBatchInFirestore, 
-    deleteBatchInFirestore, 
-    listBatchesByUser 
-} from '../firebase/batchStore';
-
-import {
-    createOvenInFirestore,
-    updateOvenInFirestore,
-    deleteOvenInFirestore,
-    listOvensByUser
-} from '../firebase/ovenStore';
-
-import {
-    createLevainStarter,
-    updateLevainStarter,
-    listLevainStartersByUser,
-    createFeedingLog,
-    listFeedingLogs,
-    archiveLevainStarter
-} from '../firebase/levainPetStore';
-import { calculateLevainStatus } from '../logic/levainPetUtils';
+import { useAuth } from './AuthContext';
+import { firestoreService } from '../services/firestoreService';
+import { isProUser } from '../lib/permissions';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { appUser, loginWithGoogle, devLogin, logout: authLogout } = useAuth();
-  
-  // State
+// Helper for Levain status calculation
+const getStatusFromLastFeeding = (levain: Levain): LevainStatus => {
+    if (levain.status === 'arquivado') return 'arquivado';
+    const hoursSinceLastFeeding = hoursBetween(new Date().toISOString(), levain.lastFeeding);
+    const SEVEN_DAYS_IN_HOURS = 7 * 24;
+
+    if (hoursSinceLastFeeding <= 48) return 'ativo';
+    else if (hoursSinceLastFeeding > 48 && hoursSinceLastFeeding <= SEVEN_DAYS_IN_HOURS) return 'precisa_atencao';
+    else return 'descanso';
+};
+
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { addToast } = useToast();
+  const { firebaseUser, appUser, loginWithGoogle, logout: authLogout, devLogin: authDevLogin } = useAuth();
+
+  // --- Global State ---
+  const [user, setUser] = useState<User | null>(null);
   const [ovens, setOvens] = useState<Oven[]>([]);
-  const [levains, setLevains] = useState<Levain[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
+  const [levains, setLevains] = useState<Levain[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [testSeries, setTestSeries] = useState<TestSeries[]>([]);
   const [customIngredientLibrary, setCustomIngredientLibrary] = useState<CustomIngredientDefinition[]>([]);
   const [favoriteStyleIds, setFavoriteStyleIds] = useState<string[]>([]);
-  const [preferredFlourId, setPreferredFlourId] = useState<string | null>(null);
 
-  // Paywall & Pro State
+  // --- Local Storage Settings ---
+  const [userSettings, setUserSettings] = useState<any>(() => {
+    try {
+        const stored = localStorage.getItem('dough-lab-user-settings');
+        return stored ? JSON.parse(stored) : { preferredFlourId: null };
+    } catch { return { preferredFlourId: null }; }
+  });
+
+  // Load Local Storage Data
+  useEffect(() => {
+      try {
+          const storedIng = localStorage.getItem('dough-lab-custom-ingredients');
+          if (storedIng) setCustomIngredientLibrary(JSON.parse(storedIng));
+          
+          const storedFavs = localStorage.getItem('dough-lab-fav-styles');
+          if (storedFavs) setFavoriteStyleIds(JSON.parse(storedFavs));
+      } catch (e) { console.error("Failed to load local storage data", e); }
+  }, []);
+
+  // Save Settings to LS
+  useEffect(() => {
+    try {
+      localStorage.setItem('dough-lab-user-settings', JSON.stringify(userSettings));
+    } catch (error) { console.error(error); }
+  }, [userSettings]);
+
+  // --- Paywall / Entitlements State ---
+  const [entitlements, setEntitlements] = useState<any>({ isPro: false, passUntil: null, lastPassGrantedAt: null });
+  const [isSessionPro, setIsSessionPro] = useState<boolean>(false);
+  const [cooldownHours] = useState(0);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [paywallOrigin, setPaywallOrigin] = useState<PaywallOrigin | null>(null);
-  const [sessionPro, setSessionPro] = useState(false);
-  const [passCooldown, setPassCooldown] = useState(0); // Mock
 
-  const hasProAccess = appUser?.isPro || sessionPro;
+  const openPaywall = useCallback((origin: PaywallOrigin = 'general') => {
+      setPaywallOrigin(origin);
+      setIsPaywallOpen(true);
+  }, []);
+  
+  const closePaywall = useCallback(() => {
+      setIsPaywallOpen(false);
+      setPaywallOrigin(null);
+  }, []);
 
-  // --- DATA LOADING ---
+  // Sync AppUser to User state
   useEffect(() => {
-      const loadData = async () => {
-          if (appUser) {
-              // --- Authenticated: Load from Firestore ---
-              try {
-                  // 1. Ovens
-                  const firestoreOvens = await listOvensByUser(appUser.uid);
-                  setOvens(firestoreOvens);
-
-                  // 2. Batches
-                  const firestoreBatches = await listBatchesByUser(appUser.uid);
-                  // Sort by date descending
-                  setBatches(firestoreBatches.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-
-                  // 3. Levains (Complex: Need to fetch starters AND recent logs to build "Levain" object)
-                  const starters = await listLevainStartersByUser(appUser.uid);
-                  const fullLevains: Levain[] = [];
-                  
-                  for (const starter of starters) {
-                      const logs = await listFeedingLogs(starter.id, 50);
-                      // Map to app's Levain type
-                      fullLevains.push({
-                          id: starter.id,
-                          name: starter.name,
-                          hydration: starter.hydration,
-                          baseFlourType: starter.baseFlourType,
-                          createdAt: starter.createdAt.toDate().toISOString(),
-                          // If logs exist, use latest log date, else creation date
-                          lastFeeding: logs.length > 0 ? logs[0].dateTime.toDate().toISOString() : starter.createdAt.toDate().toISOString(),
-                          totalWeight: 200, // default/calc
-                          isDefault: false, // logic needed
-                          status: calculateLevainStatus(starter, logs),
-                          typicalUse: starter.typicalUse,
-                          notes: starter.notes,
-                          notificationEnabled: starter.notificationEnabled,
-                          idealFeedingIntervalHours: starter.idealFeedingIntervalHours,
-                          feedingHistory: logs.map(log => ({
-                              id: log.id,
-                              date: log.dateTime.toDate().toISOString(),
-                              flourAmount: log.flourAmount,
-                              waterAmount: log.waterAmount,
-                              flourType: log.flourType,
-                              ratio: log.ratio,
-                              ambientTemperature: log.ambientTemperature,
-                              notes: log.notes
-                          }))
-                      });
-                  }
-                  
-                  // Ensure at least one default if list not empty
-                  if (fullLevains.length > 0 && !fullLevains.some(l => l.isDefault)) {
-                      fullLevains[0].isDefault = true;
-                  }
-                  setLevains(fullLevains);
-
-                  // Goals & others (still local or todo)
-                  // For now we stick to local storage for minor features to reduce complexity
-                  const loadLocal = (key: string, setter: any) => {
-                      try { const s = localStorage.getItem(`doughlab_${key}`); if (s) setter(JSON.parse(s)); } catch(e){}
-                  };
-                  loadLocal('goals', setGoals);
-                  loadLocal('testSeries', setTestSeries);
-                  loadLocal('favorites', setFavoriteStyleIds);
-
-              } catch (error) {
-                  console.error("Failed to load data from Firestore:", error);
-              }
-
-          } else {
-              // --- Guest: Load from LocalStorage ---
-              const loadLocal = (key: string, setter: any) => {
-                  try {
-                    const stored = localStorage.getItem(`doughlab_${key}`);
-                    if (stored) setter(JSON.parse(stored));
-                  } catch (e) {
-                    console.error(`Failed to load ${key}`, e);
-                  }
-              };
-              loadLocal('ovens', setOvens);
-              loadLocal('levains', setLevains);
-              loadLocal('batches', setBatches);
-              loadLocal('goals', setGoals);
-              loadLocal('testSeries', setTestSeries);
-              loadLocal('customIngredients', setCustomIngredientLibrary);
-              loadLocal('favorites', setFavoriteStyleIds);
-              loadLocal('prefFlour', setPreferredFlourId);
-          }
-      };
-      
-      loadData();
+    if (appUser) {
+        setUser({
+            uid: appUser.uid,
+            role: appUser.role,
+            name: appUser.name || "Baker",
+            displayName: appUser.displayName,
+            email: appUser.email || "",
+            avatar: appUser.avatar,
+            isPro: appUser.isPro,
+            trialEndsAt: appUser.trialEndsAt,
+            plan: appUser.plan
+        });
+    } else {
+        setUser(null);
+    }
   }, [appUser]);
 
-  // Persist data on change (ONLY FOR GUEST)
+  // --- Data Subscriptions (Real-time) ---
   useEffect(() => {
-      if (!appUser) {
-          localStorage.setItem('doughlab_ovens', JSON.stringify(ovens));
-          localStorage.setItem('doughlab_levains', JSON.stringify(levains));
-          localStorage.setItem('doughlab_batches', JSON.stringify(batches));
-          localStorage.setItem('doughlab_goals', JSON.stringify(goals));
-          localStorage.setItem('doughlab_testSeries', JSON.stringify(testSeries));
-          localStorage.setItem('doughlab_customIngredients', JSON.stringify(customIngredientLibrary));
-          localStorage.setItem('doughlab_favorites', JSON.stringify(favoriteStyleIds));
-          if(preferredFlourId) localStorage.setItem('doughlab_prefFlour', JSON.stringify(preferredFlourId));
-      }
-  }, [ovens, levains, batches, goals, testSeries, customIngredientLibrary, favoriteStyleIds, preferredFlourId, appUser]);
+    // If using dev login (mock), don't try to connect to Firestore
+    if (!firebaseUser || firebaseUser.uid.startsWith('dev-')) {
+        if (!firebaseUser) {
+            setBatches([]);
+            setOvens([]);
+            setLevains([]);
+            setGoals([]);
+            setTestSeries([]);
+        }
+        return;
+    }
 
-  // Methods
-  const updateUser = (data: Partial<User>) => {
-      console.log('Update user', data);
-  };
+    const uid = firebaseUser.uid;
 
-  const grantProAccess = () => {
-      setSessionPro(true);
-  };
-  
-  const grantSessionProAccess = () => setSessionPro(true);
-  const grant24hPass = () => setSessionPro(true); // Mock
+    // Use the service to subscribe
+    const unsubBatches = firestoreService.subscribeToUserCollection<Batch>(uid, 'batches', setBatches);
+    const unsubOvens = firestoreService.subscribeToUserCollection<Oven>(uid, 'ovens', setOvens);
+    const unsubGoals = firestoreService.subscribeToUserCollection<Goal>(uid, 'goals', setGoals);
+    const unsubTestSeries = firestoreService.subscribeToUserCollection<TestSeries>(uid, 'testSeries', setTestSeries);
+    
+    // Levains need post-processing for status
+    const unsubLevains = firestoreService.subscribeToUserCollection<Levain>(
+        uid, 
+        'levains', 
+        setLevains, 
+        undefined, 
+        (l: Levain) => ({ ...l, status: getStatusFromLastFeeding(l) })
+    );
 
-  const openPaywall = (origin?: PaywallOrigin) => {
-      setPaywallOrigin(origin || 'general');
-      setIsPaywallOpen(true);
-  };
-  const closePaywall = () => setIsPaywallOpen(false);
+    return () => {
+        unsubBatches();
+        unsubOvens();
+        unsubLevains();
+        unsubGoals();
+        unsubTestSeries();
+    };
+  }, [firebaseUser]);
 
-  // --- Ovens ---
-  const addOven = async (ovenData: Omit<Oven, 'id' | 'isDefault'>) => {
-      if (appUser) {
-          // Firestore
-          // Determine default status based on existing ovens
-          const isDefault = ovens.length === 0;
-          const ovenPayload = { ...ovenData, isDefault };
-          const newOven = await createOvenInFirestore(appUser.uid, ovenPayload);
-          setOvens(prev => [...prev, newOven]);
-      } else {
-          // Local
-          const newOven = { ...ovenData, id: crypto.randomUUID(), isDefault: ovens.length === 0 };
-          setOvens(prev => [...prev, newOven]);
-      }
-  };
-  
-  const updateOven = async (oven: Oven) => {
-      if (appUser) {
-          await updateOvenInFirestore(oven.id, oven);
-          setOvens(prev => prev.map(o => o.id === oven.id ? oven : o));
-      } else {
-          setOvens(prev => prev.map(o => o.id === oven.id ? oven : o));
-      }
-  };
-  
-  const deleteOven = async (id: string) => {
-      if (appUser) {
-          await deleteOvenInFirestore(id);
-          setOvens(prev => prev.filter(o => o.id !== id));
-      } else {
-          setOvens(prev => prev.filter(o => o.id !== id));
-      }
-  };
-  
-  const setDefaultOven = (id: string) => {
-      // This logic might need a "preference" store in Firestore, but for now we handle state.
-      // In a full implementation, we'd update all ovens in DB to set isDefault=false/true.
-      setOvens(prev => prev.map(o => ({ ...o, isDefault: o.id === id })));
-  };
+  // --- Auth Actions ---
+  const login = useCallback(() => loginWithGoogle(), [loginWithGoogle]);
+  const devLogin = useCallback((type: 'admin' | 'free') => authDevLogin(type), [authDevLogin]);
+  const logout = useCallback(() => { authLogout(); setUser(null); }, [authLogout]);
 
-  // --- Levains ---
-  const addLevain = async (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>) => {
-      if (appUser) {
-          const starter = await createLevainStarter({
-              userId: appUser.uid,
-              name: levainData.name,
-              hydration: levainData.hydration,
-              baseFlourType: levainData.baseFlourType,
-              typicalUse: levainData.typicalUse,
-              notes: levainData.notes,
-              notificationEnabled: levainData.notificationEnabled,
-              idealFeedingIntervalHours: levainData.idealFeedingIntervalHours
-          });
-          
-          const newLevain: Levain = {
-              ...levainData,
-              id: starter.id,
-              isDefault: levains.length === 0,
-              feedingHistory: [],
-              status: 'precisa_atencao',
-              createdAt: starter.createdAt.toDate().toISOString(),
-              lastFeeding: starter.createdAt.toDate().toISOString(),
-              totalWeight: levainData.totalWeight
-          };
-          setLevains(prev => [...prev, newLevain]);
-      } else {
-          const newLevain: Levain = {
-              ...levainData,
-              id: crypto.randomUUID(),
-              isDefault: levains.length === 0,
-              feedingHistory: [],
-              status: 'ativo',
-              createdAt: new Date().toISOString(),
-              lastFeeding: new Date().toISOString(),
-          };
-          setLevains(prev => [...prev, newLevain]);
+  const updateUser = useCallback(async (updatedData: Partial<User>) => {
+      if (user && firebaseUser) {
+         await firestoreService.updateUserProfile(firebaseUser.uid, updatedData);
       }
-  };
-  
-  const updateLevain = async (data: Partial<Levain> & { id: string }) => {
-      if (appUser) {
-          // Map local Levain type fields back to Firestore LevainStarter fields
-          const updates: any = {};
-          if (data.name) updates.name = data.name;
-          if (data.hydration) updates.hydration = data.hydration;
-          if (data.notes) updates.notes = data.notes;
-          if (data.typicalUse) updates.typicalUse = data.typicalUse;
-          
-          await updateLevainStarter(data.id, updates);
-          setLevains(prev => prev.map(l => l.id === data.id ? { ...l, ...data } : l));
-      } else {
-          setLevains(prev => prev.map(l => l.id === data.id ? { ...l, ...data } : l));
-      }
-  };
+  }, [user, firebaseUser]);
 
-  const deleteLevain = async (id: string) => {
-      if (appUser) {
-          await archiveLevainStarter(id); // Soft delete
-          setLevains(prev => prev.filter(l => l.id !== id));
-      } else {
-          setLevains(prev => prev.filter(l => l.id !== id));
-      }
-  };
-  const setDefaultLevain = (id: string) => {
-      setLevains(prev => prev.map(l => ({ ...l, isDefault: l.id === id })));
-  };
-  
-  const addFeedingEvent = async (levainId: string, event: Omit<FeedingEvent, 'id' | 'date'>) => {
-      if (appUser) {
-          const log = await createFeedingLog({
-              levainId,
-              flourAmount: event.flourAmount,
-              waterAmount: event.waterAmount,
-              ratio: event.ratio,
-              flourType: event.flourType,
-              ambientTemperature: event.ambientTemperature,
-              notes: event.notes
-          });
-          
-          const newEvent: FeedingEvent = {
-              ...event,
-              id: log.id,
-              date: log.dateTime.toDate().toISOString()
-          };
-          
-           setLevains(prev => prev.map(l => {
-              if (l.id !== levainId) return l;
-              return { 
-                  ...l, 
-                  feedingHistory: [newEvent, ...l.feedingHistory], 
-                  lastFeeding: newEvent.date, 
-                  status: 'ativo' // Optimistic update
-              };
-          }));
-      } else {
-          const newEvent: FeedingEvent = { ...event, id: crypto.randomUUID(), date: new Date().toISOString() };
-          setLevains(prev => prev.map(l => {
-              if (l.id !== levainId) return l;
-              return { ...l, feedingHistory: [newEvent, ...l.feedingHistory], lastFeeding: newEvent.date, status: 'ativo' };
-          }));
-      }
-  };
-  
-  const importLevains = (newLevains: Levain[]) => {
-      // Basic import: just append locally for now, implementing deep import to Firestore is complex
-      // If user is logged in, we might want to loop and create them
-      if (appUser) {
-          // TODO: Implement batch import to Firestore
-          console.warn("Import to Firestore not fully implemented yet. Adding locally.");
-      }
-      setLevains(prev => [...prev, ...newLevains]);
-  };
+  // --- Settings Actions ---
+  const setPreferredFlour = useCallback((id: string | null) => {
+      setUserSettings((prev: any) => ({...prev, preferredFlourId: id}));
+  }, []);
 
-  // --- Batches ---
-  const addBatch = async (newBatch: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'>) => {
-      if (appUser) {
-          const batch = await createBatchInFirestore(appUser.uid, newBatch);
-          setBatches(prev => [batch, ...prev]);
-          return batch;
-      } else {
-          const batch: Batch = {
-              ...newBatch,
-              id: crypto.randomUUID(),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-          };
-          setBatches(prev => [batch, ...prev]);
-          return batch;
-      }
-  };
-  
-  const updateBatch = async (updated: Batch) => {
-      if (appUser) {
-          const { id, ...rest } = updated;
-          await updateBatchInFirestore(id, rest);
-          setBatches(prev => prev.map(b => b.id === updated.id ? { ...updated, updatedAt: new Date().toISOString() } : b));
-      } else {
-          setBatches(prev => prev.map(b => b.id === updated.id ? { ...updated, updatedAt: new Date().toISOString() } : b));
-      }
-  };
-  
-  const deleteBatch = async (id: string) => {
-      if (appUser) {
-          await deleteBatchInFirestore(id);
-          setBatches(prev => prev.filter(b => b.id !== id));
-      } else {
-          setBatches(prev => prev.filter(b => b.id !== id));
-      }
-  };
-  
-  const createDraftBatch = async () => {
-      const draft: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'> = {
-          name: 'New Draft',
-          doughConfig: { ...DEFAULT_CONFIG },
-          status: BatchStatus.DRAFT,
-          isFavorite: false,
-      };
-      return addBatch(draft);
-  };
+  // --- DATA CRUD OPERATIONS (Delegating to Service) ---
 
-  // Goals & Test Series (Local only for now to save complexity, but structure ready for Firestore expansion)
-  const addGoal = async (g: any) => { 
-      const newGoal = { ...g, id: crypto.randomUUID(), createdAt: new Date().toISOString(), status: 'ativo', progress: 0 };
-      setGoals(prev => [...prev, newGoal]);
-      return newGoal;
-  };
-  const updateGoal = (g: any) => setGoals(prev => prev.map(i => i.id === g.id ? { ...i, ...g } : i));
-  const deleteGoal = (id: string) => setGoals(prev => prev.filter(i => i.id !== id));
-  const completeGoal = (id: string) => updateGoal({ id, status: 'concluido', progress: 100 });
+  // BATCHES
+  const addBatch = useCallback(async (newBatchData: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'>): Promise<Batch> => {
+    if (!firebaseUser) throw new Error("User not authenticated");
+    const batch = await firestoreService.addDocument<Batch>(firebaseUser.uid, 'batches', newBatchData);
+    
+    // Dev Mode Manual Update
+    if(user?.uid.startsWith('dev-')) setBatches(prev => [batch, ...prev]);
+    return batch;
+  }, [firebaseUser, user]);
 
-  const addTestSeries = async (s: any) => {
-      const newSeries = { ...s, id: crypto.randomUUID(), createdAt: new Date().toISOString(), relatedBakes: [] };
-      setTestSeries(prev => [...prev, newSeries]);
-      return newSeries;
-  };
-  const updateTestSeries = (s: any) => setTestSeries(prev => prev.map(i => i.id === s.id ? { ...i, ...s } : i));
-  const deleteTestSeries = (id: string) => setTestSeries(prev => prev.filter(i => i.id !== id));
-  const attachBakeToSeries = (seriesId: string, bakeId: string) => {
-      setTestSeries(prev => prev.map(s => s.id === seriesId ? { ...s, relatedBakes: [...s.relatedBakes, bakeId] } : s));
-  };
-
-  const addCustomIngredient = (ing: CustomIngredientDefinition) => {
-      if (!customIngredientLibrary.some(i => i.name === ing.name)) {
-          setCustomIngredientLibrary(prev => [...prev, ing]);
-      }
-  };
-
-  const toggleStyleFavorite = (id: string) => {
-      setFavoriteStyleIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-  };
-
-  const createBatchFromStyle = useCallback(async (style: DoughStyle): Promise<string> => {
-      const defaultPreset = style.defaultPreset;
-      const category = defaultPreset?.category || style.category;
-      
-      let bakeType = BakeType.PIZZAS;
-      const c = category.toLowerCase();
-      
-      if (c.includes('pizza')) {
-          bakeType = BakeType.PIZZAS;
-      } else if (c.includes('pão') || c.includes('bread') || c.includes('flatbread') || c.includes('savory')) {
-          bakeType = BakeType.BREADS_SAVORY;
-      } else {
-          bakeType = BakeType.SWEETS_PASTRY;
-      }
-
-      const config: DoughConfig = {
-          ...DEFAULT_CONFIG,
-          bakeType: bakeType,
-          recipeStyle: defaultPreset?.recipeStyle || DEFAULT_CONFIG.recipeStyle,
-          hydration: defaultPreset?.hydration ?? 60,
-          salt: defaultPreset?.salt ?? 2,
-          oil: defaultPreset?.oil ?? defaultPreset?.fat ?? 0,
-          sugar: defaultPreset?.sugar ?? 0,
-          fermentationTechnique: defaultPreset?.fermentationTechnique || FermentationTechnique.DIRECT,
-          bakingTempC: defaultPreset?.bakingTempC || 250,
-          baseStyleName: style.name,
-      };
-
-      const batch = await addBatch({
-          name: `Batch: ${style.name}`,
-          doughConfig: config,
-          status: BatchStatus.DRAFT,
-          isFavorite: false,
-          styleId: style.id,
-          styleName: style.name,
-          styleCategory: style.category,
-          styleSourceType: style.sourceType,
-      });
-      
-      return batch.id;
+  const createDraftBatch = useCallback(async (): Promise<Batch> => {
+    return await addBatch({ name: 'New Bake (Draft)', doughConfig: DEFAULT_CONFIG, status: BatchStatus.DRAFT, isFavorite: false });
   }, [addBatch]);
 
+  const updateBatch = useCallback((updatedBatch: Batch) => {
+      if (!firebaseUser) return;
+      firestoreService.updateDocument(firebaseUser.uid, 'batches', updatedBatch.id, updatedBatch);
+      // Dev Mode Manual Update
+      if(user?.uid.startsWith('dev-')) setBatches(prev => prev.map(b => b.id === updatedBatch.id ? updatedBatch : b));
+  }, [firebaseUser, user]);
 
-  return (
-    <UserContext.Provider value={{
-        isAuthenticated: !!appUser,
-        user: appUser,
-        login: loginWithGoogle,
-        devLogin,
-        logout: authLogout,
-        updateUser,
-        hasProAccess,
-        grantProAccess,
-        grantSessionProAccess,
-        grant24hPass,
-        isPassOnCooldown: false,
-        cooldownHoursRemaining: 0,
-        isPaywallOpen,
-        paywallOrigin,
-        openPaywall,
-        closePaywall,
-        ovens,
-        addOven,
-        updateOven,
-        deleteOven,
-        setDefaultOven,
-        levains,
-        addLevain,
-        updateLevain,
-        deleteLevain,
-        setDefaultLevain,
-        addFeedingEvent,
-        importLevains,
-        preferredFlourId,
-        setPreferredFlour: setPreferredFlourId,
-        batches,
-        addBatch,
-        updateBatch,
-        deleteBatch,
-        createDraftBatch,
-        goals,
-        addGoal,
-        updateGoal,
-        deleteGoal,
-        completeGoal,
-        testSeries,
-        addTestSeries,
-        updateTestSeries,
-        deleteTestSeries,
-        attachBakeToSeries,
-        customIngredientLibrary,
-        addCustomIngredient,
-        favoriteStyleIds,
-        toggleStyleFavorite,
-        createBatchFromStyle,
-    }}>
-      {children}
-    </UserContext.Provider>
-  );
+  const deleteBatch = useCallback(async (id: string) => {
+    if (!firebaseUser) return;
+    const batchToDelete = batches.find(b => b.id === id);
+    await firestoreService.deleteDocument(firebaseUser.uid, 'batches', id);
+    // Dev Mode Manual Update
+    if(user?.uid.startsWith('dev-')) setBatches(prev => prev.filter(b => b.id !== id));
+    // FIX: Changed addToast call to conform to new signature
+    if (batchToDelete) addToast({message: `Bake "${batchToDelete.name}" deleted.`, type: 'info'});
+  }, [firebaseUser, batches, addToast, user]);
+
+  // OVENS
+  const addOven = useCallback(async (newOvenData: Omit<Oven, 'id'|'isDefault'>) => {
+      if (!firebaseUser) return;
+      const oven = await firestoreService.addDocument<Oven>(firebaseUser.uid, 'ovens', {...newOvenData, isDefault: ovens.length === 0});
+      if(user?.uid.startsWith('dev-')) setOvens(prev => [...prev, oven]);
+  }, [firebaseUser, ovens.length, user]);
+  
+  const updateOven = useCallback((updatedOven: Oven) => {
+      if (!firebaseUser) return;
+      firestoreService.updateDocument(firebaseUser.uid, 'ovens', updatedOven.id, updatedOven);
+      if(user?.uid.startsWith('dev-')) setOvens(prev => prev.map(o => o.id === updatedOven.id ? updatedOven : o));
+  }, [firebaseUser, user]);
+
+  const deleteOven = useCallback((id: string) => {
+      if (!firebaseUser) return;
+      firestoreService.deleteDocument(firebaseUser.uid, 'ovens', id);
+      if(user?.uid.startsWith('dev-')) setOvens(prev => prev.filter(o => o.id !== id));
+  }, [firebaseUser, user]);
+  
+  const setDefaultOven = useCallback(async (id: string) => {
+    if (!firebaseUser) return;
+    if (firebaseUser.uid.startsWith('dev-')) {
+        setOvens(prev => prev.map(o => ({...o, isDefault: o.id === id})));
+        return;
+    }
+    await firestoreService.setAsDefault(firebaseUser.uid, 'ovens', id, ovens);
+  }, [firebaseUser, ovens]);
+  
+  // LEVAINS
+  const addLevain = useCallback(async (newLevainData: Omit<Levain, 'id'|'isDefault'|'feedingHistory'|'status'|'createdAt'>) => {
+    if (!firebaseUser) return;
+    const data = { ...newLevainData, status: 'ativo', lastFeeding: new Date().toISOString(), isDefault: levains.length === 0, feedingHistory: [] };
+    const newLevain = await firestoreService.addDocument<Levain>(firebaseUser.uid, 'levains', data);
+    
+    if(user?.uid.startsWith('dev-')) setLevains(prev => [...prev, newLevain]);
+    // FIX: Changed logEvent call to conform to new signature
+    if (user) logEvent({ name: 'levain_pet_created', params: { userId: user.email, levainId: newLevain.id } });
+  }, [firebaseUser, levains.length, user]);
+  
+  const updateLevain = useCallback(async (updatedData: Partial<Levain> & {id: string}) => {
+    if (!firebaseUser) return;
+    await firestoreService.updateDocument(firebaseUser.uid, 'levains', updatedData.id, updatedData);
+    
+    if(user?.uid.startsWith('dev-')) setLevains(prev => prev.map(l => l.id === updatedData.id ? {...l, ...updatedData} : l));
+    // FIX: Changed logEvent call to conform to new signature
+    if (user) logEvent({ name: 'levain_pet_profile_updated', params: { userId: user.email, levainId: updatedData.id } });
+  }, [firebaseUser, user]);
+  
+  const deleteLevain = useCallback((id: string) => {
+      if (!firebaseUser) return;
+      firestoreService.deleteDocument(firebaseUser.uid, 'levains', id);
+      if(user?.uid.startsWith('dev-')) setLevains(prev => prev.filter(l => l.id !== id));
+  }, [firebaseUser, user]);
+  
+  const setDefaultLevain = useCallback(async (id: string) => {
+    if (!firebaseUser) return;
+     if (firebaseUser.uid.startsWith('dev-')) {
+        setLevains(prev => prev.map(l => ({...l, isDefault: l.id === id})));
+        return;
+    }
+    await firestoreService.setAsDefault(firebaseUser.uid, 'levains', id, levains);
+  }, [firebaseUser, levains]);
+
+  const addFeedingEvent = useCallback(async (levainId: string, eventData: Omit<FeedingEvent, 'id'|'date'>) => {
+    if (!firebaseUser) return;
+    const levain = levains.find(l => l.id === levainId);
+    if (!levain) return;
+
+    const now = new Date().toISOString();
+    const newEvent = { id: crypto.randomUUID(), date: now, ...eventData };
+    const updatedHistory = [newEvent, ...levain.feedingHistory];
+    const updateData = { feedingHistory: updatedHistory, lastFeeding: now, status: 'ativo' };
+    
+    if(user?.uid.startsWith('dev-')) {
+        setLevains(prev => prev.map(l => l.id === levainId ? { ...l, ...updateData } : l));
+    } else {
+        await firestoreService.updateDocument(firebaseUser.uid, 'levains', levainId, updateData);
+    }
+    // FIX: Changed logEvent call to conform to new signature
+    if (user) logEvent({ name: 'levain_pet_feeding_logged', params: { userId: user.email, levainId } });
+  }, [levains, firebaseUser, user]);
+
+  const importLevains = useCallback(async (levainsToImport: Levain[]) => {
+    if (!firebaseUser) return;
+    if (firebaseUser.uid.startsWith('dev-')) {
+         setLevains(prev => [...prev, ...levainsToImport]);
+         return;
+    }
+    await firestoreService.bulkImport(firebaseUser.uid, 'levains', levainsToImport);
+  }, [firebaseUser]);
+  
+  // GOALS
+  const addGoal = useCallback(async (goalData: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'>): Promise<Goal> => {
+    if (!firebaseUser) throw new Error("User not authenticated");
+    const newGoal = await firestoreService.addDocument<Goal>(firebaseUser.uid, 'goals', {...goalData, status: 'ativo', progress: 0});
+    if(user?.uid.startsWith('dev-')) setGoals(prev => [...prev, newGoal]);
+    // FIX: Changed addToast call to conform to new signature
+    addToast({message: 'New goal created!', type: 'success'});
+    return newGoal;
+  }, [firebaseUser, addToast, user]);
+
+  const updateGoal = useCallback(async (updatedData: any) => { 
+      if (!firebaseUser) return;
+      await firestoreService.updateDocument(firebaseUser.uid, 'goals', updatedData.id, updatedData);
+      if(user?.uid.startsWith('dev-')) setGoals(prev => prev.map(g => g.id === updatedData.id ? {...g, ...updatedData} : g));
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Goal updated.', type: 'info'}); 
+  }, [firebaseUser, addToast, user]);
+
+  const deleteGoal = useCallback(async (id: string) => { 
+      if (!firebaseUser) return;
+      await firestoreService.deleteDocument(firebaseUser.uid, 'goals', id); 
+      if(user?.uid.startsWith('dev-')) setGoals(prev => prev.filter(g => g.id !== id));
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Goal deleted.', type: 'info'}); 
+  }, [firebaseUser, addToast, user]);
+
+  const completeGoal = useCallback(async (id: string) => { 
+      if (!firebaseUser) return;
+      await firestoreService.updateDocument(firebaseUser.uid, 'goals', id, { status: 'concluido', progress: 100 });
+      if(user?.uid.startsWith('dev-')) setGoals(prev => prev.map(g => g.id === id ? {...g, status: 'concluido', progress: 100} : g));
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Goal completed!', type: 'success'}); 
+  }, [firebaseUser, addToast, user]);
+
+  // TEST SERIES
+  const addTestSeries = useCallback(async (seriesData: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>): Promise<TestSeries> => {
+    if (!firebaseUser) throw new Error("User not authenticated");
+    const newSeries = await firestoreService.addDocument<TestSeries>(firebaseUser.uid, 'testSeries', {...seriesData, relatedBakes: []});
+    if(user?.uid.startsWith('dev-')) setTestSeries(prev => [...prev, newSeries]);
+    // FIX: Changed addToast call to conform to new signature
+    addToast({message: `Test series created.`, type: 'success'});
+    return newSeries;
+  }, [firebaseUser, addToast, user]);
+
+  const updateTestSeries = useCallback(async (updatedData: any) => { 
+      if (!firebaseUser) return;
+      await firestoreService.updateDocument(firebaseUser.uid, 'testSeries', updatedData.id, updatedData);
+      if(user?.uid.startsWith('dev-')) setTestSeries(prev => prev.map(s => s.id === updatedData.id ? {...s, ...updatedData} : s));
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Series updated.', type: 'info'}); 
+  }, [firebaseUser, addToast, user]);
+
+  const deleteTestSeries = useCallback(async (id: string) => { 
+      if (!firebaseUser) return;
+      await firestoreService.deleteDocument(firebaseUser.uid, 'testSeries', id);
+      if(user?.uid.startsWith('dev-')) setTestSeries(prev => prev.filter(s => s.id !== id));
+      // FIX: Changed addToast call to conform to new signature
+      addToast({message: 'Series deleted.', type: 'info'}); 
+  }, [firebaseUser, addToast, user]);
+
+  const attachBakeToSeries = useCallback(async (seriesId: string, bakeId: string) => {
+      if (!firebaseUser) return;
+      const series = testSeries.find(s => s.id === seriesId);
+      if(series && !series.relatedBakes.includes(bakeId)) {
+        await firestoreService.updateDocument(firebaseUser.uid, 'testSeries', seriesId, { relatedBakes: [...series.relatedBakes, bakeId] });
+         if(user?.uid.startsWith('dev-')) setTestSeries(prev => prev.map(s => s.id === seriesId ? {...s, relatedBakes: [...s.relatedBakes, bakeId]} : s));
+        // FIX: Changed addToast call to conform to new signature
+        addToast({message: 'Bake associated successfully!', type: 'success'});
+      } else {
+        // FIX: Changed addToast call to conform to new signature
+        addToast({message: 'Bake already associated.', type: 'info'});
+      }
+  }, [testSeries, firebaseUser, addToast, user]);
+
+  // --- Helper Logic ---
+  const addCustomIngredient = useCallback((ingredient: CustomIngredientDefinition) => {
+      if (customIngredientLibrary.some(i => i.name.toLowerCase() === ingredient.name.toLowerCase())) return;
+      const updated = [...customIngredientLibrary, ingredient];
+      setCustomIngredientLibrary(updated);
+      try { localStorage.setItem('dough-lab-custom-ingredients', JSON.stringify(updated)); } catch (e) { console.error(e); }
+  }, [customIngredientLibrary]);
+  
+  const toggleStyleFavorite = useCallback((id: string) => {
+      setFavoriteStyleIds(prev => {
+          const newFavs = prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id];
+          try { localStorage.setItem('dough-lab-fav-styles', JSON.stringify(newFavs)); } catch (e) { console.error(e); }
+          return newFavs;
+      });
+  }, []);
+  
+  const createBatchFromStyle = useCallback(async (style: DoughStyleDefinition): Promise<string> => {
+     let recipeStyle = RecipeStyle.NEAPOLITAN; // Default fallback
+     if (style.category === 'Pão') recipeStyle = RecipeStyle.COUNTRY_LOAF;
+     else if (style.category === 'Doce') recipeStyle = RecipeStyle.BRIOCHE;
+     
+     const config: DoughConfig = {
+        bakeType: style.category === 'Pizza' ? BakeType.PIZZAS : style.category === 'Pão' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
+        recipeStyle: recipeStyle,
+        baseStyleName: style.name,
+        hydration: style.technical.hydration,
+        salt: style.technical.salt,
+        oil: style.technical.oil,
+        sugar: style.technical.sugar,
+        bakingTempC: style.technical.bakingTempC,
+        fermentationTechnique: style.technical.fermentationTechnique,
+        ingredients: style.ingredients.map(ing => ({...ing, manualOverride: false})),
+        numPizzas: 4,
+        doughBallWeight: 250,
+        yeastType: YeastType.IDY,
+        yeastPercentage: 0.5,
+        prefermentFlourPercentage: 20,
+        scale: 1,
+        flourId: style.ingredients.find(i => i.role === 'flour')?.id || 'generic_all_purpose',
+        ambientTemperature: AmbientTemperature.MILD,
+        notes: `Created from style: ${style.name}`,
+    };
+
+    const newBatch = await addBatch({
+        name: style.name,
+        doughConfig: config,
+        status: BatchStatus.DRAFT,
+        isFavorite: false,
+    });
+    
+    return newBatch.id;
+  }, [addBatch]);
+
+  // --- Entitlements ---
+  const grantProAccess = useCallback(() => {
+      if (user) updateUser({ isPro: true });
+      setIsSessionPro(true);
+  }, [user, updateUser]);
+
+  const grantSessionProAccess = useCallback(() => setIsSessionPro(true), []);
+  const grant24hPass = useCallback(() => setIsSessionPro(true), []);
+  const hasProAccess = isProUser(user) || isSessionPro;
+  const isPassOnCooldown = false;
+  
+  // Value Memoization
+  const value: UserContextType = useMemo(() => ({
+    isAuthenticated: !!firebaseUser,
+    user, login, devLogin, logout, updateUser,
+    hasProAccess, grantProAccess, grantSessionProAccess, grant24hPass, isPassOnCooldown, cooldownHoursRemaining: cooldownHours,
+    isPaywallOpen, paywallOrigin, openPaywall, closePaywall,
+    ovens, addOven, updateOven, deleteOven, setDefaultOven,
+    preferredFlourId: userSettings.preferredFlourId, setPreferredFlour,
+    batches, addBatch, updateBatch, deleteBatch, createDraftBatch,
+    levains, addLevain, updateLevain, deleteLevain, setDefaultLevain, addFeedingEvent, importLevains,
+    goals, addGoal, updateGoal, deleteGoal, completeGoal,
+    testSeries, addTestSeries, updateTestSeries, deleteTestSeries, attachBakeToSeries,
+    customIngredientLibrary, addCustomIngredient,
+    createBatchFromStyle, favoriteStyleIds, toggleStyleFavorite
+  }), [
+    firebaseUser, user, login, devLogin, logout, updateUser, 
+    hasProAccess, grantProAccess, grantSessionProAccess, grant24hPass, isPassOnCooldown, cooldownHours,
+    isPaywallOpen, paywallOrigin, openPaywall, closePaywall,
+    ovens, addOven, updateOven, deleteOven, setDefaultOven,
+    userSettings.preferredFlourId, setPreferredFlour,
+    batches, addBatch, updateBatch, deleteBatch, createDraftBatch,
+    levains, addLevain, updateLevain, deleteLevain, setDefaultLevain, addFeedingEvent, importLevains,
+    goals, addGoal, updateGoal, deleteGoal, completeGoal,
+    testSeries, addTestSeries, updateTestSeries, deleteTestSeries, attachBakeToSeries,
+    customIngredientLibrary, addCustomIngredient,
+    createBatchFromStyle, favoriteStyleIds, toggleStyleFavorite
+  ]);
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-export const useUser = () => {
+export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
+  if (context === undefined) throw new Error('useUser must be used within a UserProvider');
   return context;
 };

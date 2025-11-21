@@ -52,7 +52,8 @@ const LevainFeedingForm: React.FC<LevainFeedingFormProps> = ({ isOpen, onClose, 
             notes,
         });
 
-        addToast("Feeding logged successfully.", 'success');
+        // FIX: Changed addToast call to conform to new signature
+        addToast({message: "Feeding logged successfully.", type: 'success'});
         onClose();
         // Reset form for next time
         setFlourAmount(50);

@@ -1,7 +1,9 @@
+
 import {
   EnvironmentInput,
   EnvironmentAdvice,
   RecipeStyle,
+  BakeType, // Import BakeType
 } from '../types';
 import {
   DEFAULT_DDT_C,

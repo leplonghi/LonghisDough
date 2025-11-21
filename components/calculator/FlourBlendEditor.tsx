@@ -109,7 +109,7 @@ const FlourBlendEditor: React.FC<FlourBlendEditorProps> = ({ ingredients, mainFl
                     {FLOURS.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                 </select>
                 <span className="text-lg font-bold text-slate-800 w-16 text-right">
-                    {mainFlour?.bakerPercentage.toFixed(0)}%
+                    {mainFlour ? mainFlour.bakerPercentage.toFixed(0) : '0'}%
                 </span>
             </div>
         </div>

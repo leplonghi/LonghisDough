@@ -1,105 +1,86 @@
 
-import React, { useEffect, useState } from 'react';
-import { DoughStyle } from '../../types';
+import React from 'react';
+import { DoughStyleDefinition } from '../../types';
 import { 
     CalculatorIcon, 
     BookOpenIcon, 
     BeakerIcon, 
-    FireIcon, 
-    ClockIcon, 
-    ShoppingBagIcon, 
+    FireIcon,
+    ClockIcon,
+    ShoppingBagIcon,
     ExternalLinkIcon,
-    BatchesIcon,
-    ShareIcon,
-    HeartIcon,
-    StarIcon,
-    SolidStarIcon
 } from '../../components/IconComponents';
 import { SHOP_PRODUCTS } from '../../data/affiliateLinks';
 import ProFeatureLock from '../../components/ProFeatureLock';
 import { useUser } from '../../contexts/UserProvider';
-import { isFreeUser } from '../../lib/subscriptions';
+// Fix: Corrected the import path for the `isFreeUser` function.
+import { isFreeUser } from '../../lib/permissions';
 import { AFFILIATE_PLACEMENTS } from '../../data/affiliatePlacements';
 import { AffiliateBlock } from '../../components/AffiliateBlock';
-import { fetchOfficialStyles } from '../../firebase/stylesRepository';
-import { loadStylePresetIntoCalculator } from '../../logic/calculatorIntegration';
-import { useToast } from '../../components/ToastProvider';
 
 interface StyleDetailPageProps {
-  slug: string;
+  style: DoughStyleDefinition;
+  onLoadAndNavigate: (style: DoughStyleDefinition) => void;
   onBack: () => void;
-  onNavigate: (page: any) => void;
-  onLoadAndNavigate: (config: any) => void; // Legacy prop, we'll use the new integration logic internally
 }
 
-export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ slug, onBack, onNavigate, onLoadAndNavigate }) => {
-  const { user, openPaywall, favoriteStyleIds, toggleStyleFavorite, createBatchFromStyle } = useUser();
-  const { addToast } = useToast();
+export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadAndNavigate, onBack }) => {
+  const { user, openPaywall } = useUser();
   const free = isFreeUser(user);
-  
-  const [style, setStyle] = useState<DoughStyle | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-      const load = async () => {
-          setLoading(true);
-          // For now, fetching from official list. In future this would fetch from repo by slug.
-          const allStyles = await fetchOfficialStyles();
-          const found = allStyles.find(s => s.slug === slug || s.id === slug);
-          setStyle(found || null);
-          setLoading(false);
-      };
-      load();
-  }, [slug]);
-
-  if (loading) return <div className="p-10 text-center">Loading style...</div>;
-  if (!style) return <div className="p-10 text-center">Style not found. <button onClick={onBack} className="text-lime-600 underline">Back</button></div>;
-
-  const isFavorite = favoriteStyleIds.includes(style.id);
   const pizzaPlacement = AFFILIATE_PLACEMENTS.find(p => p.context === "styles_pizza");
   const breadPlacement = AFFILIATE_PLACEMENTS.find(p => p.context === "styles_bread");
 
   const handleLoadClick = () => {
-      if (style.accessTier === 'pro' && free) {
+      if (style.isPro && free) {
           openPaywall('styles');
-      } else if (style.defaultPreset) {
-          // Use the new integration logic to build the config
-          // We need to access the current config state or just pass the partial to App's handler
-          // App's handler expects Partial<DoughConfig>.
-          // We will construct a partial config here.
-          // Since we don't have access to currentConfig here easily without prop drilling, 
-          // we assume the parent handler will merge it.
-          // Ideally we'd use the logic from calculatorIntegration but for now let's pass the data directly 
-          // which matches the App.tsx expectations.
-          
-          // Re-mapping manually here to match App.tsx expected signature for now
-          const configPayload = {
-              bakeType: style.category === 'Pizza' ? 'PIZZAS' : style.category === 'Pão' ? 'BREADS_SAVORY' : 'SWEETS_PASTRY',
-              recipeStyle: style.defaultPreset.recipeStyle,
-              hydration: style.defaultPreset.hydration,
-              salt: style.defaultPreset.salt,
-              oil: style.defaultPreset.oil,
-              sugar: style.defaultPreset.sugar,
-              fermentationTechnique: style.defaultPreset.fermentationTechnique,
-              bakingTempC: style.defaultPreset.bakingTempC,
-              baseStyleName: style.name // Set context
-          };
-          // @ts-ignore
-          onLoadAndNavigate(configPayload);
+      } else {
+          onLoadAndNavigate(style);
       }
   };
 
-  const handleStartBatch = async () => {
-      if (free) {
-          openPaywall('mylab'); // Batch creation from style is Pro feature for now (or limited)
-          return;
+  const renderRecommendation = () => {
+      let text = "";
+      let linkId = "";
+
+      if (style.category === 'Pizza') {
+          if (style.name.includes('Neapolitan')) {
+              text = "For authentic Neapolitan-style baking, high-heat pizza ovens (450°C+) make a huge difference.";
+              linkId = "ooni_oven";
+          } else {
+              text = "For crispy bottoms in a home oven, a heavy-duty baking steel performs better than stone.";
+              linkId = "baking_steel";
+          }
+      } else if (style.category === 'Pão') {
+          text = "Bread doughs, especially high hydration ones, are much easier to handle with a good bench scraper and proofing box.";
+          linkId = "proofing_box";
+      } else {
+          text = "Precision is key for pastry. A digital scale with 0.1g accuracy is essential.";
+          linkId = "scale_precision";
       }
-      try {
-        const batchId = await createBatchFromStyle(style);
-        onNavigate('batch', batchId);
-      } catch (e) {
-          addToast("Failed to create batch.", "error");
-      }
+
+      const product = SHOP_PRODUCTS.find(p => p.id === linkId);
+      const url = product ? product.url : '/shop';
+
+      return (
+          <div className="mt-8 pt-8 border-t border-slate-200">
+                <h3 className="flex items-center gap-2 font-bold text-slate-900 mb-3">
+                <ShoppingBagIcon className="h-5 w-5 text-lime-500" />
+                Recommended Tools
+            </h3>
+            <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                <p className="text-sm text-slate-700 mb-3">{text}</p>
+                <a 
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-lime-600 hover:underline"
+                >
+                    See recommended gear in Shop <ExternalLinkIcon className="h-3 w-3" />
+                </a>
+            </div>
+        </div>
+      );
   };
 
   return (
@@ -114,18 +95,12 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ slug, onBack, 
             <div className="bg-slate-900 p-8 text-white">
                 <div className="flex justify-between items-start">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <h1 className="text-3xl font-bold">{style.name}</h1>
-                             <button onClick={() => toggleStyleFavorite(style.id)} className="text-slate-400 hover:text-yellow-400 transition-colors">
-                                {isFavorite ? <SolidStarIcon className="h-6 w-6 text-yellow-400"/> : <StarIcon className="h-6 w-6"/>}
-                            </button>
-                        </div>
-                        <p className="text-slate-300 mt-2 text-lg max-w-2xl">{style.description}</p>
+                        <h1 className="text-3xl font-bold">{style.name}</h1>
+                        <p className="text-slate-300 mt-2 text-lg">{style.description}</p>
                         <div className="flex gap-3 mt-4 text-sm font-medium text-slate-400">
                             <span className="bg-slate-800 px-2 py-1 rounded border border-slate-700">{style.category}</span>
                             <span className="bg-slate-800 px-2 py-1 rounded border border-slate-700">{style.country}</span>
                             {style.year && <span className="bg-slate-800 px-2 py-1 rounded border border-slate-700">{style.year}</span>}
-                            <span className="bg-slate-800 px-2 py-1 rounded border border-slate-700">{style.complexity}</span>
                         </div>
                     </div>
                 </div>
@@ -134,100 +109,64 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ slug, onBack, 
             <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Left Column: Technical Data */}
-                <div className="lg:col-span-2 space-y-10">
+                <div className="lg:col-span-2 space-y-8">
                     {/* History Section */}
                     <section>
                         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 mb-3">
                             <BookOpenIcon className="h-5 w-5 text-lime-500" />
-                            Story & Identity
+                            History & Context
                         </h2>
                         <p className="text-slate-600 leading-relaxed">
                             {style.history}
                         </p>
                     </section>
 
-                    {/* Technical Matrix */}
-                    <section className="relative">
+                    {/* Formula Section */}
+                    <section>
                         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 mb-4">
                             <BeakerIcon className="h-5 w-5 text-lime-500" />
-                            Technical Matrix
+                            Base Formula
                         </h2>
-                        
-                         {style.accessTier === 'pro' && free && (
-                            <ProFeatureLock origin="styles" className="absolute inset-0 z-10 mt-10" title="Unlock Technical Matrix" description="Exact hydration ranges and fermentation details are available in Pro." />
-                        )}
-
-                        <div className={`bg-slate-50 rounded-xl border border-slate-200 overflow-hidden ${style.accessTier === 'pro' && free ? 'blur-[3px]' : ''}`}>
+                        <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
                             <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-100 text-slate-500 uppercase text-xs">
+                                    <tr>
+                                        <th className="px-4 py-3">Ingredient</th>
+                                        <th className="px-4 py-3 text-right">% (Baker's)</th>
+                                    </tr>
+                                </thead>
                                 <tbody className="divide-y divide-slate-200">
-                                    <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100 w-1/3">Hydration</th>
-                                        <td className="px-4 py-3 text-slate-600 font-mono">{style.technical.hydration[0]}% – {style.technical.hydration[1]}%</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100">Salt</th>
-                                        <td className="px-4 py-3 text-slate-600 font-mono">{style.technical.salt[0]}% – {style.technical.salt[1]}%</td>
-                                    </tr>
-                                     <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100">Oil/Fat</th>
-                                        <td className="px-4 py-3 text-slate-600 font-mono">{style.technical.fat[0]}% – {style.technical.fat[1]}%</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100">Sugar</th>
-                                        <td className="px-4 py-3 text-slate-600 font-mono">{style.technical.sugar[0]}% – {style.technical.sugar[1]}%</td>
-                                    </tr>
-                                    <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100">Fermentation</th>
-                                        <td className="px-4 py-3 text-slate-600">
-                                            {style.technical.fermentation.description}
-                                            <br/>
-                                            <span className="text-xs text-slate-500">{style.technical.fermentation.ranges[0]}</span>
-                                        </td>
-                                    </tr>
-                                     <tr>
-                                        <th className="px-4 py-3 font-semibold text-slate-700 bg-slate-100">Oven Temp</th>
-                                        <td className="px-4 py-3 text-slate-600">{style.technical.bakingTempC}°C</td>
-                                    </tr>
+                                    {style.ingredients.map(ing => (
+                                        <tr key={ing.id}>
+                                            <td className="px-4 py-3 font-medium text-slate-700">{ing.name}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-slate-600">{ing.bakerPercentage}%</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </section>
                     
-                    {/* Variations */}
-                     {style.variations && style.variations.length > 0 && (
-                        <section>
-                             <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 mb-4">Variations</h2>
-                             <div className="grid gap-4">
-                                 {style.variations.map((variation, idx) => (
-                                     <div key={idx} className="p-4 border border-slate-200 rounded-lg bg-white">
-                                         <h4 className="font-bold text-slate-800">{variation.name}</h4>
-                                         <p className="text-sm text-slate-600 mt-1">{variation.description}</p>
-                                         {variation.hydration && <span className="inline-block mt-2 text-xs bg-slate-100 px-2 py-1 rounded text-slate-500">Hydration: {variation.hydration}%</span>}
-                                     </div>
-                                 ))}
-                             </div>
-                        </section>
-                     )}
-
                     {/* Notes & Risks */}
                     {(style.notes || style.risks) && (
-                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                            {/* Feature Lock for Free users on Pro styles */}
+                            {style.isPro && free && (
+                                <ProFeatureLock origin="styles" className="absolute inset-0 z-10" title="Unlock the full style profile" description="Hydration ranges, fermentation windows and risk notes are fully available in the Pro plan." />
+                            )}
+
                             {style.risks && (
-                                <div className="bg-amber-50 p-5 rounded-xl border border-amber-100">
-                                    <h3 className="font-bold text-amber-800 mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
-                                        Common Pitfalls
-                                    </h3>
-                                    <ul className="list-disc list-inside text-sm text-amber-900 space-y-2">
+                                <div className={`bg-amber-50 p-4 rounded-xl border border-amber-100 ${style.isPro && free ? 'blur-[2px]' : ''}`}>
+                                    <h3 className="font-bold text-amber-800 mb-2 text-sm uppercase tracking-wide">Watch Out</h3>
+                                    <ul className="list-disc list-inside text-sm text-amber-900 space-y-1">
                                         {style.risks.map((r, i) => <li key={i}>{r}</li>)}
                                     </ul>
                                 </div>
                             )}
                              {style.notes && (
-                                <div className="bg-blue-50 p-5 rounded-xl border border-blue-100">
-                                    <h3 className="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
-                                        Chef's Notes
-                                    </h3>
-                                    <ul className="list-disc list-inside text-sm text-blue-900 space-y-2">
+                                <div className={`bg-blue-50 p-4 rounded-xl border border-blue-100 ${style.isPro && free ? 'blur-[2px]' : ''}`}>
+                                    <h3 className="font-bold text-blue-800 mb-2 text-sm uppercase tracking-wide">Chef's Notes</h3>
+                                    <ul className="list-disc list-inside text-sm text-blue-900 space-y-1">
                                         {style.notes.map((n, i) => <li key={i}>{n}</li>)}
                                     </ul>
                                 </div>
@@ -236,37 +175,50 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ slug, onBack, 
                     )}
                 </div>
 
-                {/* Right Column: Actions */}
+                {/* Right Column: Parameters & Action */}
                 <div className="space-y-6">
-                     <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                         <h3 className="font-bold text-slate-800 mb-2">Actions</h3>
-                         <button 
-                            onClick={handleLoadClick}
-                            className={`w-full flex items-center justify-center gap-2 rounded-xl py-3 px-6 text-base font-bold text-white shadow-md transition-all active:translate-y-0 ${style.accessTier === 'pro' && free ? 'bg-slate-800 hover:bg-slate-700' : 'bg-lime-500 hover:bg-lime-600 hover:-translate-y-1 shadow-lime-200'}`}
-                        >
-                            <CalculatorIcon className="h-5 w-5" />
-                            {style.accessTier === 'pro' && free ? "Load (Pro)" : "Load in Calculator"}
-                        </button>
-                        
-                        <button 
-                            onClick={handleStartBatch}
-                            className="w-full flex items-center justify-center gap-2 rounded-xl py-3 px-6 text-base font-bold text-slate-700 bg-white border border-slate-300 shadow-sm hover:bg-slate-50"
-                        >
-                            <BatchesIcon className="h-5 w-5 text-slate-500" />
-                            Start Batch in MyLab
-                        </button>
-                        
-                        <div className="grid grid-cols-2 gap-2 pt-2">
-                             <button className="flex items-center justify-center gap-1 py-2 text-sm font-medium text-slate-500 bg-slate-100 rounded hover:bg-slate-200">
-                                 <ShareIcon className="h-4 w-4" /> Share
-                             </button>
-                              <button className="flex items-center justify-center gap-1 py-2 text-sm font-medium text-slate-500 bg-slate-100 rounded hover:bg-slate-200">
-                                 Clone
-                             </button>
+                     <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 relative">
+                        {style.isPro && free && (
+                            <ProFeatureLock origin="styles" className="absolute inset-0 z-10" title="Technical Params (Pro)" description="Detailed parameters are locked." />
+                        )}
+                        <div className={style.isPro && free ? 'blur-[2px]' : ''}>
+                            <h3 className="font-bold text-slate-900 mb-4">Technical Parameters</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Hydration</p>
+                                    <p className="text-xl font-bold text-slate-800">{style.technical.hydration}%</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                        <ClockIcon className="h-3 w-3" /> Fermentation
+                                    </p>
+                                    <p className="text-base font-medium text-slate-800">{style.technical.fermentation}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                        <FireIcon className="h-3 w-3" /> Oven Temp
+                                    </p>
+                                    <p className="text-base font-medium text-slate-800">{style.technical.bakingTempC}°C</p>
+                                </div>
+                            </div>
                         </div>
                      </div>
 
-                     {/* Affiliate / Recommended */}
+                     <button 
+                        onClick={handleLoadClick}
+                        className={`w-full flex items-center justify-center gap-2 rounded-xl py-4 px-6 text-lg font-bold text-white shadow-lg transition-all active:translate-y-0 ${style.isPro && free ? 'bg-slate-800 hover:bg-slate-700' : 'bg-lime-500 hover:bg-lime-600 hover:-translate-y-1 shadow-lime-200'}`}
+                    >
+                        <CalculatorIcon className="h-6 w-6" />
+                        {style.isPro && free ? "Load into Calculator (Pro)" : "Load into Calculator"}
+                    </button>
+                     
+                     <p className="text-xs text-center text-slate-400">
+                        This will configure the calculator with the base formula for this style.
+                     </p>
+
+                     {/* Only show recommendations for Free users */}
+                     {free && renderRecommendation()}
+
                      {free && style.category === 'Pizza' && pizzaPlacement && (
                         <AffiliateBlock placement={pizzaPlacement} />
                      )}
@@ -276,6 +228,5 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ slug, onBack, 
                 </div>
             </div>
         </div>
-    </div>
-  );
+    );
 };

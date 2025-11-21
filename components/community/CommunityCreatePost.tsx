@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { PhotoIcon, ExclamationCircleIcon } from '../IconComponents';
 import { OVEN_TYPE_OPTIONS } from '../../constants';
@@ -29,13 +30,13 @@ const CommunityCreatePost: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim() || !photoPreview) {
-            addToast('Foto e nome da receita são obrigatórios.', 'error');
+            addToast({message: 'Foto e nome da receita são obrigatórios.', type: 'error'});
             return;
         }
         setIsSubmitting(true);
         setTimeout(() => {
             // In a real app, this would be an async call to Firebase/Firestore
-            addToast('Publicação criada com sucesso!', 'success');
+            addToast({message: 'Publicação criada com sucesso!', type: 'success'});
             setTitle('');
             setDescription('');
             setPhotoPreview(null);

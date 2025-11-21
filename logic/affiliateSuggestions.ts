@@ -1,6 +1,7 @@
 
 import { DoughConfig, RecipeStyle, FermentationTechnique } from '../types';
 import { SHOP_PRODUCTS } from '../data/affiliateLinks';
+import { isFreeUser } from '../lib/permissions'; // Corrigido para lib/permissions
 
 export interface AffiliateSuggestion {
   id: string;

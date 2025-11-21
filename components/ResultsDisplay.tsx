@@ -1,4 +1,3 @@
-
 import React, { useState, forwardRef, useEffect } from 'react';
 import {
   DoughConfig,
@@ -28,16 +27,16 @@ import {
   DocumentTextIcon,
   LockClosedIcon
 } from './IconComponents';
-import { gramsToVolume, INGREDIENT_DENSITIES } from '../helpers';
+import { gramsToVolume, INGREDIENT_DENSITIES, GRAMS_TO_OUNCES } from '../helpers'; // Import GRAMS_TO_OUNCES
 import { useTranslation } from '../i18n';
 import { useToast } from './ToastProvider';
 import { getAffiliateSuggestionsForConfig, AffiliateSuggestion } from '../logic/affiliateSuggestions';
 import { useUser } from '../contexts/UserProvider';
 import { generateRecipeSteps } from '../logic/recipeStepsGenerator';
 import RecipeTimeline from './RecipeTimeline';
-import { isFreeUser } from '../lib/subscriptions';
-import { AffiliateBlock } from './AffiliateBlock'; // Assuming AffiliateBlock is properly exported
-import { ProBadge } from './ProBadge';
+import { isFreeUser } from '../lib/permissions'; // Use permissions for consistency
+import { AffiliateBlock } from './AffiliateBlock';
+import { ProBadge } from './ProBadge'; // Import ProBadge component
 
 // Inform TypeScript that these libraries are available on the window object
 declare global {
@@ -51,10 +50,8 @@ interface ResultsDisplayProps {
   results: DoughResult | null;
   config: DoughConfig;
   unit: Unit;
-  unitSystem: UnitSystem;
   onUnitChange: (unit: Unit) => void;
-  hasProAccess: boolean;
-  onOpenPaywall: (origin?: string) => void;
+  unitSystem: UnitSystem;
   onConfigChange: (newConfig: Partial<DoughConfig>) => void;
   onStartBatch: () => void;
   selectedFlour?: FlourDefinition;
@@ -62,6 +59,8 @@ interface ResultsDisplayProps {
   calculationMode: CalculationMode;
   saveButtonRef?: React.Ref<HTMLButtonElement>;
   onboardingStep?: number;
+  hasProAccess: boolean; // Added hasProAccess
+  onOpenPaywall: (origin?: string) => void; // Added onOpenPaywall
 }
 
 const ResultRow: React.FC<{
@@ -134,7 +133,7 @@ const ResultRow: React.FC<{
   </div>
 );
 
-const SuggestionsBlock: React.FC<{ config: DoughConfig }> = ({ config }) => {
+const SuggestionsBlock: React.FC<{ config: DoughConfig; t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string; }> = ({ config, t }) => {
   const [suggestions, setSuggestions] = useState<AffiliateSuggestion[]>([]);
   const { user } = useUser();
 
@@ -144,14 +143,14 @@ const SuggestionsBlock: React.FC<{ config: DoughConfig }> = ({ config }) => {
   }, [config]);
 
   // Only show suggestions to Free users
-  if (!isFreeUser(user)) return null;
+  if (!user || !isFreeUser(user)) return null;
   if (suggestions.length === 0) return null;
 
   return (
     <div className="mt-8 border-t border-slate-200 pt-6">
       <h4 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
         <ShoppingBagIcon className="h-4 w-4" />
-        Technical Suggestions
+        {t('results.technical_suggestions', { defaultValue: 'Technical Suggestions' })}
       </h4>
       <div className="space-y-3">
         {suggestions.map((sug) => (
@@ -166,7 +165,7 @@ const SuggestionsBlock: React.FC<{ config: DoughConfig }> = ({ config }) => {
               rel="noopener noreferrer"
               className="flex-shrink-0 inline-flex items-center justify-center gap-1 rounded-md bg-white border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-lime-600 transition-colors"
             >
-              View in Shop <ExternalLinkIcon className="h-3 w-3" />
+              {t('common.view_in_shop', { defaultValue: 'View in Shop' })} <ExternalLinkIcon className="h-3 w-3" />
             </a>
           </div>
         ))}
@@ -193,7 +192,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
 }, ref) => {
   const { t } = useTranslation();
   const { addToast } = useToast();
-  const GRAMS_TO_OUNCES = 0.035274;
+  // Removed GRAMS_TO_OUNCES as it's now imported from helpers.ts
 
   const volumeUnits = {
     cups: t('units.cups'),
@@ -201,7 +200,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     tsp: t('units.tsp'),
   };
   
-  const recipeSteps = React.useMemo(() => generateRecipeSteps(config), [config]);
+  const recipeSteps = React.useMemo(() => generateRecipeSteps(config, t), [config, t]);
 
   const getConversionTooltip = (
     ingredient: keyof typeof INGREDIENT_DENSITIES,
@@ -240,9 +239,11 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     try {
         const url = window.location.href;
         await navigator.clipboard.writeText(url);
-        addToast("Link copied to clipboard!", "success");
+        // FIX: Changed to conform to new addToast signature (passing single object)
+        addToast({message: t('info.share_success_link'), type: "success"}); 
     } catch (e) {
-        addToast(t('results.share_error'), "error");
+        // FIX: Changed to conform to new addToast signature (passing single object)
+        addToast({message: t('results.share_error'), type: "error"});
     }
   };
 
@@ -252,7 +253,8 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         return;
     }
     // Implementation for PDF export would go here
-    addToast("Exporting PDF...", "info");
+    // FIX: Changed to conform to new addToast signature (passing single object)
+    addToast({message: t('info.exporting_pdf'), type: "info"}); 
   };
 
   const handleExportJSON = () => {
@@ -261,7 +263,8 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         return;
     }
      // Implementation for JSON export
-     addToast("Exporting JSON...", "info");
+     // FIX: Changed to conform to new addToast signature (passing single object)
+     addToast({message: t('info.exporting_json'), type: "info"}); 
   };
 
   if (!results) {
@@ -319,18 +322,18 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             <button 
                 onClick={handleExportPDF} 
                 className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
-                title={hasProAccess ? "Export as PDF" : "Available in DoughLabPro Pro: export your recipes as clean PDFs."}
+                title={hasProAccess ? t('results.export_pdf_title') : t('results.export_pdf_pro_tooltip')}
             >
                 {hasProAccess ? <DownloadIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3 text-slate-400" />}
-                Export PDF {!hasProAccess && "(Pro)"}
+                {t('results.export_pdf_label')} {!hasProAccess && `(${t('common.locked_short')})`}
             </button>
             <button 
                 onClick={handleExportJSON} 
                 className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200"
-                title={hasProAccess ? "Export as JSON" : "Available in DoughLabPro Pro: export your recipes as JSON."}
+                title={hasProAccess ? t('results.export_json_title') : t('results.export_json_pro_tooltip')}
             >
                 {hasProAccess ? <DocumentTextIcon className="h-3 w-3" /> : <LockClosedIcon className="h-3 w-3 text-slate-400" />}
-                Export JSON {!hasProAccess && "(Pro)"}
+                {t('results.export_json_label')} {!hasProAccess && `(${t('common.locked_short')})`}
             </button>
         </div>
       </div>
@@ -339,7 +342,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         {results.preferment && (
             <div className="mb-6 rounded-lg bg-amber-50 p-4 border border-amber-100">
                 <h3 className="text-sm font-bold uppercase tracking-wide text-amber-800 mb-3">
-                    {t('results.preferment_title', { technique: config.fermentationTechnique })}
+                    {t('results.preferment_title', { technique: t(`form.${config.fermentationTechnique.toLowerCase()}`) })}
                 </h3>
                 <ResultRow
                     icon={<FlourIcon className="h-5 w-5" />}
@@ -406,7 +409,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
               icon={<CubeIcon className="h-6 w-6" />}
               label={t('results.sugar')}
               value={unit === 'volume' ? formatVolume('sugar', sugarWeight) || '' : formatWeight(sugarWeight, { g: 1, oz: 2 })}
-              note={unit === 'volume' ? formatWeight(sugarWeight, { g: 1, oz: 2 }) : undefined}
+              note={unit === 'volume' ? formatWeight(sugarWeight, { g: 1, oz: 3 }) : undefined}
               tooltip={unit === 'volume' ? getConversionTooltip('sugar') : undefined}
             />
           )}
@@ -435,7 +438,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
           </p>
         )}
         
-        <SuggestionsBlock config={config} />
+        <SuggestionsBlock config={config} t={t} />
 
         <div className="mt-8 grid grid-cols-2 gap-3">
           <button
@@ -443,7 +446,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white py-2.5 px-4 font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
           >
             {hasProAccess ? <ShareIcon className="h-5 w-5" /> : <LockClosedIcon className="h-4 w-4 text-slate-400" />}
-            {t('common.share_link', {defaultValue: 'Share'})}
+            {t('common.share_link')}
           </button>
            <button
             onClick={onStartBatch}
@@ -462,7 +465,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
             <RecipeIcon className="h-6 w-6" />
           </span>
           <h3 className="text-xl font-bold text-slate-800">
-            Technical Method
+            {t('results.steps.title')}
           </h3>
         </div>
         <RecipeTimeline steps={recipeSteps} />

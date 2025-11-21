@@ -1,109 +1,108 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
     BookOpenIcon,
-    PlusCircleIcon,
-    GlobeAltIcon
+    BeakerIcon,
+    FireIcon,
+    CubeIcon,
+    ChevronRightIcon,
 } from '../../components/IconComponents';
-import { fetchOfficialStyles, fetchUserStyles, fetchCommunityStyles } from '../../firebase/stylesRepository';
+import { STYLES_DATA } from '../../data/stylesData';
 import { useTranslation } from '../../i18n';
-import { DoughStyle } from '../../types';
-import StyleCard from '../../components/styles/StyleCard';
-import { useUser } from '../../contexts/UserProvider';
-import { isFreeUser } from '../../lib/subscriptions';
+import { DoughStyleDefinition } from '../../types';
+import { ProBadge } from '../../components/ProBadge';
 
 interface DoughStylesPageProps {
-  onNavigateToDetail: (slug: string) => void;
+  onNavigateToDetail: (styleId: string) => void;
 }
 
-const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ onNavigateToDetail }) => {
-    const { t } = useTranslation();
-    const { user, favoriteStyleIds, toggleStyleFavorite, openPaywall } = useUser();
-    const free = isFreeUser(user);
+const CategoryBadge: React.FC<{ category: string }> = ({ category }) => {
+    let colorClass = 'bg-slate-100 text-slate-700';
+    let icon = <CubeIcon className="h-3 w-3 mr-1" />;
 
-    const [activeTab, setActiveTab] = useState<'library' | 'custom'>('library');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string>('All');
-    
-    const [styles, setStyles] = useState<DoughStyle[]>([]);
-    const [userStyles, setUserStyles] = useState<DoughStyle[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const loadStyles = async () => {
-            setIsLoading(true);
-            const official = await fetchOfficialStyles();
-            const community = await fetchCommunityStyles();
-            setStyles([...official, ...community]);
-            
-            if (user) {
-                const custom = await fetchUserStyles(user.uid);
-                setUserStyles(custom);
-            }
-            setIsLoading(false);
-        };
-        loadStyles();
-    }, [user]);
-
-    const categories = ['All', 'Pizza', 'Pão', 'Doce'];
-
-    const filterStyles = (list: DoughStyle[]) => {
-        return list.filter(style => {
-            const matchesSearch = style.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                  style.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = selectedCategory === 'All' || style.category === selectedCategory;
-            return matchesSearch && matchesCategory;
-        });
-    };
-
-    const featuredStyles = useMemo(() => styles.filter(s => s.isFeatured && s.accessTier !== 'coming_next'), [styles]);
-    const comingNextStyles = useMemo(() => styles.filter(s => s.accessTier === 'coming_next'), [styles]);
-    const allLibraryStyles = useMemo(() => filterStyles(styles.filter(s => s.accessTier !== 'coming_next')), [styles, searchTerm, selectedCategory]);
-    const filteredUserStyles = useMemo(() => filterStyles(userStyles), [userStyles, searchTerm, selectedCategory]);
-
-    const handleStyleClick = (style: DoughStyle) => {
-        if (style.accessTier === 'coming_next') return;
-        onNavigateToDetail(style.slug || style.id);
-    };
-
-    const handleCreateCustom = () => {
-        if (free) {
-            openPaywall('styles');
-            return;
-        }
-        // Navigate to create style page (placeholder logic for now)
-        alert("Custom Style Creator coming in next update.");
+    if (category === 'Pizza') {
+        colorClass = 'bg-orange-100 text-orange-800 border-orange-200';
+        icon = <FireIcon className="h-3 w-3 mr-1" />;
+    } else if (category === 'Pão') {
+        colorClass = 'bg-amber-100 text-amber-800 border-amber-200';
+        icon = <BeakerIcon className="h-3 w-3 mr-1" />;
+    } else if (category === 'Doce') {
+        colorClass = 'bg-pink-100 text-pink-800 border-pink-200';
+        icon = <BookOpenIcon className="h-3 w-3 mr-1" />;
     }
 
     return (
+        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${colorClass}`}>
+            {icon}
+            {category}
+        </span>
+    );
+};
+
+const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> = ({ style, onClick }) => {
+    return (
+        <div 
+            onClick={onClick}
+            className="group flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer h-full"
+        >
+            <div className="p-5 flex-grow flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1">
+                        {style.name}
+                    </h3>
+                    {style.isPro && <ProBadge />}
+                </div>
+                
+                <div className="mb-3 flex gap-2">
+                    <CategoryBadge category={style.category} />
+                    <span className="text-xs text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">{style.country}</span>
+                </div>
+
+                <p className="text-sm text-slate-600 mb-4 line-clamp-3">
+                    {style.description}
+                </p>
+                
+                {style.isPro && (
+                    <p className="text-xs text-slate-400 italic mb-4">Full technical profile and presets available with Pro.</p>
+                )}
+
+                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span className="font-mono bg-slate-50 px-1.5 py-0.5 rounded">Hidratação: {style.technical.hydration}%</span>
+                    <span className="flex items-center font-semibold text-lime-600 group-hover:underline">
+                        Detalhes <ChevronRightIcon className="h-3 w-3 ml-1" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ onNavigateToDetail }) => {
+    const { t } = useTranslation();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
+    
+    const categories = ['Todos', 'Pizza', 'Pão', 'Doce'];
+
+    const filteredStyles = useMemo(() => {
+        return STYLES_DATA.filter(style => {
+            const matchesSearch = style.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                  style.description.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCategory = selectedCategory === 'Todos' || style.category === selectedCategory;
+            return matchesSearch && matchesCategory;
+        });
+    }, [searchTerm, selectedCategory]);
+
+    return (
         <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
-            {/* Header */}
             <div className="text-center mb-10">
                 <BookOpenIcon className="mx-auto h-12 w-12 text-lime-500" />
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                    Dough Styles Library
+                    Biblioteca de Estilos
                 </h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
-                    Technical, data-driven presets for dough engineering.
+                    Um compêndio técnico com fórmulas, história e parâmetros dos principais estilos de panificação do mundo.
                 </p>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex justify-center mb-8">
-                <div className="bg-slate-100 p-1 rounded-lg flex gap-1">
-                    <button 
-                        onClick={() => setActiveTab('library')}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${activeTab === 'library' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        Library
-                    </button>
-                    <button 
-                        onClick={() => setActiveTab('custom')}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${activeTab === 'custom' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                    >
-                        My Styles
-                    </button>
-                </div>
             </div>
 
             {/* Search and Filter Bar */}
@@ -112,7 +111,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ onNavigateToDetail })
                     <input
                         type="text"
                         className="block w-full rounded-lg border-slate-300 bg-white py-2 pl-4 pr-3 text-sm placeholder-slate-500 focus:border-lime-500 focus:ring-lime-500"
-                        placeholder="Search styles..."
+                        placeholder="Buscar estilo..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -129,107 +128,17 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ onNavigateToDetail })
                     ))}
                 </div>
             </div>
-
-            {activeTab === 'library' && (
-                <div className="space-y-12">
-                    {/* Featured Section */}
-                    {featuredStyles.length > 0 && !searchTerm && selectedCategory === 'All' && (
-                        <section>
-                             <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <GlobeAltIcon className="h-5 w-5 text-lime-500" /> Featured Styles
-                             </h2>
-                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {featuredStyles.map(style => (
-                                    <StyleCard 
-                                        key={style.id} 
-                                        style={style} 
-                                        onClick={() => handleStyleClick(style)}
-                                        isFavorite={favoriteStyleIds.includes(style.id)}
-                                        onToggleFavorite={toggleStyleFavorite}
-                                    />
-                                ))}
-                             </div>
-                        </section>
-                    )}
-
-                    {/* All Styles Grid */}
-                    <section>
-                        <h2 className="text-xl font-bold text-slate-800 mb-4">All Styles</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {allLibraryStyles.map(style => (
-                                <StyleCard 
-                                    key={style.id} 
-                                    style={style} 
-                                    onClick={() => handleStyleClick(style)} 
-                                    isFavorite={favoriteStyleIds.includes(style.id)}
-                                    onToggleFavorite={toggleStyleFavorite}
-                                    lockReason={style.isPro && free ? 'pro_only' : null} // Visual lock only
-                                />
-                            ))}
-                            {allLibraryStyles.length === 0 && (
-                                <div className="col-span-full text-center py-12 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                                    No styles found matching your filters.
-                                </div>
-                            )}
-                        </div>
-                    </section>
-
-                    {/* Coming Next Section */}
-                    {comingNextStyles.length > 0 && (
-                         <section className="opacity-80">
-                            <h2 className="text-xl font-bold text-slate-800 mb-4 mt-8">Coming Next</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {comingNextStyles.map(style => (
-                                    <StyleCard 
-                                        key={style.id} 
-                                        style={style} 
-                                        lockReason='coming_next'
-                                    />
-                                ))}
-                            </div>
-                        </section>
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'custom' && (
-                <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-bold text-slate-800">My Custom Styles</h2>
-                        <button 
-                            onClick={handleCreateCustom}
-                            className="flex items-center gap-2 bg-lime-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-lime-600"
-                        >
-                            <PlusCircleIcon className="h-5 w-5" /> Create Style
-                        </button>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredStyles.map(style => (
+                    <StyleCard key={style.id} style={style} onClick={() => onNavigateToDetail(style.id)} />
+                ))}
+                {filteredStyles.length === 0 && (
+                    <div className="col-span-full text-center py-12 text-slate-500">
+                        Nenhum estilo encontrado.
                     </div>
-                    
-                    {filteredUserStyles.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredUserStyles.map(style => (
-                                <StyleCard 
-                                    key={style.id} 
-                                    style={style} 
-                                    onClick={() => handleStyleClick(style)}
-                                    isFavorite={favoriteStyleIds.includes(style.id)}
-                                    onToggleFavorite={toggleStyleFavorite}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                             <h3 className="text-lg font-medium text-slate-900">No custom styles yet</h3>
-                             <p className="text-slate-500 mt-1">Create your own dough profiles and save them here.</p>
-                             {!free && (
-                                 <button onClick={handleCreateCustom} className="mt-4 text-lime-600 font-semibold hover:underline">Create your first style</button>
-                             )}
-                             {free && (
-                                 <p className="text-xs text-slate-400 mt-4">Custom styles are available in the Pro plan.</p>
-                             )}
-                        </div>
-                    )}
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

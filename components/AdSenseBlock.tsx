@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../i18n';
 import { useUser } from '../contexts/UserProvider';
-import { isFreeUser } from '../lib/subscriptions';
+import { isFreeUser } from '../lib/permissions'; // Corrigido para lib/permissions
 
 declare global {
   interface Window {
@@ -19,7 +19,7 @@ const AdSenseBlock: React.FC = () => {
   // This effect sets up the IntersectionObserver to detect when the ad block
   // is visible in the viewport.
   useEffect(() => {
-    if (!isFreeUser(user)) return; // Don't observe if Pro
+    if (!user || !isFreeUser(user)) return; // Don't observe if Pro or user is null
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -46,7 +46,7 @@ const AdSenseBlock: React.FC = () => {
 
   // This effect triggers the AdSense push call only once the component becomes visible.
   useEffect(() => {
-    if (isVisible && isFreeUser(user)) {
+    if (isVisible && user && isFreeUser(user)) {
       try {
         if (typeof window !== 'undefined') {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -58,7 +58,7 @@ const AdSenseBlock: React.FC = () => {
   }, [isVisible, user]);
 
   // If user is Pro, do not render anything
-  if (!isFreeUser(user)) return null;
+  if (user && !isFreeUser(user)) return null;
 
   return (
     <div

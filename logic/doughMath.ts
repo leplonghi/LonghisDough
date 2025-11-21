@@ -141,14 +141,17 @@ export const calculateDoughUniversal = (
     const ingredients = normalizedConfig.ingredients || [];
 
     // 1. Calculate Total Target Weight
-    let totalTargetWeight = config.numPizzas * config.doughBallWeight * config.scale;
+    let totalTargetWeight = (config.numPizzas || 0) * (config.doughBallWeight || 0) * (config.scale || 1);
     
+    // Safe guard for NaN/Infinity in inputs
+    if (isNaN(totalTargetWeight) || totalTargetWeight < 0) totalTargetWeight = 0;
+
     // Calculate Sum of Percentages
     // IMPORTANT: For blends, multiple ingredients have role='flour'. 
     // Their percentages should sum to 100% ideally, but we sum everything to get the divisor.
     let totalPercentage = 0;
     ingredients.forEach(ing => {
-        totalPercentage += ing.bakerPercentage;
+        totalPercentage += (ing.bakerPercentage || 0);
     });
 
     // Calculate Flour Weight (The Base)
@@ -162,17 +165,23 @@ export const calculateDoughUniversal = (
     } else {
         // Mass mode: Total Weight / (Sum of % / 100)
         // E.g. 1000g / (165/100) = 606g Total Flour
-        totalFlourBase = totalTargetWeight / (totalPercentage / 100);
+        if (totalPercentage > 0) {
+             totalFlourBase = totalTargetWeight / (totalPercentage / 100);
+        } else {
+             totalFlourBase = 0;
+        }
     }
+    
+    // Safe guard
+    if (isNaN(totalFlourBase)) totalFlourBase = 0;
 
     // Calculate Individual Weights
     const ingredientWeights = ingredients.map(ing => ({
         id: ing.id,
         name: ing.name,
-        weight: totalFlourBase * (ing.bakerPercentage / 100),
+        weight: totalFlourBase * ((ing.bakerPercentage || 0) / 100),
         role: ing.role,
-        bakerPercentage: ing.bakerPercentage,
-        selectedUnit: ing.selectedUnit
+        bakerPercentage: ing.bakerPercentage || 0
     }));
 
     // Map to DoughResult structure for UI Compatibility
@@ -211,7 +220,7 @@ export const calculateDoughUniversal = (
         const starterWeight = yeastOrStarterWeight;
         let levainHydration = 100; // Default 100%
         if (config.yeastType === YeastType.USER_LEVAIN && userLevain) {
-            levainHydration = userLevain.hydration;
+            levainHydration = userLevain.hydration || 100;
         }
 
         // Calculate flour and water INSIDE the starter
@@ -220,14 +229,14 @@ export const calculateDoughUniversal = (
         const starterWater = starterWeight - starterFlour;
 
         result.preferment = {
-            flour: starterFlour,
-            water: starterWater,
+            flour: isNaN(starterFlour) ? 0 : starterFlour,
+            water: isNaN(starterWater) ? 0 : starterWater,
             yeast: 0 // Starter itself is the yeast source
         };
 
         result.finalDough = {
-            flour: aggregatedFlourWeight - starterFlour, // Remaining flour
-            water: waterWeight - starterWater,
+            flour: Math.max(0, aggregatedFlourWeight - starterFlour), // Remaining flour
+            water: Math.max(0, waterWeight - starterWater),
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
@@ -239,7 +248,7 @@ export const calculateDoughUniversal = (
         // Note: Usually preferment is calculated based on Total Flour. 
         // prefermentFlourPercentage is % of Total Flour.
         
-        const prefermentFlour = aggregatedFlourWeight * (config.prefermentFlourPercentage / 100);
+        const prefermentFlour = aggregatedFlourWeight * ((config.prefermentFlourPercentage || 0) / 100);
         let prefermentWater = prefermentFlour; // Poolish default (100%)
         
         if (config.fermentationTechnique === FermentationTechnique.BIGA) {
@@ -255,8 +264,8 @@ export const calculateDoughUniversal = (
         };
 
         result.finalDough = {
-            flour: aggregatedFlourWeight - prefermentFlour,
-            water: waterWeight - prefermentWater,
+            flour: Math.max(0, aggregatedFlourWeight - prefermentFlour),
+            water: Math.max(0, waterWeight - prefermentWater),
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
@@ -273,6 +282,23 @@ export const calculateDoughUniversal = (
             sugar: sugarWeight,
             yeast: yeastOrStarterWeight
         };
+    }
+    
+    // Final sanity check to avoid NaN in result
+    const sanitize = (val: number) => isNaN(val) ? 0 : val;
+    
+    if (result.preferment) {
+        result.preferment.flour = sanitize(result.preferment.flour);
+        result.preferment.water = sanitize(result.preferment.water);
+        result.preferment.yeast = sanitize(result.preferment.yeast);
+    }
+    if (result.finalDough) {
+        result.finalDough.flour = sanitize(result.finalDough.flour);
+        result.finalDough.water = sanitize(result.finalDough.water);
+        result.finalDough.salt = sanitize(result.finalDough.salt);
+        result.finalDough.oil = sanitize(result.finalDough.oil);
+        result.finalDough.sugar = sanitize(result.finalDough.sugar);
+        result.finalDough.yeast = sanitize(result.finalDough.yeast);
     }
 
     return result;

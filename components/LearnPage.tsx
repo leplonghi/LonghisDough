@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { useTranslation } from '../i18n';
-import { Page } from '../types';
+import { useTranslation } from '../../i18n';
+import { Page } from '../../types';
 import { 
     AcademicCapIcon, 
     WrenchScrewdriverIcon,
@@ -143,7 +142,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
         {
             page: 'learn/white-sauces',
             title: 'Molhos Brancos e Emulsões',
-            description: 'A ciência por trás de bases cremosas e seu comportamento no calor.',
+            description: 'A ciência da consistência em bases cremosas para pizza.',
             icon: <BeakerIcon className="h-8 w-8" />,
         },
         {
@@ -195,7 +194,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
             icon: <GlobeAltIcon className="h-8 w-8" />,
         },
         {
-            page: 'learn/sensory-profiles',
+            page: 'learn/sensory-profiles', // FIX: Changed 'learn/sensory-guide' to 'learn/sensory-profiles' to match types.ts
             title: 'Perfis Sensoriais',
             description: 'O equilíbrio de umami, gordura, acidez e doçura na pizza.',
             icon: <BeakerIcon className="h-8 w-8" />,
@@ -285,7 +284,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
             icon: <ListBulletIcon className="h-8 w-8" />,
         },
         {
-            page: 'learn/sensory-guide',
+            page: 'learn/sensory-guide', // This page is now a redirect to 'learn/sensory-profiles'
             title: 'Guia Sensorial',
             description: 'Aprenda a balancear doce, salgado, ácido, amargo e umami em suas criações.',
             icon: <BeakerIcon className="h-8 w-8" />,

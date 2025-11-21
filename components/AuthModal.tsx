@@ -83,7 +83,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           {/* Developer Mode Section */}
           <div className="mt-8 border-t border-slate-100 pt-4">
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">
-                Developer Access (Simulated)
+                {t('auth.dev_access_title')}
             </p>
             <div className="grid grid-cols-2 gap-3">
                  <button
@@ -91,14 +91,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-800 py-2 px-3 text-xs font-semibold text-white shadow-sm hover:bg-slate-700"
                 >
                   <ShieldCheckIcon className="h-4 w-4" />
-                  Admin (Pro)
+                  {t('auth.dev_admin_pro')}
                 </button>
                  <button
                   onClick={() => handleDevLogin('free')}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-100 py-2 px-3 text-xs font-semibold text-slate-600 hover:bg-slate-200"
                 >
                   <UserCircleIcon className="h-4 w-4" />
-                  Visitor (Free)
+                  {t('auth.dev_visitor_free')}
                 </button>
             </div>
           </div>

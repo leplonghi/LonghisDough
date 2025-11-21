@@ -19,6 +19,10 @@ export interface BlendResult {
 export function calculateBlendCharacteristics(
   ingredients: IngredientConfig[]
 ): BlendResult {
+  if (!ingredients || ingredients.length === 0) {
+      return { estimatedW: 0, estimatedProtein: 0, compositeName: 'No Flour' };
+  }
+
   let totalPercentage = 0;
   let weightedW = 0;
   let weightedProtein = 0;
@@ -32,7 +36,7 @@ export function calculateBlendCharacteristics(
     const definition = FLOURS.find(f => f.id === ing.id) || FLOURS.find(f => f.id === 'generic_all_purpose');
     
     if (definition) {
-      const pct = ing.bakerPercentage; // e.g. 90 for 90%
+      const pct = ing.bakerPercentage || 0; // Safety check
       totalPercentage += pct;
       
       // Use definition W or fallback to 200 (generic weak/medium flour)
@@ -66,13 +70,15 @@ export function balanceFlourPercentages(
   ingredients: IngredientConfig[],
   mainFlourId: string
 ): IngredientConfig[] {
+  if (!ingredients) return [];
+
   const nonMainFlours = ingredients.filter(i => i.role === 'flour' && i.id !== mainFlourId);
   const mainFlour = ingredients.find(i => i.role === 'flour' && i.id === mainFlourId);
 
   if (!mainFlour) return ingredients;
 
   let secondarySum = 0;
-  nonMainFlours.forEach(f => secondarySum += f.bakerPercentage);
+  nonMainFlours.forEach(f => secondarySum += (f.bakerPercentage || 0));
 
   // Clamp secondary sum to max 95% (leaving 5% for main flour)
   if (secondarySum > 95) {

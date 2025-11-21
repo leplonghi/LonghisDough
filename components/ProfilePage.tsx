@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -8,17 +7,17 @@ import {
   StarIcon,
   TrashIcon,
   SolidStarIcon,
+  BookmarkSquareIcon,
   BeakerIcon,
+  FlourIcon,
   ShieldCheckIcon,
   ArrowTopRightOnSquareIcon,
-  SparklesIcon,
-  CreditCardIcon
-} from './IconComponents';
+} from '../components/IconComponents';
 import { User, Gender, Oven, Page, Levain } from '../types';
 import OvenModal from '../components/OvenModal';
 import LevainModal from '../components/LevainModal';
 import AuthPlaceholder from '../components/AuthPlaceholder';
-import { useToast } from './ToastProvider';
+import { useToast } from '../components/ToastProvider';
 
 interface ProfilePageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -77,8 +76,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   };
 
   const handleSave = () => {
-    updateUser(formData);
-    setIsEditing(false);
+    if (formData.name && user.uid) { // Ensure name is not empty and user exists
+        updateUser(formData as Partial<User>);
+        // FIX: Changed addToast call to conform to new signature (passing single object)
+        addToast({message: t('info.update_success'), type: 'success'}); 
+        setIsEditing(false);
+    } else {
+        // FIX: Changed addToast call to conform to new addToast signature (passing single object)
+        addToast({message: t('info.error.generic'), type: 'error'}); 
+    }
   };
 
   const handleCancel = () => {
@@ -91,7 +97,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     setIsEditing(false);
   };
 
-  const handleSaveOven = (ovenData: Omit<Oven, 'id' | 'isDefault'> | Oven) => {
+  // FIX: Complete the function signature for handleSaveOven
+  const handleSaveOven = async (ovenData: Omit<Oven, 'id' | 'isDefault'> | Oven) => {
     if ('id' in ovenData) {
       updateOven(ovenData);
     } else {
@@ -110,7 +117,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   
   const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | Levain) => {
     if ('id' in levainData) {
-      // @ts-ignore
       updateLevain(levainData);
     } else {
       addLevain(levainData);
@@ -129,7 +135,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   const handleCancelSubscription = () => {
     if (window.confirm("Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.")) {
         // In a real app, this would call the backend Stripe API
-        addToast("Subscription cancellation requested.", "info");
+        // FIX: Changed addToast call to conform to new signature (passing single object)
+        addToast({message: "Subscription cancellation requested.", type: "info"});
     }
   };
 
@@ -159,7 +166,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         <select
           id={name}
           name={name}
-          value={formData[name] || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
         >
@@ -174,7 +181,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           type={type}
           id={name}
           name={name}
-          value={(formData[name] as string) || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 sm:text-sm"
           disabled={name === 'email'}
@@ -210,79 +217,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           <p className="mt-2 text-lg text-slate-600">
             {user.email}
           </p>
-        </div>
-
-        {/* === SECTION: Membership Status === */}
-        <div className="mt-8 border-t border-slate-200 pt-8">
-             <h2 className="text-xl font-bold text-slate-800 mb-4">Membership Status</h2>
-             
-             {hasProAccess ? (
-                 <div className="rounded-xl border border-lime-200 bg-lime-50 p-6 shadow-sm">
-                     <div className="flex items-center justify-between mb-4">
-                         <div className="flex items-center gap-3">
-                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-500 text-white shadow-sm">
-                                 <StarIcon className="h-6 w-6" />
-                             </div>
-                             <div>
-                                 <h3 className="font-bold text-slate-900">DoughLab Pro</h3>
-                                 <p className="text-xs text-lime-700 font-medium">Active Subscription</p>
-                             </div>
-                         </div>
-                         <span className="px-3 py-1 bg-white text-lime-700 text-xs font-bold rounded-full border border-lime-200 shadow-sm">
-                             ACTIVE
-                         </span>
-                     </div>
-                     <div className="space-y-2 text-sm text-slate-600">
-                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Unlimited Batches & History</p>
-                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Advanced AI Insights</p>
-                         <p className="flex items-center gap-2"><span className="text-lime-600">✓</span> Multiple Levain Pets</p>
-                     </div>
-                     <div className="mt-6 pt-4 border-t border-lime-200/60">
-                         <button 
-                            onClick={handleCancelSubscription} 
-                            className="text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition-colors"
-                         >
-                             <CreditCardIcon className="h-4 w-4" />
-                             Cancel Subscription
-                         </button>
-                     </div>
-                 </div>
-             ) : (
-                 <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
-                     <div className="relative z-10">
-                         <div className="flex items-center justify-between mb-4">
-                             <div>
-                                <h3 className="font-bold text-slate-900 text-lg">Free Plan</h3>
-                                <p className="text-xs text-slate-500">Limited Features</p>
-                             </div>
-                             <span className="px-3 py-1 bg-slate-100 text-slate-500 text-xs font-bold rounded-full">
-                                 CURRENT
-                             </span>
-                         </div>
-                         
-                         <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-                            You are currently limited to <strong>1 saved batch</strong> and <strong>1 levain</strong>. Upgrade to unlock the full potential of your dough lab.
-                         </p>
-
-                         <div className="grid grid-cols-2 gap-2 mb-6">
-                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 No AI Insights</div>
-                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 Limited Exports</div>
-                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 1 Levain Only</div>
-                             <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">🚫 Basic Styles</div>
-                         </div>
-
-                         <button 
-                            onClick={() => openPaywall('general')} 
-                            className="w-full py-3 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 transition-all active:scale-[0.98]"
-                         >
-                             <SparklesIcon className="h-4 w-4 text-lime-400"/>
-                             Upgrade to Pro
-                         </button>
-                     </div>
-                     {/* Decorative Background */}
-                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-lime-100 rounded-full opacity-50 blur-3xl"></div>
-                 </div>
-             )}
         </div>
 
         <div className="mt-10 border-t border-slate-200 pt-8">
@@ -339,6 +273,33 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                     ? t(`profile.genders.${user.gender.toLowerCase()}`)
                     : undefined,
                 )}
+                <div>
+                  <dt className="text-sm font-medium text-slate-500">
+                    {t('profile.membership')}
+                  </dt>
+                  <dd className="mt-1">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        hasProAccess
+                          ? 'bg-lime-100 text-lime-800'
+                          : 'bg-slate-100 text-slate-800'
+                      }`}
+                    >
+                      {hasProAccess && <StarIcon className="h-3.5 w-3.5" />}
+                      {hasProAccess
+                        ? t('profile.pro_member')
+                        : t('profile.free_member')}
+                    </span>
+                  </dd>
+                  {hasProAccess && !user.trialEndsAt && (
+                    <button
+                        onClick={handleCancelSubscription}
+                        className="mt-2 text-xs text-red-600 hover:underline"
+                    >
+                        Cancel Subscription
+                    </button>
+                  )}
+                </div>
               </dl>
             )}
           </div>
@@ -361,20 +322,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 {ovens.length === 0 ? (
                     <p className="text-center text-slate-500 py-4">{t('profile.ovens.empty_state')}</p>
                 ) : (
-                    ovens.map(oven => (
-                        <div key={oven.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
+                    ovens.map(ovenItem => (
+                        <div key={ovenItem.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
                             <div>
-                                <p className="font-semibold text-slate-800">{oven.name} {oven.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.ovens.default_oven')})</span>}</p>
-                                <p className="text-sm text-slate-500">{t(`profile.ovens.types.${oven.type.toLowerCase()}`)} - {oven.maxTemperature}°C</p>
+                                <p className="font-semibold text-slate-800">{ovenItem.name} {ovenItem.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.ovens.default_oven')})</span>}</p>
+                                <p className="text-sm text-slate-500">{t(`profile.ovens.types.${ovenItem.type.toLowerCase()}`)} - {ovenItem.maxTemperature}°C</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={() => setDefaultOven(oven.id)} title={t('profile.ovens.set_as_default')} className={`p-2 rounded-full ${oven.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
-                                    {oven.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
+                                <button onClick={() => setDefaultOven(ovenItem.id)} title={t('profile.ovens.set_as_default')} className={`p-2 rounded-full ${ovenItem.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
+                                    {ovenItem.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
                                 </button>
-                                <button onClick={() => { setEditingOven(oven); setIsOvenModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
+                                <button onClick={() => { setEditingOven(ovenItem); setIsOvenModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
                                     <PencilIcon className="h-5 w-5"/>
                                 </button>
-                                <button onClick={() => handleDeleteOven(oven.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
+                                <button onClick={() => handleDeleteOven(ovenItem.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
                                     <TrashIcon className="h-5 w-5"/>
                                 </button>
                             </div>
@@ -402,23 +363,23 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 {levains.length === 0 ? (
                     <p className="text-center text-slate-500 py-4">{t('profile.levains.empty_state')}</p>
                 ) : (
-                    levains.map(levain => (
-                        <div key={levain.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
+                    levains.map(levainItem => (
+                        <div key={levainItem.id} className="flex items-center justify-between rounded-lg bg-slate-50 p-4">
                             <div>
-                                <p className="font-semibold text-slate-800">{levain.name} {levain.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.levains.default')})</span>}</p>
-                                <p className="text-sm text-slate-500">{levain.hydration}% {t('profile.levains.hydration')}</p>
+                                <p className="font-semibold text-slate-800">{levainItem.name} {levainItem.isDefault && <span className="ml-2 text-xs font-bold text-lime-600">({t('profile.levains.default')})</span>}</p>
+                                <p className="text-sm text-slate-500">{levainItem.hydration}% {t('profile.levains.hydration')}</p>
                             </div>
                             <div className="flex items-center gap-1 sm:gap-2">
                                 <button onClick={() => onNavigate('mylab/levain')} title={t('profile.levains.manage')} className="p-2 rounded-md text-sm font-semibold text-lime-600 hover:bg-lime-100">
                                     {t('profile.levains.manage')}
                                 </button>
-                                <button onClick={() => setDefaultLevain(levain.id)} title={t('profile.levains.set_as_default')} className={`p-2 rounded-full ${levain.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
-                                    {levain.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
+                                <button onClick={() => setDefaultLevain(levainItem.id)} title={t('profile.levains.set_as_default')} className={`p-2 rounded-full ${levainItem.isDefault ? 'text-yellow-400' : 'text-slate-400 hover:text-yellow-400'}`}>
+                                    {levainItem.isDefault ? <SolidStarIcon className="h-5 w-5"/> : <StarIcon className="h-5 w-5"/>}
                                 </button>
-                                <button onClick={() => { setEditingLevain(levain); setIsLevainModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
+                                <button onClick={() => { setEditingLevain(levainItem); setIsLevainModalOpen(true); }} className="p-2 rounded-full text-slate-500 hover:bg-slate-200">
                                     <PencilIcon className="h-5 w-5"/>
                                 </button>
-                                <button onClick={() => handleDeleteLevain(levain.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
+                                <button onClick={() => handleDeleteLevain(levainItem.id)} className="p-2 rounded-full text-red-500 hover:bg-red-100">
                                     <TrashIcon className="h-5 w-5"/>
                                 </button>
                             </div>
@@ -427,6 +388,63 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 )}
              </div>
         </div>
+
+        {/* === SECTION: Resources === */}
+        <div className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-800">
+              {t('profile.resources.title')}
+            </h2>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <button
+                    onClick={() => onNavigate('references')}
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
+                >
+                    <BookmarkSquareIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
+                    <div>
+                        <p className="font-semibold text-slate-800">{t('profile.resources.tech_references')}</p>
+                        <p className="text-sm text-slate-500">{t('profile.resources.tech_references_desc')}</p>
+                    </div>
+                </button>
+                <button
+                    onClick={() => onNavigate('flours')}
+                    className="flex items-center gap-3 rounded-lg bg-slate-50 p-4 text-left transition hover:bg-slate-100"
+                >
+                    <FlourIcon className="h-6 w-6 flex-shrink-0 text-lime-500" />
+                    <div>
+                        <p className="font-semibold text-slate-800">{t('profile.resources.flours_library')}</p>
+                        <p className="text-sm text-slate-500">{t('profile.resources.flours_library_desc')}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        {/* === SECTION: Legal === */}
+        <div className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-bold text-slate-800">Legal</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                    onClick={() => onNavigate('terms')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5" />
+                        <span className="font-medium text-slate-700">Terms of Use</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+                <button
+                    onClick={() => onNavigate('privacy')}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                    <div className="flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5" />
+                        <span className="font-medium text-slate-700">Privacy Policy</span>
+                    </div>
+                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
+                </button>
+            </div>
+        </div>
+
 
         <div className="mt-10 border-t border-slate-200 pt-8">
           <button

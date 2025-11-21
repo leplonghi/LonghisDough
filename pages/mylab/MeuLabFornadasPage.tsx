@@ -1,12 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
-import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
+import { DoughConfig, Page, BatchStatus, RecipeStyle, OvenType } from '../../types';
 import { useUser } from '../../contexts/UserProvider';
 import { useTranslation } from '../../i18n';
 import MyLabLayout from './MyLabLayout';
-import { BatchesIcon, CalculatorIcon } from '../../components/IconComponents';
+import { BatchesIcon } from '../../components/IconComponents';
 import { OVEN_TYPE_OPTIONS } from '../../constants';
-import { isFreeUser } from '../../lib/subscriptions';
+import { isFreeUser } from '../../lib/permissions'; // Corrigido para lib/permissions
 
 interface MeuLabFornadasPageProps {
   onLoadAndNavigate: (config: DoughConfig) => void;
@@ -177,7 +177,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                         <h2 className="text-lg font-medium text-neutral-800">No bakes recorded yet.</h2>
                         <p className="mt-2 text-sm text-neutral-500">Record your first bake to track your progress.</p>
                         <button onClick={handleCreateDraft} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md">
-                           <CalculatorIcon className="h-5 w-5"/> Log Bake
+                           <BatchesIcon className="h-5 w-5"/> Log Bake
                         </button>
                     </div>
                 </div>

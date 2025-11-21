@@ -1,17 +1,20 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
 import { Locale } from '../types';
 import { CheckIcon } from './IconComponents';
 
+// TODO: This component is currently non-functional as i18n.ts is hardcoded to 'en'.
+// Enable and implement actual locale change logic in i18n.ts when multiple languages are supported.
 const LanguageSwitcher: React.FC = () => {
-  const { locale, setLocale } = useTranslation();
+  const { locale, setLocale, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const languages: { code: Locale; name: string }[] = [
-    { code: 'en', name: 'English' },
-    { code: 'pt', name: 'Português' },
-    { code: 'es', name: 'Español' },
+    { code: 'en', name: t('language_switcher.english', { defaultValue: 'English' }) },
+    { code: 'pt', name: t('language_switcher.portuguese', { defaultValue: 'Português' }) },
+    { code: 'es', name: t('language_switcher.spanish', { defaultValue: 'Español' }) },
   ];
 
   useEffect(() => {
@@ -30,7 +33,7 @@ const LanguageSwitcher: React.FC = () => {
   }, [wrapperRef]);
 
   const handleLanguageSelect = (langCode: Locale) => {
-    setLocale(langCode);
+    setLocale(langCode); // This call is currently a no-op as per i18n.ts
     setIsOpen(false);
   };
 
@@ -40,7 +43,7 @@ const LanguageSwitcher: React.FC = () => {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 ring-1 ring-slate-200 transition-all hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
-        aria-label="Change language"
+        aria-label={t('language_switcher.label')}
         aria-haspopup="true"
         aria-expanded={isOpen}
       >

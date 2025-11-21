@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { BookOpenIcon, ExternalLinkIcon, ShoppingBagIcon } from '../../components/IconComponents';
 import { getAffiliateSuggestionsForTopic } from '../../logic/affiliateSuggestions';
 import { useUser } from '../../contexts/UserProvider';
-import { isFreeUser } from '../../lib/subscriptions';
+import { isFreeUser } from '../../lib/permissions'; // Corrigido para lib/permissions
 import { AFFILIATE_PLACEMENTS } from '../../data/affiliatePlacements';
 import { AffiliateBlock } from '../../components/AffiliateBlock';
 import ProFeatureLock from '../../components/ProFeatureLock';
@@ -30,13 +30,13 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
         <div className="text-center sm:text-left">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
           {subtitle && (
-            <p className="mt-4 text-lg text-slate-700">
+            <p className="mt-4 text-lg text-slate-600">
               {subtitle}
             </p>
           )}
         </div>
 
-        <div className="prose mt-8 max-w-none text-slate-700">
+        <div className="prose mt-8 max-w-none text-slate-600">
           {children}
         </div>
         
@@ -56,7 +56,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                     href={suggestion.linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-slate-300 py-2.5 px-4 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors"
+                    className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-slate-300 py-2.5 px-4 text-sm font-semibold text-slate-700 shadow-sm hover:bg-lime-50 hover:text-lime-700 hover:border-lime-300 hover:shadow-md"
                 >
                     Visit Shop <ExternalLinkIcon className="h-4 w-4 text-slate-400" />
                 </a>

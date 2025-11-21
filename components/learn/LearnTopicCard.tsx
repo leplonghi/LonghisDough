@@ -17,7 +17,7 @@ const LearnTopicCard: React.FC<LearnTopicCardProps> = ({ icon, title, descriptio
             <h3 className="text-lg font-bold text-slate-800 group-hover:text-lime-600 transition-colors">
                 {title}
             </h3>
-            <p className="mt-2 text-sm text-slate-700">{description}</p>
+            <p className="mt-2 text-sm text-slate-600">{description}</p>
         </div>
         <p className="mt-4 text-sm font-semibold text-slate-500 group-hover:text-lime-500 transition-colors">
             Explorar &rarr;

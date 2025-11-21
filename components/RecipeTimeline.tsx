@@ -6,7 +6,6 @@ import {
     ClockIcon, 
     FireIcon, 
     HandRaisedIcon, // Simulating 'Shape' or 'Mix'
-    ScaleIcon, // Simulating 'Prep'
     LightBulbIcon,
     ExclamationCircleIcon
 } from './IconComponents';

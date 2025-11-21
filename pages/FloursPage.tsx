@@ -1,9 +1,9 @@
+
 import React from 'react';
 import { useTranslation } from '../i18n';
 import { FlourIcon, StarIcon } from '../components/IconComponents';
 import { FLOURS } from '../flours-constants';
-// FIX: Corrected import path for useUser hook
-import { useUser } from '../contexts/UserProvider';
+import { useUser } from '../contexts/UserProvider'; // Corrigido para ../contexts/UserProvider
 import { Page } from '../types';
 
 interface FloursPageProps {

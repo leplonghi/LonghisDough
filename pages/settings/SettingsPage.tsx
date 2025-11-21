@@ -1,24 +1,7 @@
 import React from 'react';
-import { useTranslation } from '../i18n';
-import { UnitSystem } from '../types';
-
-const ChoiceButton: React.FC<{
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}> = ({ active, onClick, children }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`w-full rounded-lg px-4 py-2 text-center text-sm font-medium transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 ${
-      active
-        ? 'bg-lime-500 text-white font-semibold shadow-md'
-        : 'bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600'
-    }`}
-  >
-    {children}
-  </button>
-);
+import { useTranslation } from '../../i18n';
+import { UnitSystem } from '../../types';
+import ChoiceButton from '../../components/ui/ChoiceButton';
 
 const SettingsPage: React.FC = () => {
     const { t } = useTranslation();

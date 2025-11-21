@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -18,6 +19,7 @@ import { User, Gender, Oven, Page, Levain } from '../types';
 import OvenModal from '../components/OvenModal';
 import LevainModal from '../components/LevainModal';
 import AuthPlaceholder from '../components/AuthPlaceholder';
+import { useToast } from '../components/ToastProvider';
 
 interface ProfilePageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -29,6 +31,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     logout,
     updateUser,
     hasProAccess,
+    openPaywall,
     ovens,
     addOven,
     updateOven,
@@ -42,6 +45,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     isAuthenticated
   } = useUser();
   const { t } = useTranslation();
+  const { addToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
@@ -107,7 +111,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   
   const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | Levain) => {
     if ('id' in levainData) {
-      // @ts-ignore
       updateLevain(levainData);
     } else {
       addLevain(levainData);
@@ -122,6 +125,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           deleteLevain(id);
       }
   }
+
+  const handleCancelSubscription = () => {
+    if (window.confirm("Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.")) {
+        // In a real app, this would call the backend Stripe API
+        addToast("Subscription cancellation requested.", "info");
+    }
+  };
 
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
@@ -149,7 +159,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         <select
           id={name}
           name={name}
-          value={formData[name] || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
         >
@@ -164,7 +174,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           type={type}
           id={name}
           name={name}
-          value={(formData[name] as string) || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 sm:text-sm"
           disabled={name === 'email'}
@@ -274,6 +284,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                         : t('profile.free_member')}
                     </span>
                   </dd>
+                  {hasProAccess && !user.trialEndsAt && (
+                    <button
+                        onClick={handleCancelSubscription}
+                        className="mt-2 text-xs text-red-600 hover:underline"
+                    >
+                        Cancel Subscription
+                    </button>
+                  )}
                 </div>
               </dl>
             )}
