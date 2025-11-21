@@ -12,12 +12,12 @@ export function isTrialActive(user: User | null | undefined): boolean {
 }
 
 /**
- * Checks if the user has Pro status (either via subscription or active trial).
+ * Checks if the user has Pro status (either via subscription, explicit plan, or active trial).
  */
 export function isProUser(user: User | null | undefined): boolean {
   if (!user) return false;
-  // User is Pro if the flag is true OR if they are in a valid trial
-  return !!user.isPro || isTrialActive(user);
+  // User is Pro if the flag is true, plan is 'pro', or if they are in a valid trial
+  return !!user.isPro || user.plan === 'pro' || isTrialActive(user);
 }
 
 /**

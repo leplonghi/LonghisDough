@@ -1,3 +1,4 @@
+
 import React, {
   useState,
   useEffect,
@@ -9,6 +10,8 @@ import React, {
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import RequireAuth from '@/components/RequireAuth';
+import RequirePro from '@/components/RequirePro';
 
 import {
   DoughConfig,
@@ -134,7 +137,10 @@ const ConsistencyListPage = React.lazy(() => import('@/pages/mylab/ConsistencyLi
 const ConsistencyDetailPage = React.lazy(() => import('@/pages/mylab/ConsistencyDetailPage'));
 const ShopPage = React.lazy(() => import('@/pages/ShopPage'));
 const CommunityPage = React.lazy(() => import('@/pages/CommunityPage'));
+const CommunityBatchDetailPage = React.lazy(() => import('@/pages/CommunityBatchDetailPage'));
 const ProActivatedPage = React.lazy(() => import('@/pages/pro/ProActivatedPage'));
+const FloursPage = React.lazy(() => import('@/pages/FloursPage'));
+const DoughbotPage = React.lazy(() => import('@/pages/DoughbotPage'));
 
 
 // --- Placeholder Pages ---
@@ -502,6 +508,14 @@ function AppContent() {
   const handleStartBatch = useCallback(async () => {
     if (!results) return;
 
+    // --- BATCH LIMIT CHECK ---
+    const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
+    if (!hasProAccess && savedBatches.length >= 1) {
+        openPaywall('mylab');
+        return;
+    }
+    // -------------------------
+
     const batchName = prompt("Name this bake:", `${config.recipeStyle} Bake`);
     if (batchName) {
         const newBatch = await addBatch({
@@ -514,7 +528,7 @@ function AppContent() {
         addToast(`Bake "${newBatch.name}" started!`, 'success');
         navigate('mylab/fornadas');
     }
-  }, [config, results, addBatch, navigate]);
+  }, [config, results, addBatch, navigate, hasProAccess, batches, openPaywall, addToast]);
 
 
   const handleLoadAndNavigate = useCallback((configToLoad: Partial<DoughConfig>) => {
@@ -550,31 +564,53 @@ function AppContent() {
     navigate(`batch/${draft.id}`);
   }, [createDraftBatch, navigate]);
 
+  // Helper wrapper for protected routes
+  const protect = (component: React.ReactNode) => (
+    <RequireAuth onOpenAuth={() => setIsAuthModalOpen(true)}>
+      {component}
+    </RequireAuth>
+  );
+
+  // Helper wrapper for Pro routes (implies auth)
+  const protectPro = (component: React.ReactNode) => (
+    <RequireAuth onOpenAuth={() => setIsAuthModalOpen(true)}>
+      <RequirePro>
+        {component}
+      </RequirePro>
+    </RequireAuth>
+  );
+
   const renderPage = () => {
     const defaultOven = ovens.find(o => o.isDefault) || (ovens.length > 0 ? ovens[0] : undefined);
     const selectedFlour = FLOURS.find(f => f.id === config.flourId);
     
     // Handle Dynamic Routes
     if (route === 'batch') {
-        return <BatchDetailPage batchId={routeParams} onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+        // Detail Page is visible to Free, but actions are gated
+        return protect(<BatchDetailPage batchId={routeParams} onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />);
     }
     if (route === 'mylab/levain/detail' && routeParams) {
-        return <LevainDetailPage levainId={routeParams} onNavigate={navigate} />;
+        return protect(<LevainDetailPage levainId={routeParams} onNavigate={navigate} />);
     }
     if (route === 'mylab/consistency/detail' && routeParams) {
-        return <ConsistencyDetailPage seriesId={routeParams} onNavigate={navigate} />;
+        return protectPro(<ConsistencyDetailPage seriesId={routeParams} onNavigate={navigate} />);
     }
     if (route === 'styles/detail' && routeParams) {
         const style = getStyleById(routeParams);
         if (style) {
-             return <StyleDetailPage style={style} onLoadAndNavigate={handleLoadStyleFromModule} onBack={() => navigate('styles')} />;
+             // Style detail is accessible to all (Auth only)
+             return protect(<StyleDetailPage style={style} onLoadAndNavigate={handleLoadStyleFromModule} onBack={() => navigate('styles')} />);
         }
+    }
+    
+    if (route === 'community/detail' && routeParams) {
+        return protect(<CommunityBatchDetailPage batchId={routeParams} onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} />);
     }
 
     switch (route) {
       case 'mylab':
       case 'lab': // Legacy redirect
-        return (
+        return protect(
           <MyLabPage
             onNavigate={navigate}
             onCreateDraftBatch={handleCreateDraftAndNavigate}
@@ -582,42 +618,42 @@ function AppContent() {
           />
         );
       case 'mylab/receitas':
-        return <MeuLabReceitasPage onNavigate={navigate} />;
+        return protectPro(<MeuLabReceitasPage onNavigate={navigate} />);
       case 'mylab/receitas/comparar':
-        return <CompareReceitasPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />;
+        return protectPro(<CompareReceitasPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />);
       case 'mylab/massas':
-        return <MeuLabMassasPage onNavigate={navigate} />;
+        return protectPro(<MeuLabMassasPage onNavigate={navigate} />);
       case 'mylab/farinhas':
-        return <MeuLabFarinhasPage onNavigate={navigate} />;
+        return protectPro(<MeuLabFarinhasPage onNavigate={navigate} />);
       case 'mylab/fornadas':
-        return <MeuLabFornadasPage onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} />;
+        return protect(<MeuLabFornadasPage onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} />);
       case 'mylab/diario-sensorial':
-        return <MeuLabDiarioSensorialPage onNavigate={navigate} />;
+        return protectPro(<MeuLabDiarioSensorialPage onNavigate={navigate} />);
       case 'mylab/comparacoes':
-        return <MeuLabComparacoesPage onNavigate={navigate} />;
+        return protectPro(<MeuLabComparacoesPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />);
       case 'mylab/insights':
-        return <MeuLabInsightsPage onNavigate={navigate} />;
+        return protectPro(<MeuLabInsightsPage onNavigate={navigate} />);
       case 'mylab/timeline':
-        return <TimelinePage onNavigate={navigate} />;
+        return protectPro(<TimelinePage onNavigate={navigate} />);
       case 'mylab/objetivos':
-        return <ObjectivesPage onNavigate={navigate} />;
+        return protectPro(<ObjectivesPage onNavigate={navigate} />);
       case 'mylab/consistency':
-        return <ConsistencyListPage onNavigate={navigate} />;
+        return protectPro(<ConsistencyListPage onNavigate={navigate} />);
       case 'mylab/levain-pet':
-        return <MeuLabLevainPetPage />;
+        return protectPro(<MeuLabLevainPetPage />);
       case 'mylab/levain':
-        return <LevainListPage onNavigate={navigate} />;
+        return protect(<LevainListPage onNavigate={navigate} />);
       case 'plans':
-        return (
+        return protect(
           <PlansPage
             onGrantAccess={() => {}}
             onNavigateHome={() => navigate('mylab')}
           />
         );
       case 'pro/activated':
-        return <ProActivatedPage onNavigate={navigate} />;
+        return protect(<ProActivatedPage onNavigate={navigate} />);
       case 'learn':
-        return <LearnPage onNavigate={navigate} />;
+        return <LearnPage onNavigate={navigate} />; // Public
       case 'learn/fundamentals':
         return <FundamentalsPage onNavigate={navigate} />;
       case 'learn/methods':
@@ -731,15 +767,15 @@ function AppContent() {
       case 'learn/sensory-profiles':
         return <SensoryProfilesPage />;
       case 'profile':
-        return <ProfilePage onNavigate={navigate} />;
+        return protect(<ProfilePage onNavigate={navigate} />);
       case 'references':
-        return <ReferencesPage />;
+        return <ReferencesPage />; // Public
       case 'help':
-        return <HelpPage />;
+        return <HelpPage />; // Keeping public for assistance
       case 'settings':
-        return <SettingsPage />;
+        return protect(<SettingsPage />);
       case 'settings/language':
-        return <LanguagePage />;
+        return protect(<LanguagePage />);
       case 'legal':
         return <LegalIndexPage onNavigate={navigate} />;
       case 'legal/terms':
@@ -759,13 +795,16 @@ function AppContent() {
       case 'landing':
         return <LandingPage />;
       case 'styles':
-        return <DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} />;
+        // Library is accessible (Auth)
+        return protect(<DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} onNavigateToDetail={(id) => navigate(`styles/${id}`)} />);
       case 'tools-oven-analysis':
-        return <OvenAnalysisPage />;
+        return protectPro(<OvenAnalysisPage />);
+      case 'tools-doughbot':
+        return protectPro(<DoughbotPage />);
       case 'shop':
-        return <ShopPage />;
+        return <ShopPage />; // Public
       case 'calculator':
-        return (
+        return protect(
           <CalculatorPage
             config={config}
             errors={errors}
@@ -790,11 +829,13 @@ function AppContent() {
           />
         );
       case 'flours':
-        return <MeuLabFarinhasPage onNavigate={navigate} />;
+        // Flour Library is Public/Auth
+        return protect(<FloursPage onNavigate={navigate} />);
       case 'community':
-        return <CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />;
+        // Community Feed is Auth
+        return protect(<CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />);
       default:
-        return (
+        return protect(
           <MyLabPage
             onNavigate={navigate}
             onCreateDraftBatch={handleCreateDraftAndNavigate}
@@ -815,14 +856,16 @@ function AppContent() {
       <main className="flex-grow container mx-auto px-4 py-8 md:py-10 mt-20">
         {isAssistantOpen ? (
           <Suspense fallback={<LoadingSpinner />}>
-            <AssistantPage 
-              config={config} 
-              results={results} 
-              defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
-              selectedFlour={FLOURS.find(f => f.id === config.flourId)}
-              lastBatch={lastBatch}
-              t={(key, replacements) => key} // Simple mock t function for assistant page if needed
-            />
+            {protectPro(
+              <AssistantPage 
+                config={config} 
+                results={results} 
+                defaultOven={ovens.find(o => o.isDefault) || ovens[0]}
+                selectedFlour={FLOURS.find(f => f.id === config.flourId)}
+                lastBatch={lastBatch}
+                t={(key, replacements) => key} // Simple mock t function for assistant page if needed
+              />
+            )}
           </Suspense>
         ) : (
           <ErrorBoundary>

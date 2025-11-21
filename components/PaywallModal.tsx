@@ -159,7 +159,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                    >
                       Yearly
                       <span className="bg-lime-500 text-white text-[10px] px-1.5 py-0.5 rounded-full uppercase font-bold">
-                        Save 18%
+                        Save 20%
                       </span>
                    </button>
                 </div>
@@ -168,7 +168,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
              <div className="text-center">
                 <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl font-bold">
-                        {billingCycle === 'yearly' ? '$79' : '$8'}
+                        {billingCycle === 'yearly' ? '$67.10' : '$6.99'}
                     </span>
                     <span className="text-slate-400 font-medium">
                          /{billingCycle === 'yearly' ? 'year' : 'month'}
@@ -176,7 +176,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 </div>
                 <p className="text-slate-400 text-sm mt-1">
                     {billingCycle === 'yearly' 
-                        ? 'Just $6.58/month, billed annually.' 
+                        ? 'Just $5.59/month, billed annually.' 
                         : 'Flexible plan, cancel anytime.'}
                 </p>
              </div>
@@ -192,7 +192,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     <>
                         <span>Start your 7-day free trial</span>
                         <span className="text-xs bg-slate-900/10 px-2 py-0.5 rounded font-medium">
-                           Then {billingCycle === 'yearly' ? '$79/yr' : '$8/mo'}
+                           Then {billingCycle === 'yearly' ? '$67.10/yr' : '$6.99/mo'}
                         </span>
                     </>
                 )}

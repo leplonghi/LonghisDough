@@ -5,7 +5,7 @@ import {
     CalculatorIcon, 
     BookOpenIcon, 
     BeakerIcon, 
-    FireIcon,
+    FireIcon, 
     InfoIcon,
     ClockIcon,
     ShoppingBagIcon,
@@ -34,7 +34,7 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
               text = "For crispy bottoms in a home oven, a heavy-duty baking steel performs better than stone.";
               linkId = "baking_steel";
           }
-      } else if (style.category === 'Pão') {
+      } else if (style.category === 'Bread') {
           text = "Bread doughs, especially high hydration ones, are much easier to handle with a good bench scraper and proofing box.";
           linkId = "proofing_box";
       } else {

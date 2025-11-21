@@ -233,6 +233,7 @@ export interface User {
   
   // Subscription & Permissions
   isPro?: boolean;
+  plan?: 'free' | 'pro';
   trialEndsAt?: string | null; // ISO String or null
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
@@ -408,6 +409,8 @@ export type Page =
   | 'settings/theme'
   | 'settings/language'
   | 'legal'
+  | 'terms'
+  | 'privacy'
   | 'legal/terms'
   | 'legal/privacy'
   | 'legal/cookies'

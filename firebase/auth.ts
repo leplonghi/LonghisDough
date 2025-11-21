@@ -1,14 +1,16 @@
 
 import { getAuth, GoogleAuthProvider, Auth } from "@firebase/auth";
-import { firebaseApp } from "./app";
+import { app } from "./app";
 
 export let auth: Auth | null = null;
-export const googleProvider = new GoogleAuthProvider();
+export let googleProvider: GoogleAuthProvider | null = null;
 
-if (firebaseApp) {
+if (app) {
   try {
-    auth = getAuth(firebaseApp);
-  } catch (error) {
-    console.error("Failed to initialize Firebase Auth:", error);
+    auth = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: "select_account" });
+  } catch (e) {
+    console.warn("Firebase Auth failed to initialize", e);
   }
 }

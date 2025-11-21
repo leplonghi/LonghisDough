@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from 'react';
 import {
   collection,
@@ -22,10 +23,12 @@ export function useBatchManager(
 ) {
   const [batches, setBatches] = useState<Batch[]>([]);
 
+  // --- Firebase Subscription ---
   useEffect(() => {
     if (!firebaseUser || !db) {
-      setBatches([]);
-      return;
+      // If no DB/User, we rely on local state managed by actions below
+      // We might optionally load from localStorage here for persistence in mock mode
+      return; 
     }
 
     const uid = firebaseUser.uid;
@@ -54,17 +57,28 @@ export function useBatchManager(
     return () => unsubscribe();
   }, [firebaseUser, db]);
 
+  // --- Actions ---
+
   const addBatch = useCallback(
     async (newBatchData: Omit<Batch, 'id' | 'createdAt' | 'updatedAt'>): Promise<Batch> => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated or DB not available.');
-      const collRef = collection(db, 'users', firebaseUser.uid, 'batches');
+      const now = new Date().toISOString();
       const docData = {
         ...newBatchData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       };
-      const docRef = await addDoc(collRef, docData);
-      return { ...docData, id: docRef.id } as Batch;
+
+      if (firebaseUser && db) {
+        const collRef = collection(db, 'users', firebaseUser.uid, 'batches');
+        const docRef = await addDoc(collRef, docData);
+        return { ...docData, id: docRef.id } as Batch;
+      } else {
+        // Mock Mode: Add to local state
+        const newId = `mock-batch-${Date.now()}`;
+        const newBatch = { ...docData, id: newId } as Batch;
+        setBatches(prev => [newBatch, ...prev]);
+        return newBatch;
+      }
     },
     [firebaseUser, db]
   );
@@ -80,19 +94,29 @@ export function useBatchManager(
 
   const updateBatch = useCallback(
     async (updatedBatch: Batch) => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated');
-      const docRef = doc(db, 'users', firebaseUser.uid, 'batches', updatedBatch.id);
-      await updateDoc(docRef, { ...updatedBatch, updatedAt: new Date().toISOString() });
+      if (firebaseUser && db) {
+        const docRef = doc(db, 'users', firebaseUser.uid, 'batches', updatedBatch.id);
+        await updateDoc(docRef, { ...updatedBatch, updatedAt: new Date().toISOString() });
+      } else {
+        // Mock Mode
+        setBatches(prev => prev.map(b => b.id === updatedBatch.id ? { ...updatedBatch, updatedAt: new Date().toISOString() } : b));
+      }
     },
     [firebaseUser, db]
   );
 
   const deleteBatch = useCallback(
     async (id: string) => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated');
       const batchToDelete = batches.find((b) => b.id === id);
-      const docRef = doc(db, 'users', firebaseUser.uid, 'batches', id);
-      await deleteDoc(docRef);
+      
+      if (firebaseUser && db) {
+        const docRef = doc(db, 'users', firebaseUser.uid, 'batches', id);
+        await deleteDoc(docRef);
+      } else {
+        // Mock Mode
+        setBatches(prev => prev.filter(b => b.id !== id));
+      }
+      
       if (batchToDelete) addToast(`Bake "${batchToDelete.name}" deleted.`, 'info');
     },
     [firebaseUser, db, batches, addToast]

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
@@ -128,7 +129,7 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
 };
 
 const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, onLoadAndNavigate }) => {
-  const { user, batches, updateBatch, addBatch, deleteBatch } = useUser();
+  const { user, batches, updateBatch, addBatch, deleteBatch, hasProAccess, openPaywall } = useUser();
   const { t } = useTranslation();
   const { addToast } = useToast();
 
@@ -181,6 +182,15 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
 
   const handleDuplicate = async () => {
       if(!editableBatch) return;
+      
+      // --- BATCH LIMIT CHECK ---
+      const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
+      if (!hasProAccess && savedBatches.length >= 1) {
+          openPaywall('mylab');
+          return;
+      }
+      // -------------------------
+
       const now = new Date().toISOString();
       // Deep copy and update necessary fields
       const newBatchData: Omit<Batch, 'id' | 'createdAt'|'updatedAt'> = {
@@ -203,6 +213,10 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
   };
 
   const handleExportJSON = () => {
+    if (!hasProAccess) {
+        openPaywall('mylab');
+        return;
+    }
     if (!editableBatch) return;
     try {
       exportBatchToJSON(editableBatch, t);
@@ -212,6 +226,10 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
   };
 
   const handleExportPDF = () => {
+    if (!hasProAccess) {
+        openPaywall('mylab');
+        return;
+    }
     if (!editableBatch) return;
     try {
       exportBatchToPDF(editableBatch, t);

@@ -1,13 +1,13 @@
 
 import { getFirestore, Firestore } from "firebase/firestore";
-import { firebaseApp } from "./app";
+import { app } from "./app";
 
 export let db: Firestore | null = null;
 
-if (firebaseApp) {
+if (app) {
   try {
-    db = getFirestore(firebaseApp);
-  } catch (error) {
-    console.error("Failed to initialize Firestore:", error);
+    db = getFirestore(app);
+  } catch (e) {
+    console.warn("Firebase Firestore failed to initialize", e);
   }
 }

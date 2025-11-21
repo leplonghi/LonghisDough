@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import {
   User,
@@ -101,10 +102,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: appUser.email || '',
         avatar: appUser.avatar,
         isPro: appUser.isPro,
+        plan: appUser.plan,
         trialEndsAt: appUser.trialEndsAt,
       });
     } else {
       setUser(null);
+      // Clear data on logout
+      setOvens([]);
+      setLevains([]);
+      setGoals([]);
+      setTestSeries([]);
     }
   }, [appUser]);
 
@@ -116,7 +123,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       postProcess?: (item: any) => any
     ) => {
       if (!firebaseUser || !db) {
-        setter([]);
+        // DB not available, do not clear setter here to allow mock data to persist in state
         return () => {};
       }
       const collRef = collection(db, 'users', firebaseUser.uid, collectionName);
@@ -181,6 +188,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const userRef = doc(db, 'users', firebaseUser.uid);
         await updateDoc(userRef, updatedData);
       }
+      // Update local state immediately for responsiveness/mock
+      setUser(prev => prev ? { ...prev, ...updatedData } : null);
     },
     [user, firebaseUser]
   );
@@ -198,36 +207,61 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUserSettings((prev: any) => ({ ...prev, preferredFlourId: id }));
   }, []);
 
-  // Helpers for CRUD
+  // Helpers for CRUD - Mock Aware
   const createDoc = useCallback(
-    async (collectionName: string, data: any) => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated');
-      const collRef = collection(db, 'users', firebaseUser.uid, collectionName);
+    async (collectionName: string, data: any, stateSetter?: React.Dispatch<React.SetStateAction<any[]>>) => {
+      const now = new Date().toISOString();
       const docData = {
         ...data,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       };
-      const docRef = await addDoc(collRef, docData);
-      return { ...docData, id: docRef.id };
+
+      if (firebaseUser && db) {
+        const collRef = collection(db, 'users', firebaseUser.uid, collectionName);
+        const docRef = await addDoc(collRef, docData);
+        return { ...docData, id: docRef.id };
+      } else {
+        // Mock Mode
+        const newId = `mock-${collectionName}-${Date.now()}`;
+        const newItem = { ...docData, id: newId };
+        if (stateSetter) {
+            stateSetter(prev => [newItem, ...prev]);
+        }
+        return newItem;
+      }
     },
     [firebaseUser]
   );
 
   const updateDocFn = useCallback(
-    async (collectionName: string, id: string, data: any) => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated');
-      const docRef = doc(db, 'users', firebaseUser.uid, collectionName, id);
-      await updateDoc(docRef, { ...data, updatedAt: new Date().toISOString() });
+    async (collectionName: string, id: string, data: any, stateSetter?: React.Dispatch<React.SetStateAction<any[]>>) => {
+      const update = { ...data, updatedAt: new Date().toISOString() };
+      
+      if (firebaseUser && db) {
+        const docRef = doc(db, 'users', firebaseUser.uid, collectionName, id);
+        await updateDoc(docRef, update);
+      } else {
+        // Mock Mode
+        if (stateSetter) {
+            stateSetter(prev => prev.map(item => item.id === id ? { ...item, ...update } : item));
+        }
+      }
     },
     [firebaseUser]
   );
 
   const deleteDocFn = useCallback(
-    async (collectionName: string, id: string) => {
-      if (!firebaseUser || !db) throw new Error('User not authenticated');
-      const docRef = doc(db, 'users', firebaseUser.uid, collectionName, id);
-      await deleteDoc(docRef);
+    async (collectionName: string, id: string, stateSetter?: React.Dispatch<React.SetStateAction<any[]>>) => {
+      if (firebaseUser && db) {
+        const docRef = doc(db, 'users', firebaseUser.uid, collectionName, id);
+        await deleteDoc(docRef);
+      } else {
+        // Mock Mode
+        if (stateSetter) {
+            stateSetter(prev => prev.filter(item => item.id !== id));
+        }
+      }
     },
     [firebaseUser]
   );
@@ -235,23 +269,26 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Ovens
   const addOven = useCallback(
     (newOvenData: Omit<Oven, 'id' | 'isDefault'>) =>
-      createDoc('ovens', { ...newOvenData, isDefault: ovens.length === 0 }),
+      createDoc('ovens', { ...newOvenData, isDefault: ovens.length === 0 }, setOvens),
     [createDoc, ovens.length]
   );
   const updateOven = useCallback(
-    (updatedOven: Oven) => updateDocFn('ovens', updatedOven.id, updatedOven),
+    (updatedOven: Oven) => updateDocFn('ovens', updatedOven.id, updatedOven, setOvens),
     [updateDocFn]
   );
-  const deleteOven = useCallback((id: string) => deleteDocFn('ovens', id), [deleteDocFn]);
+  const deleteOven = useCallback((id: string) => deleteDocFn('ovens', id, setOvens), [deleteDocFn]);
   const setDefaultOven = useCallback(
     async (id: string) => {
-      if (!firebaseUser || !db) return;
-      const batch = writeBatch(db);
-      ovens.forEach((oven) => {
-        const docRef = doc(db, 'users', firebaseUser.uid, 'ovens', oven.id);
-        batch.update(docRef, { isDefault: oven.id === id });
-      });
-      await batch.commit();
+      if (firebaseUser && db) {
+        const batch = writeBatch(db);
+        ovens.forEach((oven) => {
+            const docRef = doc(db, 'users', firebaseUser.uid, 'ovens', oven.id);
+            batch.update(docRef, { isDefault: oven.id === id });
+        });
+        await batch.commit();
+      } else {
+        setOvens(prev => prev.map(o => ({...o, isDefault: o.id === id})));
+      }
     },
     [firebaseUser, ovens]
   );
@@ -271,7 +308,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isDefault: levains.length === 0,
         feedingHistory: [],
       };
-      const newLevain = await createDoc('levains', data);
+      const newLevain = await createDoc('levains', data, setLevains);
       if (user) logEvent('levain_pet_created', { userId: user.email, levainId: newLevain.id });
     },
     [createDoc, levains.length, user]
@@ -279,23 +316,26 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const updateLevain = useCallback(
     async (updatedData: Partial<Levain> & { id: string }) => {
-      await updateDocFn('levains', updatedData.id, updatedData);
+      await updateDocFn('levains', updatedData.id, updatedData, setLevains);
       if (user)
         logEvent('levain_pet_profile_updated', { userId: user.email, levainId: updatedData.id });
     },
     [updateDocFn, user]
   );
 
-  const deleteLevain = useCallback((id: string) => deleteDocFn('levains', id), [deleteDocFn]);
+  const deleteLevain = useCallback((id: string) => deleteDocFn('levains', id, setLevains), [deleteDocFn]);
   const setDefaultLevain = useCallback(
     async (id: string) => {
-      if (!firebaseUser || !db) return;
-      const batch = writeBatch(db);
-      levains.forEach((l) => {
-        const docRef = doc(db, 'users', firebaseUser.uid, 'levains', l.id);
-        batch.update(docRef, { isDefault: l.id === id });
-      });
-      await batch.commit();
+      if (firebaseUser && db) {
+        const batch = writeBatch(db);
+        levains.forEach((l) => {
+            const docRef = doc(db, 'users', firebaseUser.uid, 'levains', l.id);
+            batch.update(docRef, { isDefault: l.id === id });
+        });
+        await batch.commit();
+      } else {
+        setLevains(prev => prev.map(l => ({...l, isDefault: l.id === id})));
+      }
     },
     [firebaseUser, levains]
   );
@@ -307,11 +347,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const now = new Date().toISOString();
       const newEvent = { id: crypto.randomUUID(), date: now, ...eventData };
       const updatedHistory = [newEvent, ...levain.feedingHistory];
+      
       await updateDocFn('levains', levainId, {
         feedingHistory: updatedHistory,
         lastFeeding: now,
         status: 'ativo',
-      });
+      }, setLevains);
+      
       if (user) logEvent('levain_pet_feeding_logged', { userId: user.email, levainId });
     },
     [levains, updateDocFn, user]
@@ -319,13 +361,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const importLevains = useCallback(
     async (levainsToImport: Levain[]) => {
-      if (!firebaseUser || !db) return;
-      const batch = writeBatch(db);
-      levainsToImport.forEach((levain) => {
-        const docRef = doc(collection(db, 'users', firebaseUser.uid, 'levains'));
-        batch.set(docRef, levain);
-      });
-      await batch.commit();
+      if (firebaseUser && db) {
+        const batch = writeBatch(db);
+        levainsToImport.forEach((levain) => {
+            const docRef = doc(collection(db, 'users', firebaseUser.uid, 'levains'));
+            batch.set(docRef, levain);
+        });
+        await batch.commit();
+      } else {
+        setLevains(prev => [...levainsToImport, ...prev]);
+      }
     },
     [firebaseUser]
   );
@@ -335,7 +380,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     async (
       goalData: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'>
     ): Promise<Goal> => {
-      const newGoal = await createDoc('goals', { ...goalData, status: 'ativo', progress: 0 });
+      const newGoal = await createDoc('goals', { ...goalData, status: 'ativo', progress: 0 }, setGoals);
       addToast('New goal created!', 'success');
       return newGoal as Goal;
     },
@@ -343,21 +388,21 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
   const updateGoal = useCallback(
     async (updatedData: any) => {
-      await updateDocFn('goals', updatedData.id, updatedData);
+      await updateDocFn('goals', updatedData.id, updatedData, setGoals);
       addToast('Goal updated.', 'info');
     },
     [updateDocFn, addToast]
   );
   const deleteGoal = useCallback(
     async (id: string) => {
-      await deleteDocFn('goals', id);
+      await deleteDocFn('goals', id, setGoals);
       addToast('Goal deleted.', 'info');
     },
     [deleteDocFn, addToast]
   );
   const completeGoal = useCallback(
     async (id: string) => {
-      await updateDocFn('goals', id, { status: 'concluido', progress: 100 });
+      await updateDocFn('goals', id, { status: 'concluido', progress: 100 }, setGoals);
       addToast('Goal completed!', 'success');
     },
     [updateDocFn, addToast]
@@ -368,7 +413,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     async (
       seriesData: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>
     ): Promise<TestSeries> => {
-      const newSeries = await createDoc('testSeries', { ...seriesData, relatedBakes: [] });
+      const newSeries = await createDoc('testSeries', { ...seriesData, relatedBakes: [] }, setTestSeries);
       addToast(`Test series created.`, 'success');
       return newSeries as TestSeries;
     },
@@ -376,14 +421,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
   const updateTestSeries = useCallback(
     async (updatedData: any) => {
-      await updateDocFn('testSeries', updatedData.id, updatedData);
+      await updateDocFn('testSeries', updatedData.id, updatedData, setTestSeries);
       addToast('Series updated.', 'info');
     },
     [updateDocFn, addToast]
   );
   const deleteTestSeries = useCallback(
     async (id: string) => {
-      await deleteDocFn('testSeries', id);
+      await deleteDocFn('testSeries', id, setTestSeries);
       addToast('Series deleted.', 'info');
     },
     [deleteDocFn, addToast]
@@ -394,7 +439,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (series && !series.relatedBakes.includes(bakeId)) {
         await updateDocFn('testSeries', seriesId, {
           relatedBakes: [...series.relatedBakes, bakeId],
-        });
+        }, setTestSeries);
         addToast('Bake associated successfully!', 'success');
       } else {
         addToast('Bake already associated.', 'info');
@@ -406,7 +451,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Entitlements
   const grantProAccess = useCallback(() => {
     if (user && firebaseUser) {
-      updateUser({ isPro: true });
+      updateUser({ isPro: true, plan: 'pro' });
     }
     setIsSessionPro(true);
   }, [user, updateUser, firebaseUser]);
@@ -420,7 +465,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const isPassOnCooldown = false;
 
   const value: UserContextType = {
-    isAuthenticated: !!firebaseUser,
+    isAuthenticated: !!firebaseUser || (!!appUser && !db), // Authenticated if user exists, even if DB is null (Mock)
     user,
     login,
     logout,

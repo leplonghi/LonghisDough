@@ -151,7 +151,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         <select
           id={name}
           name={name}
-          value={formData[name] || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
         >
@@ -166,7 +166,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           type={type}
           id={name}
           name={name}
-          value={(formData[name] as string) || ''}
+          value={(formData[name] as any) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 sm:text-sm"
           disabled={name === 'email'}
