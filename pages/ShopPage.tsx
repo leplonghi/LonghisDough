@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SHOP_PRODUCTS, AffiliateProduct } from '../data/affiliateLinks';
+import { AFFILIATE_LINKS, AffiliateProduct } from '../data/affiliateLinks';
 import { ShoppingBagIcon, ExternalLinkIcon, InfoIcon } from '../components/IconComponents';
 
 const ProductCard: React.FC<{ product: AffiliateProduct }> = ({ product }) => (
@@ -35,10 +35,10 @@ const ShopSection: React.FC<{ title: string; products: AffiliateProduct[] }> = (
 );
 
 const ShopPage: React.FC = () => {
-  const tools = SHOP_PRODUCTS.filter(p => p.category === 'tools');
-  const ovens = SHOP_PRODUCTS.filter(p => p.category === 'ovens');
-  const ingredients = SHOP_PRODUCTS.filter(p => p.category === 'ingredients');
-  const books = SHOP_PRODUCTS.filter(p => p.category === 'books');
+  const tools = AFFILIATE_LINKS.filter(p => p.category === 'tools');
+  const ovens = AFFILIATE_LINKS.filter(p => p.category === 'ovens');
+  const ingredients = AFFILIATE_LINKS.filter(p => p.category === 'ingredients');
+  const books = AFFILIATE_LINKS.filter(p => p.category === 'books');
 
   return (
     <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">

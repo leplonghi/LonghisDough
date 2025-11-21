@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { SunIcon, MoonIcon, ComputerDesktopIcon } from './IconComponents';
-import { useTranslation } from '../i18n';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -11,7 +9,6 @@ interface ThemeToggleProps {
 }
 
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, setTheme }) => {
-  const { t } = useTranslation();
   const cycleTheme = () => {
     if (theme === 'light') setTheme('dark');
     else if (theme === 'dark') setTheme('system');
@@ -19,9 +16,9 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, setTheme }) => {
   };
 
   const getLabel = () => {
-    if (theme === 'light') return t('header.switch_to_dark');
-    if (theme === 'dark') return t('header.switch_to_system'); // Updated to system
-    return t('header.switch_to_light'); // Fallback to "Switch to light"
+    if (theme === 'light') return 'Mudar para tema escuro';
+    if (theme === 'dark') return 'Mudar para tema do sistema';
+    return 'Mudar para tema claro';
   }
 
   return (

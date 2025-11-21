@@ -3,10 +3,10 @@
 // Em um projeto de produção, estes valores devem ser carregados a partir de variáveis de ambiente.
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyDrf_YOUR_API_KEY_HERE_EXAMPLE",
-  authDomain: "doughlabpro-example.firebaseapp.com",
-  projectId: "doughlabpro-example",
-  storageBucket: "doughlabpro-example.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:234567890:web:abcdef1234567890abcdef"
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };

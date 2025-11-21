@@ -4,30 +4,23 @@ import { DoughConfig, DoughResult, IngredientConfig, YeastType, FermentationTech
 // --- Helpers ---
 
 export function getBaseFlour(ingredients: IngredientConfig[]): IngredientConfig | undefined {
-  // In blend logic, we might have multiple. This usually returns the first one or the one with highest %.
-  return ingredients.filter(i => i.role === 'flour').sort((a, b) => b.bakerPercentage - a.bakerPercentage)[0];
+  return ingredients.find(i => i.role === 'flour');
 }
 
 // --- Normalization Logic ---
 
 export function normalizeDoughConfigWithIngredients(config: DoughConfig): DoughConfig {
-  // Check if we already have ingredients populated (e.g. from state or presets)
   if (config.ingredients && config.ingredients.length > 0) {
-    // Even if populated, we need to ensure specific dynamic values (like water from slider) 
-    // are updating the ingredient list if they haven't been manually overridden.
-    // However, for the normalization step (initial structure), we return as is if structure exists.
-    return config; 
+    return config; // Already has ingredients
   }
 
-  // Build initial ingredients from legacy fields
+  // Build ingredients from legacy fields
   const ingredients: IngredientConfig[] = [];
 
-  // 1. Base Flour (100%) - Uses the config.flourId
-  // If this was a blend, the config.ingredients would typically already exist from the UI.
-  // This fallback creates a single flour entry.
+  // 1. Base Flour (100%)
   ingredients.push({
-    id: config.flourId || 'generic_all_purpose',
-    name: 'Farinha', // Will be updated by UI lookup usually
+    id: 'base-flour',
+    name: 'Farinha',
     type: 'solid',
     bakerPercentage: 100,
     role: 'flour'
@@ -74,6 +67,9 @@ export function normalizeDoughConfigWithIngredients(config: DoughConfig): DoughC
   }
 
   // 6. Yeast
+  // Note: Pre-ferments (Levain/Biga/Poolish) are handled separately in calculation logic 
+  // regarding distribution, but here we add the "yeast component" percentage.
+  // If using Sourdough Starter/Levain, we add it as an ingredient.
   if ([YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType)) {
      ingredients.push({
          id: 'levain',
@@ -119,9 +115,6 @@ export function syncIngredientsFromConfig(config: DoughConfig): IngredientConfig
         if (ing.role === 'sugar') return { ...ing, bakerPercentage: config.sugar || 0 };
         if (ing.role === 'yeast' || ing.role === 'starter') return { ...ing, bakerPercentage: config.yeastPercentage };
         
-        // Note: We do NOT sync 'flour' percentage here because if it's a blend, 
-        // the percentage is managed by the Blend Editor, not a global slider.
-        
         return ing;
     });
     return ingredients;
@@ -140,58 +133,48 @@ export const calculateDoughUniversal = (
     const normalizedConfig = normalizeDoughConfigWithIngredients(config);
     const ingredients = normalizedConfig.ingredients || [];
 
-    // 1. Calculate Total Target Weight
-    let totalTargetWeight = (config.numPizzas || 0) * (config.doughBallWeight || 0) * (config.scale || 1);
+    // 1. Calculate Total Flour Weight
+    // Standard calc: Total Dough = NumPizzas * BallWeight * Scale
+    let totalTargetWeight = config.numPizzas * config.doughBallWeight * config.scale;
     
-    // Safe guard for NaN/Infinity in inputs
-    if (isNaN(totalTargetWeight) || totalTargetWeight < 0) totalTargetWeight = 0;
+    // If calculating by total flour
+    if (calculationMode === 'flour' && config.totalFlour) {
+        // This path is slightly different, but for now let's stick to mass mode as primary for V1 universal
+        // or derive target weight from total flour if needed.
+    }
 
     // Calculate Sum of Percentages
-    // IMPORTANT: For blends, multiple ingredients have role='flour'. 
-    // Their percentages should sum to 100% ideally, but we sum everything to get the divisor.
     let totalPercentage = 0;
     ingredients.forEach(ing => {
-        totalPercentage += (ing.bakerPercentage || 0);
+        totalPercentage += ing.bakerPercentage;
     });
 
     // Calculate Flour Weight (The Base)
-    // In universal calculation, "Total Flour" is the reference 100%.
-    // If calculationMode is 'flour', config.totalFlour IS the 100% base.
-    let totalFlourBase = 0;
+    // If we are in flour mode, we use config.totalFlour directly
+    let totalFlour = 0;
     if (calculationMode === 'flour' && config.totalFlour) {
-        totalFlourBase = config.totalFlour;
+        totalFlour = config.totalFlour;
         // Re-calculate total dough weight
-        totalTargetWeight = totalFlourBase * (totalPercentage / 100);
+        totalTargetWeight = totalFlour * (totalPercentage / 100);
     } else {
-        // Mass mode: Total Weight / (Sum of % / 100)
-        // E.g. 1000g / (165/100) = 606g Total Flour
-        if (totalPercentage > 0) {
-             totalFlourBase = totalTargetWeight / (totalPercentage / 100);
-        } else {
-             totalFlourBase = 0;
-        }
+        // Mass mode
+        totalFlour = totalTargetWeight * (100 / totalPercentage);
     }
-    
-    // Safe guard
-    if (isNaN(totalFlourBase)) totalFlourBase = 0;
 
     // Calculate Individual Weights
     const ingredientWeights = ingredients.map(ing => ({
         id: ing.id,
         name: ing.name,
-        weight: totalFlourBase * ((ing.bakerPercentage || 0) / 100),
+        weight: totalFlour * (ing.bakerPercentage / 100),
         role: ing.role,
-        bakerPercentage: ing.bakerPercentage || 0
+        bakerPercentage: ing.bakerPercentage
     }));
 
     // Map to DoughResult structure for UI Compatibility
-    // Aggregating all flours for the 'totalFlour' field in result
-    const aggregatedFlourWeight = ingredientWeights
-        .filter(i => i.role === 'flour')
-        .reduce((sum, i) => sum + i.weight, 0);
+    // We need to separate Pre-ferment vs Final Dough logic here.
 
     const result: DoughResult = {
-        totalFlour: aggregatedFlourWeight,
+        totalFlour: totalFlour,
         totalWater: 0,
         totalSalt: 0,
         totalOil: 0,
@@ -215,28 +198,28 @@ export const calculateDoughUniversal = (
     result.totalYeast = yeastOrStarterWeight;
 
     // Handle Pre-ferments Logic (Levain, Poolish, Biga)
+    
     if (config.yeastType === YeastType.SOURDOUGH_STARTER || config.yeastType === YeastType.USER_LEVAIN) {
         // Levain Logic
         const starterWeight = yeastOrStarterWeight;
         let levainHydration = 100; // Default 100%
         if (config.yeastType === YeastType.USER_LEVAIN && userLevain) {
-            levainHydration = userLevain.hydration || 100;
+            levainHydration = userLevain.hydration;
         }
 
         // Calculate flour and water INSIDE the starter
-        // formula: Flour = Total / (1 + hydration/100)
         const starterFlour = starterWeight / (1 + (levainHydration / 100));
         const starterWater = starterWeight - starterFlour;
 
         result.preferment = {
-            flour: isNaN(starterFlour) ? 0 : starterFlour,
-            water: isNaN(starterWater) ? 0 : starterWater,
+            flour: starterFlour,
+            water: starterWater,
             yeast: 0 // Starter itself is the yeast source
         };
 
         result.finalDough = {
-            flour: Math.max(0, aggregatedFlourWeight - starterFlour), // Remaining flour
-            water: Math.max(0, waterWeight - starterWater),
+            flour: totalFlour - starterFlour,
+            water: waterWeight - starterWater,
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
@@ -245,17 +228,22 @@ export const calculateDoughUniversal = (
 
     } else if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
         // Poolish or Biga
-        // Note: Usually preferment is calculated based on Total Flour. 
-        // prefermentFlourPercentage is % of Total Flour.
+        // The 'yeastOrStarterWeight' here is commercial yeast.
+        // We need to calculate the preferment flour amount based on prefermentFlourPercentage
         
-        const prefermentFlour = aggregatedFlourWeight * ((config.prefermentFlourPercentage || 0) / 100);
+        const prefermentFlour = totalFlour * (config.prefermentFlourPercentage / 100);
         let prefermentWater = prefermentFlour; // Poolish default (100%)
         
         if (config.fermentationTechnique === FermentationTechnique.BIGA) {
             prefermentWater = prefermentFlour * 0.5; // Biga (50%)
         }
 
-        const prefermentYeast = prefermentFlour * 0.002; // Hardcoded tiny yeast for preferment
+        // Yeast in preferment (usually small fixed % of preferment flour, e.g. 0.1% - 0.5% or tiny amount)
+        // Legacy logic used: const prefermentYeast = prefermentFlour * 0.002;
+        const prefermentYeast = prefermentFlour * 0.002;
+        
+        // Commercial yeast adjustments for type (ADY/Fresh) should happen on the input percentage
+        // We assume 'yeastOrStarterWeight' is already the correct amount for the specific type chosen in UI
         
         result.preferment = {
             flour: prefermentFlour,
@@ -264,8 +252,8 @@ export const calculateDoughUniversal = (
         };
 
         result.finalDough = {
-            flour: Math.max(0, aggregatedFlourWeight - prefermentFlour),
-            water: Math.max(0, waterWeight - prefermentWater),
+            flour: totalFlour - prefermentFlour,
+            water: waterWeight - prefermentWater,
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
@@ -275,30 +263,13 @@ export const calculateDoughUniversal = (
     } else {
         // Direct Method
         result.finalDough = {
-            flour: aggregatedFlourWeight,
+            flour: totalFlour,
             water: waterWeight,
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
             yeast: yeastOrStarterWeight
         };
-    }
-    
-    // Final sanity check to avoid NaN in result
-    const sanitize = (val: number) => isNaN(val) ? 0 : val;
-    
-    if (result.preferment) {
-        result.preferment.flour = sanitize(result.preferment.flour);
-        result.preferment.water = sanitize(result.preferment.water);
-        result.preferment.yeast = sanitize(result.preferment.yeast);
-    }
-    if (result.finalDough) {
-        result.finalDough.flour = sanitize(result.finalDough.flour);
-        result.finalDough.water = sanitize(result.finalDough.water);
-        result.finalDough.salt = sanitize(result.finalDough.salt);
-        result.finalDough.oil = sanitize(result.finalDough.oil);
-        result.finalDough.sugar = sanitize(result.finalDough.sugar);
-        result.finalDough.yeast = sanitize(result.finalDough.yeast);
     }
 
     return result;

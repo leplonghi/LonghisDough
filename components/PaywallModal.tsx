@@ -12,7 +12,6 @@ import {
 } from './IconComponents';
 import { useUser } from '../contexts/UserProvider';
 import { PaywallOrigin } from '../types';
-import { useTranslation } from '../i18n'; // Import useTranslation
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -29,7 +28,6 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onNavigateToPlans,
   origin
 }) => {
-  const { t } = useTranslation(); // Initialize useTranslation
   const { grantProAccess } = useUser();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('yearly');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -49,52 +47,50 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
   const getHeaderText = () => {
     switch(origin) {
-        case 'levain': return t('paywall.header_levain');
-        case 'mylab': return t('paywall.header_mylab');
-        case 'calculator': return t('paywall.header_calculator');
-        case 'styles': return t('paywall.header_styles');
-        case 'learn': return t('paywall.header_learn');
-        case 'tools': return t('paywall.header_tools');
-        case 'mobile-nav': return t('paywall.header_mobile_nav');
-        default: return t('paywall.header_general');
+        case 'levain': return "Advanced Levain Tools require DoughLabPro Pro";
+        case 'mylab': return "Unlock your full baking history and insights";
+        case 'calculator': return "Export, AI tools and advanced presets are Pro-only";
+        case 'styles': return "Access professional dough styles with Pro";
+        case 'learn': return "Continue reading advanced techniques with Pro";
+        default: return "Unlock DoughLabPro Pro";
     }
   }
 
   const benefits = [
     {
       icon: <BeakerIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_levain_title'),
-      desc: t('paywall.benefit_levain_desc')
+      title: "Unlimited Levain Pets",
+      desc: "Manage multiple starters with advanced vitality analytics."
     },
     {
       icon: <BatchesIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_batches_title'),
-      desc: t('paywall.benefit_batches_desc')
+      title: "Unlimited Batches in MyLab",
+      desc: "Full history, photos, charts and comparisons."
     },
     {
       icon: <SparklesIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_insights_title'),
-      desc: t('paywall.benefit_insights_desc')
+      title: "Advanced Dough Insights",
+      desc: "Understand hydration, fermentation, stability and structure."
     },
     {
       icon: <BookOpenIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_styles_title'),
-      desc: t('paywall.benefit_styles_desc')
+      title: "Complete Styles Library",
+      desc: "Load any professional preset directly into the calculator."
     },
     {
       icon: <DownloadIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_exports_title'),
-      desc: t('paywall.benefit_exports_desc')
+      title: "Smart Exports",
+      desc: "Generate clean PDFs, JSON and batch reports."
     },
     {
       icon: <StarIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_priority_title'),
-      desc: t('paywall.benefit_priority_desc')
+      title: "Priority Access",
+      desc: "New tools, new styles, new intelligence every month."
     },
     {
       icon: <ShieldCheckIcon className="h-5 w-5" />,
-      title: t('paywall.benefit_ads_title'),
-      desc: t('paywall.benefit_ads_desc')
+      title: "Ad-free & Faster Sync",
+      desc: "Optimized for performance."
     }
   ];
 
@@ -110,7 +106,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
-          aria-label={t('common.close')}
+          aria-label="Close"
         >
           <CloseIcon className="h-5 w-5" />
         </button>
@@ -124,7 +120,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             {getHeaderText()}
           </h2>
           <p className="mt-2 text-lg text-slate-600">
-            {t('paywall.subtitle')}
+            Experience the full power of dough engineering.
           </p>
         </div>
 
@@ -155,15 +151,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                       onClick={() => setBillingCycle('monthly')}
                       className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${billingCycle === 'monthly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
                    >
-                      {t('paywall.monthly_button')}
+                      Monthly
                    </button>
                    <button 
                       onClick={() => setBillingCycle('yearly')}
                       className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
                    >
-                      {t('paywall.yearly_button')}
+                      Yearly
                       <span className="bg-lime-500 text-white text-[10px] px-1.5 py-0.5 rounded-full uppercase font-bold">
-                        {t('paywall.save_badge')}
+                        Save 18%
                       </span>
                    </button>
                 </div>
@@ -175,13 +171,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                         {billingCycle === 'yearly' ? '$79' : '$8'}
                     </span>
                     <span className="text-slate-400 font-medium">
-                         /{billingCycle === 'yearly' ? t('common.year') : t('common.month')}
+                         /{billingCycle === 'yearly' ? 'year' : 'month'}
                     </span>
                 </div>
                 <p className="text-slate-400 text-sm mt-1">
                     {billingCycle === 'yearly' 
-                        ? t('paywall.billed_annually')
-                        : t('paywall.flexible_plan')}
+                        ? 'Just $6.58/month, billed annually.' 
+                        : 'Flexible plan, cancel anytime.'}
                 </p>
              </div>
 
@@ -191,25 +187,26 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 className="mt-6 w-full py-3.5 px-6 rounded-xl bg-lime-500 hover:bg-lime-400 text-slate-900 font-bold text-lg shadow-lg shadow-lime-900/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
              >
                 {isProcessing ? (
-                    <span>{t('paywall.processing')}</span>
+                    <span>Processing...</span>
                 ) : (
                     <>
-                        <span>{t('paywall.start_trial_button')}</span>
+                        <span>Start your 7-day free trial</span>
                         <span className="text-xs bg-slate-900/10 px-2 py-0.5 rounded font-medium">
-                           {t('paywall.then_price_yearly')} {billingCycle === 'yearly' ? '$79/yr' : t('paywall.then_price_monthly', { price: '$8/mo' })}
+                           Then {billingCycle === 'yearly' ? '$79/yr' : '$8/mo'}
                         </span>
                     </>
                 )}
              </button>
              
              <p className="text-center text-xs text-slate-500 mt-3">
-                {t('paywall.trial_notice')}
+                Instant access to all Pro tools. Cancel anytime before the trial ends. 
+                <br className="hidden md:block"/> Card required. You will not be charged if you cancel before day 7.
              </p>
           </div>
 
           <div className="text-center">
               <button onClick={onClose} className="text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors">
-                  {t('paywall.maybe_later')}
+                  Maybe later
               </button>
           </div>
 

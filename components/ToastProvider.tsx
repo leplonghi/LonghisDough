@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import { CheckCircleIcon, ExclamationCircleIcon, InfoIcon, CloseIcon } from './IconComponents';
 
@@ -11,7 +10,7 @@ interface ToastMessage {
 }
 
 interface ToastContextType {
-  addToast: (toast: Omit<ToastMessage, 'id'>) => void;
+  addToast: (message: string, type: ToastType) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -21,12 +20,10 @@ let toastId = 0;
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // FIX: Changed signature to accept a single object with message and type
-  const addToast = useCallback((toast: Omit<ToastMessage, 'id'>) => {
-    setToasts((prevToasts) => [...prevToasts, { id: toastId++, ...toast }]);
+  const addToast = useCallback((message: string, type: ToastType) => {
+    setToasts((prevToasts) => [...prevToasts, { id: toastId++, message, type }]);
   }, []);
 
-  // Define removeToast here
   const removeToast = useCallback((id: number) => {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   }, []);

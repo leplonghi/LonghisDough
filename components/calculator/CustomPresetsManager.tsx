@@ -11,9 +11,9 @@ interface CustomPresetsManagerProps {
 }
 
 const CustomPresetsManager: React.FC<CustomPresetsManagerProps> = ({ currentConfig, onLoadPreset }) => {
-  const { addToast } = useToast();
   const [presets, setPresets] = useState<{ name: string }[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string>('');
+  const { addToast } = useToast();
 
   const refreshPresets = () => {
     const presetList = customPresets.listCustomPresets();
@@ -36,8 +36,7 @@ const CustomPresetsManager: React.FC<CustomPresetsManagerProps> = ({ currentConf
     const name = prompt('Name this preset:');
     if (name && name.trim()) {
       customPresets.saveCustomPreset(name, currentConfig);
-      // FIX: Changed addToast call to conform to new signature
-      addToast({message: `Preset "${name}" saved!`, type: 'success'});
+      addToast(`Preset "${name}" saved!`, 'success');
       refreshPresets();
       setSelectedPreset(name);
     }
@@ -48,8 +47,7 @@ const CustomPresetsManager: React.FC<CustomPresetsManagerProps> = ({ currentConf
     const config = customPresets.loadCustomPreset(selectedPreset);
     if (config) {
       onLoadPreset(config);
-      // FIX: Changed addToast call to conform to new signature
-      addToast({message: `Preset "${selectedPreset}" loaded.`, type: 'info'});
+      addToast(`Preset "${selectedPreset}" loaded.`, 'info');
     }
   };
 
@@ -57,8 +55,7 @@ const CustomPresetsManager: React.FC<CustomPresetsManagerProps> = ({ currentConf
     if (!selectedPreset) return;
     if (window.confirm(`Are you sure you want to delete preset "${selectedPreset}"?`)) {
       customPresets.deleteCustomPreset(selectedPreset);
-      // FIX: Changed addToast call to conform to new signature
-      addToast({message: `Preset "${selectedPreset}" deleted.`, type: 'info'});
+      addToast(`Preset "${selectedPreset}" deleted.`, 'info');
       // After deleting, refresh and reset selection to the first available preset
       const newList = customPresets.listCustomPresets();
       setPresets(newList);

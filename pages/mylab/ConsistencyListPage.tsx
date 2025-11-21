@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { Page, TestSeries } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -8,13 +7,7 @@ import { useTranslation } from '../../i18n';
 import { FlaskIcon, PlusCircleIcon } from '../../components/IconComponents';
 import ConsistencySeriesModal from '../../components/mylab/ConsistencySeriesModal';
 
-interface ConsistencyListPageProps {
-  onNavigate: (page: Page, params?: string) => void;
-}
-
-const ConsistencyListPage: React.FC<ConsistencyListPageProps> = ({ onNavigate }) => {
-    // FIX: The `updateTestSeries` property was missing from `UserContextType` in `types.ts`.
-    // It has been added there. This file's usage was correct once the type was defined.
+const ConsistencyListPage: React.FC<{ onNavigate: (page: Page, params?: string) => void }> = ({ onNavigate }) => {
     const { testSeries, addTestSeries, updateTestSeries } = useUser();
     const { t } = useTranslation();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,14 +18,11 @@ const ConsistencyListPage: React.FC<ConsistencyListPageProps> = ({ onNavigate })
         setIsModalOpen(true);
     };
 
+    // FIX: Make function async to handle promises from context.
     const handleSaveSeries = async (seriesData: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'> | (Partial<TestSeries> & { id: string })) => {
         if ('id' in seriesData) {
             await updateTestSeries(seriesData);
         } else {
-            // FIX: The call to `addTestSeries` expects a single argument of type Omit<TestSeries, ...>.
-            // The `seriesData` variable already correctly holds this type. The "expected 13 arguments"
-            // error was a misleading message from TypeScript; the actual problem was a malformed type
-            // in `types.ts` that made `Omit` fail. Once `types.ts` is corrected, this line is valid.
             await addTestSeries(seriesData);
         }
         setIsModalOpen(false);

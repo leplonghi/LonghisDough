@@ -119,11 +119,6 @@ export interface IngredientConfig {
   manualOverride?: boolean; // If true, sliders won't update this ingredient
 }
 
-export interface CustomIngredientDefinition {
-    name: string;
-    type: 'solid' | 'liquid';
-}
-
 export interface DoughConfig {
   bakeType: BakeType;
   recipeStyle: RecipeStyle;
@@ -150,8 +145,8 @@ export interface DoughConfig {
   prefermentFlourPercentage: number;
   scale: number;
   notes: string;
-  bakingTempC: number;
   levainId?: string | null; 
+  bakingTempC: number;
 }
 
 export interface DoughIngredients {
@@ -229,28 +224,19 @@ export enum Gender {
   PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY',
 }
 
-export type UserRole = 'user' | 'admin';
-export type SubscriptionPlan = 'free' | 'pro';
-
 export interface User {
-  uid: string;
   name: string;
-  email: string | null;
-  displayName: string | null;
+  email: string;
   avatar?: string;
   birthDate?: string;
   gender?: Gender;
   
   // Subscription & Permissions
-  role: UserRole;
-  plan: SubscriptionPlan;
-  isPro: boolean;
-  trialEndsAt: string | null; // ISO String or null
+  isPro?: boolean;
+  trialEndsAt?: string | null; // ISO String or null
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
 }
-
-export type AppUser = User;
 
 export interface Oven {
     id: string;
@@ -281,11 +267,11 @@ export interface Levain {
   name: string;
   hydration: number; 
   baseFlourType?: string;
-  createdAt: string; // FIX: Added createdAt to Levain
+  createdAt: string; 
   lastFeeding: string; 
   totalWeight: number; 
   isDefault: boolean;
-  status: LevainStatus; // FIX: Added status to Levain
+  status: LevainStatus;
   typicalUse?: string;
   notes?: string; 
   feedingHistory: FeedingEvent[];
@@ -323,14 +309,12 @@ export interface TestSeries {
   relatedBakes: string[]; 
 }
 
-// Added 'tools' and 'mobile-nav' to PaywallOrigin
-export type PaywallOrigin = 'levain' | 'mylab' | 'calculator' | 'styles' | 'learn' | 'general' | 'batch' | 'tools' | 'mobile-nav';
+export type PaywallOrigin = 'levain' | 'mylab' | 'calculator' | 'styles' | 'learn' | 'general';
 
 export interface UserContextType {
   isAuthenticated: boolean;
-  user: AppUser | null; // Changed type from User to AppUser
-  login: () => void;
-  devLogin: (type: 'admin' | 'free') => void; // Added for dev testing
+  user: User | null;
+  login: (user: User) => void;
   logout: () => void;
   updateUser: (updatedData: Partial<User>) => void;
   
@@ -347,17 +331,17 @@ export interface UserContextType {
   closePaywall: () => void;
 
   ovens: Oven[];
-  addOven: (oven: Omit<Oven, 'id' | 'isDefault'>) => Promise<Oven>;
+  addOven: (oven: Omit<Oven, 'id' | 'isDefault'>) => void;
   updateOven: (oven: Oven) => void;
   deleteOven: (id: string) => void;
   setDefaultOven: (id: string) => void;
   levains: Levain[];
-  addLevain: (levain: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>) => Promise<Levain>; // FIX: Aligned signature with usage
+  addLevain: (levain: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>) => void;
   updateLevain: (levain: Partial<Levain> & { id: string }) => void;
   deleteLevain: (id: string) => void;
   setDefaultLevain: (id: string) => void;
-  addFeedingEvent: (levainId: string, event: Omit<FeedingEvent, 'id' | 'date'>) => Promise<void>;
-  importLevains: (levainsToImport: Levain[]) => Promise<void>;
+  addFeedingEvent: (levainId: string, event: Omit<FeedingEvent, 'id' | 'date'>) => void;
+  importLevains: (levainsToImport: Levain[]) => void;
   preferredFlourId: string | null;
   setPreferredFlour: (id: string | null) => void;
   batches: Batch[];
@@ -367,25 +351,17 @@ export interface UserContextType {
   createDraftBatch: () => Promise<Batch>;
   goals: Goal[];
   addGoal: (goal: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'>) => Promise<Goal>;
-  updateGoal: (goalData: Partial<Goal> & { id: string }) => Promise<void>;
+  updateGoal: (goal: Partial<Goal> & { id: string }) => void;
   deleteGoal: (id: string) => void;
   completeGoal: (id: string) => void;
-  testSeries: TestSeries[]; // FIX: Added testSeries to UserContextType
-  addTestSeries: (series: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>) => Promise<TestSeries>; // FIX: Added addTestSeries to UserContextType
-  updateTestSeries: (seriesData: Partial<TestSeries> & { id: string }) => Promise<void>; // FIX: Added updateTestSeries to UserContextType
-  deleteTestSeries: (id: string) => void; // FIX: Added deleteTestSeries to UserContextType
-  attachBakeToSeries: (seriesId: string, bakeId: string) => Promise<void>; // FIX: Added attachBakeToSeries to UserContextType
-
-  customIngredientLibrary: CustomIngredientDefinition[]; // FIX: Added customIngredientLibrary to UserContextType
-  addCustomIngredient: (ingredient: CustomIngredientDefinition) => void; // FIX: Added addCustomIngredient to UserContextType
-  
-  createBatchFromStyle: (style: DoughStyleDefinition) => Promise<string>;
-  
-  favoriteStyleIds: string[];
-  toggleStyleFavorite: (id: string) => void;
+  testSeries: TestSeries[];
+  addTestSeries: (series: Omit<TestSeries, 'id' | 'createdAt' | 'updatedAt' | 'relatedBakes'>) => Promise<TestSeries>;
+  updateTestSeries: (series: Partial<TestSeries> & { id: string }) => void;
+  deleteTestSeries: (id: string) => void;
+  attachBakeToSeries: (seriesId: string, bakeId: string) => void;
 }
 
-export type Locale = 'en';
+export type Locale = 'en' | 'pt' | 'es';
 
 export type FormErrors = {
   [key in keyof Partial<DoughConfig>]: string | null;
@@ -405,36 +381,33 @@ export type Page =
   | `batch/${string}`
   | 'mylab/levain'
   | `mylab/levain/${string}`
-  | 'mylab/levain/detail' // FIX: Added 'mylab/levain/detail' to Page type
+  | 'mylab/levain/detail' 
   | 'mylab/receitas'
   | 'mylab/receitas/comparar'
   | 'mylab/massas'
   | 'mylab/farinhas'
+  | 'mylab/fornadas'
   | 'mylab/diario-sensorial'
   | 'mylab/comparacoes'
   | 'mylab/insights'
   | 'mylab/timeline'
   | 'mylab/objetivos'
   | 'mylab/consistency'
-  | 'mylab/consistency/detail' // FIX: Added 'mylab/consistency/detail' to Page type
+  | 'mylab/consistency/detail' 
   | `mylab/consistency/${string}` 
   | 'mylab/levain-pet'
   | 'usermenu'
   | 'styles'
   | 'styles/detail'
   | `styles/${string}`
-  | 'toppings' // Added new topping page
   | 'tools-oven-analysis'
   | 'tools-doughbot'
-  | 'tools-pantry-pizza' // Added new pantry pizza tool
   | 'settings'
   | 'settings/theme'
   | 'settings/language'
   | 'legal'
   | 'legal/terms'
-  | 'terms'
   | 'legal/privacy'
-  | 'privacy'
   | 'legal/cookies'
   | 'legal/eula'
   | 'legal/ip'
@@ -449,6 +422,7 @@ export type Page =
   | 'learn/style-guide'
   | 'learn/glossary'
   | 'learn/oven-science'
+  | 'learn/sensory-guide'
   | 'learn/temperature-control'
   | 'learn/storage'
   | 'learn/hygiene-safety'
@@ -524,6 +498,8 @@ export interface DoughStylePreset {
   recommendedRange?: {
     hydrationMin?: number;
     hydrationMax?: number;
+    saltMin?: number;
+    saltMax?: number;
   };
   preferredFlourProfileId?: string;
   recommendedFermentationHours?: { min: number; max: number; };
@@ -558,7 +534,6 @@ export interface DoughStyleDefinition {
     variations?: string[];
     risks?: string[];
     notes?: string[];
-    references?: string[]; // Added field for technical references
 }
 
 export interface SmartAdjustmentSuggestion {
@@ -843,6 +818,7 @@ export interface LevainStarter {
   hydration: number;
   baseFlourType?: string;
   createdAt: Timestamp;
+  updatedAt: Timestamp;
   status: LevainStatus;
   totalWeight: number;
   notes?: string;

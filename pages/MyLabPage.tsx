@@ -5,24 +5,12 @@ import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import { timeSince } from '../helpers';
 import MyLabLayout from './mylab/MyLabLayout';
-import AuthPlaceholder from '../components/AuthPlaceholder';
 import { 
     BeakerIcon,
     BatchesIcon,
     PlusCircleIcon,
-    ArrowTopRightOnSquareIcon,
-    ChartBarIcon,
-    ClockIcon,
-    SparklesIcon,
-    FlaskIcon,
-    LockClosedIcon
+    ArrowTopRightOnSquareIcon
 } from '../components/IconComponents';
-import { AFFILIATE_PLACEMENTS } from '../data/affiliatePlacements';
-import { AffiliateBlock } from '../components/AffiliateBlock';
-import { isFreeUser, isProUser } from '../lib/permissions'; // Corrigido para lib/permissions
-import ProFeatureLock from '../components/ProFeatureLock';
-import { ProBadge } from '../components/ProBadge';
-import { logEvent } from '../services/analytics'; // Import logEvent
 
 interface MyLabPageProps {
     onNavigate: (page: Page, params?: string) => void;
@@ -30,80 +18,9 @@ interface MyLabPageProps {
     onLoadAndNavigate: (config: any) => void;
 }
 
-const DashboardCard: React.FC<{
-    title: string;
-    icon: React.ReactNode;
-    colorClass: string;
-    children: React.ReactNode;
-    onClick?: () => void;
-    isPro?: boolean;
-}> = ({ title, icon, colorClass, children, onClick, isPro }) => (
-    <div 
-        onClick={onClick}
-        className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all ${onClick ? 'hover:shadow-md cursor-pointer' : ''}`}
-    >
-        <div className="flex items-center gap-2 mb-4">
-            <span className={`p-2 rounded-lg ${colorClass}`}>
-                {icon}
-            </span>
-            <h2 className="text-lg font-bold text-slate-800 flex items-center">
-                {title}
-                {isPro && <ProBadge />}
-            </h2>
-        </div>
-        {children}
-    </div>
-);
-
 const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch }) => {
-  const { user, batches, levains, isAuthenticated, openPaywall } = useUser();
+  const { user, batches, levains } = useUser();
   const { t } = useTranslation();
-
-  React.useEffect(() => {
-    if (user) {
-        // FIX: The logEvent function expects a single object argument with 'name' and 'params'.
-        // The current call site `logEvent({ name: '...', params: { ... } })` is already correct.
-        logEvent({ name: 'levain_pet_opened', params: { userId: user.email } });
-    }
-  }, [user]);
-
-  if (!isAuthenticated) {
-      return <AuthPlaceholder />;
-  }
-
-  // Pro Check for My Lab access
-  if (!isProUser(user)) {
-    return (
-      <MyLabLayout activePage="mylab" onNavigate={onNavigate}>
-        <div className="mx-auto max-w-xl px-4 py-12 text-center">
-          <div className="mb-6 flex justify-center">
-             <div className="rounded-full bg-lime-100 p-4">
-                 <LockClosedIcon className="h-12 w-12 text-lime-600" />
-             </div>
-          </div>
-          <h1 className="mb-3 text-2xl font-bold text-slate-900">
-            My Lab is part of DoughLabPro Pro
-          </h1>
-          <p className="mb-8 text-lg text-slate-600">
-            Saving batches, tracking your history and seeing your evolution are
-            Pro features.
-            <br/>
-            <span className="text-sm text-slate-500 block mt-2">
-                The Free plan lets you experiment with the calculator, but does not store any baking history.
-            </span>
-          </p>
-          <button
-            type="button"
-            onClick={() => openPaywall("mylab")}
-            className="inline-flex items-center gap-2 rounded-lg bg-lime-500 px-6 py-3 text-base font-bold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
-          >
-            <SparklesIcon className="h-5 w-5" />
-            Unlock My Lab with Pro
-          </button>
-        </div>
-      </MyLabLayout>
-    );
-  }
 
   // Greeting Logic
   const getGreeting = () => {
@@ -124,135 +41,130 @@ const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch })
   // Levain Logic
   const mainLevain = useMemo(() => levains.find(l => l.isDefault) || levains[0], [levains]);
 
-  // Affiliate Logic
-  const free = isFreeUser(user);
-  const placement = AFFILIATE_PLACEMENTS.find(
-    (p) => p.context === "mylab_afterFirstBatch"
-  );
-
   return (
     <MyLabLayout activePage="mylab" onNavigate={onNavigate}>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{getGreeting()}</h1>
-        <p className="mt-2 text-lg text-slate-600">Your personal dough laboratory. Record, compare, understand, and evolve.</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <DashboardCard
-          title="Quick Actions"
-          icon={<PlusCircleIcon className="h-6 w-6" />}
-          colorClass="bg-lime-100 text-lime-600"
-        >
-          <div className="space-y-3">
-            <button
-              onClick={() => onCreateDraftBatch()}
-              className="w-full flex items-center gap-3 rounded-lg bg-lime-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-lime-600"
-            >
-              <BatchesIcon className="h-5 w-5" />
-              New Dough Formula
-            </button>
-            <button
-              onClick={() => onNavigate('mylab/levain')}
-              className="w-full flex items-center gap-3 rounded-lg bg-amber-100 px-4 py-2.5 text-sm font-semibold text-amber-800 shadow-sm hover:bg-amber-200"
-            >
-              <BeakerIcon className="h-5 w-5" />
-              Open Levain Pet
-            </button>
-          </div>
-        </DashboardCard>
-
-        {/* Last Bake Summary */}
-        <DashboardCard
-          title="Last Bake"
-          icon={<BatchesIcon className="h-6 w-6" />}
-          colorClass="bg-blue-100 text-blue-600"
-          onClick={lastBatch ? () => onNavigate('batch', lastBatch.id) : undefined}
-        >
-          {lastBatch ? (
-            <div>
-              <p className="text-xl font-bold text-slate-900">{lastBatch.name}</p>
-              <p className="text-sm text-slate-600 mt-1">
-                {t(`form.${lastBatch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: lastBatch.doughConfig.recipeStyle })} • {new Date(lastBatch.createdAt).toLocaleDateString()}
-              </p>
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <span className="text-slate-500">Hydration:</span>
-                <span className="font-semibold text-slate-800">{lastBatch.doughConfig.hydration}%</span>
-              </div>
+        <div className="space-y-8">
+            {/* 1. Greeting & Actions Header */}
+            <div className="rounded-2xl bg-gradient-to-br from-lime-50 to-white border border-lime-100 p-6 sm:p-8 shadow-sm">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">{getGreeting()}</h1>
+                <p className="text-slate-600 mb-6">{t('dashboard.greeting_subtext')}</p>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <button 
+                        onClick={() => onNavigate('calculator')}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-lime-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-lime-600 hover:shadow-lg active:scale-95"
+                    >
+                        <PlusCircleIcon className="h-5 w-5" />
+                        {t('dashboard.action_new_dough')}
+                    </button>
+                    <button 
+                         onClick={() => onNavigate('mylab/fornadas')}
+                         className="flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:bg-slate-50"
+                    >
+                        <BatchesIcon className="h-5 w-5 text-slate-400" />
+                        {t('dashboard.recent_batches_view_all')}
+                    </button>
+                </div>
             </div>
-          ) : (
-            <p className="text-sm text-slate-500 italic py-4">You haven't saved any bakes yet.</p>
-          )}
-        </DashboardCard>
-        
-        {/* Levain Pet Overview */}
-        <DashboardCard
-          title="Levain Pet"
-          icon={<BeakerIcon className="h-6 w-6" />}
-          colorClass="bg-red-100 text-red-600"
-          onClick={() => onNavigate('mylab/levain')}
-        >
-          {mainLevain ? (
-            <div>
-              <p className="text-xl font-bold text-slate-900">{mainLevain.name}</p>
-              <p className="text-sm text-slate-600 mt-1">
-                Status: <span className={`font-semibold ${
-                    mainLevain.status === 'ativo' ? 'text-green-600' :
-                    mainLevain.status === 'precisa_atencao' ? 'text-yellow-600' : 'text-slate-600'
-                }`}>
-                    {mainLevain.status === 'ativo' ? 'Active' : mainLevain.status === 'precisa_atencao' ? 'Needs Attention' : 'Resting'}
-                </span>
-              </p>
-              <div className="mt-3 flex items-center justify-between text-sm">
-                <span className="text-slate-500">Last fed:</span>
-                <span className="font-semibold text-slate-800">{timeSince(mainLevain.lastFeeding, t)} ago</span>
-              </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 2. Levain Pet Card */}
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="p-2 rounded-lg bg-amber-100 text-amber-600">
+                                <BeakerIcon className="h-6 w-6" />
+                            </span>
+                            <h2 className="text-lg font-bold text-slate-800">{t('levain_pet.title')}</h2>
+                        </div>
+                        
+                        {mainLevain ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-slate-900">{mainLevain.name}</h3>
+                                <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                                     <span className={`inline-block h-2.5 w-2.5 rounded-full ${mainLevain.status === 'ativo' ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+                                     <span>{t(`levain_pet.status.${mainLevain.status as LevainStatus}`)}</span>
+                                </div>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    {t('dashboard.levain_status_fed', { time: timeSince(mainLevain.lastFeeding) })}
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-slate-600">{t('dashboard.levain_empty_state')}</p>
+                        )}
+                    </div>
+                    
+                    <div className="mt-6 pt-6 border-t border-slate-100">
+                        {mainLevain ? (
+                            <button 
+                                onClick={() => onNavigate('mylab/levain/detail', mainLevain.id)}
+                                className="text-sm font-semibold text-lime-600 hover:text-lime-700 flex items-center gap-1"
+                            >
+                                {t('dashboard.action_open_levain')} <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => onNavigate('mylab/levain')}
+                                className="text-sm font-semibold text-lime-600 hover:text-lime-700"
+                            >
+                                {t('levain_pet.create_button')} &rarr;
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* 3. Last Batch Card */}
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full">
+                    <div>
+                         <div className="flex items-center gap-2 mb-4">
+                            <span className="p-2 rounded-lg bg-blue-100 text-blue-600">
+                                <BatchesIcon className="h-6 w-6" />
+                            </span>
+                            <h2 className="text-lg font-bold text-slate-800">{t('dashboard.summary_last_batch')}</h2>
+                        </div>
+
+                        {lastBatch ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-slate-900 line-clamp-1">{lastBatch.name}</h3>
+                                <p className="text-sm font-medium text-lime-600 mt-1">
+                                    {t(`form.${lastBatch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: lastBatch.doughConfig.recipeStyle })}
+                                </p>
+                                <div className="mt-3 flex gap-4 text-sm text-slate-500">
+                                    <div>
+                                        <span className="block font-semibold text-slate-700">{lastBatch.doughConfig.hydration}%</span>
+                                        Hydration
+                                    </div>
+                                    <div>
+                                        <span className="block font-semibold text-slate-700">{new Date(lastBatch.createdAt).toLocaleDateString()}</span>
+                                        Date
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <p className="text-slate-600">No bakes registered yet.</p>
+                        )}
+                    </div>
+
+                     <div className="mt-6 pt-6 border-t border-slate-100">
+                        {lastBatch ? (
+                             <button 
+                                onClick={() => onNavigate('batch', lastBatch.id)}
+                                className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                            >
+                                {t('common.details')} <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+                            </button>
+                        ) : (
+                            <button 
+                                onClick={() => onNavigate('calculator')}
+                                className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+                            >
+                                {t('dashboard.action_new_dough')} &rarr;
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
-          ) : (
-            <p className="text-sm text-slate-500 italic py-4">You don't have a Levain Pet yet.</p>
-          )}
-        </DashboardCard>
-
-        {/* Dynamic Affiliate Block */}
-        {free && placement && (
-          <AffiliateBlock placement={placement} />
-        )}
-
-        {/* Insights Teaser */}
-        <DashboardCard
-          title="Insights"
-          icon={<ChartBarIcon className="h-6 w-6" />}
-          colorClass="bg-purple-100 text-purple-600"
-          onClick={() => onNavigate('mylab/insights')}
-        >
-          <p className="text-xl font-bold text-slate-900">Your Baking Patterns</p>
-          <p className="text-sm text-slate-600 mt-1">
-            Discover what makes your dough unique.
-          </p>
-          <div className="mt-3 flex items-center justify-between text-sm">
-            <span className="text-slate-500">Avg. Hydration:</span>
-            <span className="font-semibold text-slate-800">~68%</span>
-          </div>
-        </DashboardCard>
-        
-        {/* Consistency Mode Teaser */}
-        <DashboardCard
-          title="Consistency Mode"
-          icon={<FlaskIcon className="h-6 w-6" />}
-          colorClass="bg-teal-100 text-teal-600"
-          onClick={() => onNavigate('mylab/consistency')}
-        >
-          <p className="text-xl font-bold text-slate-900">Structured Experiments</p>
-          <p className="text-sm text-slate-600 mt-1">
-            Plan and track test series with controlled variables.
-          </p>
-          <div className="mt-3 flex items-center justify-between text-sm">
-            <span className="text-slate-500">Active Series:</span>
-            <span className="font-semibold text-slate-800">{levains.length}</span>
-          </div>
-        </DashboardCard>
-
-      </div>
+        </div>
     </MyLabLayout>
   );
 };

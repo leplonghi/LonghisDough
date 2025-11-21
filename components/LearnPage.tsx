@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useTranslation } from '../../i18n';
-import { Page } from '../../types';
+import { useTranslation } from '../i18n';
+import { Page } from '../types';
 import { 
     AcademicCapIcon, 
     WrenchScrewdriverIcon,
@@ -143,7 +143,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
         {
             page: 'learn/white-sauces',
             title: 'Molhos Brancos e Emulsões',
-            description: 'A ciência da consistência em bases cremosas para pizza.',
+            description: 'A ciência por trás de bases cremosas e seu comportamento no calor.',
             icon: <BeakerIcon className="h-8 w-8" />,
         },
         {
@@ -283,6 +283,12 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
             title: 'Glossário',
             description: 'Um dicionário com os termos técnicos mais importantes da panificação.',
             icon: <ListBulletIcon className="h-8 w-8" />,
+        },
+        {
+            page: 'learn/sensory-guide',
+            title: 'Guia Sensorial',
+            description: 'Aprenda a balancear doce, salgado, ácido, amargo e umami em suas criações.',
+            icon: <BeakerIcon className="h-8 w-8" />,
         },
     ];
 

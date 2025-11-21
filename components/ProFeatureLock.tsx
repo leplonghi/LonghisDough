@@ -1,64 +1,47 @@
+import React from 'react';
+import { useUser } from '../contexts/UserProvider';
+import { StarIcon, LockClosedIcon } from './IconComponents';
+import { PaywallOrigin } from '../types';
 
-import React from "react";
-import { useUser } from "../contexts/UserProvider";
-import { LockClosedIcon, StarIcon } from "./IconComponents";
-import { PaywallOrigin } from "../types";
-
-type ProFeatureLockProps = {
-  origin: PaywallOrigin;
-  title?: string;
-  description?: string;
-  children?: React.ReactNode;
+interface ProFeatureLockProps {
+  children: React.ReactNode;
+  featureName?: string;
   className?: string;
-  featureName?: string; // Kept for backward compatibility but unused in new design
-};
+  origin?: PaywallOrigin;
+}
 
-const ProFeatureLock: React.FC<ProFeatureLockProps> = ({
-  origin,
-  title,
-  description,
-  children,
-  className = "",
-}) => {
+const ProFeatureLock: React.FC<ProFeatureLockProps> = ({ children, featureName, className = "", origin = 'general' }) => {
   const { hasProAccess, openPaywall } = useUser();
+  const hasAccess = hasProAccess;
 
-  if (hasProAccess) {
+  if (hasAccess) {
     return <>{children}</>;
   }
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    openPaywall(origin);
-  };
-
   return (
-    <div className={`relative group ${className}`} onClick={handleClick}>
-      {children && (
-        <div className="pointer-events-none select-none opacity-40 blur-[2px] transition-all duration-300 group-hover:blur-[3px]">
-          {children}
+    <div className={`relative group ${className}`} onClick={(e) => { e.stopPropagation(); openPaywall(origin as PaywallOrigin); }}>
+      <div className="pro-locked select-none pointer-events-none" aria-hidden="true">
+        {children}
+      </div>
+      
+      <div className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer">
+        <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white/90 shadow-lg backdrop-blur-sm border border-slate-200 transition-transform duration-200 group-hover:scale-105">
+            <div className="p-2 bg-lime-100 rounded-full">
+                <LockClosedIcon className="h-6 w-6 text-lime-600" />
+            </div>
+            <div className="text-center">
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                    PRO Feature
+                </h3>
+                {featureName && (
+                    <p className="text-xs text-slate-500 mt-1">{featureName}</p>
+                )}
+            </div>
+            <button className="px-4 py-1.5 text-xs font-bold text-white bg-lime-500 rounded-full shadow-sm hover:bg-lime-600 transition-colors flex items-center gap-1.5">
+                <StarIcon className="h-3 w-3" />
+                Unlock
+            </button>
         </div>
-      )}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
-        <button
-          type="button"
-          className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white/90 px-6 py-4 text-center shadow-lg backdrop-blur-sm transition-transform duration-200 hover:scale-105 hover:shadow-xl"
-        >
-          <div className="mb-2 rounded-full bg-lime-100 p-2 text-lime-600">
-             <LockClosedIcon className="h-5 w-5" />
-          </div>
-          <div className="mb-1 text-sm font-bold text-slate-900">
-            {title || "Pro Feature"}
-          </div>
-          <div className="mb-3 text-xs text-slate-500 max-w-[200px] leading-snug">
-            {description ||
-              "Unlock this tool with DoughLabPro Pro to get full access."}
-          </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-lime-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-lime-600">
-            <StarIcon className="h-3 w-3" />
-            Unlock with Pro
-          </div>
-        </button>
       </div>
     </div>
   );

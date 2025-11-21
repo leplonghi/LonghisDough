@@ -108,14 +108,14 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
             <div className="p-6 sm:p-8 space-y-6">
                  <p className="text-lg text-slate-700 dark:text-slate-200 leading-relaxed">{tutorial.intro}</p>
 
-                <div className="space-y-4 relative">
+                <div className="space-y-4">
                     <DetailSection icon={<QuestionMarkCircleIcon className="h-6 w-6"/>} title={t('learn.why_title')}>
                         {tutorial.why}
                     </DetailSection>
                     
                     {isLocked ? (
-                         <ProFeatureLock origin='learn' title="Continue reading with Pro" description="Deep technical breakdowns, references and advanced methods are available in the Pro plan." className="mt-6">
-                            <div className="filter blur-[4px] pointer-events-none select-none opacity-50">
+                         <ProFeatureLock origin='learn' featureName={`Advanced Guide: ${tutorial.title}`} className="mt-6">
+                            <div className="filter blur-sm pointer-events-none select-none opacity-50">
                                 <DetailSection icon={<ListBulletIcon className="h-6 w-6"/>} title={t('learn.howto_title')}>
                                      {tutorial.howTo}
                                 </DetailSection>
@@ -143,14 +143,13 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
                             className="w-full flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-3 px-4 text-base font-semibold text-white shadow-md transition-all hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
                         >
                             <CalculatorIcon className="h-5 w-5" />
-                            <span>Try in Calculator</span>
+                            <span>Teste na Calculadora</span>
                         </button>
                     </div>
                 )}
             </div>
         </div>
         
-        {!isLocked && (
         <div className="flex-shrink-0 p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
             <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('learn.reference_title')}:</span>
@@ -166,7 +165,6 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
                 </a>
             </div>
         </div>
-        )}
 
       </div>
     </div>

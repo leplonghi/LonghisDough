@@ -6,17 +6,14 @@ import {
     BookOpenIcon, 
     BeakerIcon, 
     FireIcon,
+    InfoIcon,
     ClockIcon,
     ShoppingBagIcon,
     ExternalLinkIcon,
 } from '../../components/IconComponents';
-import { SHOP_PRODUCTS } from '../../data/affiliateLinks';
+// Removed getRecommendedProductsForStyle import as we are hardcoding the new logic structure
+import { AFFILIATE_LINKS } from '../../data/affiliateLinks';
 import ProFeatureLock from '../../components/ProFeatureLock';
-import { useUser } from '../../contexts/UserProvider';
-// Fix: Corrected the import path for the `isFreeUser` function.
-import { isFreeUser } from '../../lib/permissions';
-import { AFFILIATE_PLACEMENTS } from '../../data/affiliatePlacements';
-import { AffiliateBlock } from '../../components/AffiliateBlock';
 
 interface StyleDetailPageProps {
   style: DoughStyleDefinition;
@@ -25,20 +22,7 @@ interface StyleDetailPageProps {
 }
 
 export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadAndNavigate, onBack }) => {
-  const { user, openPaywall } = useUser();
-  const free = isFreeUser(user);
-
-  const pizzaPlacement = AFFILIATE_PLACEMENTS.find(p => p.context === "styles_pizza");
-  const breadPlacement = AFFILIATE_PLACEMENTS.find(p => p.context === "styles_bread");
-
-  const handleLoadClick = () => {
-      if (style.isPro && free) {
-          openPaywall('styles');
-      } else {
-          onLoadAndNavigate(style);
-      }
-  };
-
+  
   const renderRecommendation = () => {
       let text = "";
       let linkId = "";
@@ -59,7 +43,7 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
           linkId = "scale_precision";
       }
 
-      const product = SHOP_PRODUCTS.find(p => p.id === linkId);
+      const product = AFFILIATE_LINKS.find(p => p.id === linkId);
       const url = product ? product.url : '/shop';
 
       return (
@@ -149,14 +133,9 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                     
                     {/* Notes & Risks */}
                     {(style.notes || style.risks) && (
-                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
-                            {/* Feature Lock for Free users on Pro styles */}
-                            {style.isPro && free && (
-                                <ProFeatureLock origin="styles" className="absolute inset-0 z-10" title="Unlock the full style profile" description="Hydration ranges, fermentation windows and risk notes are fully available in the Pro plan." />
-                            )}
-
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {style.risks && (
-                                <div className={`bg-amber-50 p-4 rounded-xl border border-amber-100 ${style.isPro && free ? 'blur-[2px]' : ''}`}>
+                                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
                                     <h3 className="font-bold text-amber-800 mb-2 text-sm uppercase tracking-wide">Watch Out</h3>
                                     <ul className="list-disc list-inside text-sm text-amber-900 space-y-1">
                                         {style.risks.map((r, i) => <li key={i}>{r}</li>)}
@@ -164,7 +143,7 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                                 </div>
                             )}
                              {style.notes && (
-                                <div className={`bg-blue-50 p-4 rounded-xl border border-blue-100 ${style.isPro && free ? 'blur-[2px]' : ''}`}>
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                                     <h3 className="font-bold text-blue-800 mb-2 text-sm uppercase tracking-wide">Chef's Notes</h3>
                                     <ul className="list-disc list-inside text-sm text-blue-900 space-y-1">
                                         {style.notes.map((n, i) => <li key={i}>{n}</li>)}
@@ -177,54 +156,53 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
 
                 {/* Right Column: Parameters & Action */}
                 <div className="space-y-6">
-                     <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 relative">
-                        {style.isPro && free && (
-                            <ProFeatureLock origin="styles" className="absolute inset-0 z-10" title="Technical Params (Pro)" description="Detailed parameters are locked." />
-                        )}
-                        <div className={style.isPro && free ? 'blur-[2px]' : ''}>
-                            <h3 className="font-bold text-slate-900 mb-4">Technical Parameters</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs text-slate-500 uppercase font-semibold">Hydration</p>
-                                    <p className="text-xl font-bold text-slate-800">{style.technical.hydration}%</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
-                                        <ClockIcon className="h-3 w-3" /> Fermentation
-                                    </p>
-                                    <p className="text-base font-medium text-slate-800">{style.technical.fermentation}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
-                                        <FireIcon className="h-3 w-3" /> Oven Temp
-                                    </p>
-                                    <p className="text-base font-medium text-slate-800">{style.technical.bakingTempC}°C</p>
-                                </div>
+                     <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 className="font-bold text-slate-900 mb-4">Technical Parameters</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-xs text-slate-500 uppercase font-semibold">Hydration</p>
+                                <p className="text-xl font-bold text-slate-800">{style.technical.hydration}%</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                    <ClockIcon className="h-3 w-3" /> Fermentation
+                                </p>
+                                <p className="text-base font-medium text-slate-800">{style.technical.fermentation}</p>
+                            </div>
+                             <div>
+                                <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                    <FireIcon className="h-3 w-3" /> Oven Temp
+                                </p>
+                                <p className="text-base font-medium text-slate-800">{style.technical.bakingTempC}°C</p>
                             </div>
                         </div>
                      </div>
 
-                     <button 
-                        onClick={handleLoadClick}
-                        className={`w-full flex items-center justify-center gap-2 rounded-xl py-4 px-6 text-lg font-bold text-white shadow-lg transition-all active:translate-y-0 ${style.isPro && free ? 'bg-slate-800 hover:bg-slate-700' : 'bg-lime-500 hover:bg-lime-600 hover:-translate-y-1 shadow-lime-200'}`}
-                    >
-                        <CalculatorIcon className="h-6 w-6" />
-                        {style.isPro && free ? "Load into Calculator (Pro)" : "Load into Calculator"}
-                    </button>
+                    {style.isPro ? (
+                        <ProFeatureLock origin='styles' featureName={`Pro Style: ${style.name}`}>
+                             <button 
+                                className="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-300 py-4 px-6 text-lg font-bold text-white cursor-not-allowed"
+                                disabled
+                            >
+                                <CalculatorIcon className="h-6 w-6" />
+                                Load into Calculator
+                            </button>
+                        </ProFeatureLock>
+                    ) : (
+                         <button 
+                            onClick={() => onLoadAndNavigate(style)}
+                            className="w-full flex items-center justify-center gap-2 rounded-xl bg-lime-500 py-4 px-6 text-lg font-bold text-white shadow-lg shadow-lime-200 transition-all hover:bg-lime-600 hover:-translate-y-1 active:translate-y-0"
+                        >
+                            <CalculatorIcon className="h-6 w-6" />
+                            Load into Calculator
+                        </button>
+                    )}
                      
                      <p className="text-xs text-center text-slate-400">
                         This will configure the calculator with the base formula for this style.
                      </p>
 
-                     {/* Only show recommendations for Free users */}
-                     {free && renderRecommendation()}
-
-                     {free && style.category === 'Pizza' && pizzaPlacement && (
-                        <AffiliateBlock placement={pizzaPlacement} />
-                     )}
-                     {free && style.category === 'Pão' && breadPlacement && (
-                        <AffiliateBlock placement={breadPlacement} />
-                     )}
+                     {renderRecommendation()}
                 </div>
             </div>
         </div>

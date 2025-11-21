@@ -1,15 +1,5 @@
-
 import { UnitSystem, ToppingSizeProfile, YeastType } from './types';
-// YEAST_EQUIVALENCIES now defined here, removed from constants.ts
-export const YEAST_EQUIVALENCIES = {
-  // Base is Instant Dry Yeast (IDY)
-  IDY_TO_ADY: 1.25, // Use 25% more ADY than IDY
-  IDY_TO_FRESH: 3.0,  // Use 3x more Fresh Yeast than IDY
-  ADY_TO_IDY: 1 / 1.25, // 0.8
-  FRESH_TO_IDY: 1 / 3.0, // 0.333
-};
-
-export const GRAMS_TO_OUNCES = 0.035274; // Centralized constant, 1 gram = 0.035274 ounces
+import { YEAST_EQUIVALENCIES } from './constants';
 
 // Grams per cup for key ingredients.
 // US Customary cup is ~236.59mL. Metric cup is 250mL.
@@ -191,14 +181,9 @@ export function convertYeast(amount: number, from: YeastType, to: YeastType): nu
  * @param ddt Desired Dough Temperature in Celsius.
  * @param ambientTemp Ambient temperature in Celsius.
  * @param flourTemp Flour temperature in Celsius.
- * @returns The required water temperature in Celsius. Returns 0 if inputs are invalid.
+ * @returns The required water temperature in Celsius.
  */
 export function calculateWaterTempDDT(ddt: number, ambientTemp: number, flourTemp: number): number {
-    // Defensively handle potential NaN or non-numeric inputs
-    if (isNaN(ddt) || isNaN(ambientTemp) || isNaN(flourTemp)) {
-        console.warn("Invalid input for DDT calculation. Returning 0.");
-        return 0;
-    }
     // Using the user-provided simplified formula: ((DDT - 1) * 3) - ambient - flour
     // This is a non-standard heuristic, but we'll implement it as requested.
     // A note could be added in the UI that this is an estimate.
@@ -234,23 +219,22 @@ export function blobToBase64(blob: Blob): Promise<string> {
 /**
  * Formats a date string into a concise "time since" string.
  * @param dateString ISO date string
- * @param t Translation function for locale-specific formatting
  * @returns A string like "2d", "5h", "10min"
  */
-export function timeSince(dateString: string, t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string): string {
-    if (!dateString) return t('levain_pet.time_since.never');
+export function timeSince(dateString: string): string {
+    if (!dateString) return 'nunca';
     const seconds = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
     let interval = seconds / 31536000;
-    if (interval > 1) return t('levain_pet.time_since.years', { count: Math.floor(interval) });
+    if (interval > 1) return `${Math.floor(interval)} anos`;
     interval = seconds / 2592000;
-    if (interval > 1) return t('levain_pet.time_since.months', { count: Math.floor(interval) });
+    if (interval > 1) return `${Math.floor(interval)} meses`;
     interval = seconds / 86400;
-    if (interval > 1) return t('levain_pet.time_since.days', { count: Math.floor(interval) });
+    if (interval > 1) return `${Math.floor(interval)}d`;
     interval = seconds / 3600;
-    if (interval > 1) return t('levain_pet.time_since.hours', { count: Math.floor(interval) });
+    if (interval > 1) return `${Math.floor(interval)}h`;
     interval = seconds / 60;
-    if (interval > 1) return t('levain_pet.time_since.minutes', { count: Math.floor(interval) });
-    return t('levain_pet.time_since.seconds', { count: Math.floor(seconds) });
+    if (interval > 1) return `${Math.floor(interval)}min`;
+    return `${Math.floor(seconds)}s`;
 }
 
 // Add polyfill for randomUUID if it doesn't exist

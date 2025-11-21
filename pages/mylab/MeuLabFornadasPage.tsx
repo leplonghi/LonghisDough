@@ -1,12 +1,11 @@
 
 import React, { useState, useMemo } from 'react';
-import { DoughConfig, Page, BatchStatus, RecipeStyle, OvenType } from '../../types';
+import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
 import { useUser } from '../../contexts/UserProvider';
 import { useTranslation } from '../../i18n';
 import MyLabLayout from './MyLabLayout';
-import { BatchesIcon } from '../../components/IconComponents';
+import { BatchesIcon, CalculatorIcon } from '../../components/IconComponents';
 import { OVEN_TYPE_OPTIONS } from '../../constants';
-import { isFreeUser } from '../../lib/permissions'; // Corrigido para lib/permissions
 
 interface MeuLabFornadasPageProps {
   onLoadAndNavigate: (config: DoughConfig) => void;
@@ -42,7 +41,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     onCreateDraftBatch,
 }) => {
     const { t } = useTranslation();
-    const { batches, hasProAccess, openPaywall, user } = useUser();
+    const { batches, hasProAccess, openPaywall } = useUser();
     const [filters, setFilters] = useState<FornadasFilters>({
         style: 'ALL',
         period: 'ALL',
@@ -58,8 +57,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     
     const handleCreateDraft = () => {
         const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
-        
-        if (isFreeUser(user) && savedBatches.length >= 1) {
+        if (!hasProAccess && savedBatches.length >= 1) {
             openPaywall('mylab');
             return;
         }
@@ -117,22 +115,13 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     
     return (
         <MyLabLayout activePage="mylab/fornadas" onNavigate={onNavigate}>
-            <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-                        My Bakes
-                    </h1>
-                    <p className="mt-1 text-sm text-neutral-500">
-                        Your complete baking history.
-                    </p>
-                </div>
-                <button
-                    onClick={handleCreateDraft}
-                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600"
-                >
-                    <BatchesIcon className="h-5 w-5"/>
-                    <span>Log Bake</span>
-                </button>
+            <div className="mb-6">
+                <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                    My Bakes
+                </h1>
+                <p className="mt-1 text-sm text-neutral-500">
+                    Your complete baking history.
+                </p>
             </div>
             
             {/* Filters */}
@@ -177,7 +166,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                         <h2 className="text-lg font-medium text-neutral-800">No bakes recorded yet.</h2>
                         <p className="mt-2 text-sm text-neutral-500">Record your first bake to track your progress.</p>
                         <button onClick={handleCreateDraft} className="mt-6 inline-flex items-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-md">
-                           <BatchesIcon className="h-5 w-5"/> Log Bake
+                           <CalculatorIcon className="h-5 w-5"/> Log Bake
                         </button>
                     </div>
                 </div>

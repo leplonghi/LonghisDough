@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -11,14 +10,10 @@ import {
   BookmarkSquareIcon,
   BeakerIcon,
   FlourIcon,
-  ShieldCheckIcon,
-  ArrowTopRightOnSquareIcon,
 } from '../components/IconComponents';
 import { User, Gender, Oven, Page, Levain } from '../types';
 import OvenModal from '../components/OvenModal';
 import LevainModal from '../components/LevainModal';
-import AuthPlaceholder from '../components/AuthPlaceholder';
-import { useToast } from '../components/ToastProvider';
 
 interface ProfilePageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -30,7 +25,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     logout,
     updateUser,
     hasProAccess,
-    openPaywall,
     ovens,
     addOven,
     updateOven,
@@ -41,10 +35,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     updateLevain,
     deleteLevain,
     setDefaultLevain,
-    isAuthenticated
   } = useUser();
   const { t } = useTranslation();
-  const { addToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<User>>({});
 
@@ -65,8 +57,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     }
   }, [user]);
 
-  if (!isAuthenticated || !user) {
-    return <AuthPlaceholder />;
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-4xl text-center">
+        <p>{t('profile.not_logged_in')}</p>
+      </div>
+    );
   }
 
   const handleInputChange = (
@@ -77,15 +73,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   };
 
   const handleSave = () => {
-    if (formData.name && user.uid) { // Ensure name is not empty and user exists
-        updateUser(formData as Partial<User>);
-        // FIX: Changed addToast call to conform to new signature (passing single object)
-        addToast({message: t('info.update_success'), type: 'success'}); 
-        setIsEditing(false);
-    } else {
-        // FIX: Changed addToast call to conform to new addToast signature (passing single object)
-        addToast({message: t('info.error.generic'), type: 'error'}); 
-    }
+    updateUser(formData);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -117,6 +106,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   
   const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | Levain) => {
     if ('id' in levainData) {
+      // @ts-ignore
       updateLevain(levainData);
     } else {
       addLevain(levainData);
@@ -131,13 +121,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           deleteLevain(id);
       }
   }
-
-  const handleCancelSubscription = () => {
-    if (window.confirm("Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.")) {
-        // In a real app, this would call the backend Stripe API
-        addToast({message: "Subscription cancellation requested.", type: "info"});
-    }
-  };
 
   const renderInfoRow = (label: string, value: string | undefined) => (
     <div>
@@ -165,7 +148,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         <select
           id={name}
           name={name}
-          value={(formData[name] as any) || ''}
+          value={formData[name] || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 sm:text-sm"
         >
@@ -180,7 +163,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
           type={type}
           id={name}
           name={name}
-          value={(formData[name] as any) || ''}
+          value={(formData[name] as string) || ''}
           onChange={handleInputChange}
           className="mt-1 block w-full rounded-md border-slate-300 bg-white py-2 px-3 shadow-sm focus:border-lime-500 focus:outline-none focus:ring-lime-500 disabled:opacity-50 sm:text-sm"
           disabled={name === 'email'}
@@ -290,14 +273,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                         : t('profile.free_member')}
                     </span>
                   </dd>
-                  {hasProAccess && !user.trialEndsAt && (
-                    <button
-                        onClick={handleCancelSubscription}
-                        className="mt-2 text-xs text-red-600 hover:underline"
-                    >
-                        Cancel Subscription
-                    </button>
-                  )}
                 </div>
               </dl>
             )}
@@ -416,34 +391,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                 </button>
             </div>
         </div>
-
-        {/* === SECTION: Legal === */}
-        <div className="mt-10 border-t border-slate-200 pt-8">
-            <h2 className="text-xl font-bold text-slate-800">Legal</h2>
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button
-                    onClick={() => onNavigate('terms')}
-                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
-                >
-                    <div className="flex items-center gap-2">
-                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
-                        <span className="font-medium text-slate-700">Terms of Use</span>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
-                </button>
-                <button
-                    onClick={() => onNavigate('privacy')}
-                    className="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-left transition hover:bg-slate-100"
-                >
-                    <div className="flex items-center gap-2">
-                        <ShieldCheckIcon className="h-5 w-5 text-slate-500" />
-                        <span className="font-medium text-slate-700">Privacy Policy</span>
-                    </div>
-                    <ArrowTopRightOnSquareIcon className="h-4 w-4 text-slate-400" />
-                </button>
-            </div>
-        </div>
-
 
         <div className="mt-10 border-t border-slate-200 pt-8">
           <button

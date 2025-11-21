@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { Page, Goal, GoalTargetType } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -60,6 +59,7 @@ const ObjectivesPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavi
         setIsModalOpen(true);
     };
 
+    // FIX: Make function async to handle promises from context.
     const handleSaveGoal = async (goalData: Omit<Goal, 'id' | 'createdAt' | 'updatedAt' | 'status' | 'progress'> | (Partial<Goal> & { id: string })) => {
         if ('id' in goalData) {
             await updateGoal(goalData);
@@ -69,6 +69,7 @@ const ObjectivesPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavi
         setIsModalOpen(false);
     };
     
+    // FIX: Make function async to handle promises from context.
     const handleQuickAddSuggestion = async (suggestion: SuggestedGoal) => {
         await addGoal(suggestion);
     };

@@ -5,7 +5,7 @@ import {
   BatchesIcon,
 } from './IconComponents';
 import { Unit } from '../types';
-import { GRAMS_TO_OUNCES } from '../helpers'; // Import GRAMS_TO_OUNCES
+import { useUser } from '../contexts/UserProvider';
 
 interface MobileSummaryBarProps {
   totalDough: number;
@@ -18,7 +18,7 @@ const MobileSummaryBar: React.FC<MobileSummaryBarProps> = ({
   unit,
   onStartBatch,
 }) => {
-  // GRAMS_TO_OUNCES is now imported from helpers.ts
+  const GRAMS_TO_OUNCES = 0.035274;
 
   const displayValue =
     unit === 'oz' ? totalDough * GRAMS_TO_OUNCES : totalDough;

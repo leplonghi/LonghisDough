@@ -23,10 +23,6 @@ import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
 import { InfoIcon } from '../components/IconComponents';
 import OnboardingTooltip from '../components/onboarding/OnboardingTooltip';
-import { AFFILIATE_PLACEMENTS } from '../data/affiliatePlacements';
-import { AffiliateBlock } from '../components/AffiliateBlock';
-// Fix: Corrected the import path for the `isFreeUser` function.
-import { isFreeUser } from '../lib/permissions';
 
 
 interface CalculatorPageProps {
@@ -57,7 +53,7 @@ interface CalculatorPageProps {
 
 const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
   const { t } = useTranslation();
-  const { levains, user } = useUser();
+  const { levains } = useUser();
 
   // Refs for onboarding targets
   const formRef = useRef<HTMLDivElement>(null);
@@ -101,15 +97,6 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
       );
   };
 
-  // Affiliate Logic
-  const free = isFreeUser(user);
-  const hydrationPlacement = AFFILIATE_PLACEMENTS.find(
-    (p) => p.context === "calculator_hydration"
-  );
-  const highHydrationPlacement = AFFILIATE_PLACEMENTS.find(
-    (p) => p.context === "calculator_highHydrationTools"
-  );
-
   return (
     <>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
@@ -130,7 +117,7 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             inputRefs={{numPizzas: numPizzasRef}}
           />
         </div>
-        <div ref={resultsRef} className="space-y-6">
+        <div ref={resultsRef}>
           <ResultsDisplay
             results={props.results}
             config={props.config}
@@ -147,15 +134,6 @@ const CalculatorPage: React.FC<CalculatorPageProps> = (props) => {
             saveButtonRef={saveButtonRef}
             onboardingStep={props.onboardingState?.step}
           />
-
-          {/* Contextual Ads for Free Users */}
-          {free && hydrationPlacement && (
-            <AffiliateBlock placement={hydrationPlacement} />
-          )}
-
-          {free && props.config.hydration >= 70 && highHydrationPlacement && (
-            <AffiliateBlock placement={highHydrationPlacement} />
-          )}
         </div>
       </div>
       {props.onboardingState && renderOnboardingTooltip()}

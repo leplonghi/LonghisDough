@@ -6,11 +6,11 @@ import {
     FireIcon,
     CubeIcon,
     ChevronRightIcon,
+    StarIcon,
 } from '../../components/IconComponents';
 import { STYLES_DATA } from '../../data/stylesData';
 import { useTranslation } from '../../i18n';
 import { DoughStyleDefinition } from '../../types';
-import { ProBadge } from '../../components/ProBadge';
 
 interface DoughStylesPageProps {
   onNavigateToDetail: (styleId: string) => void;
@@ -50,7 +50,7 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> 
                     <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1">
                         {style.name}
                     </h3>
-                    {style.isPro && <ProBadge />}
+                    {style.isPro && <StarIcon className="h-4 w-4 text-yellow-500" />}
                 </div>
                 
                 <div className="mb-3 flex gap-2">
@@ -61,10 +61,6 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> 
                 <p className="text-sm text-slate-600 mb-4 line-clamp-3">
                     {style.description}
                 </p>
-                
-                {style.isPro && (
-                    <p className="text-xs text-slate-400 italic mb-4">Full technical profile and presets available with Pro.</p>
-                )}
 
                 <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span className="font-mono bg-slate-50 px-1.5 py-0.5 rounded">Hidratação: {style.technical.hydration}%</span>

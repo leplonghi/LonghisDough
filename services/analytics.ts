@@ -9,14 +9,18 @@ interface AnalyticsEvent {
 /**
  * Logs an event to the analytics service.
  * Fails silently if the service is unavailable.
- * @param event The event object containing name and payload.
+ * @param eventName The name of the event.
+ * @param payload The event data.
  */
-// FIX: The `logEvent` function expects a single object argument of type `AnalyticsEvent`.
-// The current signature `(event: AnalyticsEvent)` is correct for this usage.
-export const logEvent = (event: AnalyticsEvent) => {
+export const logEvent = (eventName: string, payload: { [key: string]: any } = {}) => {
     try {
+        const event: AnalyticsEvent = {
+            name: eventName,
+            params: payload,
+        };
+
         // In a real app, you would call your analytics provider here.
-        // For example: firebase.analytics().logEvent(event.name, event.params);
+        // For example: firebase.analytics().logEvent(eventName, payload);
         console.log('[ANALYTICS]', event);
 
     } catch (error) {

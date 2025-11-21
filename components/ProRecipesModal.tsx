@@ -3,7 +3,6 @@ import React from 'react';
 import { CloseIcon, BookOpenIcon } from './IconComponents';
 import { PRO_RECIPES } from '../constants';
 import { ProRecipe } from '../types';
-import { useTranslation } from '../i18n'; // Import useTranslation
 
 interface ProRecipesModalProps {
   isOpen: boolean;
@@ -16,7 +15,6 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
   onClose,
   onLoadRecipe,
 }) => {
-  const { t } = useTranslation(); // Initialize useTranslation
 
   if (!isOpen) return null;
 
@@ -38,12 +36,12 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
             className="flex items-center gap-2 text-xl font-bold text-slate-900"
           >
             <BookOpenIcon className="h-6 w-6 text-lime-500" />
-            <span>{t('modals.pro_recipes.title', { defaultValue: 'Pro Recipes' })}</span>
+            <span>Professional Recipes</span>
           </h2>
           <button
             onClick={onClose}
             className="rounded-full p-1 text-slate-500 hover:bg-slate-200"
-            aria-label={t('modals.close')}
+            aria-label="Close"
           >
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -57,10 +55,10 @@ const ProRecipesModal: React.FC<ProRecipesModalProps> = ({
               className="w-full rounded-lg bg-slate-50 p-3 text-left transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-lime-500"
             >
               <span className="font-medium text-slate-800">
-                {t(recipe.nameKey)}
+                {recipe.nameKey}
               </span>
               <p className="mt-1 text-sm text-slate-500">
-                {t(recipe.descriptionKey)}
+                {recipe.descriptionKey}
               </p>
             </button>
           ))}

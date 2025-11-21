@@ -8,10 +8,6 @@ import LevainModal from '../../../components/LevainModal';
 import { logEvent } from '../../../services/analytics';
 import { exportLevainData, importLevainData } from '../../../services/levainDataService';
 import { useToast } from '../../../components/ToastProvider';
-import AuthPlaceholder from '../../../components/AuthPlaceholder';
-import { AFFILIATE_PLACEMENTS } from '../../../data/affiliatePlacements';
-import { AffiliateBlock } from '../../../components/AffiliateBlock';
-import { isFreeUser } from '../../../lib/permissions'; // Corrigido para lib/permissions
 
 interface LevainListPageProps {
     onNavigate: (page: Page, params?: string) => void;
@@ -19,7 +15,7 @@ interface LevainListPageProps {
 
 const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     const { t } = useTranslation();
-    const { user, levains, addLevain, importLevains: importLevainsToContext, hasProAccess, openPaywall, isAuthenticated } = useUser();
+    const { user, levains, addLevain, importLevains: importLevainsToContext, hasProAccess, openPaywall } = useUser();
     const { addToast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,15 +23,13 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
 
     useEffect(() => {
         if (user) {
-            logEvent({ name: 'levain_pet_opened', params: { userId: user.email } });
+            logEvent('levain_pet_opened', { userId: user.email });
         }
     }, [user]);
 
-    if (!isAuthenticated) {
-        return <AuthPlaceholder />;
-    }
-
+    // FIX: Changed the type of levainData to match the `onSave` prop of `LevainModal` and handle data transformation before calling `addLevain`.
     const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | (Partial<Levain> & { id: string })) => {
+        // This component only creates levains.
         if (!('id' in levainData)) {
             const { createdAt, status, ...restOfData } = levainData;
             addLevain(restOfData as Omit<Levain, 'id' | 'isDefault' | 'feedingHistory' | 'status' | 'createdAt'>);
@@ -78,7 +72,7 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        addToast({message: 'Data exported successfully.', type: 'success'});
+        addToast('Data exported successfully.', 'success');
     };
 
     const handleImportClick = () => {
@@ -95,10 +89,10 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
             if (typeof text === 'string') {
                 const result = importLevainData(text);
                 if (result.error) {
-                    addToast({message: result.error, type: 'error'});
+                    addToast(result.error, 'error');
                 } else {
                     importLevainsToContext(result.newLevains);
-                    addToast({message: 'Levain Pet data imported successfully.', type: 'success'});
+                    addToast('Levain Pet data imported successfully.', 'success');
                 }
             }
         };
@@ -116,9 +110,6 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     if (isLoading) {
         return <div className="p-8 text-center">Loading...</div>;
     }
-
-    const free = isFreeUser(user);
-    const placement = AFFILIATE_PLACEMENTS.find(p => p.context === "levain_basic");
 
     return (
         <>
@@ -194,13 +185,6 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                     )})}
                 </div>
             )}
-
-            {free && placement && (
-                <div className="mt-8">
-                    <AffiliateBlock placement={placement} />
-                </div>
-            )}
-
         </div>
         <LevainModal 
             isOpen={isModalOpen}

@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { Page, TestSeries, Batch } from '../../types';
 import MyLabLayout from './MyLabLayout';
@@ -12,8 +11,6 @@ interface ConsistencyDetailPageProps {
 }
 
 const ConsistencyDetailPage: React.FC<ConsistencyDetailPageProps> = ({ seriesId, onNavigate }) => {
-    // FIX: The `attachBakeToSeries` and `updateTestSeries` properties were missing from `UserContextType` in `types.ts`.
-    // They have been added there. This file's usage was correct once the types were defined.
     const { testSeries, batches, attachBakeToSeries, updateTestSeries } = useUser();
     const [notes, setNotes] = useState('');
     const [isEditingNotes, setIsEditingNotes] = useState(false);

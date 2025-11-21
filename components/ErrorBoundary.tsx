@@ -1,6 +1,4 @@
-
-
-import React, { ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { ExclamationCircleIcon } from './IconComponents';
 
 interface Props {
@@ -11,16 +9,11 @@ interface State {
   hasError: boolean;
 }
 
-class ErrorBoundary extends React.Component<Props, State> {
+class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false
   };
 
-  /**
-   * FIX: This is a false positive. In React class components, `static getDerivedStateFromError`
-   * correctly returns an object to update the state, it does not call `setState` directly on `this`.
-   * The existing code is correct for this lifecycle method.
-   */
   static getDerivedStateFromError(_: Error): State {
     return { hasError: true };
   }
@@ -30,16 +23,10 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 
   handleTryAgain = () => {
-    // FIX: This code is correct for a React class component extending React.Component.
-    // The error "Property 'setState' does not exist on type 'ErrorBoundary'" is unexpected
-    // and likely indicates a TypeScript configuration issue or mismatched React type definitions in the environment.
-    (this as React.Component<Props, State>).setState({ hasError: false });
+    this.setState({ hasError: false });
   };
 
   render() {
-    // FIX: This code is correct for a React class component extending React.Component.
-    // The error "Property 'props' does not exist on type 'ErrorBoundary'" is unexpected
-    // and likely indicates a TypeScript configuration issue or mismatched React type definitions in the environment.
     if (this.state.hasError) {
       return (
         <div className="mx-auto my-8 max-w-2xl rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10 text-center">
@@ -66,7 +53,7 @@ class ErrorBoundary extends React.Component<Props, State> {
       );
     }
 
-    return (this as React.Component<Props, State>).props.children;
+    return this.props.children;
   }
 }
 

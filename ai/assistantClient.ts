@@ -1,20 +1,75 @@
-import { GoogleGenAI, Content } from "@google/genai";
-import { DoughConfig, DoughResult, Batch, FlourDefinition, Oven, ChatMessage, Levain } from '../types';
-import { getSystemInstruction, buildContextPrompt } from './prompts';
 
-// Initialize strictly with env var as per guidelines
+import { GoogleGenAI } from "@google/genai";
+import { DoughConfig, DoughResult, Batch, FlourDefinition, Oven, RecipeStyle, Levain, FeedingEvent } from '../types';
+
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// CONFIGURATION
-// Sliding Window: Limit context to the last N turns to save tokens and maintain focus.
-// A smaller window improves Time to First Token (TTFT) and reduces cost.
-const HISTORY_WINDOW_SIZE = 10; 
-// Model Selection: Flash is optimized for speed and cost-efficiency in chat tasks.
-const CHAT_MODEL_ID = 'gemini-2.5-flash';
+// This function builds a detailed system prompt for the AI model.
+function buildGeneralSystemPrompt(t: (key: string) => string): string {
+  return t('assistant.system_prompt');
+}
+
+
+/**
+ * Builds a rich, contextual prompt for the AI model based on the user's current state in the app.
+ * @param question The user's question.
+ * @param config The current dough configuration from the calculator.
+ * @param flour The selected flour definition.
+ * @param oven The user's default oven profile.
+ * @param lastBatch The user's most recent batch for historical context.
+ * @returns A formatted string containing both context and the user's question.
+ */
+function buildRichContext(
+  t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string,
+  question: string,
+  config?: DoughConfig,
+  flour?: FlourDefinition,
+  oven?: Oven,
+  lastBatch?: Batch,
+): string {
+  const contextParts: string[] = [];
+
+  if (config) {
+    contextParts.push(`- **${t('assistant.context.active_recipe')}**:`);
+    contextParts.push(`  - ${t('assistant.context.style')}: ${config.recipeStyle}`);
+    contextParts.push(`  - ${t('assistant.context.hydration')}: ${config.hydration}%`);
+    contextParts.push(`  - ${t('assistant.context.salt')}: ${config.salt}%`);
+    contextParts.push(`  - ${t('assistant.context.oil')}: ${config.oil}%`);
+    contextParts.push(`  - ${t('assistant.context.yeast')}: ${config.yeastPercentage}% (${config.yeastType})`);
+    contextParts.push(`  - ${t('assistant.context.technique')}: ${config.fermentationTechnique}`);
+    contextParts.push(`  - ${t('assistant.context.ambient')}: ${config.ambientTemperature}`);
+
+    // AVPN/NY Violation checks
+    if (config.recipeStyle === RecipeStyle.NEAPOLITAN && (config.oil > 0 || (config.sugar && config.sugar > 0))) {
+      contextParts.push(`  - **${t('assistant.context.style_warning.title')}**: ${t('assistant.context.style_warning.neapolitan')}`);
+    }
+    if (config.recipeStyle === RecipeStyle.NEW_YORK && config.oil === 0) {
+      contextParts.push(`  - **${t('assistant.context.style_warning.title')}**: ${t('assistant.context.style_warning.ny_style')}`);
+    }
+  }
+
+  if (flour) {
+    contextParts.push(`- **${t('assistant.context.selected_flour')}**: ${flour.name} (${t('assistant.context.strength_w')}: ${flour.strengthW || t('common.not_applicable')}, ${t('assistant.context.protein')}: ${flour.protein || t('common.not_applicable')}%)`);
+  }
+
+  if (oven) {
+    contextParts.push(`- **${t('assistant.context.default_oven')}**: ${t(`profile.ovens.types.${oven.type.toLowerCase()}`)}, ${t('assistant.context.max_temp')}: ${oven.maxTemperature}°C. ${t('assistant.context.surface')}: ${oven.hasSteel ? t('assistant.context.steel') : (oven.hasStone ? t('assistant.context.stone') : t('assistant.context.none'))}.`);
+  }
+
+  if (lastBatch) {
+    contextParts.push(`- **${t('assistant.context.last_batch')}**: "${lastBatch.name}" (${t('assistant.context.style')}: ${lastBatch.doughConfig.recipeStyle}, ${t('assistant.context.rating')}: ${lastBatch.rating || t('common.not_applicable')} ${t('assistant.context.stars')})`);
+  }
+  
+  const contextString = contextParts.length > 0
+    ? `${t('assistant.context.header')}:\n${contextParts.join('\n')}`
+    : t('assistant.context.no_context');
+
+  return `${contextString}\n\n${t('assistant.context.user_question')}:\n"${question}"`;
+}
+
 
 interface AssistantInput {
   question: string;
-  history: ChatMessage[]; // Receive UI history
   doughConfig?: DoughConfig;
   doughResult?: DoughResult | null;
   lastBatch?: Batch;
@@ -23,86 +78,97 @@ interface AssistantInput {
   t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string;
 }
 
-/**
- * Converts internal ChatMessage format to Gemini SDK Content format.
- * Implements a sliding window to keep context relevant and cheap.
- */
-function formatHistory(history: ChatMessage[]): Content[] {
-  // 1. Filter out error messages or internal system notes not meant for the model context
-  const cleanHistory = history.filter(msg => msg.role === 'user' || msg.role === 'assistant');
-
-  // 2. Apply Sliding Window
-  // We slice from the end to keep the most recent interactions.
-  const recentHistory = cleanHistory.slice(-HISTORY_WINDOW_SIZE);
+export async function askGeneralAssistant(input: AssistantInput): Promise<string> {
+  const { question, doughConfig, flour, oven, lastBatch, t } = input;
   
-  // 3. Map to Gemini Content format
-  return recentHistory.map(msg => ({
-    role: msg.role === 'user' ? 'user' : 'model',
-    parts: [{ text: msg.content }],
-  }));
-}
-
-/**
- * Streams a response from the Assistant using Gemini 2.5 Flash.
- */
-export async function* createAssistantStream(input: AssistantInput) {
-  const { question, history, doughConfig, flour, oven, lastBatch, t } = input;
-
-  // 1. Build the specialized prompt incorporating the current app state.
-  // This creates a RAG-like experience by injecting "Active State" into the latest turn.
-  const contextualizedPrompt = buildContextPrompt(t, question, doughConfig, flour, oven, lastBatch);
+  const systemInstruction = buildGeneralSystemPrompt(t);
+  const userPrompt = buildRichContext(t, question, doughConfig, flour, oven, lastBatch);
 
   try {
-    // 2. Initialize Chat with History
-    const chat = ai.chats.create({
-      model: CHAT_MODEL_ID,
+    // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-pro',
+      contents: userPrompt,
       config: {
-        systemInstruction: getSystemInstruction(),
-        temperature: 0.7, // Balanced creativity
-        maxOutputTokens: 1000, // Prevent excessively long responses
-      },
-      history: formatHistory(history),
-    });
-
-    // 3. Send Message with Streaming
-    const result = await chat.sendMessageStream({ 
-      message: contextualizedPrompt 
-    });
-
-    // 4. Yield chunks as they arrive for immediate UI feedback
-    for await (const chunk of result) {
-      const text = chunk.text;
-      if (text) {
-        yield text;
+        systemInstruction,
       }
-    }
+    });
 
+    const text = response.text;
+    if (!text) {
+      throw new Error("Empty response from AI model");
+    }
+    return text;
   } catch (error) {
-    console.error('[DoughLab AI] Error in stream:', error);
-    // Throw a user-friendly error that the UI can catch and display
-    throw new Error("Connection unstable. Please try again.");
+    console.error('[DoughLab Assistant] Error calling AI model:', error);
+    throw new Error(t('assistant_page.error'));
   }
 }
 
-// --- LEVAIN ASSISTANT (Legacy wrapper switched to Flash) ---
+// --- LEVAIN PET ASSISTANT ---
+
+function buildLevainSystemPrompt(): string {
+  return `You are a baking assistant specialized in sourdough starter (levain).
+- Your role is to answer questions strictly related to levain: feeding, routine adjustments, use in recipes, and interpreting signs (smell, acidity, strength).
+- Use the provided context about the user's specific levain to give practical and personalized advice.
+- Be concise and direct.
+- **Strict Rule**: If the user asks about human health, clinical nutrition, or advanced food safety, you MUST reply ONLY with: "I can only help with technical adjustments for levain and dough. For health or specific dietary questions, please consult a specialized professional."
+- Respond in English.`;
+}
+
+function buildLevainContext(
+  levain: Levain,
+  question: string,
+): string {
+  const contextParts: string[] = [];
+
+  contextParts.push(`**User Levain Context:**`);
+  contextParts.push(`- **Name:** ${levain.name}`);
+  contextParts.push(`- **Current Status:** ${levain.status}`);
+  contextParts.push(`- **Hydration:** ${levain.hydration}%`);
+  contextParts.push(`- **Base Flour:** ${levain.baseFlourType || 'Not specified'}`);
+  contextParts.push(`- **Typical Use:** ${levain.typicalUse || 'Not specified'}`);
+  contextParts.push(`- **Last Feeding:** ${new Date(levain.lastFeeding).toLocaleString()}`);
+  
+  if (levain.feedingHistory && levain.feedingHistory.length > 0) {
+      contextParts.push(`- **Last ${Math.min(5, levain.feedingHistory.length)} Feeding Logs (newest first):**`);
+      levain.feedingHistory.slice(0, 5).forEach(log => {
+          contextParts.push(`  - **Date:** ${new Date(log.date).toLocaleString()}`);
+          contextParts.push(`    - **Ratio:** ${log.ratio || 'N/A'}`);
+          contextParts.push(`    - **Temperature:** ${log.ambientTemperature ? log.ambientTemperature + '°C' : 'N/A'}`);
+          if(log.notes) contextParts.push(`    - **Notes:** ${log.notes}`);
+      });
+  }
+
+  return `${contextParts.join('\n')}\n\n**User Question:**\n"${question}"`;
+}
 
 export async function askLevainAssistant(levain: Levain, question: string): Promise<string> {
-    const systemInstruction = `You are an expert sourdough assistant. 
-    Context: Levain "${levain.name}", Hydration ${levain.hydration}%, Status ${levain.status}, Last fed ${new Date(levain.lastFeeding).toLocaleDateString()}.
-    Answer strictly about sourdough maintenance. Keep it short.`;
+    const systemInstruction = buildLevainSystemPrompt();
+    const userPrompt = buildLevainContext(levain, question);
+
+    // Hardcoded check for out-of-scope questions (English keywords)
+    const healthKeywords = ['health', 'nutrition', 'clinical', 'medical', 'eat', 'ingest', 'safe to eat', 'safe for consumption'];
+    if (healthKeywords.some(keyword => question.toLowerCase().includes(keyword))) {
+        return "I can only help with technical adjustments for levain and dough. For health or specific dietary questions, please consult a specialized professional.";
+    }
 
     try {
-        // Using generateContent for single-turn interaction (no history needed here)
+        // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
         const response = await ai.models.generateContent({
-            model: CHAT_MODEL_ID, // Consistent model usage
-            contents: question,
+            model: 'gemini-2.5-pro',
+            contents: userPrompt,
             config: {
                 systemInstruction,
             }
         });
-        return response.text || "No response.";
+        const text = response.text;
+        if (!text) {
+            throw new Error("Empty response from AI model");
+        }
+        return text;
     } catch (error) {
-        console.error('[Levain AI] Error:', error);
-        throw new Error("Levain assistant unavailable.");
+        console.error('[Levain Assistant] Error calling AI model:', error);
+        throw new Error("Sorry, I couldn't process your question right now. Please try again.");
     }
 }
