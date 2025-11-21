@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TechnicalStep, TechnicalPhase } from '@/types';
 import { 
@@ -68,11 +67,11 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
                 <div className="flex items-start justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                 {step.phase}
                             </span>
                             {step.durationLabel && (
-                                <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                                <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
                                     <ClockIcon className="h-3 w-3" /> {step.durationLabel}
                                 </span>
                             )}
@@ -87,7 +86,7 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
                 </div>
 
                 {/* Main Instruction */}
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+                <p className="mt-2 text-sm text-slate-700 leading-relaxed">
                     {step.actionInstructions}
                 </p>
 
@@ -95,14 +94,14 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
                 <div className={`grid grid-cols-1 gap-3 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'mt-4 opacity-100 max-h-[500px]' : 'max-h-0 opacity-0'}`}>
                     
                     {step.temperatureLabel && (
-                        <div className="flex items-center gap-2 text-sm font-semibold text-orange-600 bg-orange-50 p-2 rounded-lg border border-orange-100">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-orange-700 bg-orange-50 p-2 rounded-lg border border-orange-100">
                             <FireIcon className="h-4 w-4" />
                             Target Temp: {step.temperatureLabel}
                         </div>
                     )}
 
                     {step.technicalExplanation && (
-                        <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600 border border-slate-100">
+                        <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600 border border-slate-200">
                             <span className="block font-bold text-slate-700 mb-1">The Science:</span>
                             {step.technicalExplanation}
                         </div>
@@ -129,7 +128,7 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
                     )}
 
                     {step.references && step.references.length > 0 && (
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                        <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-1">
                             <BookOpenIcon className="h-3 w-3" />
                             <span>Ref: {step.references.join(', ')}</span>
                         </div>
@@ -161,7 +160,7 @@ const TechnicalMethodPanel: React.FC<TechnicalMethodPanelProps> = ({ steps }) =>
             <BookOpenIcon className="h-6 w-6 text-lime-500" />
             Technical Method
         </h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
             A scientifically grounded roadmap for your dough.
         </p>
       </div>

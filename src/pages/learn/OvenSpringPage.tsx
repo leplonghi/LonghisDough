@@ -24,7 +24,7 @@ const OvenSpringPage: React.FC = () => {
             <p>Oven spring is the dramatic final expansion dough undergoes in first oven moments. Driven by rapid expansion of trapped gases (mostly CO₂) and creation of new gas via steam evaporation.</p>
         </Section>
         <Section title="Gluten Network Behavior">
-            <p>Gluten network acts as elastic web trapping gases. In oven heat, network stretches to limit. Strong developed network is crucial to contain violent expansion without rupturing, allowing dough to inflate and create airy crumb.</p>
+            <p>Gluten network acts as elastic web trapping gases. In oven heat, network stretches to limit. Strong developed network is crucial to contain violent expansion without rupture, allowing dough to inflate and create airy crumb.</p>
         </Section>
         <Section title="Elasticity and Gas Retention">
             <p>Capacity for good oven spring depends on balance between elasticity (stretch) and tenacity (strength) of gluten. Dough with good retention keeps structure inflated; weak dough collapses.</p>

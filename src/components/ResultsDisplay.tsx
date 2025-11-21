@@ -1,4 +1,3 @@
-
 import React, { useRef, useMemo } from 'react';
 import {
   DoughResult,
@@ -157,7 +156,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     <div className="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">
       <div>
         <p className="font-medium text-slate-700">{label}</p>
-        {subtext && <p className="text-xs text-slate-400">{subtext}</p>}
+        {subtext && <p className="text-xs text-slate-500">{subtext}</p>}
       </div>
       <span className="font-mono font-semibold text-slate-900">
         {displayIngredient(label, grams, ingredientId)}

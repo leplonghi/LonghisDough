@@ -33,6 +33,7 @@ const TemperatureControlPage: React.FC = () => {
             <li><strong>Enzymatic activity:</strong> Crucial for flavor and starch breakdown.</li>
             <li><strong>Final flavor:</strong> Modulating aromatic compounds.</li>
         </ul>
+        <p>This concept is universal and applies to all baking forms, from pizza to artisan bread.</p>
       </Section>
 
       <Section title="2. DDT — Desired Dough Temperature">
