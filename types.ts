@@ -43,6 +43,7 @@ export enum RecipeStyle {
   SANDWICH_LOAF = 'SANDWICH_LOAF',
   FLATBREAD = 'FLATBREAD',
   BRIOCHE = 'BRIOCHE',
+  DINNER_ROLLS = 'DINNER_ROLLS',
 
   // --- SWEETS & PASTRY ---
   PATE_SUCREE = 'PATE_SUCREE',
@@ -51,8 +52,13 @@ export enum RecipeStyle {
   COOKIES = 'COOKIES',
   COOKIE_NY_CHOC_CHIP = 'COOKIE_NY_CHOC_CHIP',
   CINNAMON_ROLL = 'CINNAMON_ROLL',
+  SWEET_ROLL = 'SWEET_ROLL',
+  BABKA = 'BABKA',
+  DONUT = 'DONUT',
+  SHORTBREAD = 'SHORTBREAD',
   PIE_DOUGH = 'PIE_DOUGH',
   BOLO_SIMPLES = 'BOLO_SIMPLES',
+  BROWNIE = 'BROWNIE',
   
   // Legacy/Duplicate Handling
   NY_STYLE = 'NY_STYLE',
@@ -522,19 +528,48 @@ export interface DoughStylePreset {
   ingredients?: IngredientConfig[]; // New: Universal Ingredient List
 }
 
-export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "other";
+export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "flatbread" | "other";
+
+export interface Reference {
+  source: string;
+  author?: string;
+  year?: string;
+  url?: string;
+  notes?: string;
+}
+
+export interface StyleTechnicalProfile {
+    hydration: [number, number];
+    salt: [number, number];
+    oil?: [number, number]; // Range
+    sugar?: [number, number]; // Range
+    prefermentDescription?: string;
+    flourStrength?: string; // e.g. "W280-320"
+    fermentation?: {
+        bulk: string;
+        proof: string;
+        coldRetard?: string;
+    };
+    ovenRecommendations?: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
+    recommendedUse: string;
+}
 
 // New Data-Driven Style Definition
 export interface DoughStyleDefinition {
     id: string;
-    name: string;
+    name: string; // Variant Name in UI
+    family: string; // Grouping key e.g. "Italian Rustic", "Viennoiserie"
     category: StyleCategory;
     country: string;
     year?: string;
+    releaseDate?: string; // ISO String for "New" badge
     description: string;
     history: string;
     isPro: boolean;
     recipeStyle?: RecipeStyle; // Link to enum
+    
+    // Specific single-value technicals for calculator loading
     technical: {
         hydration: number;
         salt: number;
@@ -544,8 +579,14 @@ export interface DoughStyleDefinition {
         fermentationTechnique: FermentationTechnique;
         bakingTempC: number;
     };
-    allowedFermentationTechniques?: FermentationTechnique[]; // Restrict techniques (e.g. no Biga for Cookies)
-    defaultFermentationTechnique?: FermentationTechnique;
+
+    // Validated Range Profile for Reference UI
+    technicalProfile?: StyleTechnicalProfile;
+
+    references?: Reference[]; // Literature sources
+
+    allowedFermentationTechniques: FermentationTechnique[]; // Restrict techniques (e.g. no Biga for Cookies)
+    defaultFermentationTechnique: FermentationTechnique;
     ingredients: IngredientConfig[];
     variations?: string[];
     risks?: string[];
