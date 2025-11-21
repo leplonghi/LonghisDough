@@ -5,6 +5,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'napolitana_classica',
     name: 'Neapolitan Pizza (Classic)',
+    family: 'Pizza Napoletana',
     category: 'pizza',
     country: 'Italy',
     year: '18th Century',
@@ -37,6 +38,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'ny_style',
     name: 'New York Style',
+    family: 'North American Pizza',
     category: 'pizza',
     country: 'USA',
     year: '1905',
@@ -71,6 +73,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'focaccia_genovese',
     name: 'Focaccia Genovese',
+    family: 'Italian Rustic Breads',
     category: 'bread',
     country: 'Italy',
     year: 'Ancient',
@@ -104,6 +107,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'brioche_classico',
     name: 'French Brioche',
+    family: 'Viennoiserie',
     category: 'enriched_bread',
     country: 'France',
     year: '17th Century',
@@ -138,6 +142,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
       id: 'teglia_romana',
       name: 'Roman Pan Pizza (Teglia)',
+      family: 'Pizza Romana',
       category: 'pizza',
       country: 'Italy',
       year: '1980s (modern)',
@@ -170,6 +175,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'burger_bun_brioche',
     name: 'Brioche Burger Bun',
+    family: 'Buns',
     category: 'burger_bun',
     country: 'USA/France',
     year: 'Modern',
@@ -203,6 +209,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'hokkaido_milk_bread',
     name: 'Hokkaido Milk Bread',
+    family: 'Asian Breads',
     category: 'enriched_bread',
     country: 'Japan',
     year: '20th Century',
@@ -236,6 +243,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'ny_cookie',
     name: 'NY Chocolate Chip Cookie',
+    family: 'Cookies',
     category: 'cookie',
     country: 'USA',
     year: 'Modern',
@@ -269,6 +277,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   {
     id: 'cinnamon_roll',
     name: 'Classic Cinnamon Roll',
+    family: 'Viennoiserie',
     category: 'pastry',
     country: 'Sweden/USA',
     year: '1920s',

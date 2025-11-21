@@ -189,7 +189,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                         No styles found matching criteria.
                     </div>
                 ) : (
-                    Object.entries(stylesByFamily).map(([family, styles]) => (
+                    Object.entries(stylesByFamily).map(([family, styles]: [string, DoughStyleDefinition[]]) => (
                         <section key={family} className="animate-fade-in">
                             <div className="flex items-center gap-4 mb-6">
                                 <h2 className="text-2xl font-bold text-slate-800">{family}</h2>
