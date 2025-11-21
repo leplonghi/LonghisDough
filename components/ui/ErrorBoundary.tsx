@@ -1,36 +1,32 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { ExclamationCircleIcon } from './Icons';
 
-interface Props {
+interface ErrorBoundaryProps {
   children?: ReactNode;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-class ErrorBoundary extends React.Component<Props, State> {
-  public state: State = {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
     hasError: false
   };
 
-  constructor(props: Props) {
-    super(props);
-  }
-
-  static getDerivedStateFromError(_: Error): State {
+  public static getDerivedStateFromError(_: Error): ErrorBoundaryState {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("DoughLabPro ErrorBoundary caught an error:", error, errorInfo);
   }
 
-  handleTryAgain = () => {
+  public handleTryAgain = () => {
     this.setState({ hasError: false });
   };
 
-  render() {
+  public render() {
     if (this.state.hasError) {
       return (
         <div className="mx-auto my-8 max-w-2xl rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10 text-center">

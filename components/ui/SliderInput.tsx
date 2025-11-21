@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { InfoIcon } from './Icons';
+import { InfoIcon, LockClosedIcon } from './Icons';
 
 interface SliderInputProps {
   label: string;
@@ -16,6 +16,7 @@ interface SliderInputProps {
   disabledTooltip?: string;
   hasError?: boolean;
   presetValue?: number;
+  isProFeature?: boolean;
 }
 
 const SliderInput: React.FC<SliderInputProps> = ({
@@ -32,6 +33,7 @@ const SliderInput: React.FC<SliderInputProps> = ({
   disabledTooltip,
   hasError = false,
   presetValue,
+  isProFeature = false,
 }) => {
   const [internalValue, setInternalValue] = useState(value);
   const debounceTimeout = useRef<number | null>(null);
@@ -75,8 +77,13 @@ const SliderInput: React.FC<SliderInputProps> = ({
     <div className={wrapperClasses}>
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <label htmlFor={name} className="block text-sm font-medium text-slate-700">
+          <label htmlFor={name} className="block text-sm font-medium text-slate-700 flex items-center gap-2">
             {label}
+            {isProFeature && (
+                <span className="inline-flex items-center gap-0.5 rounded-full bg-lime-100 px-1.5 py-0.5 text-[10px] font-bold text-lime-700 uppercase tracking-wide border border-lime-200">
+                   <LockClosedIcon className="h-2.5 w-2.5" /> PRO
+                </span>
+            )}
           </label>
           {tooltip && (
             <div className="group relative flex items-center">

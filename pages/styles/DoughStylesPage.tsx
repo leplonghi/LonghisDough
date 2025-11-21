@@ -50,14 +50,18 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> 
     return (
         <div 
             onClick={onClick}
-            className="group flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer h-full"
+            className="group flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-pointer h-full relative overflow-hidden"
         >
+            {style.isPro && (
+                <div className="absolute top-0 right-0 bg-lime-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm z-10 uppercase tracking-wide">
+                    PRO
+                </div>
+            )}
             <div className="p-5 flex-grow flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                     <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1">
                         {style.name}
                     </h3>
-                    {style.isPro && <StarIcon className="h-4 w-4 text-yellow-500" />}
                 </div>
                 
                 <div className="mb-3 flex gap-2">

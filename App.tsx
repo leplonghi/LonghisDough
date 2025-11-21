@@ -511,6 +511,8 @@ function AppContent() {
     // --- BATCH LIMIT CHECK ---
     const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
     if (!hasProAccess && savedBatches.length >= 1) {
+        addToast("Free plan includes 1 saved bake. Pro gives you unlimited bake history.", "error");
+        setTimeout(() => addToast("One failed dough costs more than Pro.", "info"), 2000);
         openPaywall('mylab');
         return;
     }
@@ -629,12 +631,15 @@ function AppContent() {
         return protect(<MeuLabFornadasPage onLoadAndNavigate={handleLoadAndNavigate} onNavigate={navigate} onCreateDraftBatch={handleCreateDraftAndNavigate} />);
       case 'mylab/diario-sensorial':
         return protectPro(<MeuLabDiarioSensorialPage onNavigate={navigate} />);
+      // DOWNGRADE to 'protect' to show blurred teaser
       case 'mylab/comparacoes':
-        return protectPro(<MeuLabComparacoesPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />);
+        return protect(<MeuLabComparacoesPage onNavigate={navigate} onLoadAndNavigate={handleLoadAndNavigate} />);
+      // DOWNGRADE to 'protect' to show blurred teaser
       case 'mylab/insights':
-        return protectPro(<MeuLabInsightsPage onNavigate={navigate} />);
+        return protect(<MeuLabInsightsPage onNavigate={navigate} />);
+      // DOWNGRADE to 'protect' to show blurred teaser
       case 'mylab/timeline':
-        return protectPro(<TimelinePage onNavigate={navigate} />);
+        return protect(<TimelinePage onNavigate={navigate} />);
       case 'mylab/objetivos':
         return protectPro(<ObjectivesPage onNavigate={navigate} />);
       case 'mylab/consistency':

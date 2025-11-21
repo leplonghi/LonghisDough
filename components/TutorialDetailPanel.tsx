@@ -9,8 +9,8 @@ import {
     ListBulletIcon,
     LightBulbIcon,
     CalculatorIcon,
+    StarIcon,
 } from './IconComponents';
-import ProFeatureLock from './ProFeatureLock';
 import { useUser } from '../contexts/UserProvider';
 
 interface TutorialDetailPanelProps {
@@ -38,7 +38,7 @@ const DetailSection: React.FC<{ icon: React.ReactNode; title: string; children: 
 
 const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onClose, onNavigate, onCalculatorModeChange }) => {
   const { t } = useTranslation();
-  const { hasProAccess } = useUser();
+  const { hasProAccess, openPaywall } = useUser();
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
@@ -90,9 +90,12 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
         <div className="flex-shrink-0 p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex items-start justify-between">
           <h2
             id="tutorial-title"
-            className="text-2xl font-bold text-slate-900 dark:text-white"
+            className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3"
           >
             {tutorial.title}
+            {isLocked && (
+                 <span className="bg-lime-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide">PRO</span>
+            )}
           </h2>
           <button
             onClick={handleClose}
@@ -114,8 +117,8 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
                     </DetailSection>
                     
                     {isLocked ? (
-                         <ProFeatureLock origin='learn' featureName={`Advanced Guide: ${tutorial.title}`} className="mt-6">
-                            <div className="filter blur-sm pointer-events-none select-none opacity-50">
+                         <div className="relative mt-6">
+                            <div className="filter blur-sm pointer-events-none select-none opacity-50 h-[300px] overflow-hidden">
                                 <DetailSection icon={<ListBulletIcon className="h-6 w-6"/>} title={t('learn.howto_title')}>
                                      {tutorial.howTo}
                                 </DetailSection>
@@ -123,7 +126,17 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
                                     {`<ul>${tutorial.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>`}
                                 </DetailSection>
                             </div>
-                         </ProFeatureLock>
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/90 to-white dark:via-slate-800/90 dark:to-slate-800 z-10 flex flex-col items-center justify-end pb-10">
+                                 <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 text-center">Serious bakers choose Pro for deeper knowledge.</h3>
+                                 <button
+                                    onClick={() => openPaywall('learn')}
+                                    className="bg-lime-500 text-white font-bold py-2.5 px-6 rounded-full hover:bg-lime-600 transition-colors flex items-center justify-center gap-2 shadow-lg"
+                                >
+                                    <StarIcon className="h-4 w-4" />
+                                    Upgrade to Pro to Unlock
+                                </button>
+                            </div>
+                         </div>
                     ) : (
                         <>
                             <DetailSection icon={<ListBulletIcon className="h-6 w-6"/>} title={t('learn.howto_title')}>
@@ -144,6 +157,19 @@ const TutorialDetailPanel: React.FC<TutorialDetailPanelProps> = ({ tutorial, onC
                         >
                             <CalculatorIcon className="h-5 w-5" />
                             <span>Teste na Calculadora</span>
+                        </button>
+                    </div>
+                )}
+                
+                {!isLocked && (
+                     <div className="mt-8 p-4 bg-gradient-to-r from-slate-50 to-lime-50 rounded-lg border border-lime-100 text-center">
+                         <p className="text-sm font-bold text-slate-800 mb-1">Enjoying this guide?</p>
+                         <p className="text-xs text-slate-600 mb-2">Pro unlocks the full advanced dough theory library.</p>
+                         <button
+                            onClick={() => openPaywall('learn')}
+                            className="text-xs font-bold text-lime-600 hover:underline"
+                        >
+                            Learn about Pro &rarr;
                         </button>
                     </div>
                 )}

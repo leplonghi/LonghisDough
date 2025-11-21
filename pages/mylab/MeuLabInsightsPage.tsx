@@ -2,6 +2,8 @@
 import React from 'react';
 import { Page } from '../../types';
 import MyLabLayout from './MyLabLayout';
+import ProFeatureLock from '../../components/ui/ProFeatureLock';
+import { ChartBarIcon } from '../../components/IconComponents';
 
 const InsightCard: React.FC<{
   title: string;
@@ -30,44 +32,51 @@ const MeuLabInsightsPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ on
                 </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <InsightCard
-                    title="Favorite Doughs"
-                    description="Placeholder: Here you will see your most used dough recipe based on your bake history."
-                    linkText="View My Doughs"
-                    onLinkClick={() => onNavigate('mylab/massas')}
-                />
-                <InsightCard
-                    title="Favorite Flours"
-                    description="Placeholder: The flour you log most frequently or set as default will be highlighted here."
-                    linkText="Go to My Flours"
-                    onLinkClick={() => onNavigate('mylab/farinhas')}
-                />
-                <InsightCard
-                    title="Most Used Styles"
-                    description="Placeholder: Discover which pizza or bread style you've been exploring the most."
-                    linkText="View My Bakes"
-                    onLinkClick={() => onNavigate('mylab/fornadas')}
-                />
-                 <InsightCard
-                    title="Sensory Notes"
-                    description="Placeholder: A summary of common keywords from your notes, like 'crispy' or 'sour'."
-                    linkText="Open Sensory Journal"
-                    onLinkClick={() => onNavigate('mylab/diario-sensorial')}
-                />
-                <InsightCard
-                    title="Common Errors"
-                    description="Placeholder: Identify patterns in problems you log, such as 'dough tore' or 'pale crust'."
-                    linkText="View My Bakes"
-                    onLinkClick={() => onNavigate('mylab/fornadas')}
-                />
-                <InsightCard
-                    title="MyLab Suggestions"
-                    description="Placeholder: Based on your data, MyLab might suggest experiments, e.g., 'Try comparing A vs B'."
-                    linkText="Go to Comparisons"
-                    onLinkClick={() => onNavigate('mylab/comparacoes')}
-                />
-            </div>
+            <ProFeatureLock 
+                origin="mylab" 
+                featureName="Advanced Dough Analytics"
+                description="Advanced dough analytics live here. Pro users track everything — hydration, fermentation, bake outcomes. Unlock advanced dough science with Pro."
+                className="min-h-[400px] flex items-center justify-center"
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-sm pointer-events-none select-none opacity-60">
+                    <InsightCard
+                        title="Favorite Doughs"
+                        description="See your most used dough recipes."
+                        linkText="View My Doughs"
+                        onLinkClick={() => {}}
+                    />
+                    <InsightCard
+                        title="Favorite Flours"
+                        description="The flour you log most frequently."
+                        linkText="Go to My Flours"
+                        onLinkClick={() => {}}
+                    />
+                    <InsightCard
+                        title="Most Used Styles"
+                        description="Discover which style you explore most."
+                        linkText="View My Bakes"
+                        onLinkClick={() => {}}
+                    />
+                     <InsightCard
+                        title="Sensory Notes"
+                        description="A summary of common keywords from your notes."
+                        linkText="Open Sensory Journal"
+                        onLinkClick={() => {}}
+                    />
+                    <InsightCard
+                        title="Common Errors"
+                        description="Identify patterns in problems you log."
+                        linkText="View My Bakes"
+                        onLinkClick={() => {}}
+                    />
+                    <InsightCard
+                        title="MyLab Suggestions"
+                        description="Based on your data, MyLab suggests experiments."
+                        linkText="Go to Comparisons"
+                        onLinkClick={() => {}}
+                    />
+                </div>
+            </ProFeatureLock>
         </MyLabLayout>
     );
 };

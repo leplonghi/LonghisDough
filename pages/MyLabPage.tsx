@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Page, LevainStatus } from '@/types';
 import { useUser } from '@/contexts/UserProvider';
@@ -8,8 +9,12 @@ import {
     BeakerIcon,
     BatchesIcon,
     PlusCircleIcon,
-    ArrowTopRightOnSquareIcon
+    ArrowTopRightOnSquareIcon,
+    ChartBarIcon,
+    SparklesIcon,
+    StarIcon
 } from '@/components/ui/Icons';
+import ProFeatureLock from '@/components/ui/ProFeatureLock';
 
 interface MyLabPageProps {
     onNavigate: (page: Page, params?: string) => void;
@@ -18,7 +23,7 @@ interface MyLabPageProps {
 }
 
 const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch }) => {
-  const { user, batches, levains } = useUser();
+  const { user, batches, levains, hasProAccess, openPaywall } = useUser();
   const { t } = useTranslation();
 
   // Greeting Logic
@@ -65,6 +70,29 @@ const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch })
                     </button>
                 </div>
             </div>
+
+            {!hasProAccess && (
+                 <div className="rounded-xl bg-slate-900 text-white p-6 shadow-md flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+                     <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                        <SparklesIcon className="w-48 h-48" />
+                     </div>
+                     <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-1 text-lime-400 font-bold text-xs uppercase tracking-wide">
+                             <StarIcon className="h-3 w-3" /> PRO FEATURE
+                        </div>
+                        <h3 className="text-xl font-bold">This is your future bake lab.</h3>
+                        <p className="text-slate-400 text-sm mt-1 max-w-md">
+                            Upgrade to Pro to unlock your full bake history, hydration trends, and levain health insights.
+                        </p>
+                     </div>
+                     <button 
+                        onClick={() => openPaywall('mylab')}
+                        className="relative z-10 bg-lime-500 text-slate-900 font-bold py-2.5 px-5 rounded-full text-sm hover:bg-lime-400 transition-colors whitespace-nowrap shadow-lg"
+                     >
+                        Upgrade to Pro — unlock your lab
+                     </button>
+                 </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 2. Levain Pet Card */}
@@ -163,6 +191,29 @@ const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch })
                     </div>
                 </div>
             </div>
+
+            {hasProAccess && (
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <div className="rounded-xl bg-white p-6 border border-slate-200 shadow-sm opacity-60">
+                         <h3 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><ChartBarIcon className="h-4 w-4"/> Hydration Trend</h3>
+                         <div className="h-20 bg-slate-100 rounded-lg flex items-end justify-center p-2">
+                             <span className="text-xs text-slate-400">Chart placeholder</span>
+                         </div>
+                     </div>
+                      <div className="rounded-xl bg-white p-6 border border-slate-200 shadow-sm opacity-60">
+                         <h3 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><StarIcon className="h-4 w-4"/> Success Rate</h3>
+                          <div className="h-20 bg-slate-100 rounded-lg flex items-center justify-center p-2">
+                             <span className="text-2xl font-bold text-slate-400">92%</span>
+                         </div>
+                     </div>
+                      <div className="rounded-xl bg-white p-6 border border-slate-200 shadow-sm opacity-60">
+                         <h3 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><SparklesIcon className="h-4 w-4"/> Style Frequency</h3>
+                          <div className="h-20 bg-slate-100 rounded-lg flex items-center justify-center p-2">
+                             <span className="text-xs text-slate-400">Chart placeholder</span>
+                         </div>
+                     </div>
+                 </div>
+            )}
         </div>
     </MyLabLayout>
   );

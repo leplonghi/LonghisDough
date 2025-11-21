@@ -864,3 +864,21 @@ export interface ToppingCombination {
   notes: string;
   referenceTag?: string;
 }
+
+// --- Dynamic Technical Method Types ---
+
+export type TechnicalPhase = 'PREP' | 'MIX' | 'AUTO' | 'KNEAD' | 'BULK' | 'DIVIDE' | 'PROOF' | 'BAKE' | 'COOL';
+
+export interface TechnicalStep {
+  id: string;
+  order: number;
+  phase: TechnicalPhase;
+  title: string;
+  durationLabel?: string;
+  temperatureLabel?: string;
+  actionInstructions: string;
+  technicalExplanation?: string;
+  proTip?: string;
+  criticalPoint?: string;
+  references?: string[];
+}

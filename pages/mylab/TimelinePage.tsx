@@ -5,6 +5,7 @@ import MyLabLayout from './MyLabLayout';
 import { useUser } from '../../contexts/UserProvider';
 import { useTranslation } from '../../i18n';
 import { ClockIcon, BatchesIcon, BeakerIcon, PlusCircleIcon } from '../../components/IconComponents';
+import ProFeatureLock from '../../components/ui/ProFeatureLock';
 
 interface TimelineEvent {
   id: string;
@@ -89,28 +90,35 @@ const TimelinePage: React.FC<{ onNavigate: (page: Page, params?: string) => void
         <p className="mt-1 text-sm text-neutral-500">Track your baking evolution.</p>
       </div>
 
-      {timelineEvents.length === 0 ? (
-        <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center">
-          <p className="text-neutral-500">
-            Your journey is just beginning. Your next bakes will appear here.
-          </p>
-        </div>
-      ) : (
-        <ol className="relative border-l border-neutral-200">
-            {timelineEvents.map(event => (
-                 <li key={event.id} className="mb-10 ml-6">
-                    <EventIcon type={event.type} icon={event.icon} />
-                    <button onClick={() => onNavigate(event.link.page, event.link.params)} className="text-left w-full p-4 bg-neutral-50 border border-neutral-200 rounded-lg shadow-sm hover:bg-neutral-100">
-                        <div className="flex items-center justify-between mb-2">
-                             <h3 className="font-semibold text-neutral-900">{event.title}</h3>
-                             <time className="text-xs font-normal text-neutral-500">{new Date(event.date).toLocaleDateString()}</time>
+      <ProFeatureLock 
+        origin='mylab' 
+        featureName="Full Activity Timeline" 
+        description="Pro users track everything — hydration, fermentation, bake outcomes. See your entire baking journey in one place."
+        className="min-h-[300px] flex items-center justify-center"
+      >
+          {timelineEvents.length === 0 ? (
+            <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center filter blur-sm pointer-events-none select-none opacity-60">
+              <p className="text-neutral-500">
+                Your journey is just beginning. Your next bakes will appear here.
+              </p>
+            </div>
+          ) : (
+            <ol className="relative border-l border-neutral-200 filter blur-sm pointer-events-none select-none opacity-60">
+                {timelineEvents.slice(0, 5).map(event => (
+                     <li key={event.id} className="mb-10 ml-6">
+                        <EventIcon type={event.type} icon={event.icon} />
+                        <div className="text-left w-full p-4 bg-neutral-50 border border-neutral-200 rounded-lg shadow-sm">
+                            <div className="flex items-center justify-between mb-2">
+                                 <h3 className="font-semibold text-neutral-900">{event.title}</h3>
+                                 <time className="text-xs font-normal text-neutral-500">{new Date(event.date).toLocaleDateString()}</time>
+                            </div>
+                            <p className="text-sm text-neutral-600">{event.description}</p>
                         </div>
-                        <p className="text-sm text-neutral-600">{event.description}</p>
-                    </button>
-                </li>
-            ))}
-        </ol>
-      )}
+                    </li>
+                ))}
+            </ol>
+          )}
+      </ProFeatureLock>
     </MyLabLayout>
   );
 };

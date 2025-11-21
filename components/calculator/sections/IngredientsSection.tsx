@@ -15,6 +15,7 @@ import {
   SaltIcon,
   OilIcon,
   WrenchScrewdriverIcon,
+  LockClosedIcon,
 } from '@/components/ui/Icons';
 import { timeSince } from '@/helpers';
 
@@ -28,6 +29,8 @@ interface IngredientsSectionProps {
   selectedLevain: Levain | null;
   getSelectClasses: () => string;
   onCalculatorModeChange: (mode: 'basic' | 'advanced') => void;
+  hasProAccess: boolean;
+  onOpenPaywall: () => void;
 }
 
 const CompactParamCard: React.FC<{
@@ -60,6 +63,8 @@ const IngredientsSection: React.FC<IngredientsSectionProps> = ({
   selectedLevain,
   getSelectClasses,
   onCalculatorModeChange,
+  hasProAccess,
+  onOpenPaywall,
 }) => {
   const isBasic = calculatorMode === 'basic';
   const isAnySourdough = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType);
@@ -211,10 +216,28 @@ const IngredientsSection: React.FC<IngredientsSectionProps> = ({
            </div>
            
            {!isBasic && config.ingredients && (
-                <IngredientTableEditor 
-                    ingredients={config.ingredients}
-                    onChange={handleIngredientsUpdate}
-                />
+                <div className="relative">
+                    <div className={!hasProAccess ? "opacity-40 pointer-events-none select-none filter blur-[1px]" : ""}>
+                        <IngredientTableEditor 
+                            ingredients={config.ingredients}
+                            onChange={handleIngredientsUpdate}
+                        />
+                    </div>
+                    {!hasProAccess && (
+                       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl">
+                           <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-200 text-center max-w-xs mx-auto transform transition-transform hover:scale-105 cursor-pointer" onClick={onOpenPaywall}>
+                              <div className="flex justify-center mb-3 text-lime-600">
+                                  <LockClosedIcon className="h-8 w-8" />
+                              </div>
+                              <h4 className="font-bold text-slate-900 text-lg">Blend flours like a master</h4>
+                              <p className="text-xs text-slate-500 mt-2 mb-4">Advanced ingredient management is available on Pro.</p>
+                              <span className="inline-flex items-center gap-1 rounded-full bg-lime-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+                                Unlock Pro
+                              </span>
+                           </div>
+                       </div>
+                    )}
+                </div>
            )}
     </div>
   );

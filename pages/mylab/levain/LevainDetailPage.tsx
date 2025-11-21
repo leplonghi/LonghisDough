@@ -1,8 +1,9 @@
+
 import React, { useState, useMemo } from 'react';
 import { Page, Levain } from '@/types';
 import { useUser } from '@/contexts/UserProvider';
 import LevainLayout from './LevainLayout';
-import { PlusCircleIcon, SparklesIcon } from '@/components/ui/Icons';
+import { PlusCircleIcon, SparklesIcon, LockClosedIcon, StarIcon } from '@/components/ui/Icons';
 import LevainFeedingForm from './components/LevainFeedingForm';
 import LevainProfile from './components/LevainProfile';
 import LevainInsights from './components/LevainInsights';
@@ -22,7 +23,7 @@ const DetailRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label,
 );
 
 const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigate }) => {
-    const { levains, hasProAccess } = useUser();
+    const { levains, hasProAccess, openPaywall } = useUser();
     const [activeTab, setActiveTab] = useState<'summary' | 'feedings' | 'profile' | 'insights'>('summary');
     const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
     const [isAssistantOpen, setIsAssistantOpen] = useState(false);
@@ -102,11 +103,23 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
                             </div>
                         ))}
                         {!hasProAccess && levain.feedingHistory.length > 3 && (
-                            <div className="p-4 text-center bg-neutral-50 rounded-lg">
-                                <p className="text-sm text-neutral-500 mb-2">Older history is hidden.</p>
-                                <ProFeatureLock origin='levain' featureName="Full History">
-                                    <button className="text-sm font-bold text-lime-600 hover:underline">Unlock Full History</button>
-                                </ProFeatureLock>
+                            <div className="p-6 text-center bg-gradient-to-b from-neutral-50 to-white rounded-xl border border-dashed border-lime-200 mt-6">
+                                <div className="flex justify-center mb-3 text-lime-600">
+                                    <LockClosedIcon className="h-8 w-8" />
+                                </div>
+                                <p className="text-sm font-bold text-slate-800 mb-1">
+                                    Pro keeps your full Levain feeding history forever.
+                                </p>
+                                <p className="text-xs text-slate-500 mb-4">
+                                    Unlock Pro to see all past feedings, analyze trends, and perfect your maintenance routine.
+                                </p>
+                                <button 
+                                    onClick={() => openPaywall('levain')}
+                                    className="inline-flex items-center gap-2 text-xs font-bold text-white bg-lime-500 px-5 py-2.5 rounded-full hover:bg-lime-600 shadow-sm transition-transform hover:scale-105 active:scale-95"
+                                >
+                                    <StarIcon className="h-3 w-3" />
+                                    Unlock Full History
+                                </button>
                             </div>
                         )}
                     </div>
@@ -121,7 +134,11 @@ const LevainDetailPage: React.FC<LevainDetailPageProps> = ({ levainId, onNavigat
             case 'feedings': return renderFeedings();
             case 'profile': return <LevainProfile levain={levain} />;
             case 'insights': return (
-                <ProFeatureLock origin='levain' featureName="Levain Insights">
+                <ProFeatureLock 
+                    origin='levain' 
+                    featureName="Deep Levain Health Insights" 
+                    description="Track your Levain like a scientist. Visualize activity cycles, temperature correlation, and health scoring available in Pro."
+                >
                     <LevainInsights levain={levain} />
                 </ProFeatureLock>
             );

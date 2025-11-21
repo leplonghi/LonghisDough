@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -242,6 +243,8 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
         isAnySourdough={isAnySourdough}
         isBasic={isBasic}
         errors={errors}
+        hasProAccess={hasProAccess}
+        onOpenPaywall={onOpenPaywall}
       />
 
       <QuantitySection
@@ -269,6 +272,8 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           selectedLevain={selectedLevain}
           getSelectClasses={getSelectClasses}
           onCalculatorModeChange={onCalculatorModeChange}
+          hasProAccess={hasProAccess}
+          onOpenPaywall={onOpenPaywall}
         />
       </FormSection>
 
@@ -342,6 +347,19 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           Reset Fields
         </button>
       </div>
+
+      {!hasProAccess && (
+        <div className="mt-8 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-center text-white shadow-lg">
+          <p className="text-lg font-bold">Stop guessing. Start mastering your dough.</p>
+          <p className="mt-1 text-sm text-slate-400">Costs less than 25¢ a day. Cheaper than a coffee.</p>
+          <button
+            onClick={onOpenPaywall}
+            className="mt-4 rounded-full bg-lime-500 px-6 py-2 text-sm font-bold text-white transition-transform hover:scale-105 hover:bg-lime-400"
+          >
+            Upgrade to Pro
+          </button>
+        </div>
+      )}
     </div>
   );
 };

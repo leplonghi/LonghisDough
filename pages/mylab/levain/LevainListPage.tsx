@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Levain, Page } from '@/types';
 import { useTranslation } from '@/i18n';
-import { BeakerIcon, PlusCircleIcon, DownloadIcon, ShareIcon } from '@/components/ui/Icons';
+import { BeakerIcon, PlusCircleIcon, DownloadIcon, ShareIcon, LockClosedIcon, StarIcon } from '@/components/ui/Icons';
 import { useUser } from '@/contexts/UserProvider';
 import LevainModal from '@/components/LevainModal';
 import { logEvent } from '@/services/analytics';
@@ -26,7 +27,6 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
         }
     }, [user]);
 
-    // FIX: Changed the type of levainData to match the `onSave` prop of `LevainModal` and handle data transformation before calling `addLevain`.
     const handleSaveLevain = (levainData: Omit<Levain, 'id' | 'isDefault' | 'feedingHistory'> | (Partial<Levain> & { id: string })) => {
         // This component only creates levains.
         if (!('id' in levainData)) {
@@ -182,6 +182,22 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
                              </div>
                         </div>
                     )})}
+                    
+                    {!hasProAccess && levains.length >= 1 && (
+                        <button
+                            onClick={() => openPaywall('levain')}
+                            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-lime-200 bg-lime-50/50 p-6 shadow-sm transition-all hover:bg-lime-50 hover:border-lime-300 hover:shadow-md group h-full min-h-[180px]"
+                        >
+                            <div className="p-3 bg-lime-100 rounded-full text-lime-600 mb-3 group-hover:scale-110 transition-transform">
+                                <PlusCircleIcon className="h-8 w-8" />
+                            </div>
+                            <h3 className="font-bold text-lime-800 text-lg">Add another Levain (Pro)</h3>
+                            
+                            <p className="mt-2 text-xs text-center text-lime-700 max-w-[200px]">
+                                Free plan includes 1 Levain Pet. Pro unlocks unlimited pets plus advanced feeding insights.
+                            </p>
+                        </button>
+                    )}
                 </div>
             )}
         </div>

@@ -15,9 +15,11 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
       name: 'Free',
       price: '$0',
       period: '/mo',
-      description: 'For casual home bakers.',
+      billed: 'Forever free',
+      description: 'Perfect to get started. 1 Levain Pet, 1 saved bake, basic calculator, limited styles, no export, no advanced insights.',
+      subtext: 'Great for testing the waters.',
       features: [
-        { name: 'Dough Calculator', included: true },
+        { name: 'Dough Calculator (Basic)', included: true },
         { name: 'Basic Styles Library', included: true },
         { name: '1 Saved Batch', included: true },
         { name: '1 Levain Pet', included: true },
@@ -27,25 +29,32 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
       ],
       cta: 'Current Plan',
       action: null,
+      highlight: false,
+      badge: null,
     },
     {
-      name: 'Pro',
-      price: billingCycle === 'yearly' ? '$5.59' : '$6.99',
-      period: '/mo',
-      billed: billingCycle === 'yearly' ? '$67.10 billed yearly' : 'Billed monthly',
-      description: 'For the dough obsessive.',
+      name: billingCycle === 'yearly' ? 'Pro Annual' : 'DoughLabPro Pro',
+      price: billingCycle === 'yearly' ? '$67.10' : '$6.99',
+      period: billingCycle === 'yearly' ? '/yr' : '/mo',
+      billed: billingCycle === 'yearly' ? 'Save around 20% vs paying monthly' : 'Billed monthly',
+      description: billingCycle === 'yearly' 
+        ? 'Lock in your dough lab for a full year.' 
+        : 'For serious home bakers who want consistency.',
+      subtext: billingCycle === 'yearly' 
+        ? 'Invest once, bake better all year.' 
+        : 'Costs less than 25¢ a day — cheaper than a coffee and way more useful.',
       features: [
-        { name: 'Everything in Free', included: true },
-        { name: 'Unlimited Saved Batches', included: true },
-        { name: 'Unlimited Levain Pets', included: true },
-        { name: 'Full Style Library', included: true },
-        { name: 'Smart Exports (PDF/JSON)', included: true },
-        { name: 'Advanced AI Assistant', included: true },
-        { name: 'Performance Insights', included: true },
+        { name: 'Unlimited Levain Pets & Saved Bakes', included: true },
+        { name: 'Full Calculator Control & All Styles', included: true },
+        { name: 'PDF/JSON Exports & Advanced Insights', included: true },
+        { name: 'Ad-free experience & Enhanced AI', included: true },
+        { name: 'Priority Support', included: true },
+        { name: 'One failed dough costs more than a month of Pro', included: true },
       ],
       cta: 'Upgrade to Pro',
       highlight: true,
       action: onGrantAccess,
+      badge: 'Most popular among serious home bakers',
     }
   ];
 
@@ -76,10 +85,10 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.name} className={`relative rounded-2xl p-8 shadow-xl ${plan.highlight ? 'bg-slate-900 text-white ring-4 ring-lime-500/30' : 'bg-white text-slate-900 border border-slate-200'}`}>
-            {plan.highlight && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                    Most Popular
+          <div key={plan.name} className={`relative rounded-2xl p-8 shadow-xl flex flex-col ${plan.highlight ? 'bg-slate-900 text-white ring-4 ring-lime-500/30' : 'bg-white text-slate-900 border border-slate-200'}`}>
+            {plan.badge && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide whitespace-nowrap shadow-sm">
+                    {plan.badge}
                 </div>
             )}
             <div className="mb-6">
@@ -88,19 +97,25 @@ const PlansPage: React.FC<PlansPageProps> = ({ onGrantAccess }) => {
                     <span className="text-4xl font-extrabold tracking-tight">{plan.price}</span>
                     <span className="ml-1 text-xl font-semibold opacity-70">{plan.period}</span>
                 </div>
-                <p className={`text-sm mt-1 ${plan.highlight ? 'text-lime-400' : 'text-slate-500'}`}>{plan.billed}</p>
-                <p className="mt-4 text-sm opacity-80">{plan.description}</p>
+                <p className={`text-sm mt-1 font-medium ${plan.highlight ? 'text-lime-400' : 'text-slate-500'}`}>{plan.billed}</p>
+                
+                <p className="mt-4 text-base font-medium opacity-90">{plan.description}</p>
+                {plan.subtext && (
+                    <p className={`mt-2 text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'} italic`}>
+                        "{plan.subtext}"
+                    </p>
+                )}
             </div>
             
-            <ul className="space-y-4 mb-8">
+            <ul className="space-y-4 mb-8 flex-grow">
                 {plan.features.map((feature) => (
-                    <li key={feature.name} className="flex items-center gap-3">
+                    <li key={feature.name} className="flex items-start gap-3">
                         {feature.included ? (
-                            <CheckIcon className={`h-5 w-5 flex-shrink-0 ${plan.highlight ? 'text-lime-400' : 'text-lime-600'}`} />
+                            <CheckIcon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${plan.highlight ? 'text-lime-400' : 'text-lime-600'}`} />
                         ) : (
-                            <CloseIcon className="h-5 w-5 flex-shrink-0 text-slate-400 opacity-50" />
+                            <CloseIcon className="h-5 w-5 flex-shrink-0 mt-0.5 text-slate-400 opacity-50" />
                         )}
-                        <span className={`text-sm ${!feature.included && 'opacity-50 decoration-slate-400'}`}>{feature.name}</span>
+                        <span className={`text-sm ${!feature.included && 'opacity-50 decoration-slate-400 line-through'}`}>{feature.name}</span>
                     </li>
                 ))}
             </ul>

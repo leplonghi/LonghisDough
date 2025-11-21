@@ -7,11 +7,12 @@ import { PaywallOrigin } from '@/types';
 interface ProFeatureLockProps {
   children: React.ReactNode;
   featureName?: string;
+  description?: string;
   className?: string;
   origin?: PaywallOrigin;
 }
 
-const ProFeatureLock: React.FC<ProFeatureLockProps> = ({ children, featureName, className = "", origin = 'general' }) => {
+const ProFeatureLock: React.FC<ProFeatureLockProps> = ({ children, featureName, description, className = "", origin = 'general' }) => {
   const { hasProAccess, openPaywall } = useUser();
   const hasAccess = hasProAccess;
 
@@ -26,21 +27,21 @@ const ProFeatureLock: React.FC<ProFeatureLockProps> = ({ children, featureName, 
       </div>
       
       <div className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer">
-        <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white/90 shadow-lg backdrop-blur-sm border border-slate-200 transition-transform duration-200 group-hover:scale-105">
+        <div className="flex flex-col items-center gap-3 p-5 rounded-xl bg-white/95 shadow-lg backdrop-blur-sm border border-slate-200 transition-transform duration-200 group-hover:scale-105 max-w-xs text-center">
             <div className="p-2 bg-lime-100 rounded-full">
                 <LockClosedIcon className="h-6 w-6 text-lime-600" />
             </div>
-            <div className="text-center">
+            <div>
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                    PRO Feature
+                    {featureName || "PRO Feature"}
                 </h3>
-                {featureName && (
-                    <p className="text-xs text-slate-500 mt-1">{featureName}</p>
+                {description && (
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{description}</p>
                 )}
             </div>
             <button className="px-4 py-1.5 text-xs font-bold text-white bg-lime-500 rounded-full shadow-sm hover:bg-lime-600 transition-colors flex items-center gap-1.5">
                 <StarIcon className="h-3 w-3" />
-                Unlock
+                Unlock Pro
             </button>
         </div>
       </div>

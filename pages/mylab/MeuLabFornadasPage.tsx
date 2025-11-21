@@ -4,8 +4,9 @@ import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '..
 import { useUser } from '../../contexts/UserProvider';
 import { useTranslation } from '../../i18n';
 import MyLabLayout from './MyLabLayout';
-import { BatchesIcon, CalculatorIcon } from '../../components/IconComponents';
+import { BatchesIcon, CalculatorIcon, PlusCircleIcon, StarIcon, LockClosedIcon } from '../../components/IconComponents';
 import { OVEN_TYPE_OPTIONS } from '../../constants';
+import { useToast } from '../../components/ToastProvider';
 
 interface MeuLabFornadasPageProps {
   onLoadAndNavigate: (config: DoughConfig) => void;
@@ -42,6 +43,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
 }) => {
     const { t } = useTranslation();
     const { batches, hasProAccess, openPaywall } = useUser();
+    const { addToast } = useToast();
     const [filters, setFilters] = useState<FornadasFilters>({
         style: 'ALL',
         period: 'ALL',
@@ -58,6 +60,7 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
     const handleCreateDraft = () => {
         const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
         if (!hasProAccess && savedBatches.length >= 1) {
+            addToast("Free plan includes 1 saved bake. Pro never forgets your best dough.", "error");
             openPaywall('mylab');
             return;
         }
@@ -113,6 +116,8 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
         { value: '6m', label: 'Last 6 months' },
     ];
     
+    const hasReachedFreeLimit = !hasProAccess && batches.filter(b => b.status !== BatchStatus.DRAFT).length >= 1;
+
     return (
         <MyLabLayout activePage="mylab/fornadas" onNavigate={onNavigate}>
             <div className="mb-6">
@@ -198,6 +203,24 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                            </div>
                         </div>
                     ))}
+                    
+                    {/* Pro Slot */}
+                    {hasReachedFreeLimit && (
+                         <button 
+                            onClick={() => openPaywall('mylab')}
+                            className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-lime-200 bg-lime-50/50 p-6 shadow-sm transition-all hover:bg-lime-50 hover:border-lime-300 hover:shadow-md group min-h-[250px]"
+                        >
+                            <div className="p-4 bg-lime-100 rounded-full text-lime-600 mb-4 group-hover:scale-110 transition-transform">
+                                <BatchesIcon className="h-8 w-8" />
+                            </div>
+                            <h3 className="font-bold text-lime-800 text-lg flex items-center gap-2">
+                                Unlimited Batches <LockClosedIcon className="h-4 w-4" />
+                            </h3>
+                            <p className="mt-2 text-xs text-center text-lime-700 max-w-[200px]">
+                                Unlimited saved bakes with Pro. Free plan includes 1 saved bake.
+                            </p>
+                        </button>
+                    )}
                 </div>
             )}
         </MyLabLayout>

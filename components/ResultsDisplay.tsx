@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+
+import React, { useRef, useMemo } from 'react';
 import {
   DoughResult,
   DoughConfig,
@@ -19,6 +20,8 @@ import {
 import { useToast } from '@/components/ToastProvider';
 import { useTranslation } from '@/i18n';
 import { exportBatchToJSON, exportBatchToPDF } from '@/services/exportService';
+import TechnicalMethod from '@/components/calculator/TechnicalMethod';
+import { generateTechnicalMethod } from '@/logic/methodGenerator';
 
 interface ResultsDisplayProps {
   results: DoughResult | null;
@@ -51,6 +54,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const { addToast } = useToast();
   const { t } = useTranslation();
   const resultRef = useRef<HTMLDivElement>(null);
+
+  const technicalSteps = useMemo(() => {
+      if (!results) return [];
+      return generateTechnicalMethod(config, results);
+  }, [config, results]);
 
   if (!results) {
     return null;
@@ -90,6 +98,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   const handleShare = async () => {
     if (!hasProAccess) {
+      addToast("Your recipes deserve to be shared — unlock sharing with Pro.", "info");
       onOpenPaywall('calculator');
       return;
     }
@@ -104,6 +113,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   const handleExportPDF = () => {
     if (!hasProAccess) {
+        addToast("Export your formulas as beautiful PDFs with Pro.", "info");
         onOpenPaywall('calculator');
         return;
     }
@@ -124,6 +134,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   const handleExportJSON = () => {
      if (!hasProAccess) {
+        addToast("Your recipes deserve to be shared — unlock exports with Pro.", "info");
         onOpenPaywall('calculator');
         return;
     }
@@ -155,149 +166,156 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   );
 
   return (
-    <div ref={resultRef} className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 animate-[fadeIn_0.3s_ease-out]">
-      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-bold text-slate-900">{t('results.title')}</h2>
-        <div className="flex rounded-lg bg-slate-100 p-1">
-          <button
-            onClick={() => onUnitChange('g')}
-            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
-              unit === 'g' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            g
-          </button>
-          <button
-            onClick={() => onUnitChange('oz')}
-            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
-              unit === 'oz' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            oz
-          </button>
-          <button
-            onClick={() => onUnitChange('volume')}
-            className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
-              unit === 'volume' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            Vol
-          </button>
-        </div>
-      </div>
+    <div ref={resultRef} className="space-y-8">
+        <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 animate-[fadeIn_0.3s_ease-out]">
+            <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+                <h2 className="text-xl font-bold text-slate-900">{t('results.title')}</h2>
+                <div className="flex rounded-lg bg-slate-100 p-1">
+                <button
+                    onClick={() => onUnitChange('g')}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                    unit === 'g' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                >
+                    g
+                </button>
+                <button
+                    onClick={() => onUnitChange('oz')}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                    unit === 'oz' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                >
+                    oz
+                </button>
+                <button
+                    onClick={() => onUnitChange('volume')}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                    unit === 'volume' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    }`}
+                >
+                    Vol
+                </button>
+                </div>
+            </div>
 
-      {/* Summary Cards */}
-      <div className="mb-8 grid grid-cols-2 gap-4">
-        <div className="rounded-xl bg-lime-50 p-4 text-center">
-          <p className="text-xs font-bold uppercase tracking-wider text-lime-700">{t('results.total_dough')}</p>
-          <p className="mt-1 text-2xl font-extrabold text-lime-800">{displayValue(results.totalDough)}</p>
-        </div>
-        {config.numPizzas > 1 && (
-            <div className="rounded-xl bg-sky-50 p-4 text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-sky-700">{t('results.single_ball')}</p>
-            <p className="mt-1 text-2xl font-extrabold text-sky-800">{displayValue(results.totalDough / config.numPizzas)}</p>
+            {/* Summary Cards */}
+            <div className="mb-8 grid grid-cols-2 gap-4">
+                <div className="rounded-xl bg-lime-50 p-4 text-center">
+                <p className="text-xs font-bold uppercase tracking-wider text-lime-700">{t('results.total_dough')}</p>
+                <p className="mt-1 text-2xl font-extrabold text-lime-800">{displayValue(results.totalDough)}</p>
+                </div>
+                {config.numPizzas > 1 && (
+                    <div className="rounded-xl bg-sky-50 p-4 text-center">
+                    <p className="text-xs font-bold uppercase tracking-wider text-sky-700">{t('results.single_ball')}</p>
+                    <p className="mt-1 text-2xl font-extrabold text-sky-800">{displayValue(results.totalDough / config.numPizzas)}</p>
+                    </div>
+                )}
             </div>
-        )}
-      </div>
 
-      {/* Pre-ferment Section */}
-      {results.preferment && (
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <div className="mb-3 flex items-center gap-2 border-b border-amber-200 pb-2 text-amber-800">
-            <BeakerIcon className="h-5 w-5" />
-            <h3 className="font-bold text-sm uppercase tracking-wide">
-                {t(`form.${config.fermentationTechnique.toLowerCase()}`, { defaultValue: 'Preferment' })}
-            </h3>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-                <span>{t('results.flour')}</span>
-                <span className="font-mono font-bold">{displayIngredient('Flour', results.preferment.flour, 'flour')}</span>
-            </div>
-            <div className="flex justify-between">
-                <span>{t('results.water')}</span>
-                <span className="font-mono font-bold">{displayIngredient('Water', results.preferment.water, 'water')}</span>
-            </div>
-            {results.preferment.yeast > 0 && (
-                <div className="flex justify-between">
-                    <span>{t('results.yeast')}</span>
-                    <span className="font-mono font-bold">{displayIngredient('Yeast', results.preferment.yeast, 'yeast')}</span>
+            {/* Pre-ferment Section */}
+            {results.preferment && (
+                <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <div className="mb-3 flex items-center gap-2 border-b border-amber-200 pb-2 text-amber-800">
+                    <BeakerIcon className="h-5 w-5" />
+                    <h3 className="font-bold text-sm uppercase tracking-wide">
+                        {t(`form.${config.fermentationTechnique.toLowerCase()}`, { defaultValue: 'Preferment' })}
+                    </h3>
+                </div>
+                <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                        <span>{t('results.flour')}</span>
+                        <span className="font-mono font-bold">{displayIngredient('Flour', results.preferment.flour, 'flour')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span>{t('results.water')}</span>
+                        <span className="font-mono font-bold">{displayIngredient('Water', results.preferment.water, 'water')}</span>
+                    </div>
+                    {results.preferment.yeast > 0 && (
+                        <div className="flex justify-between">
+                            <span>{t('results.yeast')}</span>
+                            <span className="font-mono font-bold">{displayIngredient('Yeast', results.preferment.yeast, 'yeast')}</span>
+                        </div>
+                    )}
+                </div>
                 </div>
             )}
-          </div>
+
+            {/* Final Dough / Main Ingredients */}
+            <div className="space-y-1 mb-8">
+                <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+                    {results.preferment ? t('results.final_dough_title') : t('results.ingredients_title', {defaultValue: 'Ingredients'})}
+                </h3>
+                
+                {results.finalDough ? (
+                    <>
+                        {renderRow(t('results.flour'), results.finalDough.flour, 'flour')}
+                        {renderRow(t('results.water'), results.finalDough.water, 'water')}
+                        {renderRow(t('results.salt'), results.finalDough.salt, 'salt', `${config.salt}%`)}
+                        {results.finalDough.yeast > 0 && renderRow(t('results.yeast'), results.finalDough.yeast, 'yeast')}
+                        {results.finalDough.oil > 0 && renderRow(t('results.oil'), results.finalDough.oil, 'oil', `${config.oil}%`)}
+                        {results.finalDough.sugar > 0 && renderRow(t('results.sugar'), results.finalDough.sugar, 'sugar', `${config.sugar}%`)}
+                    </>
+                ) : (
+                    <>
+                        {renderRow(t('results.flour'), results.totalFlour, 'flour')}
+                        {renderRow(t('results.water'), results.totalWater, 'water', `${config.hydration}%`)}
+                        {renderRow(t('results.salt'), results.totalSalt, 'salt', `${config.salt}%`)}
+                        {results.totalYeast > 0 && renderRow(t('results.yeast'), results.totalYeast, 'yeast', `${config.yeastPercentage}%`)}
+                        {results.totalOil > 0 && renderRow(t('results.oil'), results.totalOil, 'oil', `${config.oil}%`)}
+                        {results.totalSugar > 0 && renderRow(t('results.sugar'), results.totalSugar, 'sugar', `${config.sugar}%`)}
+                    </>
+                )}
+                
+                {/* Custom/Other ingredients from Universal model */}
+                {results.ingredientWeights?.filter(i => i.role === 'other').map(ing => (
+                    renderRow(ing.name, ing.weight, ing.id, `${ing.bakerPercentage}%`)
+                ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-3">
+                <button
+                onClick={onStartBatch}
+                ref={saveButtonRef}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-lime-500 py-3.5 text-base font-bold text-white shadow-lg shadow-lime-200 transition-all hover:bg-lime-600 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm"
+                >
+                <BatchesIcon className="h-5 w-5" />
+                {t('diary_page.new_batch')}
+                </button>
+
+                <div className="grid grid-cols-3 gap-3">
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+                    >
+                        <ShareIcon className="h-4 w-4" />
+                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                        Share
+                    </button>
+                    <button
+                        onClick={handleExportPDF}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+                    >
+                        <DownloadIcon className="h-4 w-4" />
+                        PDF
+                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                    </button>
+                    <button
+                        onClick={handleExportJSON}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+                    >
+                        <DocumentDuplicateIcon className="h-4 w-4" />
+                        JSON
+                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                    </button>
+                </div>
+            </div>
         </div>
-      )}
 
-      {/* Final Dough / Main Ingredients */}
-      <div className="space-y-1 mb-8">
-        <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-            {results.preferment ? t('results.final_dough_title') : t('results.ingredients_title', {defaultValue: 'Ingredients'})}
-        </h3>
-        
-        {results.finalDough ? (
-            <>
-                {renderRow(t('results.flour'), results.finalDough.flour, 'flour')}
-                {renderRow(t('results.water'), results.finalDough.water, 'water')}
-                {renderRow(t('results.salt'), results.finalDough.salt, 'salt', `${config.salt}%`)}
-                {results.finalDough.yeast > 0 && renderRow(t('results.yeast'), results.finalDough.yeast, 'yeast')}
-                {results.finalDough.oil > 0 && renderRow(t('results.oil'), results.finalDough.oil, 'oil', `${config.oil}%`)}
-                {results.finalDough.sugar > 0 && renderRow(t('results.sugar'), results.finalDough.sugar, 'sugar', `${config.sugar}%`)}
-            </>
-        ) : (
-            <>
-                {renderRow(t('results.flour'), results.totalFlour, 'flour')}
-                {renderRow(t('results.water'), results.totalWater, 'water', `${config.hydration}%`)}
-                {renderRow(t('results.salt'), results.totalSalt, 'salt', `${config.salt}%`)}
-                {results.totalYeast > 0 && renderRow(t('results.yeast'), results.totalYeast, 'yeast', `${config.yeastPercentage}%`)}
-                {results.totalOil > 0 && renderRow(t('results.oil'), results.totalOil, 'oil', `${config.oil}%`)}
-                {results.totalSugar > 0 && renderRow(t('results.sugar'), results.totalSugar, 'sugar', `${config.sugar}%`)}
-            </>
-        )}
-        
-        {/* Custom/Other ingredients from Universal model */}
-        {results.ingredientWeights?.filter(i => i.role === 'other').map(ing => (
-             renderRow(ing.name, ing.weight, ing.id, `${ing.bakerPercentage}%`)
-        ))}
-      </div>
-
-      {/* Actions */}
-      <div className="flex flex-col gap-3">
-        <button
-          onClick={onStartBatch}
-          ref={saveButtonRef}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-lime-500 py-3.5 text-base font-bold text-white shadow-lg shadow-lime-200 transition-all hover:bg-lime-600 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm"
-        >
-          <BatchesIcon className="h-5 w-5" />
-          {t('diary_page.new_batch')}
-        </button>
-
-        <div className="grid grid-cols-3 gap-3">
-            <button
-                onClick={handleShare}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
-            >
-                <ShareIcon className="h-4 w-4" />
-                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
-                Share
-            </button>
-            <button
-                onClick={handleExportPDF}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
-            >
-                <DownloadIcon className="h-4 w-4" />
-                PDF
-                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
-            </button>
-            <button
-                onClick={handleExportJSON}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
-            >
-                <DocumentDuplicateIcon className="h-4 w-4" />
-                JSON
-                {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
-            </button>
+        {/* Technical Method Section */}
+        <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50">
+            <TechnicalMethod steps={technicalSteps} />
         </div>
-      </div>
     </div>
   );
 };

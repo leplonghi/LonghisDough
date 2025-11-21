@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/Icons';
 import { AFFILIATE_LINKS } from '@/data/affiliateLinks';
 import ProFeatureLock from '@/components/ui/ProFeatureLock';
+import { useUser } from '@/contexts/UserProvider';
 
 interface StyleDetailPageProps {
   style: DoughStyleDefinition;
@@ -21,6 +22,7 @@ interface StyleDetailPageProps {
 }
 
 export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadAndNavigate, onBack }) => {
+  const { hasProAccess, openPaywall } = useUser();
   
   const renderRecommendation = () => {
       let text = "";
@@ -75,7 +77,7 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
 
         <div className="bg-white rounded-2xl shadow-lg ring-1 ring-slate-200/50 overflow-hidden">
             {/* Header */}
-            <div className="bg-slate-900 p-8 text-white">
+            <div className="bg-slate-900 p-8 text-white relative">
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-3xl font-bold">{style.name}</h1>
@@ -86,6 +88,11 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                             {style.year && <span className="bg-slate-800 px-2 py-1 rounded border border-slate-700">{style.year}</span>}
                         </div>
                     </div>
+                    {style.isPro && (
+                        <span className="bg-lime-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
+                            PRO
+                        </span>
+                    )}
                 </div>
             </div>
 
@@ -93,7 +100,7 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                 
                 {/* Left Column: Technical Data */}
                 <div className="lg:col-span-2 space-y-8">
-                    {/* History Section */}
+                    {/* History Section - Always Visible */}
                     <section>
                         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 mb-3">
                             <BookOpenIcon className="h-5 w-5 text-lime-500" />
@@ -104,30 +111,37 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                         </p>
                     </section>
 
-                    {/* Formula Section */}
+                    {/* Formula Section - Partially Locked for Pro */}
                     <section>
                         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900 mb-4">
                             <BeakerIcon className="h-5 w-5 text-lime-500" />
                             Base Formula
                         </h2>
-                        <div className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-slate-100 text-slate-500 uppercase text-xs">
-                                    <tr>
-                                        <th className="px-4 py-3">Ingredient</th>
-                                        <th className="px-4 py-3 text-right">% (Baker's)</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-200">
-                                    {style.ingredients.map(ing => (
-                                        <tr key={ing.id}>
-                                            <td className="px-4 py-3 font-medium text-slate-700">{ing.name}</td>
-                                            <td className="px-4 py-3 text-right font-mono text-slate-600">{ing.bakerPercentage}%</td>
+                        <ProFeatureLock 
+                             origin="styles" 
+                             featureName="Pro Style Formula" 
+                             description="Full style specs and baker's percentages are available in Pro."
+                             className={style.isPro && !hasProAccess ? "min-h-[200px] flex items-center justify-center" : ""}
+                        >
+                            <div className={`bg-slate-50 rounded-xl border border-slate-200 overflow-hidden ${style.isPro && !hasProAccess ? 'filter blur-sm pointer-events-none opacity-60' : ''}`}>
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-slate-100 text-slate-500 uppercase text-xs">
+                                        <tr>
+                                            <th className="px-4 py-3">Ingredient</th>
+                                            <th className="px-4 py-3 text-right">% (Baker's)</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-200">
+                                        {style.ingredients.map(ing => (
+                                            <tr key={ing.id}>
+                                                <td className="px-4 py-3 font-medium text-slate-700">{ing.name}</td>
+                                                <td className="px-4 py-3 text-right font-mono text-slate-600">{ing.bakerPercentage}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ProFeatureLock>
                     </section>
                     
                     {/* Notes & Risks */}
@@ -155,27 +169,33 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
 
                 {/* Right Column: Parameters & Action */}
                 <div className="space-y-6">
-                     <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                        <h3 className="font-bold text-slate-900 mb-4">Technical Parameters</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <p className="text-xs text-slate-500 uppercase font-semibold">Hydration</p>
-                                <p className="text-xl font-bold text-slate-800">{style.technical.hydration}%</p>
+                     <ProFeatureLock 
+                        origin="styles"
+                        featureName="Technical Parameters"
+                        className={style.isPro && !hasProAccess ? "min-h-[180px] flex items-center justify-center" : ""}
+                     >
+                         <div className={`bg-slate-50 p-6 rounded-xl border border-slate-200 ${style.isPro && !hasProAccess ? 'filter blur-sm pointer-events-none opacity-60' : ''}`}>
+                            <h3 className="font-bold text-slate-900 mb-4">Technical Parameters</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Hydration</p>
+                                    <p className="text-xl font-bold text-slate-800">{style.technical.hydration}%</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                        <ClockIcon className="h-3 w-3" /> Fermentation
+                                    </p>
+                                    <p className="text-base font-medium text-slate-800">{style.technical.fermentation}</p>
+                                </div>
+                                 <div>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
+                                        <FireIcon className="h-3 w-3" /> Oven Temp
+                                    </p>
+                                    <p className="text-base font-medium text-slate-800">{style.technical.bakingTempC}°C</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
-                                    <ClockIcon className="h-3 w-3" /> Fermentation
-                                </p>
-                                <p className="text-base font-medium text-slate-800">{style.technical.fermentation}</p>
-                            </div>
-                             <div>
-                                <p className="text-xs text-slate-500 uppercase font-semibold flex items-center gap-1">
-                                    <FireIcon className="h-3 w-3" /> Oven Temp
-                                </p>
-                                <p className="text-base font-medium text-slate-800">{style.technical.bakingTempC}°C</p>
-                            </div>
-                        </div>
-                     </div>
+                         </div>
+                     </ProFeatureLock>
 
                     {style.isPro ? (
                         <ProFeatureLock origin='styles' featureName={`Pro Style: ${style.name}`}>
@@ -202,8 +222,23 @@ export const StyleDetailPage: React.FC<StyleDetailPageProps> = ({ style, onLoadA
                      </p>
 
                      {renderRecommendation()}
+                     
+                     {/* Soft Callout for Free Styles */}
+                     {!style.isPro && !hasProAccess && (
+                        <div className="mt-8 p-4 bg-gradient-to-r from-slate-50 to-lime-50 rounded-lg border border-lime-100 text-center">
+                             <p className="text-sm font-bold text-slate-800 mb-2">Want to go deeper?</p>
+                             <p className="text-xs text-slate-600 mb-3">Pro unlocks expert-level techniques and insights for all styles.</p>
+                             <button
+                                onClick={() => openPaywall('styles')}
+                                className="text-xs font-bold text-lime-600 hover:underline"
+                            >
+                                Learn about Pro &rarr;
+                            </button>
+                        </div>
+                     )}
                 </div>
             </div>
         </div>
-    );
+    </div>
+  );
 };

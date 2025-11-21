@@ -13,7 +13,8 @@ import {
   BeakerIcon,
   UserCircleIcon,
   ShoppingBagIcon,
-  LockClosedIcon
+  LockClosedIcon,
+  StarIcon
 } from '@/components/ui/Icons';
 import { useUser } from '@/contexts/UserProvider';
 
@@ -103,6 +104,7 @@ const ToolsMenu: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
 };
 
 const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavigate, onNavigate, onOpenAuth }) => {
+    const { isAuthenticated, hasProAccess, openPaywall } = useUser();
     
     const navLinks = [
       { page: 'mylab', label: 'My Lab' },
@@ -138,8 +140,31 @@ const DesktopHeader: React.FC<HeaderComponentProps> = ({ activePage, handleNavig
               </nav>
             </div>
 
-            {/* Right Section: User Avatar */}
-            <div className="flex flex-shrink-0 items-center gap-2">
+            {/* Right Section: User Avatar & Plan Status */}
+            <div className="flex flex-shrink-0 items-center gap-4">
+              {isAuthenticated && (
+                  <div className="flex items-center gap-3 border-r border-slate-200 pr-4 mr-1">
+                    {hasProAccess ? (
+                       <div className="flex items-center gap-2" title="Thank you for supporting DoughLabPro">
+                           <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-200 to-yellow-400 px-2.5 py-0.5 text-xs font-bold text-yellow-900 shadow-sm ring-1 ring-yellow-400/50">
+                               <StarIcon className="h-3 w-3" /> PRO
+                           </span>
+                       </div>
+                    ) : (
+                        <>
+                            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                                Free plan
+                            </span>
+                            <button 
+                                onClick={() => openPaywall('general')}
+                                className="text-sm font-bold text-lime-600 hover:text-lime-700 hover:underline transition-all"
+                            >
+                                Unlock your dough lab
+                            </button>
+                        </>
+                    )}
+                  </div>
+              )}
               <UserMenu onNavigate={onNavigate} onOpenAuthModal={onOpenAuth} />
             </div>
           </div>

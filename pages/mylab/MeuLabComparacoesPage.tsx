@@ -5,6 +5,7 @@ import { useUser } from '@/contexts/UserProvider';
 import { useTranslation } from '@/i18n';
 import { FLOURS } from '@/flours-constants';
 import { CalculatorIcon, ExclamationCircleIcon } from '@/components/ui/Icons';
+import ProFeatureLock from '@/components/ui/ProFeatureLock';
 
 interface CompareReceitasPageProps {
   onNavigate: (page: Page, params?: string) => void;
@@ -70,8 +71,9 @@ const CompareReceitasPage: React.FC<CompareReceitasPageProps> = ({ onNavigate, o
             const idB = params.get('idB');
 
             if (!idA || !idB) {
-                setError('Recipe IDs not found in URL.');
-                setIsLoading(false);
+                // If no IDs, we just show the empty state or selection screen placeholder
+                // For now, let's pretend we are loading just to show the Pro Lock on the container
+                setIsLoading(false); 
                 return;
             }
 
@@ -92,27 +94,9 @@ const CompareReceitasPage: React.FC<CompareReceitasPageProps> = ({ onNavigate, o
             setIsLoading(false);
         }
     }, [batches]);
-
-    if (isLoading) {
-        return <div className="text-center p-8">Loading comparison...</div>;
-    }
-
-    if (error) {
-        return (
-            <div className="text-center p-8 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30">
-                 <ExclamationCircleIcon className="mx-auto h-10 w-10 text-red-500" />
-                <h2 className="mt-4 text-xl font-semibold text-red-800 dark:text-red-200">Comparison Error</h2>
-                <p className="mt-2 text-red-700 dark:text-red-300">{error}</p>
-                <button onClick={() => onNavigate('mylab/comparacoes')} className="mt-6 text-sm font-semibold text-lime-600 dark:text-lime-400 hover:underline">
-                    &larr; Back to selection
-                </button>
-            </div>
-        );
-    }
     
-    if (!batchA || !batchB) {
-         return null; // Should be covered by error state
-    }
+    // Mock data for visualization behind lock if no batches selected
+    const mockBatch = batches[0] || null;
 
     return (
         <div className="animate-[fadeIn_0.5s_ease-in-out]">
@@ -121,16 +105,33 @@ const CompareReceitasPage: React.FC<CompareReceitasPageProps> = ({ onNavigate, o
                 <p className="mt-1 text-sm text-neutral-500">See side-by-side differences between two recipes.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                <RecipeDetailColumn batch={batchA} onLoad={() => onLoadAndNavigate(batchA.doughConfig)} t={t} />
-                <RecipeDetailColumn batch={batchB} onLoad={() => onLoadAndNavigate(batchB.doughConfig)} t={t} />
-            </div>
-
-            <div className="mt-8 text-center">
-                 <button onClick={() => onNavigate('mylab/comparacoes')} className="text-sm font-semibold text-lime-600 dark:text-lime-400 hover:underline">
-                    &larr; Select other recipes
-                </button>
-            </div>
+            <ProFeatureLock 
+                origin='mylab' 
+                featureName="Recipe Comparison Tool" 
+                description="See beyond the surface. Unlock advanced dough science with Pro to compare recipes side-by-side."
+                className="min-h-[400px] flex items-center justify-center"
+            >
+                 {error ? (
+                    <div className="text-center p-8 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 filter blur-sm pointer-events-none select-none opacity-60">
+                         <ExclamationCircleIcon className="mx-auto h-10 w-10 text-red-500" />
+                        <h2 className="mt-4 text-xl font-semibold text-red-800 dark:text-red-200">Comparison Error</h2>
+                        <p className="mt-2 text-red-700 dark:text-red-300">{error}</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 filter blur-sm pointer-events-none select-none opacity-60">
+                        {mockBatch ? (
+                            <>
+                                <RecipeDetailColumn batch={mockBatch} onLoad={() => {}} t={t} />
+                                <RecipeDetailColumn batch={mockBatch} onLoad={() => {}} t={t} />
+                            </>
+                        ) : (
+                            <div className="col-span-2 text-center p-12 border-2 border-dashed border-slate-300 rounded-xl">
+                                <p className="text-slate-500">Select recipes to compare</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </ProFeatureLock>
         </div>
     );
 };
