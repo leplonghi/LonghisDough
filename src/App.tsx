@@ -1,4 +1,3 @@
-
 import React, {
   useState,
   useEffect,
@@ -565,10 +564,18 @@ function AppContent() {
 
   // Handle loading a Data-Driven Style Module
   const handleLoadStyleFromModule = useCallback((style: DoughStyleDefinition) => {
+      // Set BakeType based on Category
+      let bakeType = BakeType.PIZZAS;
+      if (style.category === 'bread' || style.category === 'enriched_bread' || style.category === 'burger_bun') {
+          bakeType = BakeType.BREADS_SAVORY;
+      } else if (style.category === 'pastry' || style.category === 'cookie') {
+          bakeType = BakeType.SWEETS_PASTRY;
+      }
+
       const newDoughConfig: Partial<DoughConfig> = {
-        bakeType: style.category === 'pizza' ? BakeType.PIZZAS : 
-                  style.category === 'bread' ? BakeType.BREADS_SAVORY : BakeType.SWEETS_PASTRY,
+        bakeType,
         baseStyleName: style.name,
+        recipeStyle: style.recipeStyle,
         hydration: style.technical.hydration,
         salt: style.technical.salt,
         oil: style.technical.oil,
@@ -823,7 +830,7 @@ function AppContent() {
         return <LandingPage />;
       case 'styles':
         // Library is accessible (Auth)
-        return protect(<DoughStylesPage doughConfig={config} onLoadAndNavigate={handleLoadAndNavigate} onNavigateToDetail={(id) => navigate(`styles/${id}`)} />);
+        return protect(<DoughStylesPage doughConfig={config} onLoadStyle={handleLoadStyleFromModule} onNavigateToDetail={(id) => navigate(`styles/${id}`)} />);
       case 'tools-oven-analysis':
         return protectPro(<OvenAnalysisPage />);
       case 'tools-doughbot':

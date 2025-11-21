@@ -4,7 +4,7 @@ import { DoughConfig, FermentationTechnique } from '@/types';
 import ChoiceButton from '@/components/ui/ChoiceButton';
 import FormSection from '@/components/calculator/AccordionSection';
 import SliderInput from '@/components/ui/SliderInput';
-import { FermentationIcon, LockClosedIcon } from '@/components/ui/Icons';
+import { FermentationIcon, LockClosedIcon, InfoIcon } from '@/components/ui/Icons';
 
 interface FermentationSectionProps {
   config: DoughConfig;
@@ -14,6 +14,7 @@ interface FermentationSectionProps {
   errors: any;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
+  allowedTechniques: FermentationTechnique[];
 }
 
 const FermentationSection: React.FC<FermentationSectionProps> = ({
@@ -24,6 +25,7 @@ const FermentationSection: React.FC<FermentationSectionProps> = ({
   errors,
   hasProAccess,
   onOpenPaywall,
+  allowedTechniques,
 }) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,6 +37,8 @@ const FermentationSection: React.FC<FermentationSectionProps> = ({
         onOpenPaywall();
     }
   };
+
+  const isAllowed = (tech: FermentationTechnique) => allowedTechniques.includes(tech);
 
   return (
     <FormSection
@@ -58,40 +62,57 @@ const FermentationSection: React.FC<FermentationSectionProps> = ({
               Direct
             </ChoiceButton>
             
-            <div className="relative" onClick={handleLockedClick}>
+            <div className="relative group" onClick={isAllowed(FermentationTechnique.POOLISH) ? handleLockedClick : undefined}>
                 <ChoiceButton
                     active={config.fermentationTechnique === FermentationTechnique.POOLISH}
                     onClick={() =>
-                        hasProAccess && onConfigChange({ fermentationTechnique: FermentationTechnique.POOLISH })
+                        hasProAccess && isAllowed(FermentationTechnique.POOLISH) && onConfigChange({ fermentationTechnique: FermentationTechnique.POOLISH })
                     }
-                    className={!hasProAccess ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}
+                    className={!hasProAccess || !isAllowed(FermentationTechnique.POOLISH) ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}
                 >
                     Poolish
                 </ChoiceButton>
-                {!hasProAccess && (
+                {!hasProAccess && isAllowed(FermentationTechnique.POOLISH) && (
                     <div className="absolute -top-2 -right-2 bg-lime-500 text-white text-[10px] font-bold px-1.5 rounded-full shadow-sm z-10 flex items-center gap-0.5">
                         <LockClosedIcon className="h-2.5 w-2.5" /> PRO
+                    </div>
+                )}
+                {!isAllowed(FermentationTechnique.POOLISH) && (
+                     <div className="absolute -top-2 -right-2 bg-slate-500 text-white text-[10px] font-bold px-1.5 rounded-full shadow-sm z-10 flex items-center gap-0.5" title="Not compatible with selected style">
+                        <InfoIcon className="h-2.5 w-2.5" /> N/A
                     </div>
                 )}
             </div>
 
-            <div className="relative" onClick={handleLockedClick}>
+            <div className="relative group" onClick={isAllowed(FermentationTechnique.BIGA) ? handleLockedClick : undefined}>
                 <ChoiceButton
                     active={config.fermentationTechnique === FermentationTechnique.BIGA}
                     onClick={() =>
-                        hasProAccess && onConfigChange({ fermentationTechnique: FermentationTechnique.BIGA })
+                        hasProAccess && isAllowed(FermentationTechnique.BIGA) && onConfigChange({ fermentationTechnique: FermentationTechnique.BIGA })
                     }
-                    className={!hasProAccess ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}
+                    className={!hasProAccess || !isAllowed(FermentationTechnique.BIGA) ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}
                 >
                     Biga
                 </ChoiceButton>
-                 {!hasProAccess && (
+                 {!hasProAccess && isAllowed(FermentationTechnique.BIGA) && (
                     <div className="absolute -top-2 -right-2 bg-lime-500 text-white text-[10px] font-bold px-1.5 rounded-full shadow-sm z-10 flex items-center gap-0.5">
                         <LockClosedIcon className="h-2.5 w-2.5" /> PRO
                     </div>
                 )}
+                {!isAllowed(FermentationTechnique.BIGA) && (
+                     <div className="absolute -top-2 -right-2 bg-slate-500 text-white text-[10px] font-bold px-1.5 rounded-full shadow-sm z-10 flex items-center gap-0.5" title="Not compatible with selected style">
+                        <InfoIcon className="h-2.5 w-2.5" /> N/A
+                    </div>
+                )}
             </div>
           </div>
+          
+          {!allowedTechniques.includes(FermentationTechnique.POOLISH) && !allowedTechniques.includes(FermentationTechnique.BIGA) && (
+              <p className="text-xs text-center text-slate-500 mt-2 italic">
+                  Preferments (Poolish/Biga) are not typically used for this style (e.g. Pastry/Cookies).
+              </p>
+          )}
+
           {config.fermentationTechnique !== FermentationTechnique.DIRECT && (
             <div className="pt-6 border-t border-slate-200">
               <SliderInput

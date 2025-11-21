@@ -43,6 +43,7 @@ export enum RecipeStyle {
   SANDWICH_LOAF = 'SANDWICH_LOAF',
   FLATBREAD = 'FLATBREAD',
   BRIOCHE = 'BRIOCHE',
+  DINNER_ROLLS = 'DINNER_ROLLS',
 
   // --- SWEETS & PASTRY ---
   PATE_SUCREE = 'PATE_SUCREE',
@@ -51,8 +52,13 @@ export enum RecipeStyle {
   COOKIES = 'COOKIES',
   COOKIE_NY_CHOC_CHIP = 'COOKIE_NY_CHOC_CHIP',
   CINNAMON_ROLL = 'CINNAMON_ROLL',
+  SWEET_ROLL = 'SWEET_ROLL',
+  BABKA = 'BABKA',
+  DONUT = 'DONUT',
+  SHORTBREAD = 'SHORTBREAD',
   PIE_DOUGH = 'PIE_DOUGH',
   BOLO_SIMPLES = 'BOLO_SIMPLES',
+  BROWNIE = 'BROWNIE',
   
   // Legacy/Duplicate Handling
   NY_STYLE = 'NY_STYLE',
@@ -544,8 +550,8 @@ export interface DoughStyleDefinition {
         fermentationTechnique: FermentationTechnique;
         bakingTempC: number;
     };
-    allowedFermentationTechniques?: FermentationTechnique[]; // Restrict techniques (e.g. no Biga for Cookies)
-    defaultFermentationTechnique?: FermentationTechnique;
+    allowedFermentationTechniques: FermentationTechnique[]; // Restrict techniques (e.g. no Biga for Cookies)
+    defaultFermentationTechnique: FermentationTechnique;
     ingredients: IngredientConfig[];
     variations?: string[];
     risks?: string[];

@@ -26,6 +26,7 @@ import StyleSection from '@/components/calculator/sections/StyleSection';
 import FermentationSection from '@/components/calculator/sections/FermentationSection';
 import QuantitySection from '@/components/calculator/sections/QuantitySection';
 import EnvironmentSection from '@/components/calculator/sections/EnvironmentSection';
+import { getAllowedFermentationTechniques } from '@/data/stylesData';
 
 interface CalculatorFormProps {
   config: DoughConfig;
@@ -138,6 +139,10 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
     [config.stylePresetId],
   );
 
+  const allowedFermentationTechniques = useMemo(() => {
+      return getAllowedFermentationTechniques(config.recipeStyle, config.bakeType);
+  }, [config.recipeStyle, config.bakeType]);
+
   const getInputClasses = (hasError: boolean) =>
     `w-full rounded-lg bg-slate-50 p-2 text-slate-900 border ${
       hasError
@@ -245,6 +250,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
         errors={errors}
         hasProAccess={hasProAccess}
         onOpenPaywall={onOpenPaywall}
+        allowedTechniques={allowedFermentationTechniques}
       />
 
       <QuantitySection

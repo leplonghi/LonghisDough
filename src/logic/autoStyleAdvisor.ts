@@ -52,6 +52,12 @@ const STYLE_CHARACTERISTICS: Record<
   [RecipeStyle.HOKKAIDO_MILK_BREAD]: { hydrationRange: [65, 75], idealW: [300, 380], idealOvenTemp: [170, 190], name: 'Hokkaido Milk Bread' },
   [RecipeStyle.COOKIE_NY_CHOC_CHIP]: { hydrationRange: [0, 15], idealW: [180, 240], idealOvenTemp: [190, 210], name: 'NY Cookie' },
   [RecipeStyle.CINNAMON_ROLL]: { hydrationRange: [50, 60], idealW: [240, 320], idealOvenTemp: [180, 200], name: 'Cinnamon Roll' },
+  [RecipeStyle.DINNER_ROLLS]: { hydrationRange: [55, 65], idealW: [220, 280], idealOvenTemp: [180, 200], name: 'Dinner Rolls' },
+  [RecipeStyle.SWEET_ROLL]: { hydrationRange: [50, 60], idealW: [240, 320], idealOvenTemp: [180, 200], name: 'Sweet Rolls' },
+  [RecipeStyle.BABKA]: { hydrationRange: [30, 45], idealW: [280, 350], idealOvenTemp: [170, 190], name: 'Babka' },
+  [RecipeStyle.DONUT]: { hydrationRange: [50, 60], idealW: [240, 300], idealOvenTemp: [180, 200], name: 'Yeast Donut' },
+  [RecipeStyle.SHORTBREAD]: { hydrationRange: [0, 10], idealW: [150, 200], idealOvenTemp: [160, 170], name: 'Shortbread' },
+  [RecipeStyle.BROWNIE]: { hydrationRange: [20, 30], idealW: [150, 200], idealOvenTemp: [160, 180], name: 'Brownie' },
 };
 
 

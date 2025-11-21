@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { 
     BookOpenIcon,
@@ -15,14 +14,22 @@ import {
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
 import { useTranslation } from '@/i18n';
-import { DoughStyleDefinition } from '@/types';
-import { DoughConfig } from '@/types';
+import { DoughStyleDefinition, DoughConfig } from '@/types';
 
 interface DoughStylesPageProps {
   doughConfig: DoughConfig;
-  onLoadAndNavigate: (config: Partial<DoughConfig>) => void;
+  onLoadStyle?: (style: DoughStyleDefinition) => void;
   onNavigateToDetail: (styleId: string) => void;
 }
+
+// Map internal categories to display sections
+const SECTIONS = [
+  { id: 'pizza', label: 'Pizzas', categories: ['pizza'] },
+  { id: 'bread', label: 'Breads & Enriched', categories: ['bread', 'enriched_bread'] },
+  { id: 'buns', label: 'Burger Buns', categories: ['burger_bun'] },
+  { id: 'pastry', label: 'Pastry & Sweets', categories: ['pastry'] },
+  { id: 'cookie', label: 'Cookies & Confectionery', categories: ['cookie'] },
+];
 
 const CategoryBadge: React.FC<{ category: string }> = ({ category }) => {
     let colorClass = 'bg-slate-100 text-slate-700';
@@ -63,7 +70,11 @@ const CategoryBadge: React.FC<{ category: string }> = ({ category }) => {
     );
 };
 
-const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> = ({ style, onClick }) => {
+const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; onUse: (e: React.MouseEvent) => void }> = ({ style, onClick, onUse }) => {
+    const hydration = style.technical.hydration > 0 ? `${style.technical.hydration}%` : null;
+    const fat = style.technical.oil > 0 ? `Fat: ${style.technical.oil}%` : null;
+    const sugar = style.technical.sugar > 0 ? `Sugar: ${style.technical.sugar}%` : null;
+
     return (
         <div 
             onClick={onClick}
@@ -81,48 +92,60 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void }> 
                     </h3>
                 </div>
                 
-                <div className="mb-3 flex gap-2 flex-wrap">
+                <div className="mb-3 flex gap-2 flex-wrap items-center">
                     <CategoryBadge category={style.category} />
                     <span className="text-xs text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">{style.country}</span>
                 </div>
 
-                <p className="text-sm text-slate-600 mb-4 line-clamp-3">
+                <p className="text-sm text-slate-600 mb-4 line-clamp-2 flex-grow">
                     {style.description}
                 </p>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {hydration && <span className="text-[10px] font-mono bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100">💧 {hydration}</span>}
+                    {fat && <span className="text-[10px] font-mono bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-100">{fat}</span>}
+                    {sugar && <span className="text-[10px] font-mono bg-pink-50 text-pink-700 px-1.5 py-0.5 rounded border border-pink-100">{sugar}</span>}
+                </div>
 
-                <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <span className="font-mono bg-slate-50 px-1.5 py-0.5 rounded">Hydration: {style.technical.hydration}%</span>
-                    <span className="flex items-center font-semibold text-lime-600 group-hover:underline">
-                        Details <ChevronRightIcon className="h-3 w-3 ml-1" />
-                    </span>
+                <div className="mt-auto pt-4 border-t border-slate-100 flex gap-2">
+                    <button 
+                        onClick={onUse}
+                        className="flex-1 bg-lime-50 text-lime-700 hover:bg-lime-100 hover:text-lime-800 text-xs font-bold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1"
+                    >
+                        <CalculatorIcon className="h-3 w-3" /> Use
+                    </button>
+                    <button className="flex-1 bg-slate-50 text-slate-600 hover:bg-slate-100 text-xs font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1">
+                        Details <ChevronRightIcon className="h-3 w-3" />
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
 
-const DoughStylesPage: React.FC<DoughStylesPageProps & { onNavigateToDetail: (id: string) => void }> = ({ doughConfig, onLoadAndNavigate, onNavigateToDetail }) => {
+const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadStyle, onNavigateToDetail }) => {
     const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string>('All');
+    const [selectedSectionId, setSelectedSectionId] = useState<string>('all');
     const [isPlannerOpen, setIsPlannerOpen] = useState(false);
     
-    const categories = ['All', 'Pizza', 'Bread', 'Enriched', 'Pastry'];
+    const filterSections = [{ id: 'all', label: 'All Styles' }, ...SECTIONS];
 
-    const filteredStyles = useMemo(() => {
-        return STYLES_DATA.filter(style => {
+    const getStylesForSection = (categories: string[]) => {
+         return STYLES_DATA.filter(style => {
             const matchesSearch = style.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                   style.description.toLowerCase().includes(searchTerm.toLowerCase());
-            
-            let matchesCategory = true;
-            if (selectedCategory === 'Pizza') matchesCategory = style.category === 'pizza';
-            if (selectedCategory === 'Bread') matchesCategory = style.category === 'bread';
-            if (selectedCategory === 'Enriched') matchesCategory = style.category === 'enriched_bread' || style.category === 'burger_bun';
-            if (selectedCategory === 'Pastry') matchesCategory = style.category === 'pastry' || style.category === 'cookie';
-
+            const matchesCategory = categories.includes(style.category);
             return matchesSearch && matchesCategory;
         });
-    }, [searchTerm, selectedCategory]);
+    }
+
+    const handleUseStyle = (e: React.MouseEvent, style: DoughStyleDefinition) => {
+        e.stopPropagation();
+        if (onLoadStyle) {
+            onLoadStyle(style);
+        }
+    };
 
     return (
         <>
@@ -145,7 +168,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps & { onNavigateToDetail: (id
             </div>
 
             {/* Search and Filter Bar */}
-            <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 sticky top-20 z-20 shadow-sm">
                 <div className="relative w-full md:w-96">
                     <input
                         type="text"
@@ -155,26 +178,50 @@ const DoughStylesPage: React.FC<DoughStylesPageProps & { onNavigateToDetail: (id
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
-                    {categories.map(cat => (
+                <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto no-scrollbar">
+                    {filterSections.map(section => (
                         <button 
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat ? 'bg-lime-500 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}`}
+                            key={section.id}
+                            onClick={() => setSelectedSectionId(section.id)}
+                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedSectionId === section.id ? 'bg-lime-500 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}`}
                         >
-                            {cat}
+                            {section.label}
                         </button>
                     ))}
                 </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredStyles.map(style => (
-                    <StyleCard key={style.id} style={style} onClick={() => onNavigateToDetail(style.id)} />
-                ))}
-                {filteredStyles.length === 0 && (
+            <div className="space-y-12">
+                {SECTIONS.map(section => {
+                    if (selectedSectionId !== 'all' && selectedSectionId !== section.id) return null;
+
+                    const styles = getStylesForSection(section.categories);
+                    if (styles.length === 0) return null;
+
+                    return (
+                        <section key={section.id} className="animate-fade-in">
+                            <div className="flex items-center gap-4 mb-6">
+                                <h2 className="text-2xl font-bold text-slate-800">{section.label}</h2>
+                                <div className="h-px bg-slate-200 flex-grow"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {styles.map(style => (
+                                    <StyleCard 
+                                        key={style.id} 
+                                        style={style} 
+                                        onClick={() => onNavigateToDetail(style.id)} 
+                                        onUse={(e) => handleUseStyle(e, style)}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })}
+                
+                {/* Empty State if search yields nothing */}
+                {SECTIONS.every(s => getStylesForSection(s.categories).length === 0) && (
                     <div className="col-span-full text-center py-12 text-slate-500">
-                        No styles found.
+                        No styles found matching "{searchTerm}".
                     </div>
                 )}
             </div>
