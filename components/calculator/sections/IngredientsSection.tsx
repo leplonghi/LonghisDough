@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { DoughConfig, YeastType, FormErrors, Levain, IngredientConfig } from '../../../types';
 import FormSection from '../AccordionSection';
@@ -9,6 +10,7 @@ import { YEAST_OPTIONS } from '../../../constants';
 import FlourBlendEditor from '../FlourBlendEditor';
 import IngredientTableEditor from '../IngredientTableEditor';
 import { timeSince } from '../../../helpers';
+import { useTranslation } from '../../../i18n';
 
 interface IngredientsSectionProps { 
     config: DoughConfig; 
@@ -31,7 +33,8 @@ const IngredientsSection: React.FC<IngredientsSectionProps> = ({
     levains,
     selectedLevain
 }) => {
-    
+  const { t } = useTranslation();
+  
   const isAnySourdough = [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType);
   const getSelectClasses = () => "w-full rounded-lg border-slate-300 bg-slate-50 p-2 text-slate-900 focus:border-lime-500 focus:ring-lime-500";
 
@@ -213,7 +216,7 @@ const IngredientsSection: React.FC<IngredientsSectionProps> = ({
                                         </div>
                                         <div>
                                             <span className="block text-xs text-slate-500 uppercase">Last Fed</span>
-                                            <span className="block text-lg font-bold text-slate-800">{timeSince(selectedLevain.lastFeeding)} ago</span>
+                                            <span className="block text-lg font-bold text-slate-800">{timeSince(selectedLevain.lastFeeding, t)} ago</span>
                                         </div>
                                         <div className="col-span-2 border-t border-slate-100 pt-2 mt-1">
                                              <span className="block text-xs text-slate-500">Status</span>

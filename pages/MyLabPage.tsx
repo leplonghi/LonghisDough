@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { Page, LevainStatus } from '../types';
 import { useUser } from '../contexts/UserProvider';
@@ -204,7 +205,7 @@ const MyLabPage: React.FC<MyLabPageProps> = ({ onNavigate, onCreateDraftBatch })
               </p>
               <div className="mt-3 flex items-center justify-between text-sm">
                 <span className="text-slate-500">Last fed:</span>
-                <span className="font-semibold text-slate-800">{timeSince(mainLevain.lastFeeding)} ago</span>
+                <span className="font-semibold text-slate-800">{timeSince(mainLevain.lastFeeding, t)} ago</span>
               </div>
             </div>
           ) : (

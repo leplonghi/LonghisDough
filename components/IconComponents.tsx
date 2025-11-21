@@ -1,20 +1,22 @@
 
 import React from 'react';
+import { useTranslation } from '../i18n';
 
-const createIcon =
-  (path: React.ReactNode) => (props: React.SVGProps<SVGSVGElement>) =>
-    (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        {...props}
-      >
-        {path}
-      </svg>
-    );
+// Fixed: Changed from arrow function to named function to avoid generic parsing issues
+function createIcon(path: React.ReactNode) {
+  return (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      {...props}
+    >
+      {path}
+    </svg>
+  );
+}
 
 export const BakeTypeIcon = createIcon(
   <path

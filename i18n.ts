@@ -9,7 +9,12 @@ import React, {
 } from 'react';
 import { Locale } from './types';
 
-// English Translations (Single Source of Truth)
+// --- 1. Messages Interface & English Dictionary ---
+
+export interface Messages {
+  [key: string]: any;
+}
+
 const en = {
   dashboard: {
     title: "My Lab",
@@ -194,11 +199,11 @@ const en = {
     warning: 'Warning',
     skip: 'Skip',
     share_link: 'Share',
-    locked_short: 'Pro', // New: Short label for pro features
-    year: 'year', // New: for paywall
-    month: 'month', // New: for paywall
-    view_in_shop: 'View in Shop', // New: for affiliate suggestions
-    add_photo: 'Add Photo', // New: For batch detail
+    locked_short: 'Pro',
+    year: 'year',
+    month: 'month',
+    view_in_shop: 'View in Shop',
+    add_photo: 'Add Photo',
   },
   nav: {
     lab: "My Lab",
@@ -213,8 +218,7 @@ const en = {
     references: "References",
     profile: "Profile",
     tools: "Tools",
-    toppings: "Toppings", // New: Toppings page
-    // New: Tools sub-menu
+    toppings: "Toppings",
     tools_oven_analysis: 'Oven Analysis',
     tools_dough_diagnostic: 'Dough Diagnostic',
     tools_pantry_pizza: 'Pantry Pizza',
@@ -235,15 +239,14 @@ const en = {
   header: {
     switch_to_dark: 'Switch to dark theme',
     switch_to_light: 'Switch to light theme',
-    switch_to_system: 'Switch to system theme', // New for ThemeToggle
+    switch_to_system: 'Switch to system theme',
     user_profile_tooltip: 'User menu',
-    // New: Tools menu
     tools: {
       title: 'Tools',
       formula_lab: 'Oven Analysis (FormulaLab)',
       technical_references: 'Technical References',
       dough_diagnostic: 'Dough Diagnostic (Massabo)',
-      pantry_pizza: 'Pantry Pizza', // New for tool menu
+      pantry_pizza: 'Pantry Pizza',
     }
   },
   auth: {
@@ -267,8 +270,8 @@ const en = {
     advanced_tag: 'Free Mode',
   },
   form: {
-    base_style: 'Base Style', // New key
-    clear_style_button: 'Clear style', // New key
+    base_style: 'Base Style',
+    clear_style_button: 'Clear style',
     pizzas: 'Pizzas',
     breads: 'Breads & Savory',
     sections: {
@@ -319,7 +322,7 @@ const en = {
     yeast_type: 'Yeast Type',
     yeast: 'Yeast',
     levain: 'Levain',
-    sourdough_as_preferment: 'Sourdough Starter acts as the preferment. Biga/Poolish options disabled.', // New: Levain specific message
+    sourdough_as_preferment: 'Sourdough Starter acts as the preferment. Biga/Poolish options disabled.',
     direct: 'Direct',
     poolish: 'Poolish',
     biga: 'Biga',
@@ -332,7 +335,6 @@ const en = {
     unit_system: 'Unit System (Volume)',
     us_customary: 'US Customary',
     metric: 'Metric',
-    // Tooltips
     hydration_tooltip: 'Hydration is the water-to-flour ratio. It affects the final lightness and texture. Stronger flours generally absorb more water.',
     salt_tooltip: 'Salt controls fermentation, strengthens gluten, and adds flavor.',
     oil_tooltip: 'Oil/fat adds softness and helps with crust browning, especially in lower-temperature ovens.',
@@ -363,24 +365,20 @@ const en = {
       batch_rating: 'Rate your bake from 1 to 5 stars. This helps track your best results in the Insights.',
       publish_community: 'By checking this option and saving, a copy of this bake (formula and notes) will be visible to other users in the CrustCrew tab.',
     },
-    // Yeast Types
     yeast_idy: 'Instant Dry (IDY)',
     yeast_ady: 'Active Dry (ADY)',
     yeast_fresh: 'Fresh',
     yeast_sourdough_starter: 'Levain (100% Hydration)',
     yeast_user_levain: 'My Levain Pet',
-    // Temps
     temp_cold: 'Cold (< 18°C)',
     temp_mild: 'Mild (18-24°C)',
     temp_hot: 'Hot (> 24°C)',
-    // Presets
     reset_preset_button: 'Reset to "{name}" recommended values',
     load_preset: "Load Style",
     save_preset: "Save Current as Style",
     delete_preset: "Delete Style",
     no_presets: "No saved styles",
     select_preset_aria: "Select saved style",
-    // Levain selection
     select_levain: "Select your Levain Pet",
     using_levain: "Using",
     levain_hydration: "Hydration",
@@ -388,7 +386,6 @@ const en = {
     levain_hours_ago: "hours ago",
     no_levain_found: "No Levain Pet found.",
     create_one_link: "Create one to use here.",
-    // Errors
     errors: {
       range: 'A value between {min} and {max} is recommended here.',
       range_percent: 'A value between {min}% and {max}% is recommended.',
@@ -396,7 +393,6 @@ const en = {
       range_tempC: "A value between {min}°C and {max}°C is recommended.",
       total_flour_range: 'The recommended total flour is between {min} and {max}g.',
     },
-    // Style Names
     neapolitan: 'Neapolitan',
     new_york: 'New York',
     pan_pizza: 'Pan Pizza',
@@ -424,7 +420,6 @@ const en = {
     cookies: 'Cookies',
     pie_dough: 'Pie Dough',
     bolo_simples: 'Simple Cake',
-    // New: Toppings Page specific style names
     thin_crust: 'Thin & Crispy',
     roman: 'Roman (Teglia)',
     chicago: 'Chicago Deep Dish',
@@ -466,7 +461,6 @@ const en = {
     final_dough_title: 'Final Dough',
     levain_details: 'Levain Details',
     total_levain: 'Total Levain',
-    // New: Export titles and tooltips
     export_pdf_title: 'Export as PDF',
     export_pdf_pro_tooltip: 'Available in DoughLabPro Pro: export your recipes as clean PDFs.',
     export_pdf_label: 'Export PDF',
@@ -474,7 +468,7 @@ const en = {
     export_json_pro_tooltip: 'Available in DoughLabPro Pro: export your recipes as JSON.',
     export_json_label: 'Export JSON',
     steps: {
-        "title": "Technical Method", // Changed to key for i18n
+        "title": "Technical Method",
         "generic_direct": {
             "step1_title": "Precision First",
             "step1_desc": "Weigh all ingredients accurately. In baking, precision is key to consistency.",
@@ -605,12 +599,12 @@ const en = {
       salt: 'salt',
       oil: 'oil',
       yeast: 'yeast',
-      sugar: 'sugar', // New: sugar ingredient for tooltip
+      sugar: 'sugar',
     },
     share_error: 'Could not copy formula link to clipboard.',
     pdf_error_alert: 'Sorry, there was an error exporting the PDF. Please try again later.',
     pdf_error_console: 'PDF generation failed: A required library or element is missing.',
-    technical_suggestions: 'Technical Suggestions', // New: for affiliate block in results
+    technical_suggestions: 'Technical Suggestions',
   },
   prompts: {
     batch_name_title: "Name this bake:",
@@ -622,7 +616,7 @@ const en = {
     delete_levain: 'Are you sure you want to delete the levain "{name}"?',
     delete_preset: 'Are you sure you want to delete the style "{name}"?',
     delete_batch: 'Are you sure you want to delete the bake "{name}"?',
-    cancel_subscription: 'Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.', // New: for profile page
+    cancel_subscription: 'Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.',
   },
   profile: {
     not_logged_in: 'Please log in to view your profile.',
@@ -694,8 +688,8 @@ const en = {
       flours_library: 'Flour Library',
       flours_library_desc: 'Explore flour types and set your defaults.'
     },
-    cancel_subscription: 'Cancel Subscription', // New: for profile page
-    subscription_cancel_requested: 'Subscription cancellation requested.', // New: for profile page
+    cancel_subscription: 'Cancel Subscription',
+    subscription_cancel_requested: 'Subscription cancellation requested.',
   },
   levain_manager: {
     title: 'Levain Manager',
@@ -743,10 +737,10 @@ const en = {
       empty: 'No saved bakes yet.',
       empty_favorites: 'You have no favorite bakes.',
       delete_aria: 'Delete bake',
-      file_selected_error: 'Please select a valid .json file.', // New: for import modal
-      no_file_selected_error: 'No file selected.', // New: for import modal
-      import_success: 'Recipe imported successfully.', // New: for import modal
-      import_error: 'An unexpected error occurred.', // New: for import modal
+      file_selected_error: 'Please select a valid .json file.',
+      no_file_selected_error: 'No file selected.',
+      import_success: 'Recipe imported successfully.',
+      import_error: 'An unexpected error occurred.',
     },
     presets: {
       title: 'My Styles',
@@ -771,6 +765,9 @@ const en = {
         sugar: 'Sugar',
         flourId: 'Farinha',
       }
+    },
+    pro_recipes: {
+        title: 'Pro Recipes',
     }
   },
   diary_page: {
@@ -789,7 +786,7 @@ const en = {
       open: 'Details',
       redo: 'Redo Bake',
     },
-    filter: { // New: Fornadas page filters
+    filter: {
       style: 'Style',
       period: 'Period',
       all_time: 'All Time',
@@ -881,7 +878,7 @@ const en = {
     description_label: 'Description',
     description_placeholder: 'Tell us a bit about your bake...',
     oven_label: 'Oven',
-    hydration_label: 'Hidratação (%)',
+    hydration_label: 'Hydration (%)',
     publish_button: 'Publish',
     publishing_button: 'Publishing...',
     photo_and_name_required: 'Photo and formula name are required.',
@@ -1085,7 +1082,6 @@ const en = {
   },
   paywall: {
     or_divider: 'OR',
-    // New: Paywall specific texts
     header_levain: "Advanced Levain Tools require DoughLabPro Pro",
     header_mylab: "Unlock your full baking history and insights",
     header_calculator: "Export, AI tools and advanced presets are Pro-only",
@@ -1106,7 +1102,6 @@ const en = {
     trial_notice: "Instant access to all Pro tools. Cancel anytime before the trial ends. Card required. You will not be charged if you cancel before day 7.",
     maybe_later: "Maybe later",
     processing: "Processing...",
-    // Benefits
     benefit_levain_title: "Unlimited Levain Pets",
     benefit_levain_desc: "Manage multiple starters with advanced vitality analytics.",
     benefit_batches_title: "Unlimited Batches in MyLab",
@@ -1123,7 +1118,10 @@ const en = {
     benefit_ads_desc: "Optimized for performance.",
   },
   language_switcher: {
-    label: 'Change language'
+    label: 'Change language',
+    english: 'English',
+    portuguese: 'Português',
+    spanish: 'Español'
   },
   ads: {
     advertisement: 'Advertisement'
@@ -1146,10 +1144,10 @@ const en = {
     has_steel_label: 'Has baking steel',
     notes_label: 'Notes',
     notes_placeholder: 'e.g., Takes 45min to preheat',
-    cancel_button: 'Cancel', // New: for oven modal
-    save_changes_button: 'Save Changes', // New: for oven modal
-    has_baking_stone_label: 'Has baking stone', // New: for oven modal
-    has_baking_steel_label: 'Has baking steel', // New: for oven modal
+    cancel_button: 'Cancel',
+    save_changes_button: 'Save Changes',
+    has_baking_stone_label: 'Has baking stone',
+    has_baking_steel_label: 'Has baking steel',
   },
   levain_modal: {
     name_required_alert: 'Levain name is required.',
@@ -1162,8 +1160,8 @@ const en = {
     last_feeding_label: 'Last Feeding',
     notes_label: 'Notes',
     notes_placeholder: 'Notes',
-    cancel_button: 'Cancel', // New: for levain modal
-    save_button: 'Save', // New: for levain modal
+    cancel_button: 'Cancel',
+    save_button: 'Save',
   },
   navigation: {
     home_aria: 'Home',
@@ -1172,7 +1170,7 @@ const en = {
       tech_references: 'Technical References',
       oven_analysis: 'Oven Analysis (FormulaLab)',
       doughbot: 'Dough Diagnostic (Massabo)',
-      pantry_pizza: 'Pantry Pizza', // New: for tools menu
+      pantry_pizza: 'Pantry Pizza',
     }
   },
   mylab_page: {
@@ -1236,13 +1234,11 @@ const en = {
       subtitle: 'Your personal library of flours, with notes on performance and hydration.',
       add: 'Add new flour',
     },
-    // New: My Lab general messages for Pro gating
     pro_title: 'My Lab is part of DoughLabPro Pro',
     pro_subtitle: 'Saving batches, tracking your history and seeing your evolution are Pro features.',
     pro_subtext: 'The Free plan lets you experiment with the calculator, but does not store any baking history.',
     pro_button: 'Unlock My Lab with Pro',
   },
-  // New: Toppings page
   toppings_page: {
     title: 'Toppings Library',
     subtitle: 'Explore classic and modern pizza topping combinations, with quantity guides for different sizes.',
@@ -1256,7 +1252,6 @@ const en = {
     topping_col: 'Topping (g)',
     oil_finish_col: 'Final Oil (g)',
   },
-  // New: Smart Adjustments messages
   smart_adjustments: {
     water_temp_recommendation: 'To reach the ideal dough temperature (DDT 24–26°C), use water at approximately {waterTemp}°C.',
     hot_environment_tip: 'Hot environment: use cooler water to hit DDT.',
@@ -1283,7 +1278,6 @@ const en = {
     avpn_strict_note: 'AVPN: Oven at 485°C, 60-90s, no oil/sugar in dough.',
     home_oven_compromise_warning: 'WARNING: Replicating Neapolitan pizza in a home oven is challenging. This is an adapted profile.',
   },
-  // New: Goals and Test Series
   goals_page: {
     title: 'My Goals',
     subtitle: 'Set small challenges to evolve your baking skills.',
@@ -1309,7 +1303,7 @@ const en = {
     target_type_frequency: 'Frequency',
     target_type_levain: 'Levain',
     save_button: 'Save Goal',
-    name_required_alert: 'Goal title is required.', // New: for goal modal
+    name_required_alert: 'Goal title is required.',
   },
   consistency_page: {
     title: 'Consistency Mode',
@@ -1350,7 +1344,6 @@ const en = {
     variable_fermentation_time: 'Fermentation Time (h)',
     variable_other: 'Other',
   },
-  // New: General info toast messages
   info: {
     preset_loaded: 'Style "{name}" loaded.',
     preset_saved: 'Style "{name}" saved!',
@@ -1382,7 +1375,6 @@ const en = {
       generic: 'Something didn\'t go as expected. Please try again or review the fields.'
     }
   },
-  // New: Oven Analysis page
   oven_analysis_page: {
     title: 'FormulaLab',
     subtitle: "Understand your oven's behavior and get technical suggestions for dough and baking, based on real references.",
@@ -1403,7 +1395,6 @@ const en = {
     section2_title: '2. Analysis & Recommendations',
     results_placeholder: 'Recommendations for your oven setup will appear here.',
   },
-  // New: Doughbot page
   doughbot_page: {
     title: 'Massabo',
     subtitle: "Analyze your dough, understand what to adjust.",
@@ -1427,7 +1418,6 @@ const en = {
     suggested_solutions_placeholder1: 'Technical suggestions for correction will appear here.',
     suggested_solutions_placeholder2: 'Solutions will include recipe and process adjustments.',
   },
-  // New: Pantry Pizza page
   pantry_pizza_page: {
     title: 'Pantry Pizza',
     subtitle: 'Tool to suggest possible pizzas based on ingredients you have at home, respecting technical and classic combinations.',
@@ -1455,16 +1445,15 @@ const en = {
     ingredient_egg: 'Egg',
     ingredient_olive_oil: 'Olive Oil',
   },
-  // New: Learn sections (simplified structure for i18n)
   learn: {
     title: 'Learn',
     subtitle: 'Explore the science, techniques, and ingredients that elevate your baking.',
-    explore_button: 'Explore', // New button text for LearnTopicCard
-    why_title: 'Why this is important?', // New for TutorialDetailPanel
-    howto_title: 'How to apply this?', // New for TutorialDetailPanel
-    tips_title: 'Pro Tips', // New for TutorialDetailPanel
-    reference_title: 'Technical References', // New for TutorialDetailPanel
-    sections: { // Simplified categorization for now
+    explore_button: 'Explore',
+    why_title: 'Why this is important?',
+    howto_title: 'How to apply this?',
+    tips_title: 'Pro Tips',
+    reference_title: 'Technical References',
+    sections: {
       fundamentals: {
         title: 'Fundamentals of Dough',
         description: 'The science of gluten, hydration, fermentation and the ingredients that form the base of everything.',
@@ -1487,12 +1476,10 @@ const en = {
       },
     }
   },
-  // New: Affiliate Block
   affiliate_block: {
     suggested_gear: 'Suggested Gear',
     affiliate_disclosure: 'Some links may be affiliate links. We only recommend tools that are technically relevant.',
   },
-  // New: For Navbar
   mobile_menu: {
     my_lab: 'My Lab',
     calculator: 'Calculator',
@@ -1502,92 +1489,89 @@ const en = {
     tools_label: 'Tools',
     profile: 'Profile',
   },
-  // New: For RecipeTimeline
   recipe_timeline: {
     critical_point: 'Critical Point: Precision here is key for success.',
     pro_tip: 'Pro Tip:',
   },
-  // New: For Modal Titles
   modals_general: {
-    select_saved_preset: 'Select saved preset', // For PresetLoaderSection
-    no_presets_saved: 'No presets saved', // For PresetLoaderSection
-    load_preset_button: 'Load Preset', // For PresetLoaderSection
-    delete_preset_button: 'Delete Preset', // For PresetLoaderSection
-    save_current_button: 'Save Current', // For PresetLoaderSection
-    my_presets_title: 'My Presets', // For CustomPresetsManager
-    add_button: 'Add', // For IngredientTableEditor
-    additional_ingredients_title: 'Additional Ingredients', // For IngredientTableEditor
-    additional_ingredients_desc: 'Add eggs, milk powder, malt, etc.', // For IngredientTableEditor
-    suggested_for_style: 'Suggested for this style', // For IngredientTableEditor
-    ingredient_name_placeholder: 'Ingredient Name', // For IngredientTableEditor
-    solid_type: 'Solid', // For IngredientTableEditor
-    liquid_type: 'Liquid', // For IngredientTableEditor
-    duplicate_button: 'Duplicate', // For IngredientTableEditor
-    remove_button: 'Remove', // For IngredientTableEditor
-    new_ingredients_info: 'New ingredients are automatically saved to your library.', // For IngredientTableEditor
-    base_flour_info: '* Base flour is 100%.', // For IngredientTableEditor
-    flour_blend_title: 'Flour Blend', // For FlourBlendEditor
-    est_strength: 'Est. Strength:', // For FlourBlendEditor
-    main_flour_base_label: 'Main Flour (Base)', // For FlourBlendEditor
-    blended_flours_label: 'Blended Flours', // For FlourBlendEditor
-    add_flour_to_blend_button: 'Add Flour to Blend', // For FlourBlendEditor
-    blending_info: 'Blending flours allows you to adjust protein content and flavor. Example: Add 10-20% Whole Wheat for flavor, or Semolina for crunch.', // For FlourBlendEditor
-    oven_name_label: 'Oven Name', // For OvenModal
-    oven_name_placeholder: 'e.g., My Home Oven', // For OvenModal
-    type_label: 'Type', // For OvenModal
-    max_temp_label: 'Max Temperature (°C)', // For OvenModal
-    has_baking_stone_label: 'Has baking stone', // For OvenModal
-    has_baking_steel_label: 'Has baking steel', // For OvenModal
-    notes_label: 'Notes', // For OvenModal
-    notes_placeholder: 'e.g., Takes 45min to preheat', // For OvenModal
-    cancel_button: 'Cancel', // For OvenModal and others
-    save_changes_button: 'Save Changes', // For OvenModal and others
-    levain_name_label: 'Levain Name', // For LevainModal
-    levain_name_placeholder: 'e.g. Joe, the Starter', // For LevainModal
-    hydration_label: 'Hydration (%)', // For LevainModal
-    total_weight_label: 'Total Weight (g)', // For LevainModal
-    last_feeding_label: 'Last Feeding', // For LevainModal
-    save_button: 'Save', // For LevainModal and others
-    log_feeding_title: 'Log Feeding', // For LevainFeedingForm
-    flour_label: 'Flour (g)', // For LevainFeedingForm
-    water_label: 'Water (g)', // For LevainFeedingForm
-    feeding_ratio_label: 'Feeding Ratio (Starter:Flour:Water)', // For LevainFeedingForm
-    flour_type_label: 'Flour Type', // For LevainFeedingForm
-    ambient_temp_label: 'Ambient Temp (°C)', // For LevainFeedingForm
-    observations_label: 'Observations', // For LevainFeedingForm
-    observations_placeholder: 'Smell (yogurt/vinegar), texture, rise time...', // For LevainFeedingForm
-    title_label: 'Title', // For GoalModal
-    description_label: 'Description', // For GoalModal
-    target_type_label: 'Target Type', // For GoalModal
-    target_value_label: 'Target Value', // For GoalModal
-    style_target_type: 'Style', // For GoalModal
-    hydration_target_type: 'Hydration', // For GoalModal
-    frequency_target_type: 'Frequency', // For GoalModal
-    levain_target_type: 'Levain', // For GoalModal
-    create_new_goal_title: 'Create New Goal', // For ObjectivesPage
-    edit_goal_title: 'Edit Goal', // For ObjectivesPage
-    progress_label: 'Progress', // For ObjectivesPage
-    create_new_series_title: 'Create New Series', // For ConsistencyListPage
-    edit_test_series_title: 'Edit Test Series', // For ConsistencyListPage
-    series_name_label: 'Series Name', // For ConsistencySeriesModal
-    variable_to_test_label: 'Variable to Test', // For ConsistencySeriesModal
-    steps_label: 'Steps (comma separated)', // For ConsistencySeriesModal
-    hydration_variable: 'Hydration (%)', // For ConsistencySeriesModal
-    flour_type_variable: 'Flour Type', // For ConsistencySeriesModal
-    fermentation_time_variable: 'Fermentation Time (h)', // For ConsistencySeriesModal
-    other_variable: 'Other', // For ConsistencySeriesModal
-    save_series_button: 'Save Series', // For ConsistencySeriesModal
-    associated_bakes_title: 'Associated Bakes ({count})', // For ConsistencyDetailPage
-    no_bakes_associated: 'No bakes associated yet.', // For ConsistencyDetailPage
-    select_bake_placeholder: 'Select a bake to associate...', // For ConsistencyDetailPage
-    associate_button: 'Associate', // For ConsistencyDetailPage
-    series_notes_title: 'Series Notes', // For ConsistencyDetailPage
-    click_to_add_notes: 'Click to add notes...', // For ConsistencyDetailPage
-    test_parameters_title: 'Test Parameters', // For ConsistencyDetailPage
-    variable_label: 'Variable', // For ConsistencyDetailPage
-    steps_tested_label: 'Steps tested', // For ConsistencyDetailPage
+    select_saved_preset: 'Select saved preset',
+    no_presets_saved: 'No presets saved',
+    load_preset_button: 'Load Preset',
+    delete_preset_button: 'Delete Preset',
+    save_current_button: 'Save Current',
+    my_presets_title: 'My Presets',
+    add_button: 'Add',
+    additional_ingredients_title: 'Additional Ingredients',
+    additional_ingredients_desc: 'Add eggs, milk powder, malt, etc.',
+    suggested_for_style: 'Suggested for this style',
+    ingredient_name_placeholder: 'Ingredient Name',
+    solid_type: 'Solid',
+    liquid_type: 'Liquid',
+    duplicate_button: 'Duplicate',
+    remove_button: 'Remove',
+    new_ingredients_info: 'New ingredients are automatically saved to your library.',
+    base_flour_info: '* Base flour is 100%.',
+    flour_blend_title: 'Flour Blend',
+    est_strength: 'Est. Strength:',
+    main_flour_base_label: 'Main Flour (Base)',
+    blended_flours_label: 'Blended Flours',
+    add_flour_to_blend_button: 'Add Flour to Blend',
+    blending_info: 'Blending flours allows you to adjust protein content and flavor. Example: Add 10-20% Whole Wheat for flavor, or Semolina for crunch.',
+    oven_name_label: 'Oven Name',
+    oven_name_placeholder: 'e.g., My Home Oven',
+    type_label: 'Type',
+    max_temp_label: 'Max Temperature (°C)',
+    has_baking_stone_label: 'Has baking stone',
+    has_baking_steel_label: 'Has baking steel',
+    notes_label: 'Notes',
+    notes_placeholder: 'e.g., Takes 45min to preheat',
+    cancel_button: 'Cancel',
+    save_changes_button: 'Save Changes',
+    levain_name_label: 'Levain Name',
+    levain_name_placeholder: 'e.g. Joe, the Starter',
+    hydration_label: 'Hydration (%)',
+    total_weight_label: 'Total Weight (g)',
+    last_feeding_label: 'Last Feeding',
+    save_button: 'Save',
+    log_feeding_title: 'Log Feeding',
+    flour_label: 'Flour (g)',
+    water_label: 'Water (g)',
+    feeding_ratio_label: 'Feeding Ratio (Starter:Flour:Water)',
+    flour_type_label: 'Flour Type',
+    ambient_temp_label: 'Ambient Temp (°C)',
+    observations_label: 'Observations',
+    observations_placeholder: 'Smell (yogurt/vinegar), texture, rise time...',
+    title_label: 'Title',
+    description_label: 'Description',
+    target_type_label: 'Target Type',
+    target_value_label: 'Target Value',
+    style_target_type: 'Style',
+    hydration_target_type: 'Hydration',
+    frequency_target_type: 'Frequency',
+    levain_target_type: 'Levain',
+    create_new_goal_title: 'Create New Goal',
+    edit_goal_title: 'Edit Goal',
+    progress_label: 'Progress',
+    create_new_series_title: 'Create New Series',
+    edit_test_series_title: 'Edit Test Series',
+    series_name_label: 'Series Name',
+    variable_to_test_label: 'Variable to Test',
+    steps_label: 'Steps (comma separated)',
+    hydration_variable: 'Hydration (%)',
+    flour_type_variable: 'Flour Type',
+    fermentation_time_variable: 'Fermentation Time (h)',
+    other_variable: 'Other',
+    save_series_button: 'Save Series',
+    associated_bakes_title: 'Associated Bakes ({count})',
+    no_bakes_associated: 'No bakes associated yet.',
+    select_bake_placeholder: 'Select a bake to associate...',
+    associate_button: 'Associate',
+    series_notes_title: 'Series Notes',
+    click_to_add_notes: 'Click to add notes...',
+    test_parameters_title: 'Test Parameters',
+    variable_label: 'Variable',
+    steps_tested_label: 'Steps tested',
   },
-  // New: Titles for Learn Categories
   learn_categories: {
     fundamentals: 'Fundamentos da Massa',
     fundamentals_desc: 'A ciência do glúten, hidratação, fermentação e os ingredientes que formam a base de tudo.',
@@ -1599,9 +1583,8 @@ const en = {
     ovens_heat_desc: 'A física do assamento. Entenda condução, convecção, radiação e o papel do seu equipamento.',
     troubleshooting_guide: 'Solução de Problemas',
     troubleshooting_guide_desc: 'Diagnostique e corrija os problemas mais comuns: massa pegajosa, crosta pálida e mais.',
-    explore_button: 'Explore', // For LearnTopicCard
+    explore_button: 'Explore',
   },
-  // New: Learn Subpage titles and content
   learn_subpages: {
     oven_spring_title: 'Oven Spring: A Ciência da Expansão Inicial',
     oven_spring_subtitle: "Entenda o 'salto de forno', o fenômeno que define a textura e o volume da sua massa.",
@@ -1651,7 +1634,6 @@ const en = {
     regional_combos_subtitle: 'Um perfil histórico e cultural de como diferentes lugares criaram suas pizzas icônicas.',
     sensory_profiles_title: 'Perfis Sensoriais na Pizza',
     sensory_profiles_subtitle: 'Como umami, gordura, acidez, doçura e crocância se equilibram para criar a experiência perfeita.',
-    // Specific sections
     section_introduction: 'Introdução',
     section_history: 'História e Contexto',
     section_base_formula: 'Base Formula',
@@ -1670,59 +1652,82 @@ const en = {
     section_howto_title: 'How to apply this?',
     section_tips_title: 'Pro Tips',
     section_reference_title: 'Technical References',
-    section_learn_more: 'Learn More', // New general learn more
+    section_learn_more: 'Learn More',
   },
 };
 
-const translations = { en };
+const MESSAGES: Record<Locale, Messages> = {
+  en,
+};
+
+// --- 2. Internal State ---
+
+// Global state for non-hook usage (if any) - though provider is preferred
+let currentLocale: Locale = 'en';
+
+export function getLocale(): Locale {
+  return currentLocale;
+}
+
+// No-op setLocale for now, enforces 'en'
+export function setLocale(locale: Locale) {
+  console.log(`Locale change disabled. Keeping "en". Requested: ${locale}`);
+}
+
+// --- 3. Safe Translation Function ---
+
+export function t(path: string, replacements?: { [key: string]: string | number | undefined }): string {
+  const keyParts = path.split('.');
+  let translation: any = MESSAGES['en']; // Always use 'en'
+
+  for (const part of keyParts) {
+    if (translation && typeof translation === 'object' && part in translation) {
+      translation = translation[part];
+    } else {
+      // Key not found
+      return (replacements as any)?.defaultValue ?? path;
+    }
+  }
+
+  if (typeof translation !== 'string') {
+    return (replacements as any)?.defaultValue ?? path;
+  }
+
+  if (replacements) {
+    return Object.entries(replacements).reduce((acc, [k, v]) => {
+      return acc.replace(new RegExp(`{${k}}`, 'g'), String(v));
+    }, translation);
+  }
+
+  return translation;
+}
+
+// --- 4. Context & Provider ---
 
 interface I18nContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string, replacements?: { [key: string]: string | number | undefined }) => string;
+  t: typeof t;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export const I18nProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  // Always force English locale
+  // State is just for API compatibility, effectively constant
   const [locale] = useState<Locale>('en');
 
-  // No-op function for compatibility
-  const setLocale = useCallback((newLocale: Locale) => {
-    // TODO: Implement actual locale change logic here when multiple languages are supported.
-    console.log('Locale change disabled, enforcing English.');
+  const handleSetLocale = useCallback((newLocale: Locale) => {
+     setLocale(newLocale); // Call the exported no-op function
   }, []);
 
-  const t = useCallback((key: string, replacements?: { [key: string]: string | number | undefined }): string => {
-    const keyParts = key.split('.');
-    let translation = translations.en as any;
-    
-    for (const part of keyParts) {
-      if (translation && typeof translation === 'object' && part in translation) {
-        translation = translation[part];
-      } else {
-        // If key not found, return the key itself or defaultValue
-        return (replacements as any)?.defaultValue ?? key;
-      }
-    }
-
-    if (typeof translation !== 'string') {
-         return (replacements as any)?.defaultValue ?? key;
-    }
-
-    if (replacements) {
-      return Object.entries(replacements).reduce((acc, [k, v]) => {
-        return acc.replace(new RegExp(`{${k}}`, 'g'), String(v));
-      }, translation);
-    }
-
-    return translation;
+  // Wrap the exported t function
+  const handleT = useCallback((key: string, replacements?: { [key: string]: string | number | undefined }) => {
+      return t(key, replacements);
   }, []);
 
   return React.createElement(
     I18nContext.Provider,
-    { value: { locale, setLocale, t } },
+    { value: { locale, setLocale: handleSetLocale, t: handleT } },
     children
   );
 };
@@ -1734,3 +1739,18 @@ export const useTranslation = (): I18nContextType => {
   }
   return context;
 };
+
+// FUTURE NOTE:
+// Para adicionar novos idiomas (ex: "pt", "es"), siga o padrão:
+//
+// 1. Extenda o tipo Locale em types.ts:
+//    export type Locale = "en" | "pt" | "es";
+//
+// 2. Crie objetos Messages para cada idioma aqui ou em arquivos separados:
+//    const pt: Messages = { ... };
+//    const es: Messages = { ... };
+//
+// 3. Registre no MESSAGES:
+//    const MESSAGES: Record<Locale, Messages> = { en, pt, es };
+//
+// 4. Atualize a função setLocale e o Provider para permitir a mudança de estado 'currentLocale'.

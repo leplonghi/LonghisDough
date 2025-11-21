@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserProvider';
 import { useTranslation } from '../i18n';
@@ -78,8 +77,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   };
 
   const handleSave = () => {
-    updateUser(formData);
-    setIsEditing(false);
+    if (formData.name && user.uid) { // Ensure name is not empty and user exists
+        updateUser(formData as Partial<User>);
+        // FIX: Changed addToast call to conform to new signature (passing single object)
+        addToast({message: t('info.update_success'), type: 'success'}); 
+        setIsEditing(false);
+    } else {
+        // FIX: Changed addToast call to conform to new addToast signature (passing single object)
+        addToast({message: t('info.error.generic'), type: 'error'}); 
+    }
   };
 
   const handleCancel = () => {
@@ -129,7 +135,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   const handleCancelSubscription = () => {
     if (window.confirm("Are you sure you want to cancel your Pro subscription? This will revert your account to Free at the end of the billing period.")) {
         // In a real app, this would call the backend Stripe API
-        addToast("Subscription cancellation requested.", "info");
+        addToast({message: "Subscription cancellation requested.", type: "info"});
     }
   };
 

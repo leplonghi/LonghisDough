@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Timestamp } from "firebase/firestore";
 
@@ -384,7 +385,7 @@ export interface UserContextType {
   toggleStyleFavorite: (id: string) => void;
 }
 
-export type Locale = 'en' | 'pt' | 'es';
+export type Locale = 'en';
 
 export type FormErrors = {
   [key in keyof Partial<DoughConfig>]: string | null;

@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useEffect } from 'react';
 import {
   DoughConfig,
@@ -200,7 +201,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     tsp: t('units.tsp'),
   };
   
-  const recipeSteps = React.useMemo(() => generateRecipeSteps(config, t), [config, t]);
+  const recipeSteps = React.useMemo(() => generateRecipeSteps(config), [config]);
 
   const getConversionTooltip = (
     ingredient: keyof typeof INGREDIENT_DENSITIES,
@@ -226,7 +227,7 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     return `${valueInGrams.toFixed(precision.g)} ${t('units.g')}`;
   };
 
-  const formatVolume = (ingredient: string, grams: number) => {
+  const formatVolume = (ingredient: keyof typeof INGREDIENT_DENSITIES, grams: number) => {
       if (unit !== 'volume') return null;
       return gramsToVolume(ingredient, grams, volumeUnits, unitSystem);
   };
@@ -239,10 +240,8 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
     try {
         const url = window.location.href;
         await navigator.clipboard.writeText(url);
-        // FIX: Changed to conform to new addToast signature (passing single object)
         addToast({message: t('info.share_success_link'), type: "success"}); 
     } catch (e) {
-        // FIX: Changed to conform to new addToast signature (passing single object)
         addToast({message: t('results.share_error'), type: "error"});
     }
   };
@@ -253,7 +252,6 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         return;
     }
     // Implementation for PDF export would go here
-    // FIX: Changed to conform to new addToast signature (passing single object)
     addToast({message: t('info.exporting_pdf'), type: "info"}); 
   };
 
@@ -263,7 +261,6 @@ export const ResultsDisplay = forwardRef<HTMLDivElement, ResultsDisplayProps>(({
         return;
     }
      // Implementation for JSON export
-     // FIX: Changed to conform to new addToast signature (passing single object)
      addToast({message: t('info.exporting_json'), type: "info"}); 
   };
 
