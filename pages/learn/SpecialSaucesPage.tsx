@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,28 +16,28 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const SpecialSaucesPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Molhos Especiais: Pesto, Ricota e Outros"
-      subtitle="Comportamento e riscos de bases alternativas na pizza."
+      title="Special Sauces: Pesto, Ricotta, and Others"
+      subtitle="Behavior and risks of alternative bases on pizza."
     >
-        <Section title="Introdução: Expandindo o Paladar">
-            <p>Além dos molhos de tomate e brancos, bases alternativas como pesto e cremes de ricota oferecem perfis de sabor únicos. No entanto, seu comportamento no forno é diferente e requer considerações técnicas para evitar problemas de textura e sabor.</p>
+        <Section title="Introduction: Expanding the Palate">
+            <p>Beyond tomato and white sauces, alternative bases like pesto and ricotta creams offer unique flavor profiles. However, their oven behavior is different and requires technical consideration to avoid texture and flavor issues.</p>
         </Section>
-        <Section title="Pesto: Oxidação e Notas Verdes">
-            <p>O pesto é uma emulsão de azeite com manjericão, pinhões, alho e queijo. As notas aromáticas "verdes" do manjericão vêm de compostos extremamente voláteis e sensíveis ao calor. Quando o pesto é exposto ao calor intenso do forno, esses compostos se degradam e a clorofila oxida, resultando em uma cor escura e um sabor amargo e de "erva cozida". Por isso, a melhor maneira de usar pesto na pizza é adicioná-lo <strong>pós-forno</strong> ou em pequenas gotas protegidas sob o queijo.</p>
+        <Section title="Pesto: Oxidation and Green Notes">
+            <p>Pesto is an emulsion of olive oil with basil, pine nuts, garlic, and cheese. Basil's "green" aromatic notes come from extremely volatile and heat-sensitive compounds. When pesto is exposed to intense oven heat, these compounds degrade and chlorophyll oxidizes, resulting in a dark color and a bitter, "cooked herb" flavor. Therefore, the best way to use pesto on pizza is to add it <strong>post-oven</strong> or in small dollops protected under cheese.</p>
         </Section>
-        <Section title="Ricota Cremosa: Veículo de Umidade">
-            <p>A ricota é um queijo fresco com alto teor de umidade. Quando usada como base, ela não derrete como a mozzarella, mas sua umidade evapora, criando um ambiente de vapor que pode cozinhar a massa por baixo, em vez de assá-la. A melhor forma de usar ricota é em pequenas porções ("dollops") sobre a pizza, não como uma camada uniforme. Isso permite que a massa ao redor asse corretamente. Misturar a ricota com um pouco de sal e azeite pode melhorar sua estabilidade e sabor.</p>
+        <Section title="Creamy Ricotta: Moisture Vehicle">
+            <p>Ricotta is a fresh cheese with high moisture content. When used as a base, it doesn't melt like mozzarella, but its moisture evaporates, creating a steam environment that can cook the dough underneath instead of baking it. The best way to use ricotta is in small dollops on the pizza, not as a uniform layer. This allows the surrounding dough to bake correctly. Mixing ricotta with a little salt and olive oil can improve its stability and flavor.</p>
         </Section>
-        <Section title="Bechamel e Outras Bases Lácteas">
-            <p>O bechamel, uma emulsão de farinha, manteiga e leite, serve como uma base neutra e cremosa. Sua estrutura, estabilizada pelo amido da farinha, é mais resistente ao calor do que um simples creme de leite. Ele doura bem (reação de Maillard das proteínas do leite) e cria uma textura rica, sendo uma excelente base para pizzas com vegetais ou carnes defumadas.</p>
+        <Section title="Béchamel and Other Dairy Bases">
+            <p>Béchamel, an emulsion of flour, butter, and milk, serves as a neutral, creamy base. Its structure, stabilized by flour starch, is more heat-resistant than simple cream. It browns well (Maillard reaction of milk proteins) and creates a rich texture, making it an excellent base for pizzas with vegetables or smoked meats.</p>
         </Section>
-        <Section title="Riscos Qualitativos de Molhos Úmidos">
-            <p>O principal risco de usar qualquer molho alternativo é o excesso de umidade. Molhos muito líquidos ou que liberam água durante o cozimento são a principal causa da "gum line" (a camada de massa crua e densa logo abaixo da cobertura). A chave é sempre buscar uma consistência mais espessa e usar os molhos de forma estratégica, não como uma camada uniforme e pesada que isola a massa do calor.</p>
+        <Section title="Qualitative Risks of Wet Sauces">
+            <p>The main risk of using any alternative sauce is excess moisture. Sauces that are too liquid or release water during cooking are the primary cause of "gum line" (the dense, raw layer of dough just below the topping). The key is to always seek a thicker consistency and use sauces strategically, not as a heavy uniform layer that insulates the dough from heat.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Pizza</li>
-              <li>"The Flavor Bible" de Karen Page e Andrew Dornenburg</li>
+              <li>"The Flavor Bible" by Karen Page and Andrew Dornenburg</li>
               <li>Serious Eats</li>
           </ul>
         </Section>

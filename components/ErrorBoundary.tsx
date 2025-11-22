@@ -12,23 +12,19 @@ interface ErrorBoundaryState {
 export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = { hasError: false };
 
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-  }
-
-  public static getDerivedStateFromError(_: Error): ErrorBoundaryState {
+  static getDerivedStateFromError(_: Error): ErrorBoundaryState {
     return { hasError: true };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("DoughLabPro ErrorBoundary caught an error:", error, errorInfo);
   }
 
-  public handleTryAgain = () => {
+  handleTryAgain = () => {
     this.setState({ hasError: false });
-  };
+  }
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       return (
         <div className="mx-auto my-8 max-w-2xl rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10 text-center">

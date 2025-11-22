@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,25 +16,25 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const DoughAgingPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Envelhecimento da Massa: Maturação e Degradação"
-      subtitle="O que acontece com a massa ao longo do tempo, da maturação sensorial à retrogradação do amido."
+      title="Dough Aging: Maturation and Degradation"
+      subtitle="What happens to dough over time, from sensory maturation to starch retrogradation."
     >
-        <Section title="Envelhecimento do Glúten">
-            <p>Com o tempo, a rede de glúten passa por um processo de relaxamento. As enzimas proteases, naturalmente presentes na farinha, começam a quebrar as longas cadeias de proteínas. Um envelhecimento controlado (como na fermentação a frio) resulta em uma massa mais extensível e macia. No entanto, um envelhecimento excessivo pode degradar tanto o glúten que a massa perde sua força, tornando-se fraca e pegajosa.</p>
+        <Section title="Gluten Aging">
+            <p>Over time, the gluten network undergoes a relaxation process. Protease enzymes, naturally present in flour, begin to break down long protein chains. Controlled aging (like in cold fermentation) results in a more extensible and softer dough. However, excessive aging can degrade gluten so much that the dough loses its strength, becoming weak and sticky.</p>
         </Section>
-        <Section title="Mudanças Aromáticas e Maturação Sensorial">
-            <p>O "envelhecimento" da massa é sinônimo de maturação de sabor. Durante períodos prolongados, especialmente sob refrigeração, a atividade lenta de leveduras e bactérias produz uma gama muito mais ampla e complexa de compostos aromáticos (ésteres, álcoois, ácidos). Isso transforma o sabor da massa de algo simples e de "farinha" para algo com notas frutadas, lácticas e profundas.</p>
+        <Section title="Aromatic Changes and Sensory Maturation">
+            <p>"Aging" of dough is synonymous with flavor maturation. During prolonged periods, especially under refrigeration, the slow activity of yeasts and bacteria produces a much wider and more complex range of aromatic compounds (esters, alcohols, acids). This transforms the dough's flavor from something simple and "floury" to something with fruity, lactic, and deep notes.</p>
         </Section>
-        <Section title="Retrogradação do Amido (Qualitativa)">
-            <p>Após o cozimento, o amido que foi gelatinizado (absorveu água e inchou) começa a recristalizar e a liberar a água que havia absorvido. Este processo, conhecido como retrogradação do amido, é a principal causa do envelhecimento do pão e da pizza, tornando-os duros e secos. O processo é mais rápido em temperaturas de refrigeração do que em temperatura ambiente.</p>
+        <Section title="Starch Retrogradation (Qualitative)">
+            <p>After baking, gelatinized starch (which absorbed water and swelled) begins to recrystallize and release the water it had absorbed. This process, known as starch retrogradation, is the main cause of bread and pizza staling, making them hard and dry. The process is faster at refrigerator temperatures than at room temperature (for the baked product).</p>
         </Section>
-        <Section title="Perda de Elasticidade">
-            <p>Uma massa "envelhecida" (que passou do ponto de fermentação ideal) muitas vezes perde sua elasticidade. A degradação do glúten significa que a massa não tem mais a capacidade de "voltar" quando esticada e pode rasgar facilmente, pois sua estrutura de suporte foi comprometida.</p>
+        <Section title="Loss of Elasticity">
+            <p>An "aged" dough (one that has passed the ideal fermentation point) often loses its elasticity. Gluten degradation means the dough no longer has the ability to "spring back" when stretched and can tear easily, as its support structure has been compromised.</p>
         </Section>
-        <Section title="Risco da Massa 'Cansada'">
-            <p>Uma massa "cansada" é aquela que foi fermentada por tempo demais. Ela pode apresentar um cheiro excessivamente alcoólico ou avinagrado, ter uma textura fraca e pegajosa, e não apresentar um bom "oven spring" no forno, resultando em um produto final plano e denso. É o resultado do esgotamento dos açúcares e da degradação da estrutura proteica.</p>
+        <Section title="Risk of 'Tired' Dough">
+            <p>A "tired" dough is one that has fermented for too long. It may smell excessively alcoholic or vinegary, have a weak and sticky texture, and fail to show good "oven spring" in the oven, resulting in a flat and dense final product. It is the result of sugar depletion and protein structure degradation.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Bread</li>
               <li>Wikipedia (Starch Retrogradation, Gluten)</li>

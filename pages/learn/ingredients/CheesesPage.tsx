@@ -1,15 +1,15 @@
 
 import React from 'react';
 import IngredientPageLayout from './IngredientPageLayout';
-import { BookOpenIcon, SparklesIcon, BeakerIcon, FireIcon } from '../../../components/IconComponents';
+import { BookOpenIcon, BeakerIcon, FireIcon } from '../../../components/IconComponents';
 
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -18,77 +18,73 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 const CheesesPage: React.FC = () => {
   return (
     <IngredientPageLayout
-      title="Queijos na Pizza"
-      description="Uma análise técnica do ingrediente que define a pizza. Entenda a ciência por trás do derretimento, elasticidade e sabor para fazer escolhas mais precisas."
-      category="Ingredientes"
+      title="Cheese on Pizza"
+      description="A technical analysis of the ingredient that defines pizza. Understand the science behind melting, stretch, and flavor to make precise choices."
+      category="Ingredients"
     >
-      <Section title="Introdução: A Química Sensível do Queijo">
+      <Section title="Introduction: The Sensitive Chemistry of Cheese">
         <p>
-            O queijo é um ingrediente termossensível e um sistema complexo composto por água, gordura, proteínas (principalmente caseínas), sais minerais e compostos voláteis aromáticos. A proporção exata desses componentes, como detalhado em fontes como "Modernist Pizza", determina o comportamento do queijo no forno, incluindo:
+            Cheese is a heat-sensitive ingredient and a complex system composed of water, fat, proteins (mainly caseins), minerals, and volatile aromatic compounds. The exact proportion of these components, as detailed in sources like "Modernist Pizza," determines cheese behavior in the oven, including:
         </p>
-        <ul>
-            <li><strong>Derretimento (Melting):</strong> A fluidez que o queijo adquire com o calor.</li>
-            <li><strong>Estiramento (Stretch):</strong> A capacidade de formar os fios elásticos característicos.</li>
-            <li><strong>Browning:</strong> A capacidade de dourar e desenvolver cor e sabor.</li>
-            <li><strong>Oil-Out:</strong> A separação da gordura da matriz de proteína.</li>
-            <li><strong>Sabor e Aroma:</strong> A intensidade e o perfil aromático liberados durante o cozimento.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Melting:</strong> Fluidity acquired with heat.</li>
+            <li><strong>Stretch:</strong> Ability to form characteristic elastic strands.</li>
+            <li><strong>Browning:</strong> Ability to brown and develop color and flavor.</li>
+            <li><strong>Oil-Out:</strong> Separation of fat from protein matrix.</li>
+            <li><strong>Flavor and Aroma:</strong> Intensity and aromatic profile released during baking.</li>
         </ul>
       </Section>
 
-      <Section title="Fundamentos Químicos do Comportamento do Queijo" icon={<BeakerIcon className="h-5 w-5" />}>
-        <ul>
-            <li>O <strong>derretimento</strong> ocorre quando a gordura, que está emulsificada na matriz de proteína, se liquefaz com o calor, e as redes de caseína começam a se desfazer, permitindo que o queijo flua.</li>
-            <li>O <strong>teor de água</strong> atua como um lubrificante para as proteínas, sendo crucial para a elasticidade. Queijos com umidade ideal (como a mozzarella) esticam bem, enquanto queijos secos quebram.</li>
-            <li>A <strong>gordura</strong> não só carrega a maior parte do sabor, mas também influencia o "oil-out". Queijos mais gordurosos tendem a liberar mais óleo na superfície.</li>
-            <li>Queijos <strong>curados</strong> (envelhecidos) passam por um processo onde enzimas quebram proteínas e gorduras em compostos menores e mais aromáticos, resultando em um sabor muito mais intenso e complexo.</li>
+      <Section title="Chemical Fundamentals of Cheese Behavior" icon={<BeakerIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Melting</strong> occurs when fat, emulsified in protein matrix, liquifies with heat, and casein networks begin to break down, allowing cheese to flow.</li>
+            <li><strong>Water content</strong> acts as lubricant for proteins, crucial for elasticity. Cheeses with ideal moisture (like mozzarella) stretch well, while dry cheeses break.</li>
+            <li><strong>Fat</strong> not only carries most flavor but influences "oil-out". Fatty cheeses tend to release more oil on surface.</li>
+            <li><strong>Aged</strong> cheeses undergo process where enzymes break proteins and fats into smaller, more aromatic compounds, resulting in much more intense and complex flavor.</li>
         </ul>
       </Section>
       
-      <Section title="Propriedades Técnicas dos Queijos Comuns">
-        <h4>a) Mozzarella Fior di Latte (de Vaca)</h4>
-        <p>Possui alta umidade e uma estrutura de caseína que lhe confere excelente elasticidade e derretimento uniforme. Seu sabor é suave e láctico, servindo como uma base perfeita que não sobrepõe outros ingredientes. Tem baixa tendência a "oil-out".</p>
+      <Section title="Technical Properties of Common Cheeses">
+        <h4>a) Mozzarella Fior di Latte (Cow)</h4>
+        <p>High moisture and casein structure giving excellent elasticity and even melt. Flavor is mild and milky, serving as perfect base not overpowering other ingredients. Low tendency to "oil-out".</p>
         
-        <h4>b) Mozzarella de Búfala</h4>
-        <p>Com um teor de umidade ainda maior, derrete de forma mais irregular, criando "poças" cremosas. Libera bastante água, sendo ideal para fornos muito quentes e rápidos (conforme norma da AVPN), onde a evaporação é instantânea. Seu sabor é mais rico e complexo que o da fior di latte.</p>
+        <h4>b) Buffalo Mozzarella</h4>
+        <p>With even higher moisture content, melts more irregularly, creating creamy "pools". Releases significant water, ideal for very hot, fast ovens (per AVPN rules), where evaporation is instant. Flavor is richer and more complex than fior di latte.</p>
 
         <h4>c) Provolone</h4>
-        <p>Um queijo mais curado, resultando em menor umidade e maior salinidade. Seu derretimento é menos fluido e a elasticidade é menor que a da mozzarella. Adiciona um sabor mais forte, picante ou defumado.</p>
+        <p>More aged cheese, resulting in lower moisture and higher salinity. Melt is less fluid and elasticity lower than mozzarella. Adds stronger, sharp, or smoked flavor.</p>
 
-        <h4>d) Parmesão / Grana Padano</h4>
-        <p>São queijos duros, de longa maturação e baixa umidade. Eles não "derretem" no sentido tradicional; em vez disso, "suam" sua gordura e douram. Sua função principal é adicionar um sabor umami profundo e salinidade, sendo ideais para finalização pós-forno.</p>
+        <h4>d) Parmesan / Grana Padano</h4>
+        <p>Hard, long-aged, low-moisture cheeses. Do not "melt" in traditional sense; instead, "sweat" fat and brown. Main function is adding deep umami flavor and salinity, ideal for post-oven finishing.</p>
 
         <h4>e) Gorgonzola</h4>
-        <p>Como outros queijos azuis, tem um sabor intenso e pungente devido à ação de mofos (Penicillium). Sua alta gordura garante um derretimento cremoso. É famoso pelo contraste com ingredientes doces (como mel ou figo), uma combinação documentada na gastronomia moderna.</p>
+        <p>Like other blue cheeses, has intense, pungent flavor due to mold action (Penicillium). High fat ensures creamy melt. Famous for contrast with sweet ingredients (honey or fig), a documented combination in modern gastronomy.</p>
 
-        <h4>f) Queijos Brasileiros (Análise Qualitativa)</h4>
-        <ul>
-            <li><strong>Meia-Cura:</strong> Possui notas suaves, derretimento médio e boa capacidade de dourar, mas com menor elasticidade que a mozzarella.</li>
-            <li><strong>Minas Padrão:</strong> Moderadamente úmido, derrete de forma cremosa, mas com pouca elasticidade. Libera mais soro.</li>
-            <li><strong>Coalho:</strong> Devido à sua estrutura proteica e pH, possui um comportamento térmico particular: ele amolece e doura, mas não derrete nem estica, mantendo sua forma.</li>
-        </ul>
+        <h4>f) Regional Cheeses (Qualitative Analysis)</h4>
+        <p>Consider local cheeses based on moisture and fat. Medium-cured cheeses offer mild notes and good browning but less elasticity. Standard semi-soft cheeses melt creamier but release more whey. Firm grilling cheeses (like Halloumi/Coalho) soften and brown but maintain shape without melting or stretching.</p>
       </Section>
 
-      <Section title="O Fenômeno do Oil-Out" icon={<BeakerIcon className="h-5 w-5" />}>
-        <p>O "oil-out" ocorre quando a emulsão de gordura na matriz de proteína do queijo se quebra sob calor, fazendo com que a gordura se separe e suba para a superfície. Queijos com alto teor de gordura (como cheddar e provolone) têm maior tendência a apresentar esse fenômeno. O risco aumenta com tempos de cozimento longos ou temperaturas muito altas, que dão mais tempo e energia para a gordura se separar.</p>
+      <Section title="The Oil-Out Phenomenon" icon={<BeakerIcon className="h-5 w-5" />}>
+        <p>"Oil-out" occurs when fat emulsion in cheese protein matrix breaks under heat, causing fat to separate and rise to surface. High-fat cheeses (like cheddar and provolone) are more prone. Risk increases with long baking times or very high temperatures giving fat time and energy to separate.</p>
       </Section>
 
-      <Section title="Browning (Dourado): A Reação de Maillard no Queijo" icon={<FireIcon className="h-5 w-5" />}>
-        <p>O dourado do queijo depende da Reação de Maillard, que necessita de aminoácidos e açúcares redutores (lactose). Queijos com menor umidade douram mais rápido porque sua superfície seca e atinge a temperatura necessária para a reação mais rapidamente. Queijos muito úmidos, como a ricota, liberam vapor, o que mantém a superfície "fria" (próxima de 100°C) e impede um browning eficaz.</p>
+      <Section title="Browning: Maillard Reaction in Cheese" icon={<FireIcon className="h-5 w-5" />}>
+        <p>Cheese browning depends on Maillard Reaction requiring amino acids and reducing sugars (lactose). Lower moisture cheeses brown faster because surface dries and reaches reaction temperature quicker. Very wet cheeses like ricotta release steam, keeping surface "cool" (near 100°C) preventing effective browning.</p>
       </Section>
       
-      <Section title="Misturas Clássicas e Documentadas" icon={<BookOpenIcon className="h-5 w-5" />}>
-        <ul>
-            <li><strong>Mozzarella + Provolone:</strong> A base de sabor de muitas pizzas NY-style, combinando a textura da mozzarella com o sabor mais acentuado do provolone.</li>
-            <li><strong>Mozzarella + Parmesão:</strong> Um clássico italiano e ítalo-americano. A mozzarella oferece a base cremosa, enquanto o parmesão adiciona um toque final de salinidade e umami.</li>
-            <li><strong>Quatro Queijos Tradicionais:</strong> A combinação clássica geralmente inclui Mozzarella (base), Gorgonzola (sabor picante), Provolone (sabor defumado) e Parmesão (salinidade e umami).</li>
+      <Section title="Classic and Documented Blends" icon={<BookOpenIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Mozzarella + Provolone:</strong> Flavor base of many NY-style pizzas, combining mozzarella texture with sharper provolone flavor.</li>
+            <li><strong>Mozzarella + Parmesan:</strong> Italian and Italian-American classic. Mozzarella offers creamy base, parmesan adds salty umami finish.</li>
+            <li><strong>Traditional Four Cheese:</strong> Classic combo usually includes Mozzarella (base), Gorgonzola (sharp), Provolone (smoked/sharp), and Parmesan (salty/umami).</li>
         </ul>
       </Section>
 
-      <Section title="Riscos e Cuidados Práticos">
-        <ul>
-            <li><strong>Excesso de Queijo:</strong> Uma camada muito grossa de queijo pode agir como um isolante térmico, impedindo que o calor chegue à massa e ao molho, resultando em uma "gum line".</li>
-            <li><strong>Umidade Demais:</strong> Queijos frescos como fior di latte ou búfala devem ser bem escorridos e secos antes do uso para evitar uma pizza encharcada.</li>
-            <li><strong>Queijos Duros no Forno:</strong> Queijos como parmesão e pecorino não foram feitos para derreter. Se assados por muito tempo, eles queimam e ficam amargos. Use-os para finalizar a pizza pós-forno.</li>
+      <Section title="Risks and Practical Care">
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Excess Cheese:</strong> Too thick cheese layer acts as thermal insulator preventing heat reaching dough and sauce, resulting in "gum line".</li>
+            <li><strong>Too Much Moisture:</strong> Fresh cheeses like fior di latte or buffalo must be well drained and dried before use to avoid soggy pizza.</li>
+            <li><strong>Hard Cheeses in Oven:</strong> Cheeses like parmesan and pecorino aren't made to melt. If baked too long, they burn and turn bitter. Use for post-oven finishing.</li>
         </ul>
       </Section>
     </IngredientPageLayout>

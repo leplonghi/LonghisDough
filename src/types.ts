@@ -47,6 +47,20 @@ export enum RecipeStyle {
   BRIOCHE = 'BRIOCHE',
   DINNER_ROLLS = 'DINNER_ROLLS',
 
+  // --- NEW STYLES (BREADS) ---
+  BREAD_RUSTIC_SOURDOUGH = 'BREAD_RUSTIC_SOURDOUGH',
+  BREAD_BAGUETTE_CLASSIC = 'BREAD_BAGUETTE_CLASSIC',
+  BREAD_SANDWICH_SOFT = 'BREAD_SANDWICH_SOFT',
+  
+  // --- NEW STYLES (ENRICHED) ---
+  ENRICHED_BRIOCHE_CLASSIC = 'ENRICHED_BRIOCHE_CLASSIC',
+  ENRICHED_DINNER_ROLL = 'ENRICHED_DINNER_ROLL',
+
+  // --- NEW STYLES (BUNS) ---
+  BURGER_BUN_BRIOCHE = 'BURGER_BUN_BRIOCHE',
+  BURGER_BUN_POTATO = 'BURGER_BUN_POTATO',
+  BURGER_BUN_SOFT = 'BURGER_BUN_SOFT',
+
   // --- SWEETS & PASTRY ---
   PATE_SUCREE = 'PATE_SUCREE',
   SABLEE = 'SABLEE',
@@ -62,6 +76,13 @@ export enum RecipeStyle {
   BOLO_SIMPLES = 'BOLO_SIMPLES',
   BROWNIE = 'BROWNIE',
   
+  // --- NEW STYLES (PASTRY/COOKIES) ---
+  PASTRY_CINNAMON_ROLL = 'PASTRY_CINNAMON_ROLL',
+  PASTRY_DANISH = 'PASTRY_DANISH',
+  COOKIE_CLASSIC_CHOC_CHIP = 'COOKIE_CLASSIC_CHOC_CHIP',
+  COOKIE_BROWN_BUTTER = 'COOKIE_BROWN_BUTTER',
+  COOKIE_SHORTBREAD = 'COOKIE_SHORTBREAD',
+
   // Legacy/Duplicate Handling
   NY_STYLE = 'NY_STYLE',
   SICILIAN = 'SICILIAN',
@@ -72,6 +93,9 @@ export enum FermentationTechnique {
   DIRECT = 'DIRECT',
   POOLISH = 'POOLISH',
   BIGA = 'BIGA',
+  SOURDOUGH = 'SOURDOUGH',
+  CHEMICAL = 'CHEMICAL',
+  NO_FERMENT = 'NO_FERMENT',
 }
 
 export enum YeastType {
@@ -373,10 +397,12 @@ export interface Reference {
   notes?: string;
 }
 
+export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "flatbread" | "other";
+
 export interface DoughStyleDefinition {
     id: string;
     name: string; // Variant Name in UI
-    family: string; // Grouping key e.g. "Italian Rustic", "Viennoiserie"
+    family?: string; // Grouping key e.g. "Italian Rustic", "Viennoiserie"
     category: StyleCategory;
     
     // Expanded Metadata
@@ -476,8 +502,6 @@ export interface UserContextType {
   customIngredientLibrary?: IngredientConfig[];
   addCustomIngredient?: (ing: IngredientConfig) => void;
 }
-
-export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "flatbread" | "other";
 
 export type FormErrors = {
   [key in keyof Partial<DoughConfig>]: string | null;

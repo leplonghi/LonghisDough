@@ -5,11 +5,11 @@ import { BookOpenIcon, SparklesIcon, BeakerIcon, FireIcon } from '../../../compo
 
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -18,76 +18,76 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 const MeatsPage: React.FC = () => {
   return (
     <IngredientPageLayout
-      title="Carnes e Embutidos"
-      description="Uma análise técnica sobre como carnes, curados e embutidos se comportam na pizza, da ciência da cura à reação no forno."
-      category="Ingredientes"
+      title="Meats and Cured Meats"
+      description="A technical analysis of how meats, cured products, and sausages behave on pizza, from curing science to oven reaction."
+      category="Ingredients"
     >
-      <Section title="Introdução: O Impacto Químico da Carne">
+      <Section title="Introduction: Chemical Impact of Meat">
         <p>
-            Carnes e embutidos são mais do que apenas um topping; eles são um sistema químico complexo que interage intensamente com a pizza. Do ponto de vista científico e sensorial, eles são responsáveis por modular:
+            Meats and sausages are more than just a topping; they are a complex chemical system interacting intensely with pizza. From scientific and sensory standpoint, they modulate:
         </p>
-        <ul>
-            <li><strong>Salinidade e Gordura:</strong> Contribuem com sal e gordura, que precisam ser equilibrados com a acidez do molho e a suavidade do queijo.</li>
-            <li><strong>Sabor Umami:</strong> Processos de cura e fermentação concentram glutamatos, proporcionando uma profundidade de sabor umami.</li>
-            <li><strong>Crocância:</strong> A gordura derretida (rendering) e a reação de Maillard nas proteínas criam texturas crocantes que contrastam com a maciez da massa.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Salinity and Fat:</strong> Contribute salt and fat, needing balance with sauce acidity and cheese smoothness.</li>
+            <li><strong>Umami Flavor:</strong> Curing and fermentation processes concentrate glutamates, providing depth of umami flavor.</li>
+            <li><strong>Crispness:</strong> Rendered fat and Maillard reaction on proteins create crispy textures contrasting with soft dough.</li>
         </ul>
         <p>
-            Embutidos como salames e pepperoni passam por processos químicos sofisticados antes de chegarem à pizza, incluindo cura (com sal e nitritos), fermentação (que desenvolve acidez e sabor), defumação e desidratação, que concentram o sabor e garantem a segurança alimentar.
+            Cured meats like salami and pepperoni undergo sophisticated chemical processes before reaching pizza, including curing (salt/nitrites), fermentation (acidity/flavor), smoking, and dehydration concentrating flavor and ensuring safety.
         </p>
       </Section>
 
-      <Section title="Propriedades Técnicas (Química Real)" icon={<BeakerIcon className="h-5 w-5" />}>
+      <Section title="Technical Properties (Real Chemistry)" icon={<BeakerIcon className="h-5 w-5" />}>
         <p>
-            O comportamento de carnes e embutidos no forno é ditado por sua composição.
+            Behavior of meats in oven is dictated by composition.
         </p>
-        <ul>
-            <li><strong>Derretimento da Gordura (Rendering):</strong> A gordura derrete e se espalha pela pizza. Gorduras mais saturadas, como as do bacon, derretem mais lentamente e em temperaturas mais altas. Esse processo pode levar ao "oil-out", um excesso de óleo na superfície.</li>
-            <li><strong>Teor de Água:</strong> Carnes curadas (como salame e prosciutto) têm baixo teor de água, o que as torna mais estáveis no forno e propensas a ficarem crocantes. Carnes frescas (como linguiça crua ou frango) liberam uma quantidade significativa de água, o que representa um risco de deixar a pizza encharcada.</li>
-            <li><strong>Salinidade:</strong> O sal usado na cura é concentrado. É crucial considerar o sal do embutido ao balancear o sal total da pizza, incluindo molho e queijo.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Fat Rendering:</strong> Fat melts and spreads. Saturated fats (like bacon) melt slower at higher temps. Process can lead to "oil-out".</li>
+            <li><strong>Water Content:</strong> Cured meats (salami, prosciutto) have low water, making them stable and prone to crisping. Fresh meats (raw sausage, chicken) release significant water, risking soggy pizza.</li>
+            <li><strong>Salinity:</strong> Curing salt is concentrated. Crucial to consider meat salt when balancing total pizza salt including sauce and cheese.</li>
         </ul>
       </Section>
       
-      <Section title="Comportamento no Forno" icon={<FireIcon className="h-5 w-5" />}>
-        <p>Cada tipo de carne reage de forma diferente ao calor intenso.</p>
-        <ul>
-            <li><strong>"Cupping" do Pepperoni:</strong> Como explicado por J. Kenji López-Alt em Serious Eats, fatias finas de pepperoni se curvam para cima ("cup") porque a parte de cima (exposta ao calor radiante) cozinha e contrai mais rápido que a parte de baixo (protegida e em contato com a pizza). A gordura derretida se acumula nesses "copos", fritando as bordas e tornando-as crocantes.</li>
-            <li><strong>Liberação de Água de Carnes Frescas:</strong> Linguiça fresca, carne moída ou frango, se colocados crus, liberam vapor e água durante o cozimento, o que pode criar uma "gum line" (linha de goma) na massa. Por isso, muitas vezes são pré-cozidos.</li>
-            <li><strong>Prosciutto e Curados Delicados:</strong> Conforme a tradição italiana e fontes como a Ooni Pizza School, o prosciutto crudo deve ser aplicado <strong>pós-forno</strong>. O calor intenso destruiria seus compostos aromáticos delicados e alteraria sua textura sedosa, tornando-o salgado e rígido.</li>
+      <Section title="Oven Behavior" icon={<FireIcon className="h-5 w-5" />}>
+        <p>Each meat type reacts differently to intense heat.</p>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Pepperoni Cupping:</strong> Thin slices cup upwards because top (exposed to radiant heat) cooks and contracts faster than bottom (protected). Rendered fat pools in cups, frying edges crisp.</li>
+            <li><strong>Fresh Meat Water Release:</strong> Fresh sausage, ground beef, or chicken, if raw, release steam creating "gum line" on dough. Often pre-cooked for this reason.</li>
+            <li><strong>Prosciutto and Delicate Cured Meats:</strong> Per Italian tradition and sources like Ooni Pizza School, prosciutto crudo must be applied <strong>post-oven</strong>. Intense heat destroys delicate aromatics and alters silky texture, making it salty and tough.</li>
         </ul>
       </Section>
       
-       <Section title="Tipos Comuns de Carnes e Embutidos">
+       <Section title="Common Meat Types">
         <h4>a) Pepperoni</h4>
-        <p>Um salame curado e seco de origem ítalo-americana, com páprica e pimenta. Sua alta concentração de gordura e o invólucro de colágeno contribuem para o "cupping" e a crocância das bordas quando fatiado fino.</p>
+        <p>Cured dry sausage of Italian-American origin with paprika/chili. High fat and collagen casing contribute to cupping and crispy edges when sliced thin.</p>
         
-        <h4>b) Salame Italiano</h4>
-        <p>Existem centenas de variedades. Geralmente é fermentado, o que lhe confere notas ácidas e um sabor mais complexo. Por ser mais denso e ter menos gordura que o pepperoni, tende a não "cupear", mas fica agradavelmente crocante.</p>
+        <h4>b) Italian Salami</h4>
+        <p>Hundreds of varieties. Generally fermented giving acidic notes and complex flavor. Denser with less fat than pepperoni, tends not to cup but crisps pleasantly.</p>
         
-        <h4>c) Calabresa Brasileira</h4>
-        <p>Um embutido processado e cozido, não curado da mesma forma que o salame. Seu perfil aromático é forte, e por ter mais umidade e gordura emulsionada, libera bastante óleo na pizza.</p>
+        <h4>c) Smoked Sausage / Calabresa</h4>
+        <p>Often cooked/processed differently than dry cured salami. Strong aromatic profile, more moisture and emulsified fat, releases significant oil.</p>
 
-        <h4>d) Presunto Cru (Prosciutto di Parma, San Daniele)</h4>
-        <p>Curado a seco apenas com sal, tem um sabor delicado e textura que derrete na boca. Como mencionado, seu melhor uso é fatiado finamente e adicionado à pizza assim que ela sai do forno.</p>
+        <h4>d) Prosciutto Crudo (Parma, San Daniele)</h4>
+        <p>Dry-cured with salt only, delicate flavor and melt-in-mouth texture. Best used thinly sliced added post-oven.</p>
 
         <h4>e) Bacon</h4>
-        <p>Sua gordura densa precisa de tempo para derreter (render). Em pizzas de cozimento rápido (como a Napolitana), ele não cozinharia adequadamente. Por isso, é quase sempre pré-cozido até ficar parcialmente crocante antes de ser usado como cobertura.</p>
+        <p>Dense fat needs time to render. In fast-bake pizzas (Neapolitan), won't cook properly. Almost always pre-cooked to partial crispness before use as topping.</p>
       </Section>
 
-      <Section title="Combinações Clássicas (Validadas pela Tradição)" icon={<BookOpenIcon className="h-5 w-5" />}>
-        <ul>
-            <li><strong>Pepperoni + Mozzarella:</strong> O clássico americano. A picância e a gordura do pepperoni são equilibradas pela suavidade da mozzarella.</li>
-            <li><strong>Salame + Provolone:</strong> Uma combinação robusta. O sabor forte do salame é complementado pelo provolone, que é mais picante que a mozzarella.</li>
-            <li><strong>Prosciutto + Rúcula + Lascas de Parmesão:</strong> Uma combinação moderna, mas já clássica na Itália. Adicionados pós-forno, o salgado do presunto, o amargor da rúcula e o umami do parmesão criam um contraste fresco.</li>
-            <li><strong>Bacon + Cebola (Caramelizada ou Roxa):</strong> O doce da cebola corta a riqueza e o salgado do bacon, uma combinação consagrada.</li>
+      <Section title="Classic Combinations (Tradition Validated)" icon={<BookOpenIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Pepperoni + Mozzarella:</strong> American classic. Pepperoni spice and fat balanced by mozzarella mildness.</li>
+            <li><strong>Salami + Provolone:</strong> Robust combination. Strong salami complements sharper provolone.</li>
+            <li><strong>Prosciutto + Arugula + Parmesan Shavings:</strong> Modern classic. Added post-oven; salty ham, bitter arugula, umami cheese create fresh contrast.</li>
+            <li><strong>Bacon + Onion (Caramelized or Red):</strong> Onion sweetness cuts bacon richness and salt.</li>
         </ul>
       </Section>
       
-       <Section title="Cuidados e Riscos Comuns" icon={<SparklesIcon className="h-5 w-5" />}>
-        <ul>
-            <li><strong>Excesso de Gordura (Oil-Out):</strong> O uso de múltiplos embutidos gordurosos (ex: pepperoni + bacon) pode levar a uma pizza excessivamente oleosa. Equilibre com queijos de menor gordura ou adicione menos quantidade.</li>
-            <li><strong>Carnes Frescas Cruas:</strong> O risco de liberar água e não cozinhar completamente é alto. Para carnes como linguiça ou frango, a pré-cocção é a prática mais segura e eficaz.</li>
-            <li><strong>Agentes de Cura (Nitritos):</strong> Os nitritos e nitratos usados na cura de muitos embutidos são estáveis e não se alteram significativamente com o calor do forno. Sua função principal ocorre durante o processo de cura, antes do produto chegar à sua cozinha.</li>
-            <li><strong>Perda de Aroma em Curados Finos:</strong> Nunca asse um prosciutto de alta qualidade. Você estará pagando por uma complexidade aromática que será destruída pelo calor.</li>
+       <Section title="Risks and Common Care" icon={<SparklesIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Excess Fat (Oil-Out):</strong> Multiple fatty meats (pepperoni + bacon) lead to oily pizza. Balance with lower fat cheese or less quantity.</li>
+            <li><strong>Raw Fresh Meats:</strong> High risk of releasing water and undercooking. Pre-cooking is safest effective practice.</li>
+            <li><strong>Curing Agents (Nitrites):</strong> Stable and don't change significantly with oven heat. Function happens during curing before reaching kitchen.</li>
+            <li><strong>Aroma Loss in Fine Cured Meats:</strong> Never bake high quality prosciutto. You pay for aromatic complexity destroyed by heat.</li>
         </ul>
       </Section>
     </IngredientPageLayout>

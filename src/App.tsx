@@ -41,6 +41,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import LevainOnboardingModal from '@/components/onboarding/LevainOnboardingModal';
 import { logEvent } from '@/services/analytics';
 import { calculateDoughUniversal, syncIngredientsFromConfig } from '@/logic/doughMath';
+import { normalizeDoughConfig } from '@/logic/normalization';
 import { I18nProvider } from '@/i18n';
 
 // Lazy Load Pages
@@ -385,12 +386,18 @@ function AppContent() {
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
     setHasInteracted(true);
-    const updatedConfig = { 
+    
+    // 1. Merge basic changes
+    let updatedConfig = { 
         ...config, 
         ...newConfig, 
         stylePresetId: calculatorMode === 'basic' ? config.stylePresetId : undefined 
     };
+
+    // 2. Normalize Configuration based on Style constraints
+    updatedConfig = normalizeDoughConfig(updatedConfig);
     
+    // 3. Sync ingredients
     const syncedIngredients = syncIngredientsFromConfig(updatedConfig);
     updatedConfig.ingredients = syncedIngredients;
 
@@ -403,7 +410,7 @@ function AppContent() {
       const preset = DOUGH_STYLE_PRESETS.find(p => p.recipeStyle === config.recipeStyle);
       if (preset) {
         const { defaultHydration, defaultSalt, defaultOil, defaultSugar } = preset;
-        const newConf = {
+        let newConf = {
           ...config,
           hydration: defaultHydration,
           salt: defaultSalt,
@@ -411,8 +418,10 @@ function AppContent() {
           sugar: defaultSugar || 0,
           stylePresetId: preset.id,
         };
-        // Sync ingredients
+        
+        newConf = normalizeDoughConfig(newConf);
         newConf.ingredients = syncIngredientsFromConfig(newConf);
+        
         setConfig(newConf);
       }
     }
@@ -442,26 +451,22 @@ function AppContent() {
             presetValues.flourId = preferredFlourProfileId;
         }
 
-        // Check allowed techniques for this BakeType
-        const allowedTechniques = getAllowedFermentationTechniques(recipeStyle, bakeType);
-        let newTechnique = config.fermentationTechnique;
-        if (!allowedTechniques.includes(newTechnique)) {
-            newTechnique = allowedTechniques[0] || FermentationTechnique.DIRECT;
-        }
-
-        const newConf = {
+        let newConf = {
           ...initialConfig,
           ...config,
           bakeType,
           recipeStyle: recipeStyle,
           ...presetValues,
           stylePresetId: firstMatchingPreset.id,
-          fermentationTechnique: newTechnique,
         };
+        
+        newConf = normalizeDoughConfig(newConf);
         newConf.ingredients = syncIngredientsFromConfig(newConf);
+        
         setConfig(newConf);
       } else {
-        const newConf = { ...config, bakeType, stylePresetId: undefined };
+        let newConf = { ...config, bakeType, stylePresetId: undefined };
+        newConf = normalizeDoughConfig(newConf);
         newConf.ingredients = syncIngredientsFromConfig(newConf);
         setConfig(newConf);
       }
@@ -487,24 +492,19 @@ function AppContent() {
           presetValues.flourId = preferredFlourProfileId;
       }
 
-      // Enforce allowed fermentation techniques
-      const allowedTechniques = getAllowedFermentationTechniques(recipeStyle, type);
-      let newTechnique = config.fermentationTechnique;
-      if (!allowedTechniques.includes(newTechnique)) {
-          newTechnique = allowedTechniques[0] || FermentationTechnique.DIRECT;
-      }
-
-      const newConf = { 
+      let newConf = { 
           ...config, 
           recipeStyle, 
           ...presetValues, 
           stylePresetId: preset.id,
-          fermentationTechnique: newTechnique 
       };
+      
+      newConf = normalizeDoughConfig(newConf);
       newConf.ingredients = syncIngredientsFromConfig(newConf);
+      
       setConfig(newConf);
     }
-  }, [config.yeastType, config, config.fermentationTechnique]);
+  }, [config.yeastType, config]);
 
   const handleYeastTypeChange = useCallback((yeastType: YeastType) => {
     setHasInteracted(true);
@@ -527,7 +527,8 @@ function AppContent() {
         newConfig.yeastPercentage = 0.4;
       }
       
-      const merged = { ...prev, ...newConfig } as DoughConfig;
+      let merged = { ...prev, ...newConfig } as DoughConfig;
+      merged = normalizeDoughConfig(merged);
       merged.ingredients = syncIngredientsFromConfig(merged);
       return merged;
     });
@@ -535,7 +536,8 @@ function AppContent() {
 
   const handleLoadProRecipe = (newConfig: ProRecipe['config']) => {
     setHasInteracted(true);
-    const fullConfig = { ...config, ...newConfig, stylePresetId: undefined };
+    let fullConfig = { ...config, ...newConfig, stylePresetId: undefined };
+    fullConfig = normalizeDoughConfig(fullConfig);
     fullConfig.ingredients = syncIngredientsFromConfig(fullConfig);
     setConfig(fullConfig);
     navigate('calculator');
@@ -571,7 +573,8 @@ function AppContent() {
 
   const handleLoadAndNavigate = useCallback((configToLoad: Partial<DoughConfig>) => {
     setHasInteracted(true);
-    const merged = { ...config, ...configToLoad };
+    let merged = { ...config, ...configToLoad };
+    merged = normalizeDoughConfig(merged);
     merged.ingredients = syncIngredientsFromConfig(merged);
     setConfig(merged);
     addToast(`Style "${configToLoad.recipeStyle || 'Preset'}" loaded.`, 'info');
@@ -588,7 +591,7 @@ function AppContent() {
           bakeType = BakeType.SWEETS_PASTRY;
       }
 
-      const newDoughConfig: Partial<DoughConfig> = {
+      let newDoughConfig: Partial<DoughConfig> = {
         bakeType,
         baseStyleName: style.name,
         recipeStyle: style.recipeStyle,
@@ -601,9 +604,22 @@ function AppContent() {
         ingredients: style.ingredients.map(ing => ({...ing, manualOverride: false})),
         stylePresetId: undefined
       };
+      
+      // Apply Normalization to ensure valid state immediately
+      // We merge with current config to satisfy type safety for the helper, then extract partial
+      const tempConfig = { ...config, ...newDoughConfig };
+      const normalized = normalizeDoughConfig(tempConfig);
+      
+      // We only want to pass the partial updates that came from the style
+      newDoughConfig = {
+          ...newDoughConfig,
+          fermentationTechnique: normalized.fermentationTechnique,
+          yeastType: normalized.yeastType
+      };
+
       setCalculatorMode('advanced');
       handleLoadAndNavigate(newDoughConfig);
-  }, [handleLoadAndNavigate]);
+  }, [handleLoadAndNavigate, config]);
 
 
   const handleCreateDraftAndNavigate = useCallback(async () => {

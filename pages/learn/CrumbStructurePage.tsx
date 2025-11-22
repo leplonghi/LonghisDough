@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,22 +16,22 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const CrumbStructurePage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Estrutura Interna da Massa (Crumb)"
-      subtitle="A ciência por trás da formação dos alvéolos e da textura do miolo da sua pizza ou pão."
+      title="Crumb Structure"
+      subtitle="The science behind alveoli formation and the internal texture of your pizza or bread."
     >
-        <Section title="Formação dos Alvéolos">
-            <p>Os alvéolos, ou as "bolhas" no miolo da massa, são bolsões de gás (CO₂) produzidos pela levedura durante a fermentação. Eles se formam em locais de nucleação na massa e crescem à medida que mais gás é produzido. O tamanho, a forma e a distribuição desses alvéolos definem a textura final, de um miolo fechado e uniforme a um miolo aberto e irregular.</p>
+        <Section title="Alveoli Formation">
+            <p>Alveoli, or the "bubbles" in the dough crumb, are pockets of gas (CO₂) produced by yeast during fermentation. They form at nucleation sites in the dough and grow as more gas is produced. The size, shape, and distribution of these alveoli define the final texture, from a tight, uniform crumb to an open, irregular one.</p>
         </Section>
-        <Section title="Tensões Internas e a Rede de Glúten">
-            <p>A rede de glúten age como uma estrutura de suporte que aprisiona esses bolsões de gás. A estrutura do miolo é um equilíbrio entre a pressão do gás tentando expandir os alvéolos e a tensão da rede de glúten tentando contê-los. Uma rede de glúten forte e extensível permite que os alvéolos se expandam significativamente sem romper, resultando em um miolo leve e aerado.</p>
+        <Section title="Internal Tensions and the Gluten Network">
+            <p>The gluten network acts as a support structure that traps these gas pockets. Crumb structure is a balance between gas pressure trying to expand the alveoli and gluten network tension trying to contain them. A strong, extensible gluten network allows alveoli to expand significantly without breaking, resulting in a light, airy crumb.</p>
         </Section>
-        <Section title="Impacto da Mistura e das Dobras">
-            <p>As técnicas de manipulação da massa, como a sova e as dobras ("stretch and fold"), são fundamentais para organizar e fortalecer a rede de glúten. Elas alinham as proteínas, criam tensão e distribuem os gases de forma mais uniforme. Uma boa técnica de manipulação resulta em uma estrutura interna mais forte e com melhor capacidade de retenção de gás.</p>
+        <Section title="Impact of Mixing and Folding">
+            <p>Dough manipulation techniques, such as kneading and "stretch and fold," are fundamental for organizing and strengthening the gluten network. They align proteins, create tension, and distribute gases more evenly. Good manipulation technique results in a stronger internal structure with better gas retention capacity.</p>
         </Section>
-        <Section title="O Colapso de Estruturas Extremas">
-            <p>O equilíbrio é chave. Uma massa muito rígida (baixa hidratação e glúten superdesenvolvido) pode restringir a expansão dos gases, resultando em um miolo denso. Por outro lado, uma massa muito mole (alta hidratação com uma rede de glúten fraca) pode não ter força suficiente para sustentar os alvéolos, fazendo com que eles se rompam e a estrutura colapse, também resultando em um miolo denso e, muitas vezes, úmido.</p>
+        <Section title="Collapse of Extreme Structures">
+            <p>Balance is key. A dough that is too stiff (low hydration and overdeveloped gluten) can restrict gas expansion, resulting in a dense crumb. Conversely, a dough that is too loose (high hydration with a weak gluten network) may not have enough strength to support the alveoli, causing them to rupture and the structure to collapse, also resulting in a dense and often wet crumb.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Bread</li>
               <li>King Arthur Baking</li>

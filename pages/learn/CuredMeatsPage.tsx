@@ -1,14 +1,13 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,29 +16,29 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const CuredMeatsPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Carnes Curadas: Ciência da Cura e Sabores"
-      subtitle="Como a desidratação e a fermentação transformam a carne em um ingrediente de sabor intenso."
+      title="Cured Meats: Curing Science and Flavors"
+      subtitle="How dehydration and fermentation transform meat into an intensely flavored ingredient."
       showReferencesSection
     >
-        <Section title="O Processo de Cura">
-            <p>A cura é um método de preservação ancestral que envolve o uso de sal, e por vezes nitritos/nitratos, para remover a umidade da carne. Esse processo de desidratação inibe o crescimento de microrganismos e, crucialmente, concentra os sabores naturais da carne.</p>
+        <Section title="The Curing Process">
+            <p>Curing is an ancient preservation method involving the use of salt, and sometimes nitrites/nitrates, to remove moisture from meat. This dehydration process inhibits microorganism growth and, crucially, concentrates natural meat flavors.</p>
         </Section>
-        <Section title="Transformação de Proteínas e Sabor Umami">
-            <p>Durante a cura e a maturação, as enzimas naturais da carne quebram as longas cadeias de proteínas em componentes menores, como aminoácidos. Um desses aminoácidos é o glutamato, responsável pelo quinto gosto, o umami. É por isso que carnes curadas como o prosciutto e o salame têm um sabor tão profundo e satisfatório.</p>
+        <Section title="Protein Transformation and Umami Flavor">
+            <p>During curing and maturation, natural meat enzymes break down long protein chains into smaller components, such as amino acids. One of these amino acids is glutamate, responsible for the fifth taste, umami. That's why cured meats like prosciutto and salami have such deep, satisfying flavor.</p>
         </Section>
-        <Section title="Sabores Concentrados">
-            <p>A remoção da água concentra não apenas as proteínas, mas também a gordura e os sais minerais. O resultado é um ingrediente com sabor muito mais intenso do que sua contraparte fresca. Isso significa que uma pequena quantidade de carne curada pode ter um grande impacto sensorial na pizza.</p>
+        <Section title="Concentrated Flavors">
+            <p>Removing water concentrates not only proteins but also fat and minerals. The result is an ingredient with much more intense flavor than its fresh counterpart. This means a small amount of cured meat can have a large sensory impact on pizza.</p>
         </Section>
-        <Section title="Comportamento ao Assar">
-            <p>No calor do forno, a gordura presente nas carnes curadas derrete ("rendering"), liberando óleo que frita levemente a carne e adiciona sabor à pizza. As proteínas se contraem, fazendo com que fatias finas (como as de pepperoni) fiquem crocantes e se curvem ("cupping").</p>
+        <Section title="Baking Behavior">
+            <p>In the heat of the oven, fat present in cured meats melts ("rendering"), releasing oil that lightly fries the meat and adds flavor to the pizza. Proteins contract, causing thin slices (like pepperoni) to crisp and curl ("cupping").</p>
         </Section>
-        <Section title="Riscos de Ressecamento">
-            <p>Carnes curadas já têm pouca umidade. Em fornos muito quentes e com tempos de cozimento longos, elas podem ressecar excessivamente, tornando-se duras e excessivamente salgadas. Carnes curadas muito delicadas, como o prosciutto, são quase sempre adicionadas pós-forno para preservar sua textura e sabor.</p>
+        <Section title="Risks of Drying Out">
+            <p>Cured meats already have low moisture. In very hot ovens and with long cooking times, they can dry out excessively, becoming tough and overly salty. Very delicate cured meats, like prosciutto, are almost always added post-oven to preserve their texture and flavor.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Cuisine</li>
-              <li>"On Food and Cooking" de Harold McGee</li>
+              <li>"On Food and Cooking" by Harold McGee</li>
               <li>Serious Eats – Cured Meats Guides</li>
           </ul>
         </Section>

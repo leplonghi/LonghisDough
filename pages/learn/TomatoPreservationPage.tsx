@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,32 +16,32 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const TomatoPreservationPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Ciência do Tomate: Acidez, Doçura e Conservação"
-      subtitle="Como o preparo e a escolha do tomate definem o perfil do molho."
+      title="Tomato Science: Acidity, Sweetness, and Preservation"
+      subtitle="How preparation and tomato choice define the sauce profile."
     >
-        <Section title="Introdução: A Alma Ácida da Pizza">
-            <p>O molho de tomate é o coração de muitas pizzas, fornecendo acidez, umidade e uma base de sabor fundamental. A ciência por trás de um bom molho reside no equilíbrio entre os compostos do tomate e em como eles são transformados pelo processamento e pelo calor.</p>
+        <Section title="Introduction: The Acidic Soul of Pizza">
+            <p>Tomato sauce is the heart of many pizzas, providing acidity, moisture, and a fundamental flavor foundation. The science behind a good sauce lies in the balance between tomato compounds and how they are transformed by processing and heat.</p>
         </Section>
-        <Section title="Diferenças Qualitativas entre Tomates Crus e Cozidos">
-            <p>Um molho de <strong>tomates crus</strong> (como o da Napolitana) preserva os compostos voláteis e frescos, resultando em um sabor brilhante, frutado e com acidez pronunciada. Um molho <strong>cozido</strong> (típico da NY Style) passa por reações químicas: a água evapora, concentrando os açúcares e o umami, e o calor quebra as paredes celulares, liberando mais compostos de sabor e criando notas mais profundas e adocicadas.</p>
+        <Section title="Qualitative Differences Between Raw and Cooked Tomatoes">
+            <p>A <strong>raw tomato</strong> sauce (like Neapolitan) preserves volatile and fresh compounds, resulting in a bright, fruity flavor with pronounced acidity. A <strong>cooked</strong> sauce (typical of NY Style) undergoes chemical reactions: water evaporates, concentrating sugars and umami, and heat breaks down cell walls, releasing more flavor compounds and creating deeper, sweeter notes.</p>
         </Section>
-        <Section title="Como Acidez e Doçura Influenciam a Percepção">
-            <p>O sabor de um tomate é um balanço delicado entre seus açúcares naturais (frutose e glicose) e seus ácidos orgânicos (cítrico e málico). A <strong>acidez</strong> é crucial para cortar a gordura do queijo e realçar os outros sabores. A <strong>doçura</strong> equilibra essa acidez. O cozimento tende a diminuir a percepção da acidez e aumentar a da doçura, à medida que a água evapora.</p>
+        <Section title="How Acidity and Sweetness Influence Perception">
+            <p>A tomato's flavor is a delicate balance between its natural sugars (fructose and glucose) and its organic acids (citric and malic). <strong>Acidity</strong> is crucial for cutting through cheese fat and highlighting other flavors. <strong>Sweetness</strong> balances this acidity. Cooking tends to decrease the perception of acidity and increase that of sweetness as water evaporates.</p>
         </Section>
-        <Section title="Impacto da Oxidação e Armazenamento">
-            <p>O contato com o oxigênio e com metais (como em latas não revestidas) pode oxidar os compostos do tomate, levando a um sabor metálico e à perda de frescor. É por isso que tomates enlatados de alta qualidade vêm em latas com revestimento protetor e é recomendado transferir o molho para um recipiente de vidro ou plástico após aberto.</p>
+        <Section title="Impact of Oxidation and Storage">
+            <p>Contact with oxygen and metals (like in unlined cans) can oxidize tomato compounds, leading to a metallic taste and loss of freshness. That's why high-quality canned tomatoes come in cans with protective lining, and transferring sauce to a glass or plastic container after opening is recommended.</p>
         </Section>
-        <Section title="Notas Frescas vs. Notas Cozidas">
-            <p>As "notas frescas" vêm de compostos voláteis que se perdem facilmente com o calor. As "notas cozidas" são desenvolvidas através da caramelização dos açúcares e de reações de Maillard (em menor grau), criando um perfil de sabor mais robusto e complexo. A escolha entre um e outro depende inteiramente do estilo da pizza e do resultado desejado.</p>
+        <Section title="Fresh Notes vs. Cooked Notes">
+            <p>"Fresh notes" come from volatile compounds that are easily lost with heat. "Cooked notes" are developed through sugar caramelization and Maillard reactions (to a lesser degree), creating a more robust and complex flavor profile. The choice between one and the other depends entirely on the pizza style and desired result.</p>
         </Section>
-        <Section title="Comportamento do Tomate no Assamento">
-            <p>No forno, a água do molho evapora rapidamente. Se o molho for muito líquido, essa evaporação pode "cozinhar" a massa por baixo, criando a "gum line". Se o molho for muito concentrado e tiver açúcares adicionados, ele pode queimar em fornos de alta temperatura. O objetivo é ter a consistência certa para que o molho concentre seu sabor sem encharcar a massa ou queimar.</p>
+        <Section title="Tomato Behavior in Baking">
+            <p>In the oven, sauce water evaporates rapidly. If the sauce is too liquid, this evaporation can "cook" the dough underneath, creating a "gum line." If the sauce is too concentrated and has added sugars, it can burn in high-temperature ovens. The goal is to have the right consistency so the sauce concentrates its flavor without soaking the dough or burning.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Pizza</li>
               <li>Serious Eats - The Pizza Lab: Tomato Sauce</li>
-              <li>"On Food and Cooking" de Harold McGee</li>
+              <li>"On Food and Cooking" by Harold McGee</li>
           </ul>
         </Section>
     </TechnicalPageLayout>

@@ -1,14 +1,13 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,38 +16,38 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const SensoryProfilesPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Perfis Sensoriais na Pizza"
-      subtitle="Como umami, gordura, acidez, doçura e crocância se equilibram para criar a experiência perfeita."
+      title="Sensory Profiles in Pizza"
+      subtitle="How umami, fat, acidity, sweetness, and crunch balance to create the perfect experience."
       showReferencesSection
     >
-        <Section title="O Equilíbrio dos Gostos Fundamentais">
-            <p>Uma pizza de sucesso é uma sinfonia de sabores e texturas. O segredo não está em um único ingrediente, mas no equilíbrio harmonioso entre os gostos fundamentais. Uma combinação bem-sucedida estimula diferentes partes do paladar simultaneamente, criando uma experiência complexa e satisfatória.</p>
+        <Section title="The Balance of Fundamental Tastes">
+            <p>A successful pizza is a symphony of flavors and textures. The secret isn't in a single ingredient, but in the harmonious balance between fundamental tastes. A successful combination stimulates different parts of the palate simultaneously, creating a complex and satisfying experience.</p>
         </Section>
-        <Section title="Umami: O Sabor da Satisfação">
-            <p>O umami, ou o "quinto gosto", é o sabor da "deliciosidade" e da profundidade, associado a glutamatos. Na pizza, o umami está naturalmente presente em ingredientes-chave:</p>
-            <ul>
-                <li><strong>Tomates maduros:</strong> Especialmente quando cozidos, concentram glutamatos.</li>
-                <li><strong>Queijos curados:</strong> O parmesão é uma das fontes mais ricas de umami natural.</li>
-                <li><strong>Cogumelos:</strong> Particularmente quando cozidos, liberam um sabor terroso e rico em umami.</li>
-                <li><strong>Carnes curadas:</strong> O processo de cura quebra proteínas, liberando glutamatos.</li>
+        <Section title="Umami: The Taste of Satisfaction">
+            <p>Umami, or the "fifth taste," is the flavor of "deliciousness" and depth, associated with glutamates. In pizza, umami is naturally present in key ingredients:</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Ripe Tomatoes:</strong> Especially when cooked, concentrate glutamates.</li>
+                <li><strong>Aged Cheeses:</strong> Parmesan is one of the richest natural sources.</li>
+                <li><strong>Mushrooms:</strong> Particularly when cooked, release an earthy, umami-rich flavor.</li>
+                <li><strong>Cured Meats:</strong> The curing process breaks down proteins, releasing glutamates.</li>
             </ul>
         </Section>
-        <Section title="Gordura como Veículo de Sabor">
-            <p>A gordura, proveniente do queijo, do azeite e das carnes, é essencial. Ela não apenas adiciona riqueza e uma sensação agradável na boca, mas também atua como um solvente para muitos compostos aromáticos, carregando e distribuindo o sabor por toda a pizza.</p>
+        <Section title="Fat as a Flavor Vehicle">
+            <p>Fat, from cheese, olive oil, and meats, is essential. It not only adds richness and a pleasant mouthfeel but also acts as a solvent for many aromatic compounds, carrying and distributing flavor throughout the pizza.</p>
         </Section>
-        <Section title="Acidez para Contraste e Limpeza">
-            <p>A acidez é o contraponto necessário para a gordura. O ácido do molho de tomate "corta" a riqueza do queijo, limpando o paladar e evitando que a pizza se torne enjoativa. Ingredientes como picles ou azeitonas também podem adicionar essa nota ácida brilhante.</p>
+        <Section title="Acidity for Contrast and Cleansing">
+            <p>Acidity is the necessary counterpoint to fat. The acid from tomato sauce "cuts" the richness of the cheese, cleansing the palate and preventing the pizza from becoming cloying. Ingredients like pickles or olives can also add that bright acidic note.</p>
         </Section>
-        <Section title="Doçura Natural para Equilíbrio">
-            <p>A doçura, mesmo que sutil, é crucial para equilibrar o sal e a acidez. Ela pode vir da caramelização natural da cebola e do pimentão, da concentração dos açúcares do tomate em um molho cozido, ou de adições intencionais, como um fio de mel para contrastar com um queijo salgado.</p>
+        <Section title="Natural Sweetness for Balance">
+            <p>Sweetness, even if subtle, is crucial for balancing salt and acidity. It can come from the natural caramelization of onion and pepper, the concentration of tomato sugars in a cooked sauce, or intentional additions, like a drizzle of honey to contrast with a salty cheese.</p>
         </Section>
-        <Section title="Crocância como Elemento de Textura">
-            <p>A experiência de comer pizza não é apenas sobre sabor, mas também sobre textura. O contraste entre a base crocante, a maciez do queijo derretido e a firmeza de uma carne curada é fundamental. A crocância adiciona uma dimensão auditiva e tátil que torna a experiência muito mais interessante.</p>
+        <Section title="Crunch as a Texture Element">
+            <p>The pizza experience isn't just about flavor, but also texture. The contrast between the crispy base, the softness of melted cheese, and the firmness of cured meat is fundamental. Crunch adds an auditory and tactile dimension that makes the experience much more interesting.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
-              <li>"The Flavor Bible" de Karen Page e Andrew Dornenburg</li>
-              <li>"On Food and Cooking" de Harold McGee</li>
+              <li>"The Flavor Bible" by Karen Page and Andrew Dornenburg</li>
+              <li>"On Food and Cooking" by Harold McGee</li>
               <li>Modernist Cuisine</li>
           </ul>
         </Section>

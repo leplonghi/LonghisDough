@@ -2,9 +2,6 @@
 import { DoughStyleDefinition, FermentationTechnique, RecipeStyle, BakeType } from '../types';
 
 export const STYLES_DATA: DoughStyleDefinition[] = [
-  // ========================================================================
-  // FAMILY: PIZZA NAPOLETANA
-  // ========================================================================
   {
     id: 'napolitana_classica',
     name: 'Neapolitan (AVPN Standards)',
@@ -49,7 +46,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
       { source: "AVPN International Regulations", url: "https://www.pizzanapoletana.org/en/ricetta_pizza_napoletana" },
       { source: "Modernist Pizza", author: "Nathan Myhrvold", year: "2021" }
     ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.BIGA], 
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.BIGA, FermentationTechnique.POOLISH, FermentationTechnique.SOURDOUGH], 
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: '00 Flour (W280+)', type: 'solid', role: 'flour', bakerPercentage: 100 },
@@ -59,10 +56,6 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     ],
     tags: ['classic', 'high-heat', 'soft']
   },
-
-  // ========================================================================
-  // FAMILY: NORTH AMERICAN PIZZA
-  // ========================================================================
   {
     id: 'ny_style',
     name: 'New York Style (Slice Shop)',
@@ -105,7 +98,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
       { source: "The Pizza Bible", author: "Tony Gemignani" },
       { source: "Serious Eats", author: "J. Kenji López-Alt" }
     ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH],
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH, FermentationTechnique.BIGA, FermentationTechnique.SOURDOUGH],
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
@@ -159,7 +152,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
         { source: "Modernist Pizza", author: "Nathan Myhrvold" },
         { source: "Pizza Today", notes: "Detroit Style Guidelines" }
     ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH],
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
@@ -171,396 +164,600 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
   },
 
   // ========================================================================
-  // FAMILY: ITALIAN RUSTIC BREADS
+  // BREADS (New)
   // ========================================================================
   {
-    id: 'ciabatta_modernist',
-    name: 'Ciabatta (High Hydration)',
+    id: 'bread_rustic_sourdough',
+    name: 'Rustic Sourdough Loaf',
+    family: 'Artisan Breads',
+    category: 'bread',
+    origin: { country: 'France/USA', region: 'General', period: 'Modern' },
+    country: 'International',
+    year: 'Ancient/Revival',
+    description: 'Crusty, open-crumb bread with a mild sour tang. The gold standard of artisan baking.',
+    history: 'Uses wild yeast (levain) instead of commercial yeast. Requires careful fermentation management.',
+    culturalContext: 'The symbol of the modern baking revival.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.BREAD_RUSTIC_SOURDOUGH,
+    technical: {
+      hydration: 75,
+      salt: 2.0,
+      oil: 0,
+      sugar: 0,
+      fermentation: 'Long bulk + Cold retard',
+      fermentationTechnique: FermentationTechnique.SOURDOUGH,
+      bakingTempC: 240,
+    },
+    technicalProfile: {
+      hydration: [70, 85],
+      salt: [1.8, 2.2],
+      oil: [0, 0],
+      sugar: [0, 0],
+      flourStrength: "Strong Bread / Whole Wheat mix",
+      fermentation: {
+        bulk: "4-6h (folds)",
+        proof: "12-24h Cold",
+      },
+      ovenRecommendations: "Dutch Oven or Steam Injection. 240°C.",
+      difficulty: "Expert",
+      recommendedUse: "Table bread, Toast."
+    },
+    allowedFermentationTechniques: [FermentationTechnique.SOURDOUGH],
+    defaultFermentationTechnique: FermentationTechnique.SOURDOUGH,
+    ingredients: [
+      { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 90 },
+      { id: 'whole', name: 'Whole Wheat', type: 'solid', role: 'flour', bakerPercentage: 10 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 75 },
+      { id: 'salt', name: 'Sea Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
+      { id: 'levain', name: 'Active Starter', type: 'solid', role: 'starter', bakerPercentage: 20 }
+    ],
+    tags: ['sourdough', 'artisan', 'vegan']
+  },
+  {
+    id: 'bread_baguette_classic',
+    name: 'Classic French Baguette',
+    family: 'French Lean Breads',
+    category: 'bread',
+    origin: { country: 'France', period: '19th Century' },
+    country: 'France',
+    year: '1920',
+    description: 'Thin, crisp crust with a creamy, open interior. Requires steam to bake properly.',
+    history: 'Iconic symbol of France. Traditionally made with a poolish for flavor and extensibility.',
+    culturalContext: 'Daily bread.',
+    isCanonical: true,
+    source: 'official',
+    isPro: true,
+    recipeStyle: RecipeStyle.BREAD_BAGUETTE_CLASSIC,
+    technical: {
+      hydration: 68,
+      salt: 2.0,
+      oil: 0,
+      sugar: 0,
+      fermentation: 'Poolish',
+      fermentationTechnique: FermentationTechnique.POOLISH,
+      bakingTempC: 250,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.POOLISH, FermentationTechnique.DIRECT, FermentationTechnique.SOURDOUGH],
+    defaultFermentationTechnique: FermentationTechnique.POOLISH,
+    ingredients: [
+      { id: 'flour', name: 'T65 / Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 68 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
+      { id: 'yeast', name: 'Fresh Yeast', type: 'solid', role: 'yeast', bakerPercentage: 0.6 }
+    ],
+    tags: ['classic', 'crispy', 'challenging']
+  },
+  {
+    id: 'bread_sandwich_loaf',
+    name: 'Soft Sandwich Loaf',
+    family: 'Pan Breads',
+    category: 'bread',
+    origin: { country: 'USA/UK', period: '20th Century' },
+    country: 'International',
+    year: 'Modern',
+    description: 'Soft, tight crumb, perfect for slicing and sandwiches. Enriched with a little fat and sugar.',
+    history: 'Designed for the pullman pan (pain de mie).',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.BREAD_SANDWICH_SOFT,
+    technical: {
+      hydration: 62,
+      salt: 1.8,
+      oil: 4.0, // Butter or Oil
+      sugar: 4.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 190,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'water', name: 'Water/Milk', type: 'liquid', role: 'water', bakerPercentage: 62 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 4.0 },
+      { id: 'oil', name: 'Butter/Oil', type: 'solid', role: 'fat', bakerPercentage: 4.0 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.8 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.0 }
+    ],
+    tags: ['soft', 'family', 'easy']
+  },
+  {
+    id: 'bread_ciabatta',
+    name: 'Ciabatta (Classic)',
     family: 'Italian Rustic Breads',
     category: 'bread',
     origin: { country: 'Italy', region: 'Veneto', period: '1982' },
     country: 'Italy',
     year: '1982',
-    releaseDate: '2024-09-15',
-    description: 'Crystal thin crust, massive open crumb. The modern standard for artisan slippers.',
-    history: 'Created in Adria, Italy by Arnaldo Cavallari to combat the baguette. Relies heavily on Biga for structure and flavor.',
-    culturalContext: 'A symbol of modern Italian baking renaissance.',
-    isCanonical: true,
-    source: 'official',
-    isPro: true,
-    recipeStyle: RecipeStyle.CIABATTA,
-    technical: {
-      hydration: 82,
-      salt: 2.2,
-      oil: 0,
-      sugar: 0,
-      fermentation: 'Biga (16h) + Bulk (3h)',
-      fermentationTechnique: FermentationTechnique.BIGA,
-      bakingTempC: 240,
-    },
-    technicalProfile: {
-      hydration: [78, 85],
-      salt: [2.0, 2.4],
-      oil: [0, 2.0],
-      sugar: [0, 0],
-      flourStrength: "W320+ (Strong)",
-      prefermentDescription: "Biga at 45-50% hydration",
-      fermentation: {
-        bulk: "2-3h with folds",
-        proof: "45-60 min (gentle)",
-      },
-      ovenRecommendations: "Steam essential. 240°C falling to 220°C.",
-      difficulty: "Hard",
-      recommendedUse: "Sandwiches, dipping."
-    },
-    references: [
-        { source: "Bread: A Baker's Book", author: "Jeffrey Hamelman" },
-        { source: "The Taste of Bread", author: "Raymond Calvel" }
-    ],
-    allowedFermentationTechniques: [FermentationTechnique.BIGA, FermentationTechnique.POOLISH],
-    defaultFermentationTechnique: FermentationTechnique.BIGA,
-    ingredients: [
-      { id: 'flour', name: 'High Gluten Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
-      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 82 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.2 },
-      { id: 'yeast', name: 'Fresh Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.0 }
-    ],
-    tags: ['artisan', 'airy', 'advanced']
-  },
-  {
-    id: 'focaccia_genovese',
-    name: 'Focaccia Genovese (Classic)',
-    family: 'Italian Rustic Breads',
-    category: 'flatbread',
-    origin: { country: 'Italy', region: 'Liguria', period: 'Ancient' },
-    country: 'Italy',
-    year: 'Ancient',
-    description: 'Flatbread, oily, with characteristic dimples and a salty crust.',
-    history: 'A classic from Liguria. The secret is the "salamoia" (brine) poured over the dimples before baking.',
-    culturalContext: 'Traditionally eaten at breakfast dipped in cappuccino, or as a street food snack.',
+    description: 'High hydration Italian slipper bread. Chewy crust, very open crumb.',
+    history: 'Created to compete with the baguette. Relies on Biga.',
     isCanonical: true,
     source: 'official',
     isPro: false,
-    recipeStyle: RecipeStyle.FOCACCIA,
+    recipeStyle: RecipeStyle.CIABATTA,
     technical: {
-      hydration: 75,
-      salt: 2.5,
-      oil: 5.0, // In dough
-      sugar: 1.0,
-      fermentation: 'Medium (direct or poolish)',
-      fermentationTechnique: FermentationTechnique.DIRECT,
+      hydration: 78,
+      salt: 2.2,
+      oil: 2.0,
+      sugar: 0,
+      fermentation: 'Biga',
+      fermentationTechnique: FermentationTechnique.BIGA,
       bakingTempC: 230,
     },
-    technicalProfile: {
-      hydration: [65, 75],
-      salt: [2.0, 2.5],
-      oil: [5.0, 10.0], // Including surface oil
-      sugar: [0, 1.5],
-      flourStrength: "W260-280 (Medium)",
-      fermentation: {
-        bulk: "1.5h",
-        proof: "1h in pan -> Dimple -> 45min",
-      },
-      ovenRecommendations: "230°C. No steam (oil provides moisture barrier).",
-      difficulty: "Easy",
-      recommendedUse: "Snack, Breakfast."
-    },
-    references: [
-        { source: "Salt, Fat, Acid, Heat", author: "Samin Nosrat" },
-        { source: "Eataly Guide to Focaccia" }
-    ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.BIGA],
-    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    allowedFermentationTechniques: [FermentationTechnique.BIGA, FermentationTechnique.POOLISH],
+    defaultFermentationTechnique: FermentationTechnique.BIGA,
     ingredients: [
-      { id: 'flour', name: 'AP/Bread Mix', type: 'solid', role: 'flour', bakerPercentage: 100 },
-      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 75 },
-      { id: 'oil', name: 'Olive Oil (Dough)', type: 'liquid', role: 'fat', bakerPercentage: 5.0 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.5 },
-      { id: 'yeast', name: 'IDY', type: 'solid', role: 'yeast', bakerPercentage: 0.8 }
+      { id: 'flour', name: 'Strong Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 78 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.2 },
+      { id: 'oil', name: 'Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 2.0 },
+      { id: 'yeast', name: 'Yeast', type: 'solid', role: 'yeast', bakerPercentage: 0.8 }
     ],
-    tags: ['oily', 'salty', 'beginner']
+    tags: ['airy', 'rustic', 'chewy']
   },
 
   // ========================================================================
-  // FAMILY: FRENCH LEAN BREADS
+  // ENRICHED BREADS
   // ========================================================================
   {
-    id: 'baguette_tradition',
-    name: 'Baguette de Tradition',
-    family: 'French Lean Breads',
-    category: 'bread',
-    origin: { country: 'France', period: '1993 (Decree)' },
-    country: 'France',
-    year: '1993',
-    description: 'The legally defined French standard. Creamy crumb, thin crisp crust.',
-    history: 'Protected by the 1993 "Décret Pain". No additives allowed. Poolish or cold ferment mandatory for flavor.',
-    culturalContext: 'A daily ritual in France. The law was passed to protect artisanal baking from industrialization.',
-    isCanonical: true,
-    source: 'official',
-    isPro: true,
-    recipeStyle: RecipeStyle.BAGUETTE,
-    technical: {
-      hydration: 72,
-      salt: 2.0,
-      oil: 0,
-      sugar: 0,
-      fermentation: 'Poolish (12h) + Bulk',
-      fermentationTechnique: FermentationTechnique.POOLISH,
-      bakingTempC: 250,
-    },
-    technicalProfile: {
-      hydration: [68, 75],
-      salt: [1.8, 2.0],
-      oil: [0, 0],
-      sugar: [0, 0],
-      flourStrength: "T65 (French designation) or AP/Bread Mix",
-      prefermentDescription: "Poolish (100% Hyd) - 20-40% of flour",
-      fermentation: {
-        bulk: "1h cold or ambient",
-        proof: "45 min (Couche)",
-      },
-      ovenRecommendations: "250°C. Steam injection critical.",
-      difficulty: "Expert",
-      recommendedUse: "Daily bread."
-    },
-    references: [
-        { source: "Décret n°93-1074", notes: "French Law" },
-        { source: "Ferrandi: French Pâtisserie" }
-    ],
-    allowedFermentationTechniques: [FermentationTechnique.POOLISH, FermentationTechnique.DIRECT, FermentationTechnique.BIGA],
-    defaultFermentationTechnique: FermentationTechnique.POOLISH,
-    ingredients: [
-      { id: 'flour', name: 'T65 Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
-      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 72 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
-      { id: 'yeast', name: 'Fresh Yeast', type: 'solid', role: 'yeast', bakerPercentage: 0.5 }
-    ],
-    tags: ['classic', 'technical', 'crispy']
-  },
-
-  // ========================================================================
-  // FAMILY: VIENNOISERIE & ENRICHED
-  // ========================================================================
-  {
-    id: 'brioche_nanterre',
-    name: 'Brioche Nanterre',
+    id: 'enriched_brioche_classic',
+    name: 'Brioche à Tête',
     family: 'Viennoiserie',
     category: 'enriched_bread',
-    origin: { country: 'France', region: 'Normandy' },
+    origin: { country: 'France', region: 'Paris', period: '17th Century' },
     country: 'France',
     year: 'Classic',
-    description: 'Rich, tender crumb with 50% butter. The gold standard of enriched doughs.',
-    history: 'Originating in Normandy, famous for its high butter and egg content. Named after the city of Nanterre.',
-    culturalContext: 'Served for breakfast or as a base for gourmet dishes.',
+    description: 'Rich, buttery, egg-heavy dough. Soft and flaky.',
+    history: 'The high butter content necessitates intensive kneading and cold fermentation to handle.',
     isCanonical: true,
     source: 'official',
     isPro: true,
-    recipeStyle: RecipeStyle.BRIOCHE,
+    recipeStyle: RecipeStyle.ENRICHED_BRIOCHE_CLASSIC,
     technical: {
-      hydration: 15, // Milk only
-      salt: 2.2,
+      hydration: 10, // Liquid mostly from eggs
+      salt: 2.0,
       oil: 50.0, // Butter
       sugar: 12.0,
-      fermentation: 'Cold Retard (Mandatory)',
+      fermentation: 'Cold Retard',
       fermentationTechnique: FermentationTechnique.DIRECT,
       bakingTempC: 180,
     },
-    technicalProfile: {
-      hydration: [10, 20], // Liquid comes from eggs
-      salt: [2.0, 2.5],
-      oil: [40, 60], // Butter percentage
-      sugar: [10, 15],
-      flourStrength: "W350+ (Very Strong) to hold butter",
-      fermentation: {
-        bulk: "1h Room -> 12h Cold",
-        proof: "2-3h Room (Warm)",
-      },
-      ovenRecommendations: "180°C. Egg wash essential.",
-      difficulty: "Hard",
-      recommendedUse: "Breakfast, Burger Buns."
-    },
-    references: [
-        { source: "The Professional Pastry Chef", author: "Bo Friberg" },
-        { source: "Larousse Gastronomique" }
-    ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH, FermentationTechnique.SOURDOUGH],
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: 'Strong Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
       { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 50 },
-      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 50 },
+      { id: 'butter', name: 'Butter (Cold)', type: 'solid', role: 'fat', bakerPercentage: 50 },
       { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 12 },
-      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 15 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.2 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 10 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
       { id: 'yeast', name: 'Osmo-tolerant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 2.5 }
     ],
-    tags: ['rich', 'buttery', 'advanced']
+    tags: ['rich', 'buttery', 'decadent']
   },
   {
-    id: 'hokkaido_milk',
-    name: 'Hokkaido Milk Bread (Shokupan)',
-    family: 'Asian Enriched',
+    id: 'enriched_milk_bread_hokkaido',
+    name: 'Hokkaido Milk Bread',
+    family: 'Asian Breads',
     category: 'enriched_bread',
-    origin: { country: 'Japan', period: '20th Century' },
+    origin: { country: 'Japan', region: 'Hokkaido', period: 'Modern' },
     country: 'Japan',
     year: '20th Century',
-    description: 'Feather-light crumb using the Tangzhong (Yudane) method.',
-    history: 'Uses the Tangzhong method to pre-gelatinize starches, holding more moisture and keeping the bread soft for days.',
-    culturalContext: 'The staple "Shokupan" in Japan, prized for its white, fluffy interior.',
+    description: 'Super soft, fluffy, shreddable crumb using Tangzhong.',
+    history: 'Tangzhong (water roux) gelatinizes starch to hold more water, extending shelf life and softness.',
     isCanonical: true,
     source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.HOKKAIDO_MILK_BREAD,
     technical: {
       hydration: 70,
-      salt: 1.8,
-      oil: 8.0,
+      salt: 1.5,
+      oil: 8.0, // Butter
       sugar: 10.0,
       fermentation: 'Direct + Tangzhong',
       fermentationTechnique: FermentationTechnique.DIRECT,
       bakingTempC: 175,
     },
-    technicalProfile: {
-      hydration: [68, 75],
-      salt: [1.5, 2.0],
-      oil: [6.0, 10.0],
-      sugar: [8.0, 12.0],
-      flourStrength: "Bread Flour",
-      fermentation: {
-        bulk: "1.5h",
-        proof: "1h in Pullman Pan",
-      },
-      ovenRecommendations: "175°C. Lid on for square, off for domed.",
-      difficulty: "Medium",
-      recommendedUse: "Sandwiches, Toast."
-    },
-    references: [
-        { source: "Modernist Bread", notes: "Tangzhong science" },
-        { source: "Just One Cookbook" }
-    ],
     allowedFermentationTechniques: [FermentationTechnique.DIRECT],
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
       { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 70 },
-      { id: 'tangzhong', name: 'Tangzhong (Flour portion)', type: 'solid', role: 'other', bakerPercentage: 5 },
+      { id: 'tangzhong', name: 'Tangzhong (Flour)', type: 'solid', role: 'other', bakerPercentage: 5 },
       { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 8 },
       { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 10 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.8 },
-      { id: 'yeast', name: 'IDY', type: 'solid', role: 'yeast', bakerPercentage: 1.2 }
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.5 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.2 }
     ],
     tags: ['soft', 'asian', 'tangzhong']
   },
   {
-      id: 'teglia_romana',
-      name: 'Roman Pan Pizza (Teglia)',
-      family: 'Pizza Romana',
-      category: 'pizza',
-      origin: { country: 'Italy', region: 'Rome', period: 'Modern (1980s)' },
-      country: 'Italy',
-      year: '1980s (modern)',
-      description: 'High hydration, baked in rectangular pans. Crispy bottom, very airy crumb.',
-      history: 'The reinvention of Roman pizza al taglio, focused on digestibility and open crumb structure using high hydration.',
-      culturalContext: 'A staple street food in Rome, sold by weight.',
-      isCanonical: true,
-      source: 'official',
-      isPro: true,
-      recipeStyle: RecipeStyle.ROMANA_TONDA, // Mapping to existing enum for Roman style
-      technical: {
-        hydration: 80,
-        salt: 2.5,
-        oil: 3.0,
-        sugar: 0,
-        fermentation: 'Long cold ferment (24-48h)',
-        fermentationTechnique: FermentationTechnique.DIRECT,
-        bakingTempC: 250,
-      },
-      technicalProfile: {
-        hydration: [75, 90],
-        salt: [2.2, 2.8],
-        oil: [2.0, 4.0],
-        sugar: [0, 0],
-        flourStrength: "W320+ (Strong)",
-        fermentation: {
-            bulk: "24-48h Cold",
-            proof: "3-4h Room Temp"
-        },
-        ovenRecommendations: "250°C. Bake on bottom rack first.",
-        difficulty: "Expert",
-        recommendedUse: "Light, crunchy snack."
-      },
-      references: [
-          { source: "Bonci", notes: "Gabriele Bonci methodology" }
-      ],
-      allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH, FermentationTechnique.BIGA],
-      defaultFermentationTechnique: FermentationTechnique.DIRECT,
-      ingredients: [
-        { id: 'flour', name: 'Very Strong Flour (W320+)', type: 'solid', role: 'flour', bakerPercentage: 100 },
-        { id: 'water', name: 'Ice Water', type: 'liquid', role: 'water', bakerPercentage: 80 },
-        { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.5 },
-        { id: 'oil', name: 'Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 3.0 },
-        { id: 'yeast', name: 'Yeast', type: 'solid', role: 'yeast', bakerPercentage: 0.6 }
-      ],
-      tags: ['high-hydration', 'crispy', 'airy']
-  },
-  
-  // ========================================================================
-  // FAMILY: COOKIES & CONFECTIONERY
-  // ========================================================================
-  {
-    id: 'ny_cookie_levain',
-    name: 'NY Giant Cookie',
-    family: 'American Cookies',
-    category: 'cookie',
-    origin: { country: 'USA', region: 'New York', period: '1995' },
+    id: 'enriched_dinner_roll_soft',
+    name: 'Soft Dinner Rolls',
+    family: 'Buns',
+    category: 'enriched_bread',
+    origin: { country: 'USA', period: 'Modern' },
     country: 'USA',
-    year: '1995',
-    description: '6oz monster cookie. Walnut-packed, gooey center, crispy shell.',
-    history: 'Popularized by Levain Bakery in NYC. Uses cold butter and very high temperature to arrest spread.',
-    culturalContext: 'A dessert that challenges the traditional flat cookie.',
+    year: 'Modern',
+    description: 'Classic American soft rolls, perfect for holiday dinners.',
+    history: 'A simpler enriched dough than brioche, often using milk and a moderate amount of butter.',
     isCanonical: true,
     source: 'official',
     isPro: false,
-    recipeStyle: RecipeStyle.COOKIE_NY_CHOC_CHIP,
+    recipeStyle: RecipeStyle.ENRICHED_DINNER_ROLL,
     technical: {
-      hydration: 0,
-      salt: 1.2,
-      oil: 60.0, // Butter
-      sugar: 70.0,
-      fermentation: 'Chilling (Physical)',
+      hydration: 60,
+      salt: 1.8,
+      oil: 10.0, // Butter
+      sugar: 8.0,
+      fermentation: 'Direct',
       fermentationTechnique: FermentationTechnique.DIRECT,
-      bakingTempC: 210,
+      bakingTempC: 190,
     },
-    technicalProfile: {
-      hydration: [0, 0],
-      salt: [1.0, 1.5],
-      oil: [55, 65],
-      sugar: [65, 80],
-      flourStrength: "Low protein (Cake/AP blend)",
-      fermentation: {
-        bulk: "N/A",
-        proof: "Chill 12h+ to hydrate flour",
-      },
-      ovenRecommendations: "210°C (Hot!) to set outside quickly.",
-      difficulty: "Easy",
-      recommendedUse: "Dessert."
-    },
-    references: [
-        { source: "Serious Eats", author: "Stella Parks" },
-        { source: "Modernist Cuisine" }
-    ],
     allowedFermentationTechniques: [FermentationTechnique.DIRECT],
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
-      { id: 'flour', name: 'Cake/AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
-      { id: 'butter', name: 'Cold Butter', type: 'solid', role: 'fat', bakerPercentage: 60 },
-      { id: 'sugar', name: 'Brown/White Mix', type: 'solid', role: 'sugar', bakerPercentage: 70 },
-      { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 20 },
-      { id: 'chocolate', name: 'Chunks', type: 'solid', role: 'other', bakerPercentage: 80 },
-      { id: 'walnuts', name: 'Walnuts', type: 'solid', role: 'other', bakerPercentage: 40 },
-      { id: 'baking_powder', name: 'Baking Powder', type: 'solid', role: 'other', bakerPercentage: 1.5 }
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 60 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 10 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 8 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.8 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.5 }
     ],
-    tags: ['sweet', 'dense', 'gooey']
+    tags: ['easy', 'soft', 'family']
+  },
+
+  // ========================================================================
+  // BURGER BUNS
+  // ========================================================================
+  {
+    id: 'burger_bun_brioche',
+    name: 'Brioche Burger Bun',
+    family: 'Buns',
+    category: 'burger_bun',
+    origin: { country: 'France/USA', period: 'Modern' },
+    country: 'International',
+    year: 'Modern',
+    description: 'Sturdy enough for a patty, soft enough to bite. The premium standard.',
+    history: 'Adapted from brioche dough but with slightly less butter for structural integrity.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.BURGER_BUN_BRIOCHE,
+    technical: {
+      hydration: 55,
+      salt: 2.0,
+      oil: 15.0, // Butter
+      sugar: 8.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 190,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 55 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 15 },
+      { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 10 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 8 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.2 }
+    ],
+    tags: ['gourmet', 'sturdy', 'soft']
+  },
+  {
+    id: 'burger_bun_potato',
+    name: 'Potato Bun',
+    family: 'Buns',
+    category: 'burger_bun',
+    origin: { country: 'USA', region: 'Pennsylvania', period: 'Dutch Tradition' },
+    country: 'USA',
+    year: 'Traditional',
+    description: 'Famous for its squishiness and ability to steam. Martin\'s style.',
+    history: 'Potato flour or mash retains moisture, creating an incredibly soft shelf-stable bun.',
+    isCanonical: true,
+    source: 'official',
+    isPro: true,
+    recipeStyle: RecipeStyle.BURGER_BUN_POTATO,
+    technical: {
+      hydration: 60,
+      salt: 2.0,
+      oil: 10.0,
+      sugar: 12.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 190,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'Bread Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'potato', name: 'Potato Flour/Mash', type: 'solid', role: 'other', bakerPercentage: 15 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 60 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 10 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 12 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.5 }
+    ],
+    tags: ['soft', 'moist', 'commercial-style']
+  },
+  {
+    id: 'burger_bun_classic_soft',
+    name: 'Classic Soft Bun',
+    family: 'Buns',
+    category: 'burger_bun',
+    origin: { country: 'USA', period: 'Modern' },
+    country: 'USA',
+    year: 'Modern',
+    description: 'Simple white bun. Soft crust, neutral flavor.',
+    history: 'The standard backyard burger bun.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.BURGER_BUN_SOFT,
+    technical: {
+      hydration: 58,
+      salt: 2.0,
+      oil: 6.0,
+      sugar: 6.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 200,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 58 },
+      { id: 'oil', name: 'Vegetable Oil', type: 'liquid', role: 'fat', bakerPercentage: 6 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 6 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.2 }
+    ],
+    tags: ['simple', 'fast', 'everyday']
+  },
+
+  // ========================================================================
+  // PASTRY (Yeasted)
+  // ========================================================================
+  {
+    id: 'pastry_cinnamon_roll',
+    name: 'Cinnamon Roll',
+    family: 'Sweet Rolls',
+    category: 'pastry',
+    origin: { country: 'USA/Sweden', period: '1920s' },
+    country: 'International',
+    year: '1920s',
+    description: 'Sweet leavened dough rolled with cinnamon and sugar.',
+    history: 'Evolved from the Swedish Kanelbulle but richer and frosted.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.PASTRY_CINNAMON_ROLL,
+    technical: {
+      hydration: 55,
+      salt: 1.5,
+      oil: 15.0, // Butter
+      sugar: 15.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 180,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 55 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 15 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 15 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.5 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.5 }
+    ],
+    tags: ['sweet', 'breakfast', 'comfort']
+  },
+  {
+    id: 'pastry_babka',
+    name: 'Chocolate Babka',
+    family: 'Sweet Breads',
+    category: 'pastry',
+    origin: { country: 'Poland/Ukraine', period: 'Jewish Tradition' },
+    country: 'Eastern Europe',
+    year: 'Traditional',
+    description: 'Twisted sweet bread with chocolate or cinnamon filling.',
+    history: 'Jewish origin, made popular worldwide. Dough is similar to brioche but rolled and twisted.',
+    isCanonical: true,
+    source: 'official',
+    isPro: true,
+    recipeStyle: RecipeStyle.BABKA,
+    technical: {
+      hydration: 50, // Milk/Eggs
+      salt: 1.5,
+      oil: 25.0, // Butter
+      sugar: 15.0,
+      fermentation: 'Cold Retard',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 175,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 30 },
+      { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 20 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 25 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 15 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.5 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.5 }
+    ],
+    tags: ['twisted', 'chocolate', 'rich']
+  },
+  {
+    id: 'pastry_donut_yeasted',
+    name: 'Yeasted Donut',
+    family: 'Fried Dough',
+    category: 'pastry',
+    origin: { country: 'Global', period: 'Various' },
+    country: 'International',
+    year: 'Classic',
+    description: 'Light, airy fried dough, glazed or filled.',
+    history: 'Distinct from cake donuts (chemical leavening). Requires proofing to float in oil.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.DONUT,
+    technical: {
+      hydration: 55,
+      salt: 1.5,
+      oil: 12.0, // Butter/Shortening
+      sugar: 10.0,
+      fermentation: 'Direct',
+      fermentationTechnique: FermentationTechnique.DIRECT,
+      bakingTempC: 190, // Frying temp
+    },
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT],
+    defaultFermentationTechnique: FermentationTechnique.DIRECT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'milk', name: 'Milk', type: 'liquid', role: 'water', bakerPercentage: 55 },
+      { id: 'butter', name: 'Butter/Shortening', type: 'solid', role: 'fat', bakerPercentage: 12 },
+      { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 10 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.5 },
+      { id: 'yeast', name: 'Instant Yeast', type: 'solid', role: 'yeast', bakerPercentage: 1.5 }
+    ],
+    tags: ['fried', 'glazed', 'sweet']
+  },
+
+  // ========================================================================
+  // COOKIES (Chemical Leavening)
+  // ========================================================================
+  {
+    id: 'cookie_chocolate_chip_classic',
+    name: 'Classic Chocolate Chip',
+    family: 'Drop Cookies',
+    category: 'cookie',
+    origin: { country: 'USA', period: '1938' },
+    country: 'USA',
+    year: '1938',
+    description: 'The Toll House standard. Crisp edges, chewy center.',
+    history: 'Invented by Ruth Wakefield. Relies on baking soda/powder interaction.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.COOKIE_CLASSIC_CHOC_CHIP,
+    technical: {
+      hydration: 0,
+      salt: 1.2,
+      oil: 50.0, // Butter
+      sugar: 75.0,
+      fermentation: 'None (Chemical)',
+      fermentationTechnique: FermentationTechnique.CHEMICAL,
+      bakingTempC: 190,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.CHEMICAL, FermentationTechnique.NO_FERMENT, FermentationTechnique.DIRECT],
+    defaultFermentationTechnique: FermentationTechnique.CHEMICAL,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 50 },
+      { id: 'sugar', name: 'Sugar (Brown/White)', type: 'solid', role: 'sugar', bakerPercentage: 75 },
+      { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 20 },
+      { id: 'chocolate', name: 'Chocolate Chips', type: 'solid', role: 'other', bakerPercentage: 60 },
+      { id: 'leavening', name: 'Baking Soda', type: 'solid', role: 'other', bakerPercentage: 1.0 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 1.2 }
+    ],
+    tags: ['classic', 'sweet', 'quick']
+  },
+  {
+    id: 'cookie_brown_butter',
+    name: 'Brown Butter Cookie',
+    family: 'Gourmet Cookies',
+    category: 'cookie',
+    origin: { country: 'Modern', period: '2000s' },
+    country: 'International',
+    year: 'Modern',
+    description: 'Deep toffee flavor from browned butter (beurre noisette).',
+    history: 'A modern elevation of the classic cookie enhancing nutty notes.',
+    isCanonical: true,
+    source: 'official',
+    isPro: true,
+    recipeStyle: RecipeStyle.COOKIE_BROWN_BUTTER,
+    technical: {
+      hydration: 0,
+      salt: 1.5,
+      oil: 55.0, // Browned Butter
+      sugar: 70.0,
+      fermentation: 'Chill 24h',
+      fermentationTechnique: FermentationTechnique.CHEMICAL,
+      bakingTempC: 180,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.CHEMICAL, FermentationTechnique.NO_FERMENT],
+    defaultFermentationTechnique: FermentationTechnique.CHEMICAL,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'butter', name: 'Browned Butter', type: 'solid', role: 'fat', bakerPercentage: 55 },
+      { id: 'sugar', name: 'Dark Brown Sugar', type: 'solid', role: 'sugar', bakerPercentage: 70 },
+      { id: 'eggs', name: 'Eggs', type: 'liquid', role: 'other', bakerPercentage: 20 },
+      { id: 'chocolate', name: 'Chocolate Chunks', type: 'solid', role: 'other', bakerPercentage: 70 },
+      { id: 'leavening', name: 'Baking Soda', type: 'solid', role: 'other', bakerPercentage: 1.0 },
+      { id: 'salt', name: 'Sea Salt', type: 'solid', role: 'salt', bakerPercentage: 1.5 }
+    ],
+    tags: ['gourmet', 'nutty', 'rich']
+  },
+  {
+    id: 'cookie_shortbread',
+    name: 'Shortbread',
+    family: 'Butter Cookies',
+    category: 'cookie',
+    origin: { country: 'Scotland', period: 'Medieval' },
+    country: 'Scotland',
+    year: 'Traditional',
+    description: '1:2:3 Ratio of Sugar, Butter, Flour. No leavening.',
+    history: 'A classic Scottish biscuit. Friable (short) texture due to high fat and no gluten development.',
+    isCanonical: true,
+    source: 'official',
+    isPro: false,
+    recipeStyle: RecipeStyle.COOKIE_SHORTBREAD,
+    technical: {
+      hydration: 0,
+      salt: 0.5,
+      oil: 65.0, // Butter
+      sugar: 35.0,
+      fermentation: 'None',
+      fermentationTechnique: FermentationTechnique.NO_FERMENT,
+      bakingTempC: 160,
+    },
+    allowedFermentationTechniques: [FermentationTechnique.NO_FERMENT],
+    defaultFermentationTechnique: FermentationTechnique.NO_FERMENT,
+    ingredients: [
+      { id: 'flour', name: 'AP Flour', type: 'solid', role: 'flour', bakerPercentage: 100 },
+      { id: 'butter', name: 'Butter', type: 'solid', role: 'fat', bakerPercentage: 65 },
+      { id: 'sugar', name: 'Caster Sugar', type: 'solid', role: 'sugar', bakerPercentage: 35 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 0.5 }
+    ],
+    tags: ['3-ingredient', 'buttery', 'dense']
   }
 ];
 
@@ -574,11 +771,12 @@ export function getAllowedFermentationTechniques(style: RecipeStyle, bakeType: B
         return definition.allowedFermentationTechniques;
     }
     if (bakeType === BakeType.SWEETS_PASTRY) {
-        return [FermentationTechnique.DIRECT];
+        return [FermentationTechnique.CHEMICAL, FermentationTechnique.NO_FERMENT, FermentationTechnique.DIRECT];
     }
     return [
         FermentationTechnique.DIRECT,
         FermentationTechnique.POOLISH,
-        FermentationTechnique.BIGA
+        FermentationTechnique.BIGA,
+        FermentationTechnique.SOURDOUGH
     ];
 }

@@ -1,14 +1,13 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,29 +16,29 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const RegionalCombosPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Combinações Regionais do Mundo"
-      subtitle="Um perfil histórico e cultural de como diferentes lugares criaram suas pizzas icônicas."
+      title="Regional Combinations of the World"
+      subtitle="A historical and cultural profile of how different places created iconic pizzas."
       showReferencesSection
     >
-        <Section title="Tradições Italianas: Simplicidade e Qualidade">
-            <p>A tradição italiana, especialmente a do sul (Nápoles), preza pela simplicidade e pela alta qualidade de poucos ingredientes. Combinações como a Margherita não são apenas uma receita, mas uma celebração do tomate, da mozzarella e do manjericão. A filosofia é "menos é mais", onde o sabor da massa fermentada e dos ingredientes frescos não deve ser mascarado.</p>
+        <Section title="Italian Traditions: Simplicity and Quality">
+            <p>Italian tradition, especially southern (Naples), values simplicity and high quality of few ingredients. Combinations like Margherita are not just a recipe, but a celebration of tomato, mozzarella, and basil. The philosophy is 'less is more,' where the flavor of fermented dough and fresh ingredients should not be masked.</p>
         </Section>
-        <Section title="Tradições Americanas: Abundância e Inovação">
-            <p>A pizza nos Estados Unidos evoluiu para um prato de abundância e criatividade. Estilos como o de Nova York popularizaram coberturas generosas de queijo e pepperoni. O estilo californiano, por sua vez, introduziu ingredientes frescos e inusitados, como abacate e queijo de cabra, refletindo uma cultura gastronômica focada em produtos locais e saudáveis.</p>
+        <Section title="American Traditions: Abundance and Innovation">
+            <p>Pizza in the United States evolved into a dish of abundance and creativity. Styles like New York popularized generous cheese and pepperoni toppings. Californian style, in turn, introduced fresh and unusual ingredients like avocado and goat cheese, reflecting a gastronomic culture focused on local and healthy products.</p>
         </Section>
-        <Section title="Tradições Brasileiras: Criatividade e Influência Cultural">
-            <p>A pizza no Brasil, fortemente influenciada pela imigração italiana em São Paulo, desenvolveu uma identidade própria. Caracteriza-se pela generosidade nas coberturas e por combinações que refletem o paladar local, como a pizza de "Calabresa com cebola" e a "Portuguesa" (com presunto, ovo, ervilha e cebola). A criatividade é um marco, com a existência de inúmeros sabores que não são encontrados em outras partes do mundo.</p>
+        <Section title="Brazilian Traditions: Creativity and Cultural Influence">
+            <p>Pizza in Brazil, strongly influenced by Italian immigration in São Paulo, developed its own identity. It is characterized by generosity in toppings and combinations reflecting local tastes, such as 'Calabresa with onion' and 'Portuguesa' (with ham, egg, peas, and onion). Creativity is a hallmark, with countless flavors not found elsewhere.</p>
         </Section>
-        <Section title="Outras Tradições (Japão, etc.)">
-            <p>Em lugares como o Japão, a pizza foi adaptada para incluir ingredientes locais e combinações únicas, como o uso de molho teriyaki, maionese e frutos do mar, demonstrando a incrível capacidade da pizza de se adaptar e se fundir com diferentes culturas gastronômicas.</p>
+        <Section title="Other Traditions (Japan, etc.)">
+            <p>In places like Japan, pizza was adapted to include local ingredients and unique combinations, such as the use of teriyaki sauce, mayonnaise, and seafood, demonstrating pizza's incredible ability to adapt and fuse with different food cultures.</p>
         </Section>
-        <Section title="Harmonias Sensoriais Consolidadas">
-            <p>Independentemente da origem, as combinações que se tornam clássicas o fazem porque respeitam princípios de harmonia sensorial. A pizza "havaiana" (presunto e abacaxi), por exemplo, embora controversa, funciona pelo contraste clássico de doce e salgado, um pilar da gastronomia.</p>
+        <Section title="Consolidated Sensory Harmonies">
+            <p>Regardless of origin, combinations that become classic do so because they respect principles of sensory harmony. 'Hawaiian' pizza (ham and pineapple), for example, although controversial, works through the classic contrast of sweet and salty, a pillar of gastronomy.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
-              <li>"Modernist Pizza" (seções sobre a história global da pizza)</li>
-              <li>Livros de história da gastronomia</li>
+              <li>"Modernist Pizza" (sections on global pizza history)</li>
+              <li>Gastronomy history books</li>
               <li>Wikipedia (History of pizza)</li>
           </ul>
         </Section>

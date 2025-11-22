@@ -46,12 +46,12 @@ const StyleGuidePage: React.FC = () => {
             </ul>
         </Section>
         
-        <Section title="3. Romana (Pala and Teglia)" icon={<BookOpenIcon className="h-5 w-5" />}>
+        <Section title="3. Roman (Pala and Teglia)" icon={<BookOpenIcon className="h-5 w-5" />}>
             <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Dough:</strong> Very high extensibility and hydration, resulting in extremely light, airy texture.</li>
-                <li><strong>Crumb:</strong> Characterized by very large, irregular alveoli.</li>
-                <li><strong>Baking:</strong> Can be double or prolonged, seeking maximum crispness development.</li>
-                <li><strong>Crispness:</strong> The main feature. Base is notably crunchy ("scrocchiarella").</li>
+                <li><strong>Dough:</strong> Very high extensibility and hydration, resulting in extremely light and airy texture.</li>
+                <li><strong>Crumb:</strong> Characterized by very large and irregular alveoli.</li>
+                <li><strong>Baking:</strong> Can be double-baked or prolonged, seeking maximum crispness development.</li>
+                <li><strong>Crispness:</strong> The main feature. The base is notably crunchy ("scrocchiarella").</li>
                 <li><strong>Flour:</strong> Commonly uses very strong flours to support high hydration and long fermentations.</li>
                 <li><strong>Tradition:</strong> A pillar of contemporary Roman baking, sold in bakeries ("forni") by weight.</li>
             </ul>
@@ -59,44 +59,44 @@ const StyleGuidePage: React.FC = () => {
         
         <Section title="4. Detroit Style" icon={<BeakerIcon className="h-5 w-5" />}>
             <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Baking Pan:</strong> Baked in rectangular steel pans that conduct heat intensely.</li>
-                <li><strong>Cheese Crust ("Frico"):</strong> The style's trademark. Cheese is spread to edges, creating a caramelized, crispy wall.</li>
-                <li><strong>Dough:</strong> Higher and airier, with fluffy, soft texture similar to focaccia.</li>
-                <li><strong>Inverted Assembly:</strong> Sauce is applied in stripes over cheese ("red stripes"), protecting dough from excess moisture.</li>
+                <li><strong>Baking Pan:</strong> Baked in rectangular steel pans, which conduct heat intensely.</li>
+                <li><strong>Cheese Crust ("Frico"):</strong> The trademark of the style. Cheese is spread to the pan edges, creating a caramelized and crispy wall.</li>
+                <li><strong>Dough:</strong> Higher and airier, with a fluffy and soft texture, similar to focaccia.</li>
+                <li><strong>Inverted Assembly:</strong> Sauce is applied in stripes on top of cheese ("red stripes"), protecting dough from excess moisture.</li>
                 <li><strong>Final Texture:</strong> A crispy, almost fried base, soft interior, and ultra-crispy cheese edges.</li>
             </ul>
         </Section>
 
         <Section title="5. Focaccia / Pan Pizza">
             <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Dough:</strong> High with spongy, open crumb structure.</li>
-                <li><strong>Texture:</strong> Soft and moist inside, with golden base and surface from oil.</li>
-                <li><strong>Baking:</strong> Slower and at moderate temperatures to ensure interior cooks fully.</li>
-                <li><strong>Oily Base:</strong> Generous use of olive oil in pan is fundamental for texture and flavor, lightly frying the base.</li>
-                <li><strong>Use:</strong> Its robust structure is ideal for supporting heavier, wetter toppings.</li>
+                <li><strong>Dough:</strong> High with a spongy and open crumb structure.</li>
+                <li><strong>Texture:</strong> Soft and moist inside, with base and surface golden from oil.</li>
+                <li><strong>Baking:</strong> Slower and at moderate temperatures to ensure interior cooks completely.</li>
+                <li><strong>Oily Base:</strong> Generous use of olive oil in the pan is fundamental for texture and flavor, lightly frying the base.</li>
+                <li><strong>Use:</strong> Robust structure is ideal for supporting heavier and wetter toppings.</li>
             </ul>
         </Section>
 
         <Section title="6. Chicago Deep Dish (Technical Summary)">
              <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>Pie Structure:</strong> Closer to a savory pie than flat pizza.</li>
-                <li><strong>Dough:</strong> Dough forms a high wall and contains fat (butter or oil), giving rich, flaky texture.</li>
-                <li><strong>Inverted Layers:</strong> Assembly is reversed (cheese at base, fillings in middle, sauce on top) to protect ingredients during long bake time.</li>
-                <li><strong>Baking:</strong> Very long at low temperature to cook large amount of filling without burning dough.</li>
+                <li><strong>Pie Structure:</strong> Closer to a savory pie than a flat pizza.</li>
+                <li><strong>Dough:</strong> Dough forms a high wall and contains fat (butter or oil), giving it a rich, biscuit-like texture.</li>
+                <li><strong>Inverted Layers:</strong> Assembly is done in reverse order (cheese on base, fillings in middle, sauce on top) to protect ingredients during long bake time.</li>
+                <li><strong>Baking:</strong> Very long and at low temperature to cook large amount of filling without burning dough.</li>
             </ul>
         </Section>
 
         <Section title="7. Thermal Considerations by Style">
             <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li><strong>High Temperature</strong> styles (like Neapolitan) rely on <strong>intense radiant heat</strong> from oven ceiling to cook top and puff rim quickly.</li>
-                <li><strong>Home Oven</strong> styles (like adapted NY Style or Detroit) rely more on <strong>heat conduction</strong> from good surface (steel or pan) and <strong>convection</strong> (circulating hot air) to cook dough over longer period.</li>
+                <li><strong>High Temperature</strong> styles (like Neapolitan) depend on <strong>intense radiant heat</strong> from oven ceiling to cook top and puff rim quickly.</li>
+                <li><strong>Home Oven</strong> styles (like adapted NY Style or Detroit) depend more on <strong>heat conduction</strong> from a good surface (steel or pan) and <strong>convection</strong> (circulating hot air) to cook dough over a longer period.</li>
             </ul>
         </Section>
 
         <Section title="8. Technical References" icon={<BookOpenIcon className="h-5 w-5" />}>
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Pizza – Nathan Myhrvold & Francisco Migoya</li>
-              <li>Associazione Verace Pizza Napoletana (AVPN) – Official regulation</li>
+              <li>Associazione Verace Pizza Napoletana (AVPN) – Official disciplinare</li>
               <li>Historical and culinary records on pizza evolution in New York, Rome, and Detroit.</li>
               <li>Historical pizzerias like Lombardi's (NY), Forno Campo de' Fiori (Rome), and Buddy's (Detroit).</li>
           </ul>

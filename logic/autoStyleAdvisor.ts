@@ -58,6 +58,21 @@ const STYLE_CHARACTERISTICS: Record<
   [RecipeStyle.DONUT]: { hydrationRange: [50, 60], idealW: [240, 300], idealOvenTemp: [180, 200], name: 'Yeast Donut' },
   [RecipeStyle.SHORTBREAD]: { hydrationRange: [0, 10], idealW: [150, 200], idealOvenTemp: [160, 170], name: 'Shortbread' },
   [RecipeStyle.BROWNIE]: { hydrationRange: [20, 30], idealW: [150, 200], idealOvenTemp: [160, 180], name: 'Brownie' },
+  
+  // New Styles from Types
+  [RecipeStyle.BREAD_RUSTIC_SOURDOUGH]: { hydrationRange: [70, 80], idealW: [280, 350], idealOvenTemp: [230, 250], name: 'Rustic Sourdough' },
+  [RecipeStyle.BREAD_BAGUETTE_CLASSIC]: { hydrationRange: [65, 75], idealW: [260, 300], idealOvenTemp: [240, 260], name: 'Classic Baguette' },
+  [RecipeStyle.BREAD_SANDWICH_SOFT]: { hydrationRange: [60, 68], idealW: [240, 300], idealOvenTemp: [180, 200], name: 'Soft Sandwich Loaf' },
+  [RecipeStyle.ENRICHED_BRIOCHE_CLASSIC]: { hydrationRange: [10, 20], idealW: [280, 350], idealOvenTemp: [180, 200], name: 'Classic Brioche' },
+  [RecipeStyle.ENRICHED_DINNER_ROLL]: { hydrationRange: [60, 65], idealW: [240, 280], idealOvenTemp: [190, 210], name: 'Dinner Roll' },
+  [RecipeStyle.BURGER_BUN_BRIOCHE]: { hydrationRange: [55, 65], idealW: [260, 320], idealOvenTemp: [190, 210], name: 'Brioche Burger Bun' },
+  [RecipeStyle.BURGER_BUN_POTATO]: { hydrationRange: [60, 70], idealW: [240, 300], idealOvenTemp: [190, 210], name: 'Potato Bun' },
+  [RecipeStyle.BURGER_BUN_SOFT]: { hydrationRange: [58, 65], idealW: [240, 280], idealOvenTemp: [200, 220], name: 'Soft Burger Bun' },
+  [RecipeStyle.PASTRY_CINNAMON_ROLL]: { hydrationRange: [50, 60], idealW: [240, 300], idealOvenTemp: [180, 200], name: 'Cinnamon Roll' },
+  [RecipeStyle.PASTRY_DANISH]: { hydrationRange: [45, 55], idealW: [280, 340], idealOvenTemp: [200, 220], name: 'Danish Pastry' },
+  [RecipeStyle.COOKIE_CLASSIC_CHOC_CHIP]: { hydrationRange: [0, 10], idealW: [150, 200], idealOvenTemp: [175, 190], name: 'Classic Choc Chip' },
+  [RecipeStyle.COOKIE_BROWN_BUTTER]: { hydrationRange: [0, 10], idealW: [150, 200], idealOvenTemp: [175, 190], name: 'Brown Butter Cookie' },
+  [RecipeStyle.COOKIE_SHORTBREAD]: { hydrationRange: [0, 5], idealW: [120, 160], idealOvenTemp: [160, 170], name: 'Shortbread' },
 };
 
 

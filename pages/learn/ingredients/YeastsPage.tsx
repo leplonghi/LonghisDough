@@ -5,11 +5,11 @@ import { BeakerIcon, BookOpenIcon, SparklesIcon } from '../../../components/Icon
 
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -18,68 +18,68 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 const YeastsPage: React.FC = () => {
   return (
     <IngredientPageLayout
-      title="Fermentos: O Motor Biológico da Massa"
-      description="Uma análise científica sobre os microrganismos que dão vida, estrutura e sabor à pizza."
-      category="Ingredientes"
+      title="Yeasts: The Biological Engine"
+      description="Scientific analysis of microorganisms giving life, structure, and flavor to pizza."
+      category="Ingredients"
     >
-      <Section title="1. Introdução: O que é Fermento?">
+      <Section title="1. Introduction: What is Yeast?">
         <p>
-          Cientificamente, os fermentos utilizados na panificação são microrganismos unicelulares, primariamente da espécie <em>Saccharomyces cerevisiae</em>. Sua função é metabolizar os açúcares simples presentes na farinha através de um processo anaeróbico. Esse metabolismo gera dois subprodutos principais: <strong>dióxido de carbono (CO₂)</strong>, que fica aprisionado na rede de glúten e faz a massa crescer, e <strong>etanol</strong>. Além disso, o processo produz uma gama de compostos secundários, como ésteres e aldeídos, que são fundamentais para o desenvolvimento do aroma e sabor complexo da massa assada.
+          Scientifically, baking yeasts are single-celled microorganisms, primarily <em>Saccharomyces cerevisiae</em>. Their function is metabolizing simple sugars in flour via anaerobic process. Generates two main byproducts: <strong>Carbon Dioxide (CO₂)</strong> trapped in gluten making dough rise, and <strong>Ethanol</strong>. Also produces secondary compounds like esters/aldehydes crucial for aroma/flavor.
         </p>
       </Section>
 
-      <Section title="2. Fermento Biológico Seco (IDY & ADY)" icon={<BeakerIcon className="h-5 w-5" />}>
+      <Section title="2. Dry Yeast (IDY & ADY)" icon={<BeakerIcon className="h-5 w-5" />}>
         <p>
-          O fermento seco é a levedura <em>S. cerevisiae</em> em estado dormente, desidratada. Sua principal vantagem, como apontado em "Modernist Bread", é a <strong>alta estabilidade</strong> e longa vida útil, o que o torna ideal para produção consistente em pizzarias e para uso doméstico. A reativação ocorre com a hidratação, sendo um método de alta previsibilidade.
+          Dry yeast is dormant dehydrated <em>S. cerevisiae</em>. Main advantage ("Modernist Bread") is <strong>high stability</strong> and shelf life, ideal for consistent production. Reactivation via hydration is highly predictable.
         </p>
       </Section>
       
-      <Section title="3. Fermento Biológico Fresco">
+      <Section title="3. Fresh Yeast">
         <p>
-          Vendido em blocos prensados com cerca de 70% de umidade, é a mesma levedura, mas em estado ativo. Apresenta <strong>maior atividade imediata</strong>, mas tem um prazo de validade muito curto e é sensível a variações de temperatura. É o fermento tradicional da panificação europeia.
+          Compressed blocks (~70% moisture), active state yeast. <strong>Higher immediate activity</strong>, short shelf life, temp sensitive. Traditional in Europe.
         </p>
       </Section>
 
-      <Section title="4. Fermentação Natural (Levain)">
+      <Section title="4. Natural Fermentation (Levain/Sourdough)">
         <p>
-          Diferente dos fermentos comerciais, o levain é uma <strong>mistura simbiótica complexa</strong> de leveduras selvagens e bactérias ácido-láticas (LAB). As LAB produzem ácidos (lático e acético) que conferem o sabor ácido característico e uma estrutura de miolo diferente. A ação é mais lenta e complexa. (Detalhes completos estão no módulo Levain Pet).
+          Unlike commercial yeast, levain is a <strong>complex symbiotic mixture</strong> of wild yeast and Lactic Acid Bacteria (LAB). LAB produce acids (lactic/acetic) giving characteristic sour flavor and structure. Slower complex action. (See Levain Pet module).
         </p>
       </Section>
 
-      <Section title="5. Fatores que Afetam a Fermentação">
-        <p>A velocidade da fermentação é regulada por um balanço de fatores:</p>
-        <ul>
-            <li><strong>Temperatura:</strong> Regula a velocidade metabólica da levedura. A faixa ideal é 24-27°C.</li>
-            <li><strong>Hidratação:</strong> Determina a mobilidade dos nutrientes e da levedura na massa.</li>
-            <li><strong>Tipo de Farinha:</strong> Influencia a quantidade de açúcares (alimento) disponíveis. Farinhas integrais aceleram a fermentação.</li>
-            <li><strong>Sal:</strong> Retarda a fermentação por osmose, controlando a atividade da levedura.</li>
-            <li><strong>Gordura:</strong> Em excesso, pode revestir as células de levedura, dificultando a hidratação e retardando o processo.</li>
+      <Section title="5. Factors Affecting Fermentation">
+        <p>Fermentation speed regulated by:</p>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Temperature:</strong> Ideal 24-27°C.</li>
+            <li><strong>Hydration:</strong> Mobility of nutrients.</li>
+            <li><strong>Flour Type:</strong> Available sugars. Whole flour accelerates.</li>
+            <li><strong>Salt:</strong> Retards via osmosis.</li>
+            <li><strong>Fat:</strong> Coating cells can retard process.</li>
         </ul>
       </Section>
 
-      <Section title="6. Aromas Produzidos" icon={<SparklesIcon className="h-5 w-5" />}>
-        <p>A fermentação é um processo de criação de aromas. As leveduras e bactérias produzem uma vasta gama de compostos:</p>
-        <ul>
-            <li><strong>Leveduras:</strong> Geram álcoois, ésteres (notas frutadas) e compostos aromáticos leves.</li>
-            <li><strong>Bactérias Ácido-Láticas (LAB):</strong> Produzem ácido lático (sabor suave de iogurte) e ácido acético (sabor pungente de vinagre).</li>
+      <Section title="6. Aromas Produced" icon={<SparklesIcon className="h-5 w-5" />}>
+        <p>Fermentation creates aromas:</p>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Yeasts:</strong> Alcohols, esters (fruity).</li>
+            <li><strong>LAB:</strong> Lactic acid (yogurt), acetic acid (vinegar).</li>
         </ul>
       </Section>
 
-      <Section title="7. Riscos Comuns">
-        <ul>
-            <li><strong>Fermentação Excessiva (Over-proofing):</strong> A rede de glúten colapsa, resultando em uma massa fraca e pegajosa com sabor excessivamente ácido.</li>
-            <li><strong>Fermentação Insuficiente (Under-proofing):</strong> Resulta em um produto final denso, pesado e com sabor subdesenvolvido.</li>
-            <li><strong>Temperatura Alta:</strong> Leva a uma fermentação descontrolada, onde a produção de gás ocorre antes que o sabor tenha tempo de se desenvolver.</li>
+      <Section title="7. Common Risks">
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Over-proofing:</strong> Gluten collapse, weak sticky dough, acidic taste.</li>
+            <li><strong>Under-proofing:</strong> Dense heavy product, undeveloped flavor.</li>
+            <li><strong>High Temp:</strong> Uncontrolled fermentation, gas before flavor.</li>
         </ul>
       </Section>
       
-      <Section title="8. Referências Técnicas" icon={<BookOpenIcon className="h-5 w-5" />}>
+      <Section title="8. Technical References" icon={<BookOpenIcon className="h-5 w-5" />}>
           <ul className="list-disc pl-5 space-y-2">
             <li>Modernist Bread</li>
             <li>Modernist Pizza</li>
-            <li>King Arthur Baking – Yeast 101 Guide</li>
-            <li>Artigos de microbiologia sobre <em>Saccharomyces cerevisiae</em></li>
-            <li>Wikipedia – Fermentação, Leveduras</li>
+            <li>King Arthur Baking – Yeast 101</li>
+            <li>Microbiology articles on <em>Saccharomyces cerevisiae</em></li>
+            <li>Wikipedia – Fermentation, Yeast</li>
           </ul>
       </Section>
     </IngredientPageLayout>

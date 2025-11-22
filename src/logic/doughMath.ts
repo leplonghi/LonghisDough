@@ -1,5 +1,5 @@
+
 import { DoughConfig, DoughResult, IngredientConfig, YeastType, FermentationTechnique, Levain, CalculationMode } from '../types';
-import { getAllowedFermentationTechniques } from '../data/stylesData';
 
 // --- Helpers ---
 
@@ -10,19 +10,8 @@ export function getBaseFlour(ingredients: IngredientConfig[]): IngredientConfig 
 // --- Normalization Logic ---
 
 export function normalizeDoughConfigWithIngredients(config: DoughConfig): DoughConfig {
-  // Enforce allowed fermentation techniques based on style/bake type
-  const allowedTechniques = getAllowedFermentationTechniques(config.recipeStyle, config.bakeType);
-  let validTechnique = config.fermentationTechnique;
-  
-  if (!allowedTechniques.includes(validTechnique)) {
-      validTechnique = allowedTechniques[0] || FermentationTechnique.DIRECT;
-  }
-
-  // Create a config with the guaranteed valid technique
-  const workingConfig = { ...config, fermentationTechnique: validTechnique };
-
-  if (workingConfig.ingredients && workingConfig.ingredients.length > 0) {
-    return workingConfig; // Already has ingredients
+  if (config.ingredients && config.ingredients.length > 0) {
+    return config; // Already has ingredients
   }
 
   // Build ingredients from legacy fields
@@ -31,7 +20,7 @@ export function normalizeDoughConfigWithIngredients(config: DoughConfig): DoughC
   // 1. Base Flour (100%)
   ingredients.push({
     id: 'base-flour',
-    name: 'Farinha',
+    name: 'Flour',
     type: 'solid',
     bakerPercentage: 100,
     role: 'flour'
@@ -40,65 +29,65 @@ export function normalizeDoughConfigWithIngredients(config: DoughConfig): DoughC
   // 2. Water (Hydration)
   ingredients.push({
     id: 'water',
-    name: 'Água',
+    name: 'Water',
     type: 'liquid',
-    bakerPercentage: workingConfig.hydration,
+    bakerPercentage: config.hydration,
     role: 'water'
   });
 
   // 3. Salt
   ingredients.push({
     id: 'salt',
-    name: 'Sal',
+    name: 'Salt',
     type: 'solid',
-    bakerPercentage: workingConfig.salt,
+    bakerPercentage: config.salt,
     role: 'salt'
   });
 
   // 4. Oil
-  if (workingConfig.oil > 0) {
+  if (config.oil > 0) {
     ingredients.push({
       id: 'oil',
-      name: 'Azeite/Óleo',
+      name: 'Oil/Olive Oil',
       type: 'liquid',
-      bakerPercentage: workingConfig.oil,
+      bakerPercentage: config.oil,
       role: 'fat'
     });
   }
 
   // 5. Sugar
-  if (workingConfig.sugar && workingConfig.sugar > 0) {
+  if (config.sugar && config.sugar > 0) {
     ingredients.push({
       id: 'sugar',
-      name: 'Açúcar',
+      name: 'Sugar',
       type: 'solid',
-      bakerPercentage: workingConfig.sugar,
+      bakerPercentage: config.sugar,
       role: 'sugar'
     });
   }
 
   // 6. Yeast
-  if ([YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(workingConfig.yeastType)) {
+  if ([YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(config.yeastType)) {
      ingredients.push({
          id: 'levain',
-         name: 'Levain (Fermento Natural)',
+         name: 'Levain (Sourdough Starter)',
          type: 'solid', // Semisolid
-         bakerPercentage: workingConfig.yeastPercentage,
+         bakerPercentage: config.yeastPercentage,
          role: 'starter'
      });
   } else {
-      // Commercial Yeast
+      // Commercial Yeast or Chemical Leavening
       ingredients.push({
           id: 'yeast',
-          name: 'Fermento Biológico',
+          name: 'Yeast/Leavening',
           type: 'solid',
-          bakerPercentage: workingConfig.yeastPercentage,
+          bakerPercentage: config.yeastPercentage,
           role: 'yeast'
       });
   }
 
   return {
-    ...workingConfig,
+    ...config,
     ingredients
   };
 }
@@ -137,19 +126,16 @@ export const calculateDoughUniversal = (
   calculationMode: CalculationMode,
   userLevain?: Levain | null
 ): DoughResult => {
-    // Ensure we are using a valid technique for calculation
+    // Ensure we have ingredients
     const normalizedConfig = normalizeDoughConfigWithIngredients(config);
     const ingredients = normalizedConfig.ingredients || [];
-    
-    // Use the validated technique from normalizedConfig
-    const effectiveTechnique = normalizedConfig.fermentationTechnique;
 
     // 1. Calculate Total Flour Weight
     // Standard calc: Total Dough = NumPizzas * BallWeight * Scale
-    let totalTargetWeight = normalizedConfig.numPizzas * normalizedConfig.doughBallWeight * normalizedConfig.scale;
+    let totalTargetWeight = config.numPizzas * config.doughBallWeight * config.scale;
     
     // If calculating by total flour
-    if (calculationMode === 'flour' && normalizedConfig.totalFlour) {
+    if (calculationMode === 'flour' && config.totalFlour) {
         // This path is slightly different, but for now let's stick to mass mode as primary for V1 universal
         // or derive target weight from total flour if needed.
     }
@@ -163,8 +149,8 @@ export const calculateDoughUniversal = (
     // Calculate Flour Weight (The Base)
     // If we are in flour mode, we use config.totalFlour directly
     let totalFlour = 0;
-    if (calculationMode === 'flour' && normalizedConfig.totalFlour) {
-        totalFlour = normalizedConfig.totalFlour;
+    if (calculationMode === 'flour' && config.totalFlour) {
+        totalFlour = config.totalFlour;
         // Re-calculate total dough weight
         totalTargetWeight = totalFlour * (totalPercentage / 100);
     } else {
@@ -210,11 +196,13 @@ export const calculateDoughUniversal = (
 
     // Handle Pre-ferments Logic (Levain, Poolish, Biga)
     
-    if (normalizedConfig.yeastType === YeastType.SOURDOUGH_STARTER || normalizedConfig.yeastType === YeastType.USER_LEVAIN) {
+    const isChemicalOrNoFerment = config.fermentationTechnique === FermentationTechnique.CHEMICAL || config.fermentationTechnique === FermentationTechnique.NO_FERMENT;
+
+    if (!isChemicalOrNoFerment && (config.yeastType === YeastType.SOURDOUGH_STARTER || config.yeastType === YeastType.USER_LEVAIN)) {
         // Levain Logic
         const starterWeight = yeastOrStarterWeight;
         let levainHydration = 100; // Default 100%
-        if (normalizedConfig.yeastType === YeastType.USER_LEVAIN && userLevain) {
+        if (config.yeastType === YeastType.USER_LEVAIN && userLevain) {
             levainHydration = userLevain.hydration;
         }
 
@@ -237,24 +225,21 @@ export const calculateDoughUniversal = (
             yeast: 0
         };
 
-    } else if (effectiveTechnique !== FermentationTechnique.DIRECT) {
+    } else if (!isChemicalOrNoFerment && (config.fermentationTechnique === FermentationTechnique.POOLISH || config.fermentationTechnique === FermentationTechnique.BIGA)) {
         // Poolish or Biga
         // The 'yeastOrStarterWeight' here is commercial yeast.
         // We need to calculate the preferment flour amount based on prefermentFlourPercentage
         
-        const prefermentFlour = totalFlour * (normalizedConfig.prefermentFlourPercentage / 100);
+        const prefermentFlour = totalFlour * (config.prefermentFlourPercentage / 100);
         let prefermentWater = prefermentFlour; // Poolish default (100%)
         
-        if (effectiveTechnique === FermentationTechnique.BIGA) {
+        if (config.fermentationTechnique === FermentationTechnique.BIGA) {
             prefermentWater = prefermentFlour * 0.5; // Biga (50%)
         }
 
         // Yeast in preferment (usually small fixed % of preferment flour, e.g. 0.1% - 0.5% or tiny amount)
         // Legacy logic used: const prefermentYeast = prefermentFlour * 0.002;
         const prefermentYeast = prefermentFlour * 0.002;
-        
-        // Commercial yeast adjustments for type (ADY/Fresh) should happen on the input percentage
-        // We assume 'yeastOrStarterWeight' is already the correct amount for the specific type chosen in UI
         
         result.preferment = {
             flour: prefermentFlour,
@@ -272,7 +257,7 @@ export const calculateDoughUniversal = (
         };
 
     } else {
-        // Direct Method
+        // Direct Method / Chemical / No Ferment - No preferment calculation
         result.finalDough = {
             flour: totalFlour,
             water: waterWeight,

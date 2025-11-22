@@ -1,11 +1,14 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
 
 const TechniquesPage: React.FC = () => {
   return (
-    <TechnicalPageLayout title="Técnicas de Panificação" showReferencesSection>
-        <p>Aqui será inserido conteúdo técnico detalhado, sempre validado e referenciado a partir de fontes confiáveis (AVPN, King Arthur Baking, Serious Eats, literatura científica etc.).</p>
-        <p>Abordaremos temas como autólise, stretch & fold, no-knead, sova, modelagem e muito mais.</p>
+    <TechnicalPageLayout title="Baking Techniques" showReferencesSection>
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p>Detailed technical content will be inserted here, always validated and referenced from reliable sources (AVPN, King Arthur Baking, Serious Eats, scientific literature etc.).</p>
+            <p>We will cover topics such as autolyse, stretch & fold, no-knead, kneading, shaping and much more.</p>
+        </div>
     </TechnicalPageLayout>
   );
 };

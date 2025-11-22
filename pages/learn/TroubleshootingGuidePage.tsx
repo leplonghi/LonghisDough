@@ -11,18 +11,18 @@ interface TroubleshootingGuidePageProps {
 
 const TroubleshootingGuidePage: React.FC<TroubleshootingGuidePageProps> = ({ onNavigate }) => {
     const topics = [
-        { page: 'learn/troubleshooting', title: 'Massa Pegajosa', description: 'Diagnóstico e soluções para uma massa muito mole e difícil de manusear.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
-        { page: 'learn/troubleshooting', title: 'Massa Seca ou Quebradiça', description: 'Entenda por que a massa não desenvolve elasticidade.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
-        { page: 'learn/troubleshooting', title: 'Fermentação Insuficiente', description: 'Causas e correções para uma massa que não cresce o esperado.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
-        { page: 'learn/troubleshooting', title: 'Crosta Pálida', description: 'Descubra por que sua pizza não está dourando no forno.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
-        { page: 'learn/troubleshooting', title: 'Queijo Escorrendo Óleo', description: 'A ciência por trás do "oil-out" e como controlá-lo.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
-        { page: 'learn/troubleshooting', title: 'Centro Encharcado (Gum Line)', description: 'Como evitar a camada de massa crua sob a cobertura.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Sticky Dough', description: 'Diagnosis and solutions for dough that is too soft and hard to handle.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Dry or Tearing Dough', description: 'Understand why the dough is not developing elasticity.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Under-fermentation', description: 'Causes and corrections for dough that doesn\'t rise as expected.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Pale Crust', description: 'Discover why your pizza is not browning in the oven.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Oily Cheese', description: 'The science behind "oil-out" and how to control it.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
+        { page: 'learn/troubleshooting', title: 'Soggy Center (Gum Line)', description: 'How to avoid the layer of dense raw dough under the topping.', icon: <QuestionMarkCircleIcon className="h-8 w-8" /> },
     ];
 
     return (
         <TechnicalPageLayout
-            title="Solução de Problemas"
-            subtitle="Diagnostique e corrija os problemas mais comuns: massa pegajosa, crosta pálida e mais."
+            title="Troubleshooting Guide"
+            subtitle="Diagnose and fix common problems: sticky dough, pale crust, and more."
         >
             <div className="not-prose grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {topics.map(topic => (

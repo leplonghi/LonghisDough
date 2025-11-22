@@ -1,14 +1,13 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,32 +16,32 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const CaramelizableVegetablesPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Vegetais Caramelizáveis: Açúcares e Aromas"
-      subtitle="Como o calor transforma a doçura natural de vegetais em sabores complexos."
+      title="Caramelizable Vegetables: Sugars and Aromas"
+      subtitle="How heat transforms natural vegetable sweetness into complex flavors."
       showReferencesSection
     >
-        <Section title="A Ciência da Caramelização">
-            <p>A caramelização é um processo de oxidação de açúcares que ocorre sob calor. Diferente da Reação de Maillard, ela não envolve proteínas. Quando vegetais ricos em açúcares são aquecidos, suas longas cadeias de carboidratos se quebram em açúcares simples, que então se decompõem e reformam, criando centenas de novos compostos aromáticos.</p>
+        <Section title="The Science of Caramelization">
+            <p>Caramelization is a process of sugar oxidation that occurs under heat. Unlike the Maillard Reaction, it does not involve proteins. When sugar-rich vegetables are heated, their long carbohydrate chains break down into simple sugars, which then decompose and reform, creating hundreds of new aromatic compounds.</p>
         </Section>
-        <Section title="Principais Vegetais Caramelizáveis">
-            <p>Alguns vegetais são particularmente adequados para este processo devido ao seu alto teor de açúcares naturais:</p>
-            <ul>
-                <li><strong>Cebola:</strong> O exemplo clássico. O calor transforma seus compostos de enxofre pungentes em notas doces e profundas.</li>
-                <li><strong>Pimentão:</strong> Especialmente os vermelhos e amarelos, que perdem seu amargor e desenvolvem uma doçura intensa quando assados.</li>
-                <li><strong>Cenoura e Abóbora:</strong> Quando fatiados finamente, seus açúcares caramelizam, adicionando uma doçura terrosa.</li>
+        <Section title="Main Caramelizable Vegetables">
+            <p>Some vegetables are particularly suited for this process due to their high natural sugar content:</p>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Onion:</strong> The classic example. Heat transforms its pungent sulfur compounds into deep, sweet notes.</li>
+                <li><strong>Peppers:</strong> Especially red and yellow ones, which lose their bitterness and develop intense sweetness when roasted.</li>
+                <li><strong>Carrot and Pumpkin:</strong> When thinly sliced, their sugars caramelize, adding earthy sweetness.</li>
             </ul>
         </Section>
-        <Section title="Desenvolvimento de Notas Doces e Complexas">
-            <p>O processo de caramelização transforma o sabor unidimensional dos vegetais crus em um perfil complexo, com notas de nozes, tostado e umami, além da doçura evidente. Essa complexidade adiciona uma camada de sabor sofisticada à pizza, que vai além do simples "gosto de vegetal".</p>
+        <Section title="Development of Sweet and Complex Notes">
+            <p>The caramelization process transforms the one-dimensional flavor of raw vegetables into a complex profile with nutty, toasted, and umami notes, in addition to evident sweetness. This complexity adds a sophisticated flavor layer to pizza that goes beyond simple "vegetable taste."</p>
         </Section>
-        <Section title="Impacto no Perfil Geral da Pizza">
-            <p>A doçura dos vegetais caramelizados serve como um contraponto perfeito para ingredientes salgados e gordurosos, como queijos curados, bacon ou anchovas. Esse equilíbrio entre doce e salgado é um dos pilares fundamentais da harmonia de sabores na gastronomia.</p>
+        <Section title="Impact on Overall Pizza Profile">
+            <p>The sweetness of caramelized vegetables serves as a perfect counterpoint to salty and fatty ingredients, such as cured cheeses, bacon, or anchovies. This balance between sweet and salty is one of the fundamental pillars of flavor harmony in gastronomy.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
-              <li>"On Food and Cooking" de Harold McGee</li>
+              <li>"On Food and Cooking" by Harold McGee</li>
               <li>Wikipedia (Caramelization)</li>
-              <li>Food Chemistry (livros didáticos sobre o tema)</li>
+              <li>Food Chemistry (textbooks)</li>
           </ul>
         </Section>
     </TechnicalPageLayout>

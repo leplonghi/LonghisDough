@@ -1,16 +1,16 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { FireIcon, BeakerIcon, BookOpenIcon, LightBulbIcon } from '../../components/IconComponents';
+import { FireIcon, BookOpenIcon } from '../../components/IconComponents';
 
 // Local Section component for structuring content
-const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
+const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -18,92 +18,92 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 
 const OvenSciencePage: React.FC = () => {
   return (
-    <TechnicalPageLayout title="Assamento de Pizza: A Física do Forno" showReferencesSection>
-        <Section title="1. Introdução: O Choque Térmico que Cria a Pizza">
+    <TechnicalPageLayout title="Baking Pizza: The Physics of the Oven" showReferencesSection>
+        <Section title="1. Introduction: The Thermal Shock That Creates Pizza">
             <p>
-              Cientificamente, o assamento é o estágio mais violento e transformador na vida da massa. Quando a pizza entra no forno, ela sofre um choque térmico que desencadeia uma cascata de eventos físicos e químicos em segundos, como descrito em "Modernist Pizza":
+              Scientifically, baking is the most violent and transformative stage in the dough's life. When the pizza enters the oven, it undergoes a thermal shock triggering a cascade of physical and chemical events in seconds, as described in "Modernist Pizza":
             </p>
-            <ul>
-                <li><strong>Choque térmico:</strong> A massa fria encontra o calor intenso do forno.</li>
-                <li><strong>Evaporação rápida da água:</strong> A água na superfície da massa e dos ingredientes se transforma em vapor quase instantaneamente.</li>
-                <li><strong>Expansão de gases (Oven Spring):</strong> O CO₂ aprisionado na rede de glúten e o vapor recém-formado se expandem violentamente, causando o "salto de forno" e inflando a borda (cornicione).</li>
-                <li><strong>Coloração da superfície:</strong> Reações de Maillard e caramelização ocorrem na superfície seca, desenvolvendo cor e sabor.</li>
-                <li><strong>Estabilização da estrutura interna:</strong> O amido gelatiniza e as proteínas do glúten coagulam, fixando a estrutura aerada da massa.</li>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Thermal shock:</strong> Cold dough meets intense oven heat.</li>
+                <li><strong>Rapid water evaporation:</strong> Water on dough surface and ingredients turns to steam almost instantly.</li>
+                <li><strong>Gas expansion (Oven Spring):</strong> CO₂ trapped in gluten and newly formed steam expand violently, causing "oven spring" and puffing the rim (cornicione).</li>
+                <li><strong>Surface coloration:</strong> Maillard reactions and caramelization occur on dry surface, developing color and flavor.</li>
+                <li><strong>Internal structure stabilization:</strong> Starch gelatinizes and gluten proteins coagulate, fixing the aerated dough structure.</li>
             </ul>
         </Section>
 
-        <Section title="2. Fluxo de Calor (Heat Flow): Os Três Mecanismos">
+        <Section title="2. Heat Flow: The Three Mechanisms">
             <p>
-              O calor não é uma entidade única; ele é transferido de três maneiras distintas. A excelência no assamento, como explica Kenji López-Alt, depende do equilíbrio perfeito entre elas. Diferentes fornos alteram drasticamente a predominância de cada mecanismo.
+              Heat isn't a single entity; it transfers in three distinct ways. Baking excellence, as Kenji López-Alt explains, depends on perfect balance between them. Different ovens drastically alter the dominance of each mechanism.
             </p>
-            <ul>
-                <li>O calor <strong>flui da superfície quente do forno (lastro) para a base da pizza</strong> (Condução).</li>
-                <li>O calor <strong>radiante age sobre a superfície superior</strong> da pizza, vindo do teto e das chamas (Radiação).</li>
-                <li>O calor <strong>convectivo aquece o ar ao redor</strong> da pizza, ajudando a cozinhar os ingredientes e remover a umidade (Convecção).</li>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>Heat <strong>flows from hot oven surface (deck) to pizza base</strong> (Conduction).</li>
+                <li>Radiant heat <strong>acts on upper surface</strong> of pizza, coming from ceiling and flames (Radiation).</li>
+                <li>Convective heat <strong>warms air around</strong> pizza, helping cook ingredients and remove moisture (Convection).</li>
             </ul>
         </Section>
         
-        <Section title="3. Condução: O Calor da Base">
+        <Section title="3. Conduction: Base Heat">
             <p>
-              A condução é a transferência de calor por contato direto. O piso do forno (seja de aço, pedra ou tijolo) transfere sua energia térmica para a base da massa. A velocidade dessa transferência é fundamental para uma base crocante. Materiais diferentes conduzem calor em velocidades distintas. O aço, por exemplo, é um condutor muito mais rápido que a pedra, transferindo calor de forma mais agressiva.
+              Conduction is heat transfer by direct contact. Oven floor (steel, stone, or brick) transfers thermal energy to dough base. Transfer speed is fundamental for crispy base. Different materials conduct heat at different speeds. Steel, for example, is a much faster conductor than stone, transferring heat more aggressively.
             </p>
         </Section>
         
-        <Section title="4. Radiação: O Calor do Topo">
+        <Section title="4. Radiation: Top Heat">
             <p>
-              A radiação é o calor emitido na forma de ondas infravermelhas. Em um forno de pizza, ela vem do teto (cúpula), das paredes e, crucialmente, da chama em um forno a lenha. Este é o principal mecanismo responsável por controlar a coloração da borda e da superfície e cozinhar as coberturas.
+              Radiation is heat emitted as infrared waves. In a pizza oven, it comes from the ceiling (dome), walls, and crucially, flame in a wood oven. This is main mechanism responsible for controlling rim and surface coloration and cooking toppings.
             </p>
         </Section>
 
-        <Section title="5. Convecção: O Ar em Movimento">
+        <Section title="5. Convection: Moving Air">
             <p>
-              A convecção é a transferência de calor pelo movimento do ar quente. Em fornos domésticos elétricos, muitas vezes há uma ventoinha para forçar essa circulação. A convecção ajuda a assar a pizza de maneira mais uniforme e é crucial para remover a camada de vapor que se forma ao redor da pizza, permitindo que a superfície seque e doure.
+              Convection is heat transfer by hot air movement. In electric home ovens, there is often a fan to force this circulation. Convection helps bake pizza more evenly and is crucial for removing steam layer forming around pizza, allowing surface to dry and brown.
             </p>
         </Section>
         
-        <Section title="6. Mudança de Fase: A Força do Vapor">
+        <Section title="6. Phase Change: The Power of Steam">
             <p>
-              A transformação da água em vapor é um dos eventos mais importantes no forno.
+              Transformation of water to steam is one of most important events in oven.
             </p>
-            <ul>
-                <li>A <strong>evaporação rápida da água</strong> na massa se transforma em vapor. Como o vapor ocupa um volume muito maior que a água líquida, ele expande violentamente as bolhas de gás já existentes, contribuindo para o "oven spring".</li>
-                <li>A água livre nos ingredientes (especialmente molho e vegetais) também evapora. O <strong>controle dessa umidade é crítico</strong> para evitar uma pizza encharcada.</li>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Rapid water evaporation</strong> in dough turns to steam. Since steam occupies much larger volume than liquid water, it violently expands existing gas bubbles, contributing to "oven spring".</li>
+                <li>Free water in ingredients (especially sauce and veg) also evaporates. <strong>Controlling this moisture is critical</strong> to avoid soggy pizza.</li>
             </ul>
         </Section>
 
-        <Section title="7. Estágios do Assamento">
+        <Section title="7. Baking Stages">
             <p>
-              O assamento pode ser dividido em estágios sequenciais e sobrepostos:
+              Baking can be divided into sequential and overlapping stages:
             </p>
-            <ol>
-                <li><strong>Expansão (Oven Spring):</strong> Nos primeiros 30-60 segundos, o calor acelera a atividade final da levedura e expande o CO₂ e o vapor de água, inflando a massa.</li>
-                <li><strong>Fixação da Estrutura:</strong> À medida que a temperatura interna da massa sobe, o amido gelatiniza e as proteínas do glúten coagulam, solidificando a estrutura aerada criada na fase de expansão.</li>
-                <li><strong>Secagem Superficial:</strong> A umidade na superfície da massa evapora, criando uma "pele" seca, pré-requisito para as reações de coloração.</li>
-                <li><strong>Coloração (Browning):</strong> Com a superfície seca e a temperatura elevada, a Reação de Maillard e a Caramelização ocorrem, desenvolvendo cor, sabor e aroma.</li>
+            <ol className="list-decimal pl-5 mt-2 space-y-1">
+                <li><strong>Expansion (Oven Spring):</strong> In first 30-60 seconds, heat accelerates final yeast activity and expands CO₂ and water vapor, inflating dough.</li>
+                <li><strong>Structure Fixation:</strong> As internal dough temperature rises, starch gelatinizes and gluten proteins coagulate, solidifying aerated structure created in expansion phase.</li>
+                <li><strong>Surface Drying:</strong> Moisture on dough surface evaporates, creating dry "skin", prerequisite for coloring reactions.</li>
+                <li><strong>Coloration (Browning):</strong> With dry surface and high temperature, Maillard Reaction and Caramelization occur, developing color, flavor, and aroma.</li>
             </ol>
         </Section>
 
-        <Section title="8. Interação com Ingredientes">
+        <Section title="8. Interaction with Ingredients">
             <p>
-              As coberturas não são passivas; elas interagem com o calor e com a massa.
+              Toppings aren't passive; they interact with heat and dough.
             </p>
-            <ul>
-                <li><strong>Molhos muito úmidos</strong> liberam vapor e retardam a secagem da superfície, o que pode inibir a coloração e levar a uma base crua ("gum line").</li>
-                <li><strong>Queijos muito gordos</strong> sofrem "oil-out", liberando óleo que pode fritar a superfície de outros ingredientes.</li>
-                <li><strong>Carnes frescas</strong> liberam gordura e água, impactando a umidade.</li>
-                <li><strong>Vegetais crus</strong> liberam uma grande quantidade de vapor, que precisa ser gerenciado para não encharcar a pizza.</li>
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Very wet sauces</strong> release steam and delay surface drying, which can inhibit coloring and lead to raw base ("gum line").</li>
+                <li><strong>Very fatty cheeses</strong> suffer "oil-out", releasing oil that can fry surface of other ingredients.</li>
+                <li><strong>Fresh meats</strong> release fat and water, impacting moisture.</li>
+                <li><strong>Raw vegetables</strong> release large amount of steam, which needs managing to not soak pizza.</li>
             </ul>
         </Section>
 
-        <Section title="9. Riscos: O Desequilíbrio Térmico">
-            <ul>
-                <li><strong>Assar rápido demais (calor de topo excessivo):</strong> A pizza ganha cor por fora, mas o miolo permanece cru.</li>
-                <li><strong>Assar devagar demais (forno frio):</strong> A massa desidrata lentamente antes de assar, resultando em uma textura seca e dura.</li>
-                <li><strong>Piso frio (falta de condução):</strong> A base não cozinha adequadamente, ficando pálida e empapada, mesmo que o topo pareça pronto.</li>
+        <Section title="9. Risks: Thermal Imbalance">
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Baking too fast (excess top heat):</strong> Pizza gains color outside, but crumb remains raw.</li>
+                <li><strong>Baking too slow (cold oven):</strong> Dough dehydrates slowly before baking, resulting in dry hard texture.</li>
+                <li><strong>Cold floor (lack of conduction):</strong> Base doesn't cook properly, staying pale and soggy, even if top looks ready.</li>
             </ul>
         </Section>
         
-        <Section title="10. Referências Técnicas" icon={<BookOpenIcon className="h-5 w-5" />}>
+        <Section title="10. Technical References" icon={<BookOpenIcon className="h-5 w-5" />}>
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Pizza – Nathan Myhrvold & Francisco Migoya</li>
               <li>Serious Eats (J. Kenji López-Alt) – The Pizza Lab: Heat Transfer</li>

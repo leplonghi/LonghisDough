@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
 import { useUser } from '../../contexts/UserProvider';
@@ -8,7 +9,7 @@ import { OVEN_TYPE_OPTIONS } from '../../constants';
 import { useToast } from '../../components/ToastProvider';
 
 interface MeuLabFornadasPageProps {
-  onLoadAndNavigate: (config: DoughConfig) => void;
+  onLoadAndNavigate: (config: Partial<DoughConfig>) => void;
   onNavigate: (page: Page, params?: string) => void;
   onCreateDraftBatch: () => void;
 }
@@ -39,6 +40,7 @@ const ResultTag: React.FC<{ rating?: number }> = ({ rating }) => {
 const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({ 
     onNavigate, 
     onCreateDraftBatch,
+    onLoadAndNavigate,
 }) => {
     const { t } = useTranslation();
     const { batches, hasProAccess, openPaywall } = useUser();

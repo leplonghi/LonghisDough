@@ -5,11 +5,11 @@ import { BookOpenIcon, SparklesIcon, BeakerIcon, FireIcon } from '../../../compo
 
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -19,87 +19,87 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 const SaucesPage: React.FC = () => {
   return (
     <IngredientPageLayout
-      title="Molhos de Pizza"
-      description="Uma análise técnica do coração da pizza: o molho. Entenda como a escolha e o preparo do tomate impactam acidez, umidade e o equilíbrio final do sabor."
-      category="Ingredientes"
+      title="Pizza Sauces"
+      description="A technical analysis of the pizza heart: the sauce. Understand how tomato choice and preparation impact acidity, moisture, and final flavor balance."
+      category="Ingredients"
     >
-      <Section title="Introdução: O Papel Central do Molho">
+      <Section title="Introduction: The Central Role of Sauce">
         <p>
-            O molho é muito mais do que um simples ingrediente úmido; ele é o componente que define a alma da pizza. Um bom molho é responsável por trazer:
+            Sauce is much more than a simple wet ingredient; it defines the pizza's soul. A good sauce brings:
         </p>
-        <ul>
-            <li><strong>Acidez:</strong> Para cortar a gordura do queijo e dos embutidos.</li>
-            <li><strong>Aroma:</strong> O perfume característico do tomate, que é liberado com o calor do forno.</li>
-            <li><strong>Umidade:</strong> Essencial para a textura, mas um fator de risco se não for controlada.</li>
-            <li><strong>Cor:</strong> O vermelho vibrante do licopeno, um pigmento e antioxidante natural do tomate.</li>
-            <li><strong>Equilíbrio:</strong> A base sobre a qual todos os outros sabores da cobertura são construídos.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Acidity:</strong> To cut through cheese and meat fat.</li>
+            <li><strong>Aroma:</strong> Characteristic tomato scent released with oven heat.</li>
+            <li><strong>Moisture:</strong> Essential for texture, but a risk factor if uncontrolled.</li>
+            <li><strong>Color:</strong> Vibrant red from lycopene, a natural pigment and antioxidant.</li>
+            <li><strong>Balance:</strong> The foundation all other topping flavors are built on.</li>
         </ul>
         <p>
-            Cientificamente, o tomate é uma maravilha da natureza, contendo água (mais de 90%), açúcares naturais (frutose e glicose), ácidos orgânicos (principalmente cítrico e málico), e polissacarídeos como a pectina, que dão estrutura e viscosidade ao molho.
+            Scientifically, tomato is a natural marvel containing water (>90%), natural sugars (fructose/glucose), organic acids (citric/malic), and polysaccharides like pectin giving structure/viscosity.
         </p>
       </Section>
 
-      <Section title="Tomates e a Química da Umidade" icon={<BeakerIcon className="h-5 w-5" />}>
+      <Section title="Tomatoes and Moisture Chemistry" icon={<BeakerIcon className="h-5 w-5" />}>
         <p>
-            A gestão da água é o desafio número um ao trabalhar com tomates.
+            Water management is challenge number one when working with tomatoes.
         </p>
-        <ul>
-            <li><strong>Estrutura Celular:</strong> Tomates inteiros, especialmente em lata, retêm a maior parte de sua água dentro das paredes celulares. Ao serem triturados ou amassados, essas paredes se rompem, liberando água e criando um molho mais fluido.</li>
-            <li><strong>Variedades:</strong> Variedades como San Marzano ou Roma são preferidas para molhos por terem uma polpa mais densa e menos sementes, resultando em um equilíbrio ideal de açúcar e acidez.</li>
-            <li><strong>Pectina:</strong> Esta molécula atua como um espessante natural. O processamento (trituração) e o cozimento podem alterar a estrutura da pectina, influenciando diretamente a viscosidade final do molho.</li>
-            <li><strong>Redução:</strong> Cozinhar o molho lentamente (redução) evapora a água, concentrando os açúcares, ácidos e compostos de sabor. É uma forma de controlar a umidade e intensificar o sabor.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Cell Structure:</strong> Whole tomatoes, especially canned, retain most water inside cell walls. Crushing breaks walls releasing water creating fluid sauce.</li>
+            <li><strong>Varieties:</strong> Varieties like San Marzano or Roma preferred for denser pulp and fewer seeds, resulting in ideal sugar/acid balance.</li>
+            <li><strong>Pectin:</strong> Natural thickener. Processing and cooking can alter pectin structure, influencing final viscosity.</li>
+            <li><strong>Reduction:</strong> Slow cooking evaporates water, concentrating sugars, acids, and flavor compounds. Controls moisture and intensifies flavor.</li>
         </ul>
       </Section>
       
-      <Section title="Molho Cru vs. Molho Cozido: Uma Escolha de Estilo">
-        <p>A decisão de cozinhar ou não o molho antes de ir para a pizza é uma das principais distinções entre os estilos de pizza, como bem documentado por fontes como a AVPN e guias de NY Style.</p>
-        <h4>Molho Cru (Estilo Napolitano)</h4>
-        <ul>
-            <li><strong>Sabor:</strong> Brilhante, fresco e com a acidez natural do tomate em destaque. A pizza é assada tão rapidamente que o molho "cozinha" na própria pizza.</li>
-            <li><strong>Preparo:</strong> Simplesmente tomates de alta qualidade (como San Marzano) amassados à mão ou levemente triturados, temperados apenas com sal.</li>
-            <li><strong>Desafio:</strong> Exige um controle rigoroso da umidade do tomate, pois não há evaporação prévia.</li>
-            <li><strong>Referência:</strong> É o padrão obrigatório do <em>disciplinare</em> da AVPN para a autêntica Pizza Napolitana.</li>
+      <Section title="Raw vs. Cooked Sauce: A Style Choice">
+        <p>Deciding whether to cook sauce before pizza is a key distinction between styles, documented by sources like AVPN and NY Style guides.</p>
+        <h4>Raw Sauce (Neapolitan Style)</h4>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Flavor:</strong> Bright, fresh, natural acidity highlighted. Pizza bakes so fast sauce "cooks" on pizza.</li>
+            <li><strong>Prep:</strong> High quality tomatoes (San Marzano) hand-crushed or lightly blended, seasoned only with salt.</li>
+            <li><strong>Challenge:</strong> Requires strict moisture control as no prior evaporation.</li>
+            <li><strong>Reference:</strong> Mandatory standard of AVPN <em>disciplinare</em> for authentic Neapolitan Pizza.</li>
         </ul>
-        <h4>Molho Cozido (Estilos NY, Pan Pizzas)</h4>
-        <ul>
-            <li><strong>Sabor:</strong> Mais profundo, adocicado e concentrado. O cozimento lento permite uma leve caramelização dos açúcares e a infusão de outros aromas (alho, orégano, etc.).</li>
-            <li><strong>Preparo:</strong> O molho é cozido em fogo baixo para reduzir o volume em 25-50%, concentrando o sabor e eliminando o excesso de água.</li>
-            <li><strong>Vantagem:</strong> Oferece maior controle sobre a umidade final, reduzindo o risco de uma pizza encharcada, especialmente em fornos domésticos com tempos de cozimento mais longos.</li>
+        <h4>Cooked Sauce (NY Style, Pan Pizzas)</h4>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Flavor:</strong> Deeper, sweeter, concentrated. Slow cooking allows slight sugar caramelization and infusion of aromatics (garlic, oregano).</li>
+            <li><strong>Prep:</strong> Simmered to reduce volume 25-50%, concentrating flavor and eliminating excess water.</li>
+            <li><strong>Advantage:</strong> Greater control over final moisture, reducing soggy pizza risk, especially in home ovens with longer bake times.</li>
         </ul>
       </Section>
       
-       <Section title="Densidade e Viscosidade: O Ponto Certo">
-        <p>A consistência do molho é crucial e deve ser adaptada ao estilo da pizza.</p>
-        <ul>
-            <li><strong>Molhos Muito Líquidos:</strong> São a principal causa da "gum line" (aquela camada de massa crua sob a cobertura). A água em excesso impede que o calor da base asse a massa, cozinhando-a a vapor.</li>
-            <li><strong>Molhos Muito Densos:</strong> Podem agir como um isolante térmico, impedindo que o calor penetre eficientemente nos ingredientes abaixo dele. Além disso, um molho pastoso pode resultar em uma textura seca após o assamento.</li>
-            <li><strong>O Ideal:</strong> O molho deve ser espesso o suficiente para cobrir as costas de uma colher sem escorrer imediatamente, mas fluido o bastante para ser espalhado com facilidade.</li>
+       <Section title="Density and Viscosity: The Sweet Spot">
+        <p>Sauce consistency is crucial and must adapt to pizza style.</p>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Too Liquid:</strong> Main cause of "gum line" (raw dough layer under topping). Excess water prevents base heat from baking dough, steaming it instead.</li>
+            <li><strong>Too Dense:</strong> Can act as thermal insulator preventing heat penetration. Pasty sauce can result in dry texture.</li>
+            <li><strong>Ideal:</strong> Thick enough to coat spoon back without running immediately, fluid enough to spread easily.</li>
         </ul>
       </Section>
 
-      <Section title="Comportamento Térmico no Forno" icon={<FireIcon className="h-5 w-5" />}>
-        <p>Dentro do forno, o molho passa por uma rápida transformação:</p>
-        <ul>
-            <li><strong>Evaporação:</strong> A água é a primeira a evaporar, o que concentra todos os outros componentes.</li>
-            <li><strong>Concentração de Sabor:</strong> Açúcares e ácidos se tornam mais pronunciados. Um molho que parecia perfeitamente equilibrado a frio pode se tornar excessivamente doce ou ácido após o cozimento.</li>
-            <li><strong>Oxidação de Pigmentos:</strong> O licopeno (pigmento vermelho) é relativamente estável, mas pode sofrer uma leve oxidação, escurecendo a cor do molho.</li>
+      <Section title="Thermal Behavior in Oven" icon={<FireIcon className="h-5 w-5" />}>
+        <p>Inside oven, sauce undergoes rapid transformation:</p>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Evaporation:</strong> Water evaporates first, concentrating components.</li>
+            <li><strong>Flavor Concentration:</strong> Sugars and acids become pronounced. Balanced cold sauce can become overly sweet or acidic after baking.</li>
+            <li><strong>Pigment Oxidation:</strong> Lycopene is relatively stable but can suffer slight oxidation darkening sauce color.</li>
         </ul>
       </Section>
 
-      <Section title="Combinações Clássicas com o Molho">
-        <ul>
-            <li><strong>Napolitana:</strong> A pureza do molho de tomate cru é complementada apenas pela cremosidade da mozzarella e o frescor do manjericão adicionado no final.</li>
-            <li><strong>NY Style:</strong> O molho cozido e temperado com orégano cria uma base de sabor robusta que suporta bem a gordura do pepperoni e a maior quantidade de queijo.</li>
-            <li><strong>Pizzas com alta carga de toppings:</strong> Para pizzas com muitos ingredientes, especialmente vegetais, um molho mais denso e cozido é essencial para não adicionar ainda mais umidade ao conjunto.</li>
+      <Section title="Classic Sauce Combinations">
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Neapolitan:</strong> Raw tomato purity complemented only by mozzarella creaminess and fresh basil added at end.</li>
+            <li><strong>NY Style:</strong> Cooked sauce seasoned with oregano creates robust flavor base supporting pepperoni fat and cheese quantity.</li>
+            <li><strong>High Topping Load:</strong> For many ingredients (vegetables), denser cooked sauce essential not to add more moisture.</li>
         </ul>
       </Section>
 
-      <Section title="Cuidados e Riscos Comuns" icon={<SparklesIcon className="h-5 w-5" />}>
-        <ul>
-            <li><strong>Excesso de Água:</strong> A principal causa de uma pizza encharcada. Sempre busque reduzir a umidade, seja cozinhando o molho ou usando tomates de polpa mais densa.</li>
-            <li><strong>Molho Muito Doce:</strong> Açúcares caramelizam rapidamente e podem queimar em fornos de alta temperatura, resultando em um sabor amargo.</li>
-            <li><strong>Molho Muito Ácido:</strong> Um molho excessivamente ácido pode dominar todos os outros sabores. Equilibre com uma pitada de açúcar, se necessário (em estilos que permitem), ou cozinhando-o por mais tempo.</li>
-            <li><strong>Cozimento Prolongado:</strong> Cozinhar o tomate por horas pode desenvolver um sabor profundo, mas ao custo do frescor. Para pizza, um cozimento de 20-40 minutos é geralmente suficiente.</li>
+      <Section title="Risks and Common Care" icon={<SparklesIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Excess Water:</strong> Main cause of soggy pizza. Always reduce moisture, either by cooking or using denser pulp tomatoes.</li>
+            <li><strong>Too Sweet:</strong> Sugars caramelize fast and can burn in high heat, tasting bitter.</li>
+            <li><strong>Too Acidic:</strong> Overly acidic sauce dominates flavors. Balance with pinch of sugar/baking soda if needed, or longer cooking.</li>
+            <li><strong>Overcooking:</strong> Hours of cooking develops depth but loses freshness. 20-40 mins usually sufficient for pizza.</li>
         </ul>
       </Section>
     </IngredientPageLayout>

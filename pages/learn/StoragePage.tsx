@@ -6,7 +6,7 @@ import { BeakerIcon, BookOpenIcon, ShieldCheckIcon } from '../../components/Icon
 // Local Section component for structuring content
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
@@ -20,83 +20,83 @@ const StoragePage: React.FC = () => {
   return (
     <TechnicalPageLayout
       title="Technical Dough Storage"
-      subtitle="The science behind storing dough to control fermentation, preserve texture, and ensure safety."
+      subtitle="The science of storing dough to control fermentation, preserve texture, and ensure safety."
       showReferencesSection={false} // Custom references section at the end
     >
-      <Section title="1. Introduction: Storage as a Control Tool">
+      <Section title="1. Introduction: Storage as Control Tool">
         <p>
-          Proper dough storage is not a passive step, but an active tool to modulate the final result. How dough is stored directly influences:
+          Proper dough storage is an active tool modulating final result, influencing:
         </p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Fermentation speed and profile</strong>, by controlling temperature and oxygen exposure.</li>
-            <li><strong>Texture and surface hydration</strong>, preventing drying that impairs extensibility.</li>
-            <li><strong>Flavor development</strong>, by allowing enzymatic and microbial processes to occur in a stable environment.</li>
-            <li><strong>Safety and hygiene</strong>, protecting the dough from external contamination.</li>
-            <li><strong>Gluten stability</strong>, ensuring the dough maintains its ability to retain gas.</li>
+            <li><strong>Fermentation speed/profile</strong> via temperature/oxygen.</li>
+            <li><strong>Texture/surface hydration</strong> preventing drying.</li>
+            <li><strong>Flavor development</strong> via stable environment.</li>
+            <li><strong>Safety/Hygiene</strong> preventing contamination.</li>
+            <li><strong>Gluten stability</strong> maintaining gas retention.</li>
         </ul>
       </Section>
 
-      <Section title="2. Suitable Containers" icon={<ShieldCheckIcon className="h-5 w-5" />}>
+      <Section title="2. Adequate Containers" icon={<ShieldCheckIcon className="h-5 w-5" />}>
         <p>
-          The choice of container is the first line of defense for dough integrity.
+          Container choice is first defense line.
         </p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Clean, airtight containers</strong> are essential to prevent contamination by unwanted microorganisms (fungi, bacteria) from the environment.</li>
-            <li>Using individual boxes or dividers for dough balls <strong>prevents drying</strong> and keeps them from sticking together.</li>
-            <li>The container must have <strong>sufficient space for expansion</strong>. Inadequate space can cause the dough to press against the lid, collapsing its gas structure and losing volume.</li>
+            <li><strong>Clean airtight containers</strong> prevent contamination.</li>
+            <li>Individual boxes or dividers <strong>prevent drying and sticking</strong>.</li>
+            <li>Must have <strong>space for expansion</strong>. Inadequate space collapses gas structure.</li>
         </ul>
       </Section>
       
-      <Section title="3. Air Contact: The Enemy of the Surface">
+      <Section title="3. Air Contact: Surface Enemy">
         <p>
-          Direct exposure to air is detrimental to the dough surface.
+          Direct air exposure harms dough surface.
         </p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>Air <strong>dehydrates the surface</strong>, creating a dry "skin" or crust. This layer loses elasticity and can cause tearing during stretching, as well as creating hard spots on the crust after baking.</li>
-            <li>Oxygen contact can also lead to <strong>surface oxidation</strong>, which may subtly affect flavor and color.</li>
+            <li>Air <strong>dehydrates surface</strong> creating dry skin losing elasticity causing tearing.</li>
+            <li>Oxygen contact leads to <strong>surface oxidation</strong> affecting flavor/color.</li>
         </ul>
       </Section>
       
       <Section title="4. Internal Humidity Control">
-        <p>Maintaining humidity balance within the container is crucial.</p>
+        <p>Maintain humidity balance.</p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Closed boxes retain moisture</strong> naturally released by the dough, creating a stable microclimate that keeps the surface pliable.</li>
-            <li>The traditional method of covering with a <strong>damp cloth</strong> works on the same principle of maintaining surface moisture, but offers less protection against contamination.</li>
-            <li><strong>Excess moisture can cause condensation</strong>, especially if warm dough is placed in a cold environment. Water droplets on the surface can make the dough excessively sticky.</li>
+            <li><strong>Closed boxes retain natural moisture</strong> creating stable microclimate.</li>
+            <li>Traditional damp cloth offers less protection.</li>
+            <li><strong>Excess humidity causes condensation</strong> making surface sticky.</li>
         </ul>
       </Section>
 
       <Section title="5. Contamination: Real Risks">
-        <p>Dough is an ideal culture medium for microorganisms. Protection against contamination is fundamental.</p>
+        <p>Dough is ideal culture medium.</p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Environmental molds</strong> can settle on the surface of unprotected dough, especially during long fermentations.</li>
-            <li><strong>Unwanted bacteria</strong> from dirty surfaces or utensils can compete with yeast and produce unpleasant flavors and odors.</li>
-            <li>Dough is porous to odors. Storing it near strong-smelling foods (like onion or fish) in the fridge can result in <strong>odor migration</strong>, contaminating the delicate flavor of the dough.</li>
+            <li><strong>Environmental molds</strong> can settle on unprotected dough.</li>
+            <li><strong>Bacteria</strong> from dirty surfaces compete with yeast.</li>
+            <li>Dough absorbs odors. Store away from strong smells (onion/fish).</li>
         </ul>
       </Section>
       
        <Section title="6. Storage During Cold Fermentation">
-        <p>Refrigerated storage (cold fermentation) is a powerful technique but requires specific care.</p>
+        <p>Refrigerated storage requires care.</p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Lower temperatures drastically slow down yeast activity</strong> but do not stop it completely. This allows slower enzymatic processes to continue, developing flavor complexity not possible at room temperature.</li>
-            <li>The cold, damp environment of a fridge makes <strong>clean, well-sealed containers</strong> even more important to avoid cross-contamination with other foods.</li>
+            <li><strong>Low temp slows yeast</strong> but allows slow enzyme action developing flavor.</li>
+            <li>Cold moist fridge makes <strong>clean sealed containers</strong> vital.</li>
         </ul>
       </Section>
 
       <Section title="7. Post-Balling Storage">
-        <p>After the dough is divided and balled, the goal of storage is to preserve the structure of each individual ball.</p>
+        <p>Preserve individual ball structure.</p>
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>Dough balls should be stored in a way that <strong>maintains their shape and surface tension</strong>.</li>
-            <li><strong>Avoid stacking or squashing</strong> the balls, as this destroys the internal gas structure carefully developed.</li>
-            <li>Each ball must have its own space to ferment and expand without touching others.</li>
+            <li>Maintain <strong>shape and surface tension</strong>.</li>
+            <li><strong>Avoid stacking/squashing</strong> destroying gas structure.</li>
+            <li>Each ball needs space to expand without touching.</li>
         </ul>
       </Section>
       
-      <Section title="8. Common Risks of Improper Storage">
+      <Section title="8. Common Improper Storage Risks">
         <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li><strong>Dried dough:</strong> Results in a tearing surface and hard crust. Cause: poor seal or air exposure.</li>
-            <li><strong>Excessively sticky dough:</strong> Difficult to handle. Cause: condensation inside a sealed container when warm dough is refrigerated.</li>
-            <li><strong>Strong alcohol smell:</strong> Indicates uncontrolled anaerobic fermentation, often in a container that is too airtight at high temperatures.</li>
+            <li><strong>Dried dough:</strong> Surface tears, hard crust. Cause: bad seal/air exposure.</li>
+            <li><strong>Sticky dough:</strong> Hard to handle. Cause: condensation.</li>
+            <li><strong>Strong alcohol smell:</strong> Uncontrolled anaerobic fermentation.</li>
         </ul>
       </Section>
 
@@ -104,9 +104,9 @@ const StoragePage: React.FC = () => {
           <ul className="list-disc pl-5 space-y-2">
             <li>Modernist Pizza</li>
             <li>Modernist Bread</li>
-            <li>King Arthur Baking – Dough Storage Guides</li>
-            <li>Ooni Learn – Storing Pizza Dough</li>
-            <li>Wikipedia – Basic microbiology and food safety</li>
+            <li>King Arthur Baking – Storage Guides</li>
+            <li>Ooni Learn – Storing Dough</li>
+            <li>Wikipedia – Food safety microbiology</li>
           </ul>
       </Section>
     </TechnicalPageLayout>

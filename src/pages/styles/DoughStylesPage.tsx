@@ -6,20 +6,20 @@ import {
     FireIcon,
     CubeIcon,
     ChevronRightIcon,
-    StarIcon,
     CalculatorIcon,
     TrashIcon,
-    CloseIcon,
     PlusCircleIcon,
     FlourIcon,
     SparklesIcon,
     UserCircleIcon,
     ClockIcon,
     GlobeAltIcon,
+    StarIcon,
+    TagIcon
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
 import { useTranslation } from '@/i18n';
-import { DoughStyleDefinition, DoughConfig, StyleCategory, RecipeStyle, FermentationTechnique } from '@/types';
+import { DoughStyleDefinition, DoughConfig, StyleCategory } from '@/types';
 import { useUser } from '@/contexts/UserProvider';
 import CreateStyleModal from '@/components/styles/CreateStyleModal';
 import AiStyleBuilderModal from '@/components/styles/AiStyleBuilderModal';
@@ -31,40 +31,86 @@ interface DoughStylesPageProps {
   onNavigateToDetail: (styleId: string) => void;
 }
 
-// Navigation Categories
+// Navigation Categories matching the new taxonomy
 const CATEGORY_FILTERS: { id: StyleCategory | 'all', label: string }[] = [
     { id: 'all', label: 'All' },
     { id: 'pizza', label: 'Pizza' },
     { id: 'bread', label: 'Breads' },
-    { id: 'flatbread', label: 'Flatbreads' },
     { id: 'enriched_bread', label: 'Enriched' },
-    { id: 'pastry', label: 'Pastry & Sweets' },
+    { id: 'burger_bun', label: 'Buns' },
+    { id: 'pastry', label: 'Pastry' },
+    { id: 'cookie', label: 'Cookies' },
 ];
 
+// Helper to group categories for display sections
+const getDisplayGroup = (category: StyleCategory): string => {
+    switch (category) {
+        case 'pizza': return 'Pizzas';
+        case 'bread':
+        case 'enriched_bread':
+        case 'flatbread': return 'Breads & Enriched Breads';
+        case 'burger_bun': return 'Burger Buns';
+        case 'pastry': return 'Pastry & Sweet Doughs';
+        case 'cookie': return 'Cookies & Confectionery';
+        default: return 'Other Styles';
+    }
+};
+
+// Priority order for display groups
+const GROUP_ORDER = [
+    'Pizzas',
+    'Breads & Enriched Breads',
+    'Burger Buns',
+    'Pastry & Sweet Doughs',
+    'Cookies & Confectionery',
+    'Other Styles'
+];
+
+const CategoryBadge: React.FC<{ category: StyleCategory }> = ({ category }) => {
+    let colorClass = 'bg-slate-100 text-slate-700 border-slate-200';
+    let icon = <CubeIcon className="h-3 w-3 mr-1" />;
+
+    switch (category) {
+        case 'pizza':
+            colorClass = 'bg-orange-50 text-orange-700 border-orange-200';
+            icon = <FireIcon className="h-3 w-3 mr-1" />;
+            break;
+        case 'bread':
+            colorClass = 'bg-amber-50 text-amber-800 border-amber-200';
+            icon = <BeakerIcon className="h-3 w-3 mr-1" />;
+            break;
+        case 'enriched_bread':
+            colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200';
+            icon = <StarIcon className="h-3 w-3 mr-1" />;
+            break;
+        case 'burger_bun':
+            colorClass = 'bg-orange-50 text-orange-800 border-orange-200';
+            icon = <CubeIcon className="h-3 w-3 mr-1" />;
+            break;
+        case 'pastry':
+            colorClass = 'bg-pink-50 text-pink-700 border-pink-200';
+            icon = <SparklesIcon className="h-3 w-3 mr-1" />;
+            break;
+        case 'cookie':
+            colorClass = 'bg-stone-100 text-stone-700 border-stone-200';
+            icon = <FlourIcon className="h-3 w-3 mr-1" />;
+            break;
+    }
+
+    return (
+        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${colorClass}`}>
+            {icon}
+            {category.replace(/_/g, ' ')}
+        </span>
+    );
+};
+
 const TechnicalBadge: React.FC<{ label: string, value: string | number }> = ({ label, value }) => (
-    <div className="flex flex-col px-2 py-1 bg-slate-50 rounded border border-slate-100">
+    <div className="flex flex-col px-2 py-1 bg-slate-50 rounded border border-slate-100 items-center text-center">
         <span className="text-[9px] uppercase text-slate-400 font-bold tracking-wider">{label}</span>
         <span className="text-xs font-semibold text-slate-700">{value}</span>
     </div>
 );
-
-const ReferenceList: React.FC<{ references?: DoughStyleDefinition['references'] }> = ({ references }) => {
-    if (!references || references.length === 0) return null;
-    return (
-        <div className="mt-3 pt-3 border-t border-slate-100">
-            <p className="text-[10px] text-slate-400 uppercase font-bold mb-1 flex items-center gap-1">
-                <BookOpenIcon className="h-3 w-3" /> Validated Sources
-            </p>
-            <ul className="space-y-0.5">
-                {references.slice(0, 2).map((ref, idx) => (
-                    <li key={idx} className="text-[10px] text-slate-500 truncate">
-                        • {ref.source} {ref.author ? `(${ref.author})` : ''}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
 
 const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; onUse: (e: React.MouseEvent) => void; onDelete?: (e: React.MouseEvent) => void }> = ({ style, onClick, onUse, onDelete }) => {
     // New Badge Logic (last 30 days)
@@ -75,6 +121,11 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays <= 30;
     }, [style.releaseDate]);
+
+    // Format hydration display
+    const hydrationDisplay = style.technicalProfile 
+        ? `${style.technicalProfile.hydration[0]}-${style.technicalProfile.hydration[1]}%` 
+        : `${style.technical.hydration}%`;
 
     return (
         <div 
@@ -99,26 +150,40 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
             )}
             
             <div className="p-5 flex-grow flex flex-col">
-                <div className="flex justify-between items-start mb-1 mt-2">
-                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1">
+                <div className="flex justify-between items-start mb-2 mt-2">
+                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1 leading-tight">
                         {style.name}
                     </h3>
                 </div>
-                <p className="text-xs text-slate-500 mb-3">
-                    {style.country}, {style.year}
-                </p>
+                
+                <div className="mb-3 flex flex-wrap gap-2">
+                    <CategoryBadge category={style.category} />
+                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 flex items-center gap-1">
+                        <GlobeAltIcon className="h-3 w-3" /> {style.country}
+                    </span>
+                </div>
 
                 <p className="text-sm text-slate-600 mb-4 line-clamp-2 flex-grow">
                     {style.description}
                 </p>
                 
+                {/* Technical Stats Grid */}
                 <div className="grid grid-cols-3 gap-2 mb-4">
-                    <TechnicalBadge label="Hydration" value={style.technicalProfile ? `${style.technicalProfile.hydration[0]}-${style.technicalProfile.hydration[1]}%` : `${style.technical.hydration}%`} />
-                    <TechnicalBadge label="Ferment" value={style.technicalProfile ? style.technicalProfile.fermentation?.bulk.split(' ')[0] : 'Std'} />
+                    <TechnicalBadge label="Hydration" value={hydrationDisplay} />
+                    <TechnicalBadge label="Time" value={style.technicalProfile ? style.technicalProfile.fermentation?.bulk.split(' ')[0] : 'Std'} />
                     <TechnicalBadge label="Skill" value={style.technicalProfile?.difficulty || 'Med'} />
                 </div>
 
-                <ReferenceList references={style.references} />
+                {/* Tags */}
+                {style.tags && style.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-4">
+                        {style.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className="text-[9px] text-slate-500 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <TagIcon className="h-2 w-2" /> {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
                 <div className="mt-auto pt-4 border-t border-slate-100 flex gap-2">
                     <button 
@@ -157,21 +222,23 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
     // Combine Official and User Styles
     const allStyles = useMemo(() => [...STYLES_DATA, ...userStyles], [userStyles]);
     
-    // Group styles by Family
-    const stylesByFamily = useMemo(() => {
+    // Group styles by Display Section
+    const stylesByGroup = useMemo(() => {
         const filtered = allStyles.filter(style => {
-            const matchesSearch = style.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                  style.description.toLowerCase().includes(searchTerm.toLowerCase());
+            const searchLower = searchTerm.toLowerCase();
+            const matchesSearch = style.name.toLowerCase().includes(searchLower) || 
+                                  style.description.toLowerCase().includes(searchLower) ||
+                                  (style.tags && style.tags.some(t => t.toLowerCase().includes(searchLower)));
+            
             const matchesCategory = selectedCategory === 'all' || style.category === selectedCategory;
             return matchesSearch && matchesCategory;
         });
 
         const grouped: Record<string, DoughStyleDefinition[]> = {};
         filtered.forEach(style => {
-            // Group AI/User styles separately or by family if defined
-            const family = style.family || 'Other';
-            if (!grouped[family]) grouped[family] = [];
-            grouped[family].push(style);
+            const groupName = getDisplayGroup(style.category);
+            if (!grouped[groupName]) grouped[groupName] = [];
+            grouped[groupName].push(style);
         });
         
         return grouped;
@@ -206,7 +273,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                     Style Library
                 </h1>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
-                    A rigorous technical compendium of baking styles, validated by international standards and scientific literature.
+                    Explore technical formulas for Pizzas, Breads, Pastry, and more.
                 </p>
             </div>
 
@@ -250,7 +317,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                     <input
                         type="text"
                         className="block w-full rounded-lg border-slate-300 bg-white py-2 pl-4 pr-3 text-sm placeholder-slate-500 focus:border-lime-500 focus:ring-lime-500"
-                        placeholder="Search style..."
+                        placeholder="Search by name or tag..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -258,31 +325,36 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
             </div>
             
             <div className="space-y-12">
-                {Object.keys(stylesByFamily).length === 0 ? (
+                {Object.keys(stylesByGroup).length === 0 ? (
                     <div className="col-span-full text-center py-12 text-slate-500">
                         No styles found matching criteria.
                     </div>
                 ) : (
-                    Object.entries(stylesByFamily).sort().map(([family, styles]: [string, DoughStyleDefinition[]]) => (
-                        <section key={family} className="animate-fade-in">
-                            <div className="flex items-center gap-4 mb-6">
-                                <h2 className="text-2xl font-bold text-slate-800">{family}</h2>
-                                <span className="text-xs font-medium px-2 py-1 bg-slate-100 rounded-full text-slate-500">{styles.length} variants</span>
-                                <div className="h-px bg-slate-200 flex-grow"></div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {styles.map(style => (
-                                    <StyleCard 
-                                        key={style.id} 
-                                        style={style} 
-                                        onClick={() => onNavigateToDetail(style.id)} 
-                                        onUse={(e) => handleUseStyle(e, style)}
-                                        onDelete={!style.isCanonical ? (e) => handleDeleteUserStyle(e, style.id) : undefined}
-                                    />
-                                ))}
-                            </div>
-                        </section>
-                    ))
+                    GROUP_ORDER.map(groupName => {
+                        const styles = stylesByGroup[groupName];
+                        if (!styles || styles.length === 0) return null;
+                        
+                        return (
+                            <section key={groupName} className="animate-fade-in">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <h2 className="text-2xl font-bold text-slate-800">{groupName}</h2>
+                                    <span className="text-xs font-medium px-2 py-1 bg-slate-100 rounded-full text-slate-500">{styles.length}</span>
+                                    <div className="h-px bg-slate-200 flex-grow"></div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {styles.map(style => (
+                                        <StyleCard 
+                                            key={style.id} 
+                                            style={style} 
+                                            onClick={() => onNavigateToDetail(style.id)} 
+                                            onUse={(e) => handleUseStyle(e, style)}
+                                            onDelete={!style.isCanonical ? (e) => handleDeleteUserStyle(e, style.id) : undefined}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        );
+                    })
                 )}
             </div>
         </div>

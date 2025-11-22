@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,31 +16,31 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const SugarsPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Açúcares, Maltes e Enzimas"
-      subtitle="O papel na fermentação, cor e sabor da crosta."
+      title="Sugars, Malts, and Enzymes"
+      subtitle="Their role in fermentation, color, and crust flavor."
     >
-        <Section title="Introdução: A Energia da Massa">
-            <p>Os açúcares, em suas diversas formas, são a principal fonte de energia para a fermentação. A farinha de trigo já contém amidos, que são cadeias longas de açúcar, mas são as enzimas que os quebram em açúcares simples que a levedura pode consumir.</p>
+        <Section title="Introduction: The Dough's Energy">
+            <p>Sugars, in their various forms, are the primary energy source for fermentation. Wheat flour naturally contains starches, which are long chains of sugar, but it is the enzymes that break them down into simple sugars that yeast can consume.</p>
         </Section>
-        <Section title="Açúcares como Alimento para Leveduras">
-            <p>A levedura metaboliza açúcares simples (como glicose e frutose) para produzir CO₂ e etanol. A adição de pequenas quantidades de açúcar pode dar um "empurrão" inicial na fermentação. No entanto, em excesso, o açúcar pode retardar a fermentação por efeito osmótico, de forma similar ao sal.</p>
+        <Section title="Sugars as Yeast Food">
+            <p>Yeast metabolizes simple sugars (like glucose and fructose) to produce CO₂ and ethanol. Adding small amounts of sugar can give fermentation an initial "push." However, in excess, sugar can retard fermentation through an osmotic effect, similar to salt.</p>
         </Section>
-        <Section title="Caramelização e Reação de Maillard">
-            <p>Os açúcares residuais na massa (aqueles que não foram consumidos pela levedura) são cruciais para a cor da crosta. Durante o assamento, eles participam de duas reações químicas fundamentais: a <strong>Caramelização</strong> (degradação do açúcar pelo calor) e a <strong>Reação de Maillard</strong> (reação entre açúcares e aminoácidos), que juntas criam a cor dourada e os sabores complexos da crosta.</p>
+        <Section title="Caramelization and Maillard Reaction">
+            <p>Residual sugars in the dough (those not consumed by yeast) are crucial for crust color. During baking, they participate in two fundamental chemical reactions: <strong>Caramelization</strong> (degradation of sugar by heat) and the <strong>Maillard Reaction</strong> (reaction between sugars and amino acids), which together create the golden color and complex flavors of the crust.</p>
         </Section>
-        <Section title="Maltos e a Ação Enzimática">
-            <p>A farinha naturalmente contém enzimas chamadas <strong>amilases</strong>. A farinha maltada (ou extrato de malte) é frequentemente adicionada para suplementar essa atividade enzimática. As amilases quebram os amidos complexos da farinha em açúcares mais simples, incluindo o malte (maltose), garantindo um suprimento constante de alimento para a levedura ao longo de fermentações mais longas e açúcares residuais para o browning.</p>
+        <Section title="Malts and Enzymatic Action">
+            <p>Flour naturally contains enzymes called <strong>amylases</strong>. Malted flour (or malt extract) is often added to supplement this enzymatic activity. Amylases break down complex flour starches into simpler sugars, including maltose, ensuring a constant food supply for yeast throughout longer fermentations and residual sugars for browning.</p>
         </Section>
-        <Section title="Impacto no Aroma e na Cor da Crosta">
-            <p>Uma massa com uma quantidade adequada de açúcares residuais desenvolverá uma crosta com cor rica e aroma de pão tostado. A falta de açúcar disponível (seja por fermentação curta que não quebrou amido, ou por fermentação longa que consumiu tudo) resultará em uma crosta pálida e com sabor menos desenvolvido.</p>
+        <Section title="Impact on Aroma and Crust Color">
+            <p>A dough with an adequate amount of residual sugars will develop a crust with rich color and a toasted bread aroma. Lack of available sugar (either due to short fermentation that didn't break down starch, or long fermentation that consumed everything) will result in a pale crust with less developed flavor.</p>
         </Section>
-        <Section title="Comportamento de Massas com Mais ou Menos Açúcares">
-            <ul>
-                <li><strong>Massas com mais açúcares livres:</strong> Tendem a dourar mais rápido e de forma mais intensa, o que pode ser benéfico em fornos domésticos de temperatura mais baixa. Também podem resultar em um miolo mais macio.</li>
-                <li><strong>Massas com menos açúcares livres:</strong> Exigem temperaturas mais altas ou tempos de cozimento mais longos para alcançar uma boa coloração. É o caso de estilos tradicionais como a Pizza Napolitana, que não leva açúcar adicionado.</li>
+        <Section title="Behavior of Doughs with More or Less Sugars">
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Doughs with more free sugars:</strong> Tend to brown faster and more intensely, which can be beneficial in lower-temperature home ovens. Can also result in a softer crumb.</li>
+                <li><strong>Doughs with fewer free sugars:</strong> Require higher temperatures or longer baking times to achieve good coloration. This is the case for traditional styles like Neapolitan Pizza, which does not use added sugar.</li>
             </ul>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Bread</li>
               <li>Modernist Pizza</li>

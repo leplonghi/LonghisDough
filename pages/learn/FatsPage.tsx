@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,31 +16,31 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const FatsPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Gorduras na Massa: Estrutura, Sabor e Textura"
-      subtitle="Uma visão comparativa sobre o papel de óleos, manteiga e outras gorduras."
+      title="Fats in Dough: Structure, Flavor, and Texture"
+      subtitle="A comparative view on the role of oils, butter, and other fats."
     >
-        <Section title="Introdução: O Agente de Maciez e Sabor">
-            <p>As gorduras, sejam líquidas (óleos) ou sólidas (manteiga, banha), são adicionadas à massa para modificar sua textura, sabor e comportamento no forno. Elas atuam como um "amaciante", interferindo na formação do glúten e lubrificando a estrutura da massa.</p>
+        <Section title="Introduction: The Softening and Flavor Agent">
+            <p>Fats, whether liquid (oils) or solid (butter, lard), are added to dough to modify its texture, flavor, and oven behavior. They act as a "shortener" or softener, interfering with gluten formation and lubricating the dough structure.</p>
         </Section>
-        <Section title="Interação das Gorduras com o Glúten">
-            <p>As moléculas de gordura revestem as proteínas da farinha, o que interfere parcialmente na sua capacidade de se conectar e formar uma rede de glúten longa e rígida. Isso resulta em uma rede de glúten mais "curta" e fragmentada, o que se traduz em um miolo mais macio e menos "borrachudo".</p>
+        <Section title="Interaction of Fats with Gluten">
+            <p>Fat molecules coat flour proteins, partially interfering with their ability to connect and form a long, rigid gluten network. This results in a "shorter" and more fragmented gluten network, translating to a softer, less "rubbery" crumb.</p>
         </Section>
-        <Section title="Impacto na Maciez e Extensibilidade">
-            <p>Ao lubrificar a rede de glúten, a gordura aumenta a extensibilidade da massa, tornando-a mais fácil de esticar. O resultado final é um produto com um miolo mais macio, uma crosta mais tenra e uma vida útil mais longa, pois a gordura também retarda a retrogradação do amido (o processo que torna o pão velho).</p>
+        <Section title="Impact on Softness and Extensibility">
+            <p>By lubricating the gluten network, fat increases dough extensibility, making it easier to stretch. The final result is a product with a softer crumb, a more tender crust, and a longer shelf life, as fat also retards starch retrogradation (the process that makes bread stale).</p>
         </Section>
-        <Section title="Impacto no Sabor e Textura Final">
-            <p>Cada tipo de gordura contribui com um perfil de sabor distinto: o azeite de oliva traz notas frutadas, a manteiga confere um sabor rico e lácteo, e a banha, um sabor mais rústico. Além disso, as gorduras ajudam a conduzir o calor, contribuindo para uma crosta mais dourada e crocante, especialmente em estilos assados em formas (pan pizza).</p>
+        <Section title="Impact on Flavor and Final Texture">
+            <p>Each type of fat contributes a distinct flavor profile: olive oil brings fruity notes, butter confers a rich, milky flavor, and lard a more rustic taste. Additionally, fats help conduct heat, contributing to a more golden and crispy crust, especially in pan-baked styles (pan pizza).</p>
         </Section>
-        <Section title="Quando São Tradicionais (e Quando Não São)">
-            <ul>
-                <li><strong>Tradicionais:</strong> A adição de óleo ou azeite é tradicional em estilos como a Pizza NY Style (para maciez), Romana e Focaccia (para sabor e crocância). A manteiga é essencial em massas ricas como o brioche, e a banha é usada em algumas receitas tradicionais de pizza.</li>
-                <li><strong>Não Tradicionais:</strong> Estilos puristas como a Pizza Napolitana autêntica (seguindo as regras da AVPN) proíbem a adição de qualquer tipo de gordura na massa.</li>
+        <Section title="When They Are Traditional (and When Not)">
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Traditional:</strong> Adding oil or olive oil is traditional in styles like NY Style Pizza (for softness), Roman, and Focaccia (for flavor and crunch). Butter is essential in rich doughs like brioche, and lard is used in some traditional pizza recipes.</li>
+                <li><strong>Non-Traditional:</strong> Purist styles like authentic Neapolitan Pizza (following AVPN rules) forbid adding any type of fat to the dough.</li>
             </ul>
         </Section>
-        <Section title="Riscos do Excesso de Gordura na Massa">
-            <p>Enquanto uma pequena quantidade de gordura é benéfica, o excesso pode ser prejudicial. Muita gordura pode revestir excessivamente as proteínas e o fermento, inibindo o desenvolvimento do glúten e retardando a fermentação. O resultado pode ser uma massa pesada, oleosa e com pouco volume.</p>
+        <Section title="Risks of Excess Fat in Dough">
+            <p>While a small amount of fat is beneficial, excess can be harmful. Too much fat can excessively coat proteins and yeast, inhibiting gluten development and retarding fermentation. The result can be a heavy, oily dough with poor volume.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Bread</li>
               <li>Modernist Pizza</li>

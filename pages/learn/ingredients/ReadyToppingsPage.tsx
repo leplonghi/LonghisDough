@@ -1,14 +1,15 @@
+
 import React from 'react';
 import IngredientPageLayout from './IngredientPageLayout';
 import { BookOpenIcon, SparklesIcon, BeakerIcon } from '../../../components/IconComponents';
 
 const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {icon}
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,75 +18,75 @@ const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React
 const ReadyToppingsPage: React.FC = () => {
   return (
     <IngredientPageLayout
-      title="Guia de Recheios Prontos"
-      description="Uma análise técnica sobre o uso de ingredientes pré-preparados para otimizar o tempo e garantir a qualidade da sua pizza."
-      category="Ingredientes"
+      title="Ready-to-Use Toppings Guide"
+      description="Technical analysis of pre-prepared ingredients to optimize time and ensure quality."
+      category="Ingredients"
     >
-      <Section title="Introdução: Acelerando a Qualidade">
+      <Section title="Introduction: Quality Speed">
         <p>
-          "Recheios prontos" são ingredientes que já passaram por algum tipo de processamento industrial ou artesanal antes de chegarem à sua cozinha. Eles oferecem conveniência, mas exigem uma avaliação técnica para garantir que não comprometam o resultado final da pizza. Esta categoria inclui:
+          "Ready toppings" are ingredients processed industrially or artisanally before your kitchen. They offer convenience but require technical evaluation to ensure quality. Includes:
         </p>
-        <ul>
-            <li><strong>Molhos prontos:</strong> Desde passatas a molhos de pizza já temperados.</li>
-            <li><strong>Carnes pré-cozidas:</strong> Como frango desfiado, bacon em cubos ou linguiça já cozida.</li>
-            <li><strong>Vegetais pré-preparados:</strong> Pimentões assados, cebola caramelizada, cogumelos salteados.</li>
-            <li><strong>Conservas e Ingredientes Premium:</strong> Alcachofras em conserva, tomates secos, anchovas, azeitonas especiais.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Ready sauces:</strong> Passatas, seasoned pizza sauces.</li>
+            <li><strong>Pre-cooked meats:</strong> Shredded chicken, bacon cubes, cooked sausage.</li>
+            <li><strong>Prepared vegetables:</strong> Roasted peppers, caramelized onions, sautéed mushrooms.</li>
+            <li><strong>Preserves/Premium:</strong> Artichokes, sun-dried tomatoes, anchovies, olives.</li>
         </ul>
         <p>
-          Ao escolher um ingrediente processado, avalie-o criticamente com base em: <strong>textura, umidade, acidez, salinidade e concentração de sabor</strong>.
+          Evaluate based on: <strong>texture, moisture, acidity, salinity, and flavor concentration</strong>.
         </p>
       </Section>
 
-      <Section title="Molhos Prontos" icon={<BeakerIcon className="h-5 w-5" />}>
+      <Section title="Ready Sauces" icon={<BeakerIcon className="h-5 w-5" />}>
         <p>
-            Molhos de pizza industrializados podem ser uma base conveniente, mas é crucial inspecionar suas propriedades.
+            Convenient but inspect properties.
         </p>
-        <ul>
-            <li><strong>Umidade:</strong> Muitos molhos prontos têm um teor de água mais elevado para reduzir custos. Um molho excessivamente líquido é a principal causa da "gum line" (camada de massa crua sob a cobertura). <strong>Dica técnica:</strong> Se o molho escorrer facilmente de uma colher, considere reduzi-lo em fogo baixo por 10-15 minutos para evaporar o excesso de água.</li>
-            <li><strong>Estabilizantes:</strong> Ingredientes como amido modificado ou gomas podem ser usados para dar viscosidade artificial. Embora não sejam prejudiciais, podem resultar em uma textura gelatinosa após o cozimento.</li>
-            <li><strong>Acidez e Sabor:</strong> A acidez pode variar muito. Muitos molhos contêm açúcar adicionado para equilibrar a acidez de tomates de menor qualidade. Prove sempre antes de usar e, se necessário, ajuste o sal ou a acidez com uma gota de vinagre ou suco de limão.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Moisture:</strong> Many have high water content. Liquid sauce causes "gum line". <strong>Tip:</strong> If it runs easily off spoon, reduce on low heat 10-15 min.</li>
+            <li><strong>Stabilizers:</strong> Modified starch/gums give artificial viscosity. Can result in gelatinous texture.</li>
+            <li><strong>Acidity/Flavor:</strong> Often contain sugar balancing poor tomato acidity. Taste and adjust salt/acid.</li>
         </ul>
       </Section>
       
-      <Section title="Carnes Pré-cozidas">
+      <Section title="Pre-Cooked Meats">
         <p>
-            Carnes que já foram cozidas (seja assadas, fritas ou defumadas) se comportam de maneira previsível no forno.
+            Behave predictably in oven.
         </p>
-        <ul>
-            <li><strong>Menos Liberação de Água:</strong> A principal vantagem. Ingredientes como frango desfiado ou linguiça pré-cozida não soltarão umidade na massa, protegendo sua estrutura.</li>
-            <li><strong>Sabor Concentrado:</strong> O processo de cozimento inicial já concentrou os sabores da carne através da reação de Maillard.</li>
-            <li><strong>Gordura Parcialmente Renderizada:</strong> Em carnes como bacon, a maior parte da gordura já derreteu. O que resta no forno é apenas o suficiente para adicionar sabor e crocância, com menos risco de "oil-out" excessivo.</li>
-            <li><strong>Ideal para Fornos Domésticos:</strong> Como documentado em práticas de pizzarias de NY Style, o pré-cozimento é essencial para garantir que a carne esteja totalmente cozida no tempo mais curto de um forno de pizza.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Less Water Release:</strong> Main advantage. Won't release moisture onto dough.</li>
+            <li><strong>Concentrated Flavor:</strong> Initial cooking concentrated flavors via Maillard.</li>
+            <li><strong>Rendered Fat:</strong> Bacon fat already rendered. Reduced risk of excessive oil-out.</li>
+            <li><strong>Ideal for Home Ovens:</strong> Essential for food safety in short bake times.</li>
         </ul>
       </Section>
       
-      <Section title="Vegetais Preparados">
+      <Section title="Prepared Vegetables">
         <p>
-            Vegetais crus são compostos majoritariamente por água. O pré-preparo é a melhor forma de controlar essa umidade.
+            Raw veg is mostly water. Pre-prep controls moisture.
         </p>
-        <ul>
-            <li><strong>Vegetais Assados ou Grelhados:</strong> Processos como assar pimentões ou grelhar abobrinha removem a água, quebram a celulose e caramelizam os açúcares naturais, resultando em um sabor muito mais profundo e uma textura macia. São ideais para pizzas de estilo romano e NY, que têm tempo de forno suficiente para reaquecê-los.</li>
-            <li><strong>Vegetais em Conserva:</strong> Ingredientes como picles ou pimentas em conserva trazem uma acidez acentuada que pode ser usada para cortar a gordura de queijos e carnes. Use com moderação para não dominar a pizza.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Roasted/Grilled:</strong> Removes water, breaks cellulose, caramelizes sugars. Deep flavor and soft texture.</li>
+            <li><strong>Pickled:</strong> Pickles/peppers bring sharp acidity cutting fat. Use moderately.</li>
         </ul>
       </Section>
 
-      <Section title="Conservas de Alta Qualidade" icon={<SparklesIcon className="h-5 w-5" />}>
+      <Section title="High Quality Preserves" icon={<SparklesIcon className="h-5 w-5" />}>
         <p>
-            Ingredientes de alta qualidade em conserva são um atalho profissional para sabores intensos e complexos.
+            Professional shortcut to intense flavor.
         </p>
-        <ul>
-            <li><strong>Alcachofra:</strong> Geralmente conservada em óleo ou salmoura, já está cozida e com sabor concentrado. Escorra bem antes de usar.</li>
-            <li><strong>Tomate Seco:</strong> O processo de desidratação remove a água e concentra açúcares e umami. Re-hidratá-lo brevemente em água morna pode torná-lo mais macio.</li>
-            <li><strong>Pimentão Assado:</strong> Disponível em potes, já sem pele e com um sabor adocicado e defumado. Uma grande economia de tempo com resultado profissional.</li>
-            <li><strong>Anchovas:</strong> Curadas em sal, são uma "bomba" de umami e salinidade. Devem ser usadas com parcimônia, pois seu sabor é extremamente potente.</li>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Artichoke:</strong> Often in oil/brine. Drain well.</li>
+            <li><strong>Sun-dried Tomato:</strong> Dehydration concentrates sugar/umami. Rehydrate in warm water for softness.</li>
+            <li><strong>Roasted Pepper:</strong> Jarred, peeled, smoky sweet. Great time saver.</li>
+            <li><strong>Anchovies:</strong> Salt cured umami bomb. Use sparingly.</li>
         </ul>
       </Section>
       
-      <Section title="Riscos Técnicos e Como Mitigá-los" icon={<BookOpenIcon className="h-5 w-5" />}>
-        <ul>
-            <li><strong>Excesso de Cobertura:</strong> Como enfatizado em "Modernist Pizza", a quantidade total de cobertura não deve ser excessiva. Muitos ingredientes frios podem reduzir drasticamente a temperatura da superfície da pizza, prejudicando o "salto de forno" (oven spring) e resultando em uma base pálida.</li>
-            <li><strong>Ingredientes Oleosos:</strong> Conservas em óleo (como tomate seco ou alcachofra) devem ser bem escorridas para evitar um "oil-out" excessivo que deixa a pizza gordurosa.</li>
-            <li><strong>Ingredientes Aquosos:</strong> Mesmo em conserva, alguns ingredientes retêm água. Azeitonas, por exemplo, devem ser secas com papel toalha antes de ir para a pizza. A umidade é a inimiga de uma base crocante.</li>
+      <Section title="Technical Risks & Mitigation" icon={<BookOpenIcon className="h-5 w-5" />}>
+        <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Excess Topping:</strong> Too many cold ingredients reduce surface temp drastically, impairing oven spring.</li>
+            <li><strong>Oily Ingredients:</strong> Drain oil preserves well to avoid greasy pizza.</li>
+            <li><strong>Watery Ingredients:</strong> Dry olives/brined items with paper towel. Moisture is enemy of crispness.</li>
         </ul>
       </Section>
     </IngredientPageLayout>

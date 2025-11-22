@@ -1,13 +1,13 @@
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -16,35 +16,35 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const WaterPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Água: Composição e Impacto Qualitativo"
-      subtitle="A ciência por trás do ingrediente que dá vida à massa."
+      title="Water: Composition and Qualitative Impact"
+      subtitle="The science behind the ingredient that gives life to dough."
     >
-        <Section title="Introdução: Mais que H₂O">
-            <p>A água é o solvente universal da panificação. Ela não apenas hidrata a farinha, mas também dissolve o sal, ativa o fermento e permite que as enzimas comecem seu trabalho. A composição mineral da água, especialmente sua "dureza", tem um impacto sutil, mas significativo, na massa.</p>
+        <Section title="Introduction: More Than H₂O">
+            <p>Water is the universal solvent in baking. It not only hydrates the flour but also dissolves salt, activates yeast, and allows enzymes to begin their work. The mineral composition of water, especially its "hardness," has a subtle but significant impact on the dough.</p>
         </Section>
-        <Section title="Minerais e Dureza da Água">
-            <p>A dureza da água refere-se à concentração de minerais dissolvidos, principalmente cálcio e magnésio. Uma água "branda" tem poucos minerais, enquanto uma água "dura" tem uma concentração mais elevada. Esses minerais interagem diretamente com a estrutura da massa.</p>
+        <Section title="Minerals and Water Hardness">
+            <p>Water hardness refers to the concentration of dissolved minerals, primarily calcium and magnesium. "Soft" water has few minerals, while "hard" water has a higher concentration. These minerals interact directly with the dough structure.</p>
         </Section>
-        <Section title="Efeito da Dureza na Estrutura do Glúten">
-            <p>Os minerais na água dura, como o cálcio, fortalecem as ligações da rede de glúten. Isso resulta em uma massa mais forte e tenaz. Em contraste, a água muito branda pode resultar em uma massa mais pegajosa e relaxada, pois o glúten não recebe esse reforço mineral.</p>
+        <Section title="Hardness Effect on Gluten Structure">
+            <p>Minerals in hard water, such as calcium, strengthen the bonds of the gluten network. This results in a stronger, more tenacious dough. In contrast, very soft water can result in a stickier, more relaxed dough because the gluten doesn't receive this mineral reinforcement.</p>
         </Section>
-        <Section title="Impacto na Fermentação">
-            <p>Os minerais na água também servem como nutrientes para a levedura, promovendo uma fermentação saudável. Água excessivamente branda ou desmineralizada pode retardar a atividade da levedura. Por outro lado, água extremamente dura pode inibir a fermentação.</p>
+        <Section title="Impact on Fermentation">
+            <p>Minerals in water also serve as nutrients for yeast, promoting healthy fermentation. Excessively soft or demineralized water can retard yeast activity. Conversely, extremely hard water can inhibit fermentation.</p>
         </Section>
-        <Section title="Águas Brandas vs. Águas Duras">
-            <ul>
-                <li><strong>Água Branda:</strong> Tende a produzir massas mais moles e pegajosas. A fermentação pode ser um pouco mais lenta.</li>
-                <li><strong>Água Dura:</strong> Produz massas mais firmes e fortes, com maior tolerância à fermentação. Em excesso, pode tornar a massa rígida demais.</li>
+        <Section title="Soft vs. Hard Water">
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li><strong>Soft Water:</strong> Tends to produce softer, stickier doughs. Fermentation may be slightly slower.</li>
+                <li><strong>Hard Water:</strong> Produces firmer, stronger doughs with greater fermentation tolerance. In excess, can make the dough too stiff.</li>
             </ul>
-            <p>Geralmente, uma água de dureza moderada é considerada ideal para a panificação.</p>
+            <p>Generally, moderately hard water is considered ideal for baking.</p>
         </Section>
-        <Section title="Essencial para Hidratação e Processos Enzimáticos">
-            <p>Independentemente da sua dureza, a função primária da água é a hidratação. Ela permite que as proteínas da farinha (gliadina e glutenina) se unam para formar o glúten e ativa as enzimas amilase e protease, que são cruciais para quebrar amidos e proteínas, desenvolvendo o sabor e a estrutura da massa.</p>
+        <Section title="Essential for Hydration and Enzymatic Processes">
+            <p>Regardless of its hardness, water's primary function is hydration. It allows flour proteins (gliadin and glutenin) to join and form gluten and activates amylase and protease enzymes, which are crucial for breaking down starches and proteins, developing flavor and dough structure.</p>
         </Section>
-        <Section title="Impacto no Sabor Final">
-            <p>Embora sutil, a composição mineral da água pode influenciar o sabor final. Águas com perfis minerais distintos podem contribuir com notas de fundo que complementam o sabor do trigo fermentado.</p>
+        <Section title="Impact on Final Flavor">
+            <p>Although subtle, water's mineral composition can influence the final flavor. Waters with distinct mineral profiles can contribute background notes that complement the flavor of fermented wheat.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Bread</li>
               <li>King Arthur Baking - Water in Baking</li>

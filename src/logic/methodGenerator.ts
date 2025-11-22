@@ -52,6 +52,7 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
   const isPoolish = effectiveTechnique === FermentationTechnique.POOLISH;
   const isBiga = effectiveTechnique === FermentationTechnique.BIGA;
   const isDirect = effectiveTechnique === FermentationTechnique.DIRECT;
+  const isChemicalOrNoFerment = effectiveTechnique === FermentationTechnique.CHEMICAL || effectiveTechnique === FermentationTechnique.NO_FERMENT;
 
   const isNeapolitan = config.recipeStyle === RecipeStyle.NEAPOLITAN;
   const isNY = config.recipeStyle === RecipeStyle.NEW_YORK || config.recipeStyle === RecipeStyle.NY_STYLE;
@@ -73,17 +74,31 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
       grandmaWaterAdvice = "It's a bit chilly. Use water that feels slightly warm to the touch, like baby bath water.";
   }
   
-  addStep(
-    'PREP',
-    'Preparation',
-    `Weigh ingredients using a digital scale. ${waterTempAdvice}. Your target Final Dough Temperature (DDT) is 23-25°C.`,
-    `Get your bowls ready. ${grandmaWaterAdvice} Measure everything carefully—baking is magic, but it needs the right amounts!`,
-    {
-      durationLabel: '15 min',
-      technicalExplanation: 'Accurate weighing ensures the Baker\'s Percentage ratios are maintained. DDT control regulates enzymatic activity.',
-      criticalPoint: isHighHydration ? 'For high hydration, use very cold water to prevent overheating during aggressive mixing.' : undefined
-    }
-  );
+  // Special case for Cookies/Pastry which might not use water or fermentation logic
+  if (isChemicalOrNoFerment) {
+       addStep(
+        'PREP',
+        'Preparation',
+        `Weigh ingredients. Ensure butter/fats are at the correct temperature (usually cold or room temp depending on recipe).`,
+        `Get your bowls ready. Make sure your butter is ready.`,
+        {
+            durationLabel: '15 min',
+            technicalExplanation: 'Temperature of fats determines texture (flaky vs tender).',
+        }
+      );
+  } else {
+      addStep(
+        'PREP',
+        'Preparation',
+        `Weigh ingredients using a digital scale. ${waterTempAdvice}. Your target Final Dough Temperature (DDT) is 23-25°C.`,
+        `Get your bowls ready. ${grandmaWaterAdvice} Measure everything carefully—baking is magic, but it needs the right amounts!`,
+        {
+          durationLabel: '15 min',
+          technicalExplanation: 'Accurate weighing ensures the Baker\'s Percentage ratios are maintained. DDT control regulates enzymatic activity.',
+          criticalPoint: isHighHydration ? 'For high hydration, use very cold water to prevent overheating during aggressive mixing.' : undefined
+        }
+      );
+  }
 
   // --- PHASE 2: PRE-FERMENT (Day -1) ---
   
@@ -145,7 +160,7 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
 
   // --- PHASE 3: MIXING (Day 0) ---
 
-  if ((isHighHydration || isSourdough) && !isBiga) {
+  if ((isHighHydration || isSourdough) && !isBiga && !isChemicalOrNoFerment) {
       addStep(
           'AUTO',
           'Autolyse',
@@ -162,7 +177,10 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
   let mixInstruction = "";
   let grandmaMix = "";
   
-  if (isDirect) {
+  if (isChemicalOrNoFerment) {
+      mixInstruction = "Cream butter and sugar (if cookie) or mix wet and dry ingredients separately. Combine gently.";
+      grandmaMix = "Mix your wet stuff and dry stuff. Don't overmix or it will get tough!";
+  } else if (isDirect) {
       mixInstruction = "Dissolve salt in water, add 10% flour, mix. Add yeast, then gradually add remaining flour.";
       grandmaMix = "Dissolve the salt in the water. Add a handful of flour and mix. Add the yeast, then slowly mix in the rest of the flour until it comes together.";
       
@@ -197,7 +215,10 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
 
   // --- PHASE 4: KNEADING / STRENGTH ---
 
-  if (isHighHydration) {
+  if (isChemicalOrNoFerment) {
+       // No kneading for chemical leavening
+       // Skip
+  } else if (isHighHydration) {
       addStep(
           'KNEAD',
           'Strength Building (Folds)',
@@ -248,61 +269,89 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
 
   // --- PHASE 5: BULK FERMENTATION ---
 
-  let bulkDuration = "2-4 hours";
-  let bulkTip = "Relaxation of the gluten network before dividing.";
-  
-  if (isPoolish || isBiga) {
-      bulkDuration = "1-2 hours"; // Pre-ferments accelerate activity
-      bulkTip = "Preferments kickstart fermentation. Watch closely; it may rise faster than direct dough.";
-  }
-  
-  if (isColdEnv) bulkDuration = "4-6 hours";
-  if (isHotEnv) bulkDuration = "1-2 hours";
-
-  if (isNeapolitan && isDirect) {
-      addStep(
+  if (isChemicalOrNoFerment) {
+       addStep(
           'BULK',
-          'Bulk Fermentation',
-          'Let the dough mass rest in a covered container at room temperature.',
-          `Put the dough ball in a bowl, cover it with a damp cloth, and let it rest on the kitchen counter.`,
+          'Rest / Chill',
+          'Rest dough in fridge to hydrate flour and solidify fats.',
+          `Put it in the fridge for a bit. Cold dough makes better cookies/pastry!`,
           {
-              durationLabel: bulkDuration,
-              technicalExplanation: bulkTip,
+              durationLabel: '30 min - 24h',
+              temperatureLabel: '4°C',
+              technicalExplanation: 'Resting allows gluten to relax and flour to fully hydrate, preventing toughness.'
           }
       );
   } else {
-      // Cold Ferment path
-      addStep(
-          'BULK',
-          'Cold Fermentation',
-          'Let sit at room temp for 1 hour to kickstart yeast, then place in the fridge (4°C).',
-          `Leave it out for an hour to get started, then put the covered bowl in the fridge. Go to sleep! The cold makes it taste better.`,
-          {
-              durationLabel: '24-72 hours',
-              temperatureLabel: '4°C',
-              technicalExplanation: 'Cold fermentation slows yeast (CO2) but allows enzymes (amylase/protease) to develop flavor and sugars for browning.',
-              proTip: 'Cold dough is stiffer and easier to ball.'
-          }
-      );
+      let bulkDuration = "2-4 hours";
+      let bulkTip = "Relaxation of the gluten network before dividing.";
+      
+      if (isPoolish || isBiga) {
+          bulkDuration = "1-2 hours"; // Pre-ferments accelerate activity
+          bulkTip = "Preferments kickstart fermentation. Watch closely; it may rise faster than direct dough.";
+      }
+      
+      if (isColdEnv) bulkDuration = "4-6 hours";
+      if (isHotEnv) bulkDuration = "1-2 hours";
+
+      if (isNeapolitan && isDirect) {
+          addStep(
+              'BULK',
+              'Bulk Fermentation',
+              'Let the dough mass rest in a covered container at room temperature.',
+              `Put the dough ball in a bowl, cover it with a damp cloth, and let it rest on the kitchen counter.`,
+              {
+                  durationLabel: bulkDuration,
+                  technicalExplanation: bulkTip,
+              }
+          );
+      } else {
+          // Cold Ferment path
+          addStep(
+              'BULK',
+              'Cold Fermentation',
+              'Let sit at room temp for 1 hour to kickstart yeast, then place in the fridge (4°C).',
+              `Leave it out for an hour to get started, then put the covered bowl in the fridge. Go to sleep! The cold makes it taste better.`,
+              {
+                  durationLabel: '24-72 hours',
+                  temperatureLabel: '4°C',
+                  technicalExplanation: 'Cold fermentation slows yeast (CO2) but allows enzymes (amylase/protease) to develop flavor and sugars for browning.',
+                  proTip: 'Cold dough is stiffer and easier to ball.'
+              }
+          );
+      }
   }
 
   // --- PHASE 6: DIVIDE & SHAPE ---
 
-  addStep(
-      'DIVIDE',
-      'Divide & Ball',
-      `Divide into ${config.numPizzas} portions (~${config.doughBallWeight}g). Shape into smooth, tight balls.`,
-      `Cut the dough into ${config.numPizzas} equal pieces. Roll each one on the table under your cupped hand until it's a nice tight ball.`,
-      {
-          durationLabel: '20 min',
-          criticalPoint: 'Ensure the bottom of the ball is sealed tight to trap gases.',
-          technicalExplanation: 'Creating surface tension ("skin") forces expansion upwards (oven spring) rather than flattening out.'
-      }
-  );
+  if (!isChemicalOrNoFerment) {
+      addStep(
+          'DIVIDE',
+          'Divide & Ball',
+          `Divide into ${config.numPizzas} portions (~${config.doughBallWeight}g). Shape into smooth, tight balls.`,
+          `Cut the dough into ${config.numPizzas} equal pieces. Roll each one on the table under your cupped hand until it's a nice tight ball.`,
+          {
+              durationLabel: '20 min',
+              criticalPoint: 'Ensure the bottom of the ball is sealed tight to trap gases.',
+              technicalExplanation: 'Creating surface tension ("skin") forces expansion upwards (oven spring) rather than flattening out.'
+          }
+      );
+  } else {
+      addStep(
+          'DIVIDE',
+          'Portioning',
+          'Portion dough onto baking sheet.',
+          `Scoop it onto your tray.`,
+          {
+              durationLabel: '10 min'
+          }
+      );
+  }
 
   // --- PHASE 7: FINAL PROOF ---
 
-  if (isPan) {
+  if (isChemicalOrNoFerment) {
+      // Skip final proof for cookies usually, or short rest
+  } else if (isPan) {
       addStep(
           'PROOF',
           'Pan Proofing',
@@ -329,7 +378,18 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
 
   // --- PHASE 8: BAKE ---
 
-  if (isNeapolitan) {
+  if (isChemicalOrNoFerment) {
+       addStep(
+          'BAKE',
+          'Baking',
+          'Bake until golden brown or set.',
+          `Bake it until it looks done!`,
+          {
+              durationLabel: '10-15 min',
+              temperatureLabel: `${config.bakingTempC}°C`
+          }
+      );
+  } else if (isNeapolitan) {
       addStep(
           'BAKE',
           'The Neapolitan Slap',

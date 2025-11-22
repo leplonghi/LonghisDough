@@ -1,14 +1,13 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {title}
         </h3>
-        <div className="prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+        <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
             {children}
         </div>
     </div>
@@ -17,29 +16,29 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 const LowMoistureCheesesPage: React.FC = () => {
   return (
     <TechnicalPageLayout
-      title="Queijos Low-Moisture: Comportamento e Ciência"
-      subtitle="A ciência por trás do derretimento estável e do sabor concentrado."
+      title="Low-Moisture Cheeses: Behavior & Science"
+      subtitle="The science behind stable melting and concentrated flavor."
       showReferencesSection
     >
-        <Section title="Baixa Umidade: Sabor e Estabilidade">
-            <p>Queijos "low-moisture" (baixa umidade), como a mozzarella usada na pizza NY Style, passam por um processo que remove parte do soro. Essa redução de água concentra as proteínas e a gordura, resultando em um sabor mais intenso e em um produto final mais estável.</p>
+        <Section title="Low Moisture: Flavor and Stability">
+            <p>"Low-moisture" cheeses, like the mozzarella used in NY Style pizza, undergo a process that removes part of the whey. This water reduction concentrates proteins and fat, resulting in more intense flavor and a more stable final product.</p>
         </Section>
-        <Section title="Derretimento Estável e Controlado">
-            <p>Com menos água para evaporar, o derretimento desses queijos é mais uniforme e menos propenso a criar "poças" de líquido. A gordura se distribui de forma mais homogênea, criando uma cobertura coesa e consistente, ideal para fatias que precisam de estrutura.</p>
+        <Section title="Stable and Controlled Melt">
+            <p>With less water to evaporate, the melting of these cheeses is more uniform and less prone to creating liquid "pools." Fat distributes more homogeneously, creating cohesive, consistent coverage, ideal for slices needing structure.</p>
         </Section>
-        <Section title="Resistência ao Calor Prolongado">
-            <p>A baixa umidade torna o queijo mais resistente a tempos de cozimento mais longos, típicos de fornos domésticos. Enquanto queijos muito úmidos podem "quebrar" e liberar gordura excessivamente, os de baixa umidade mantêm sua emulsão por mais tempo, dourando de forma gradual.</p>
+        <Section title="Resistance to Prolonged Heat">
+            <p>Low moisture makes the cheese more resistant to longer baking times typical of home ovens. While very wet cheeses can "break" and release excessive fat, low moisture ones maintain their emulsion longer, browning gradually.</p>
         </Section>
-        <Section title="Comportamento Elástico e Sabor Concentrado">
-            <p>A concentração de caseína (a principal proteína do queijo) resulta em um excelente "stretch" (elasticidade). O sabor, por sua vez, é mais salgado e pronunciado, pois todos os componentes de sabor estão menos diluídos em água.</p>
+        <Section title="Elastic Behavior and Concentrated Flavor">
+            <p>The concentration of casein (the main cheese protein) results in excellent "stretch." Flavor, in turn, is saltier and more pronounced, as flavor components are less diluted in water.</p>
         </Section>
-        <Section title="Papel Fundamental em Estilos Específicos">
-            <p>No estilo New York, o queijo low-moisture é essencial para criar uma cobertura que se mantém firme na fatia dobrável, sem escorrer. Sua capacidade de dourar de forma controlada também contribui para a aparência clássica deste estilo de pizza.</p>
+        <Section title="Fundamental Role in Specific Styles">
+            <p>In New York style, low-moisture cheese is essential for creating a topping that stays firm on a foldable slice without running. Its ability to brown in a controlled manner also contributes to the classic appearance of this pizza style.</p>
         </Section>
-        <Section title="Riscos de Escurecimento Excessivo ('Browning')">
-            <p>Por ter menos água, a superfície do queijo atinge mais rapidamente a temperatura necessária para a Reação de Maillard. Em fornos muito quentes ou com tempos de assamento muito longos, isso pode levar a um escurecimento excessivo ou até à queima do queijo, resultando em um sabor amargo.</p>
+        <Section title="Risks of Excessive Browning">
+            <p>Having less water, the cheese surface reaches the temperature needed for the Maillard Reaction faster. In very hot ovens or with very long bake times, this can lead to excessive browning or even burning, resulting in a bitter taste.</p>
         </Section>
-        <Section title="Referências Técnicas">
+        <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
               <li>Modernist Pizza</li>
               <li>Serious Eats – The Pizza Lab (Cheese Guides)</li>
