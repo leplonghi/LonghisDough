@@ -33,18 +33,3 @@ const CuredMeatsPage: React.FC = () => {
         <Section title="Baking Behavior">
             <p>In oven heat, fat in cured meats melts ("rendering"), releasing oil that lightly fries meat and adds flavor to pizza. Proteins contract causing thin slices (like pepperoni) to crisp and cup.</p>
         </Section>
-        <Section title="Drying Risks">
-            <p>Cured meats already have low moisture. In very hot ovens with long cook times, they can dry out excessively becoming hard and overly salty. Very delicate cured meats like prosciutto are almost always added post-oven to preserve texture and flavor.</p>
-        </Section>
-        <Section title="Technical References">
-          <ul className="list-disc pl-5 space-y-2">
-              <li>Modernist Cuisine</li>
-              <li>"On Food and Cooking" by Harold McGee</li>
-              <li>Serious Eats – Cured Meats Guides</li>
-          </ul>
-        </Section>
-    </TechnicalPageLayout>
-  );
-};
-
-export default CuredMeatsPage;

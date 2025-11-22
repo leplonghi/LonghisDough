@@ -1,20 +1,19 @@
 
-
 import { Tutorial, TutorialSection, YeastType } from './types';
 
 export const TUTORIALS: Tutorial[] = [
   {
-    id: 'cold_fermentation',
+    id: 'maturacao_fria',
     section: TutorialSection.FERMENTATION,
-    title: 'Cold Maturation: Why and How',
+    title: 'Cold Maturation: The Science of Patience',
     image: 'https://images.unsplash.com/photo-1627435199109-6_m8J4s_V-0?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Maturing dough in a refrigerated environment (typically 3-5°C for 12 to 72 hours) allows yeast to act slowly while flour enzymes—amylases, proteases—break down protein and starch complexes more effectively.',
-    why: '<ul><li>Allows for greater flavor and aroma development;</li><li>Relaxes the gluten network = better extensibility and less risk of tearing;</li><li>More consistent and repeatable results, reducing guesswork.</li></ul>',
-    howTo: '<ol><li>Use a scale to weigh ingredients precisely.</li><li>Mix and ball normally;</li><li>Place in a sealed container and refrigerate at 3-5°C for 12-72h;</li><li>Remove 1-2h before opening on the bench to acclimatize.</li></ol>',
+    intro: 'Cold maturation (retarding the dough at 3-5°C for 12 to 72 hours) allows yeast activity to slow down while enzymes like amylase and protease break down starches and proteins more effectively.',
+    why: '<ul><li>Enhances flavor and aroma complexity through enzymatic activity.</li><li>Relaxes the gluten network for better extensibility and easier handling.</li><li>Provides consistent, repeatable results by controlling fermentation speed.</li></ul>',
+    howTo: '<ol><li>Weigh ingredients precisely.</li><li>Mix and ball your dough as usual.</li><li>Place in airtight containers and refrigerate at 3-5°C for 12-72 hours.</li><li>Remove from the fridge 1-2 hours before stretching to bring to room temperature.</li></ol>',
     tips: [
-      'Avoid placing warm containers directly in the fridge to prevent condensation;',
-      'In summer (>28°C), prefer mixing in the morning and refrigerating immediately;',
-      'Use strong flour (W ≥ 280) for best results.'
+      'Avoid putting warm dough boxes directly into the fridge to prevent condensation.',
+      'In hot environments (>28°C), mix in the morning and refrigerate immediately to control yeast activity.',
+      'Use strong flour (W ≥ 280) to withstand long fermentation times.'
     ],
     reference: {
       name: "Gozney Blog – Pizza Dough Hydration Explained",
@@ -25,15 +24,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'biga_vs_poolish',
     section: TutorialSection.FERMENTATION,
-    title: 'Preferments: Biga vs Poolish – Technical Choice',
+    title: 'Preferments: Biga vs. Poolish',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Among the most used preferments by technical pizza makers are poolish (~100% hydration) and biga (45-60% hydration) — each brings distinct characteristics to fermentation, flavor, and dough structure.',
-    why: '<ul><li>Poolish favors light, open dough;</li><li>Biga favors strong structure, chewy texture;</li><li>Technical choice changes flavor, texture, and handling behavior.</li></ul>',
-    howTo: '<p>– For Poolish: mix 100% flour/water + tiny yeast, ferment 8-18 h;<br>– For Biga: low hydration (~45-55%), ferment 12-24 h or more, incorporate as ~20-50% of total flour.</p>',
+    intro: 'Professional pizzaiolos use preferments like Poolish (100% hydration) and Biga (45-60% hydration) to add distinct characteristics to the final dough.',
+    why: '<ul><li><strong>Poolish:</strong> Creates a light, airy crumb and a crisp, thin crust.</li><li><strong>Biga:</strong> Builds a strong gluten structure and complex, nutty flavor profile.</li><li>Choosing the right preferment transforms the texture and handling of your dough.</li></ul>',
+    howTo: '<p><strong>Poolish:</strong> Mix equal parts flour and water with a tiny amount of yeast. Ferment 8-18 hours.<br><strong>Biga:</strong> Mix flour, water (~45-50%), and yeast into a shaggy mass. Ferment 12-24+ hours.</p>',
     tips: [
-      'If you knead by hand, poolish can be easier to incorporate;',
-      'Avoid poolish in very hot environments without refrigeration or the usage window will be short;',
-      'Biga requires good flour and gluten strength to support high hydration in the final dough.'
+      'Poolish is easier to incorporate by hand due to its liquid state.',
+      'Avoid using Poolish in very hot environments without refrigeration as it over-ferments quickly.',
+      'Biga requires strong flour to support the gluten structure in high-hydration doughs.'
     ],
     reference: {
       name: "PizzaBlab – Biga vs Poolish for Pizza Dough",
@@ -44,15 +43,15 @@ export const TUTORIALS: Tutorial[] = [
    {
     id: 'pizza_detroit',
     section: TutorialSection.TECHNIQUES,
-    title: 'Detroit Style Pizza: Complete Guide',
+    title: 'Detroit Style Pizza: A Complete Guide',
     image: 'https://images.unsplash.com/photo-1633342537224-3c6c5233fe2a?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Detroit style pizza is known for its high hydration dough, baked in rectangular pans with high edges, cheese that goes all the way to the edges, and an airy texture, differing greatly from Neapolitan.',
-    why: '<ul><li>High hydration generates extremely airy crumb;</li><li>Pan style favors generous portions and cuts;</li><li>Differs from Neapolitan in technique and equipment — enthusiasts gain a new dimension.</li></ul>',
-    howTo: '<ol><li>Mix dough with ~65-70% hydration;</li><li>Ferment preferably with poolish or direct method, 18-24h;</li><li>Divide, place in oiled pan, stretch to corners;</li><li>Bake for 12-15 min in a very hot oven (~250-300°C).</li></ol>',
+    intro: 'Detroit Style is characterized by high-hydration dough baked in rectangular steel pans. The cheese is spread to the edges, creating a caramelized crust (frico), with sauce often added on top.',
+    why: '<ul><li>High hydration yields an exceptionally light and airy crumb.</li><li>The pan method creates a fried, crispy bottom unlike any other style.</li><li>Offers a unique texture profile distinct from Neapolitan or NY styles.</li></ul>',
+    howTo: '<ol><li>Mix dough with 65-75% hydration.</li><li>Ferment (Poolish or Direct) for 18-24 hours.</li><li>Place dough in an oiled pan and gently stretch to the corners.</li><li>Bake at 250-280°C for 12-15 minutes until the cheese edge is dark and crispy.</li></ol>',
     tips: [
-      'Use flour with protein ≥ 12.5% for better structure;',
-      'Pan greased with olive oil or neutral oil ensures crispy edges;',
-      'If oven is limited in temperature, increase baking time by 1-2 min and monitor base to avoid burning.'
+      'Use flour with at least 12.5% protein for sufficient structure.',
+      'Generously oil the pan with neutral oil or olive oil for a fried crust effect.',
+      'If your oven temp is limited, extend bake time by 1-2 minutes but watch the bottom closely.'
     ],
     reference: {
       name: "Ooni Blog – Pizza Dough Hydration Explained",
@@ -65,17 +64,17 @@ export const TUTORIALS: Tutorial[] = [
     }
   },
   {
-    id: 'high_hydration',
+    id: 'hidratacao_alta',
     section: TutorialSection.INGREDIENTS,
-    title: 'High Hydration: 70%+ in Pizza Dough',
+    title: 'High Hydration: Mastering 70%+ Doughs',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'When we enter the universe of pizza doughs with hydration above 70%, we enter a refined technique that requires sensitivity and pronounced knowledge, resulting in airy crumbs and light crusts.',
-    why: '<ul><li>Higher hydration = more internal steam = more open crumb;</li><li>Relaxed gluten network favors expansion and light texture;</li><li>Technical differentiation: delivers "pro-like" results at home.</li></ul>',
-    howTo: '<ol><li>Select desired hydration % (e.g. 72%).</li><li>The system recalculates water, salt, oil, and yeast.</li><li>Adopt folding technique during bulk.</li><li>Prepare well-floured bench and use scraper to handle dough.</li></ol>',
+    intro: 'Doughs with hydration above 70% enter the realm of advanced baking. This technique requires skill but rewards you with incredibly open crumbs and light crusts.',
+    why: '<ul><li>More water creates more steam, opening up the crumb structure.</li><li>A relaxed gluten network expands easily, resulting in a lighter texture.</li><li>Achieves professional-level artisan results at home.</li></ul>',
+    howTo: '<ol><li>Set your desired hydration (e.g., 72%) in the calculator.</li><li>The app adjusts flour, water, and yeast ratios.</li><li>Use "coil folds" or "slap and fold" techniques to build strength without overworking.</li><li>Handle gently with wet hands and a bench scraper.</li></ol>',
     tips: [
-      'Use high absorption flour or strong flour to sustain loose dough;',
-      'In hot environment (> 28°C) reduce yeast or prolong fermentation;',
-      'For limited oven (< 300°C) prefer hydration between 65-67% for easier control.'
+      'Use high-protein or "strong" flour to hold the water structure.',
+      'In hot weather (>28°C), use cold water or reduce yeast to control rise.',
+      'For standard home ovens (<300°C), 65-67% hydration is often easier to manage.'
     ],
     reference: {
       name: 'Ooni – Pizza Dough Hydration Explained',
@@ -87,17 +86,17 @@ export const TUTORIALS: Tutorial[] = [
     },
   },
   {
-    id: 'ddt_control',
+    id: 'ddt_controle',
     section: TutorialSection.ENVIRONMENT,
-    title: 'Dough Temperature (DDT) – Control & Formula',
+    title: 'Dough Temperature (DDT): Control for Consistency',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Desired Dough Temperature (DDT) is the target temperature after mixing. Controlling it ensures consistency in fermentation, even with weather or equipment variations.',
-    why: '<ul><li>Without temperature control, fermentation can go off rhythm — too fast or too slow.</li><li>Controlling DDT brings predictability and repeatability, key for technical level results.</li><li>Teaching this concept raises the app\'s perceived value beyond "automatic recipe".</li></ul>',
-    howTo: '<ol><li>Measure flour and ambient temperature with thermometer.</li><li>In app, select "Temperature Adjustment" and enter values.</li><li>System calculates ideal water temperature.</li><li>Proceed to mix and record result in diary.</li></ol>',
+    intro: 'Desired Dough Temperature (DDT) is the target temperature of your dough right after mixing. Controlling this ensures fermentation happens at a predictable rate.',
+    why: '<ul><li>Inconsistent temps lead to unpredictable fermentation (too fast or too slow).</li><li>DDT control is the secret to professional consistency.</li><li>Empowers you to adapt to seasonal changes in your kitchen.</li></ul>',
+    howTo: '<ol><li>Measure air and flour temperature.</li><li>Use the app\'s environment settings to calculate the ideal water temperature.</li><li>Mix with water at the calculated temperature.</li><li>Check final dough temp to verify accuracy.</li></ol>',
     tips: [
-      'Fast reading digital thermometer speeds up process.',
-      'In environments >28°C, reduce yeast or increase bulk time.',
-      'In cold environments, initially heat dough or water to reach DDT target.'
+      'A digital thermometer is essential for quick checks.',
+      'In hot kitchens (>28°C), use ice water or reduce bulk fermentation time.',
+      'In cold kitchens, use warmer water to help the yeast wake up.'
     ],
     reference: {
       name: 'The Perfect Loaf – The Importance of Dough Temperature in Baking',
@@ -109,17 +108,17 @@ export const TUTORIALS: Tutorial[] = [
     },
   },
   {
-    id: 'baking_surfaces',
+    id: 'superficies_assamento',
     section: TutorialSection.TECHNIQUES,
-    title: 'Baking Surfaces: Stone vs Steel – Technical Choice',
+    title: 'Baking Surfaces: Stone vs. Steel',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'The choice of surface (stone, steel) has direct impact on crust and texture. Steel heats up faster, ideal for home ovens, while stone is better for extreme heat, preventing burnt bases.',
-    why: '<ul><li>Steel = rapid heating, ideal for home ovens.</li><li>Stone = better for extreme heat and authentic styles.</li><li>Wrong choice leads to burnt base or raw center.</li></ul>',
-    howTo: '<ol><li>In equipment profile in app, select your base.</li><li>Enter oven type and max temperature.</li><li>In recipe, enable "Adapt to my base".</li><li>Calculator proposes adjustments automatically.</li></ol>',
+    intro: 'Your baking surface dictates heat transfer. Steel conducts heat rapidly (great for home ovens), while stone radiates gentler heat (better for high-temp ovens).',
+    why: '<ul><li><strong>Steel:</strong> Fast heat transfer, ideal for crisping bases in standard ovens (250-300°C).</li><li><strong>Stone/Biscotto:</strong> Prevents burning in high-heat ovens (>400°C).</li><li>Choosing the right surface matches your oven to your pizza style.</li></ul>',
+    howTo: '<ol><li>Select your surface type in the app\'s oven profile.</li><li>Input your oven\'s max temperature.</li><li>Enable "Smart Adjustments" for tailored recipe advice.</li><li>Follow the calculator\'s recommendations.</li></ol>',
     tips: [
-      'Preheat base for 30-40 min.',
-      'In home oven <300°C: choose steel to compensate for lower temperature.',
-      'In oven >400°C: use stone to avoid burning base.'
+      'Always preheat your surface for at least 45-60 minutes.',
+      'In home ovens, steel is usually superior for pizza.',
+      'In professional ovens, use biscotto (clay) to avoid scorched bottoms.'
     ],
     reference: {
       name: 'PizzaBlab – Steel vs. Stone for Pizza Surfaces',
@@ -128,17 +127,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'pro',
   },
   {
-    id: 'levain_management',
+    id: 'gestao_levain',
     section: TutorialSection.FERMENTATION,
-    title: 'Sourdough Starter Management',
+    title: 'Sourdough Starter (Levain) Management',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Managing a sourdough starter (levain) is a technical differentiator. The "My Levain" module allows registering your culture, and the calculator uses this profile to adjust recipe to your own starter.',
-    why: '<ul><li>Levain contributes complex flavor and slower, controlled fermentation.</li><li>Recording culture data increases repeatability and reduces variability.</li><li>Integrating this data into calculator reinforces "accessible professional tool" proposition.</li></ul>',
-    howTo: '<ol><li>Access My Levain → New profile: enter name, hydration, etc.</li><li>In calculator, select "Use my Levain".</li><li>Enter desired levain % (e.g. 20%).</li><li>Tool updates hydration and bulk time automatically.</li></ol>',
+    intro: 'Maintaining a sourdough starter adds complex flavor and natural leavening to your dough. The "Levain Pet" module helps you track its health and feeding schedule.',
+    why: '<ul><li>Natural fermentation creates superior flavor depth.</li><li>Tracking feedings improves consistency and starter strength.</li><li>Adapting recipes to your starter\'s hydration is crucial for accuracy.</li></ul>',
+    howTo: '<ol><li>Register your starter in "Levain Pet".</li><li>In the calculator, select "My Levain" as the yeast type.</li><li>The app adjusts flour and water in the final dough based on your starter\'s hydration.</li></ol>',
     tips: [
-      'In hot environments (> 28°C): decrease levain % to avoid accelerated fermentation.',
-      'Use clear glass to observe bubbles and growth before using.',
-      'Record culture notes after each use to generate history and learning.'
+      'Feed your starter at peak activity for best leavening power.',
+      'In hot weather, feed with colder water or use a lower inoculation ratio.',
+      'Keep a feeding log to learn your starter\'s rhythm.'
     ],
     reference: {
       name: 'King Arthur Baking – Hydration in Bread Dough, Explained',
@@ -151,17 +150,17 @@ export const TUTORIALS: Tutorial[] = [
     }
   },
   {
-    id: 'toppings_ratios',
+    id: 'recheios_proporcoes',
     section: TutorialSection.TECHNIQUES,
-    title: 'Toppings & Ratios: Calculation Beyond Dough',
+    title: 'Toppings & Ratios: The Balance',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'The "dough + topping" module expands app utility. It calculates ideal amount of cheese, sauce and toppings for pizza style and size, transforming app into complete tool.',
-    why: '<ul><li>Well-dimensioned filling ensures balance of flavor and texture.</li><li>Adding this functionality turns app into complete tool.</li><li>Increases retention: user returns to adjust coverage and test variations.</li></ul>',
-    howTo: '<ol><li>In Calculator select Pizza style.</li><li>Activate "Topping" tab and enter number of pizzas.</li><li>System shows suggested amounts.</li><li>Adjust % if you want and save as preset.</li></ol>',
+    intro: 'A great pizza is a balance of dough, sauce, and cheese. Overloading destroys the bake. This guide helps you calculate the perfect ratios.',
+    why: '<ul><li>Prevents soggy centers and "gum lines".</li><li>Ensures even cooking of dough and toppings.</li><li>Saves money by reducing waste.</li></ul>',
+    howTo: '<ol><li>Select your pizza style and size in the calculator.</li><li>Check the "Toppings" tab for recommended weights.</li><li>Use a scale to portion cheese and sauce.</li><li>Adjust based on personal preference and save as a preset.</li></ol>',
     tips: [
-      'In limited home oven (<300°C): prefer light topping.',
-      'Use sauce separately if you want crispier dough.',
-      'In larger batch, use "Topping Report" to calculate cost and inputs.'
+      'For home ovens, go lighter on toppings to ensure the dough cooks through.',
+      'Drain wet ingredients (like fresh mozzarella) thoroughly.',
+      'Apply sauce sparingly; it spreads as it cooks.'
     ],
     reference: {
       name: 'Serious Eats – The Pizza Lab: Sauce-to-Cheese Ratios & Build Tips',
@@ -170,17 +169,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'pro',
   },
   {
-    id: 'hydration_gluten',
+    id: 'hidratacao_gluten',
     section: TutorialSection.INGREDIENTS,
-    title: 'Hydration and Gluten Network: Science Behind the Dough',
+    title: 'Hydration & Gluten: The Science',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Hydration is amount of liquid relative to flour. It activates proteins forming gluten. "Custom Hydration" mode allows total control over this crucial parameter.',
-    why: '<ul><li>Hydration defines texture and crumb openness.</li><li>Strong gluten network depends on sufficient water.</li><li>Understanding hydration gives control and predictability to dough.</li></ul>',
-    howTo: '<ol><li>In form, enter desired hydration %.</li><li>App recalculates all other ingredients.</li><li>Observe consistency: looser dough indicates high hydration.</li><li>Monitor "windowpane test" to evaluate gluten.</li></ol>',
+    intro: 'Hydration is the ratio of water to flour. It dictates the openness of the crumb and the crispiness of the crust. Understanding this is key to mastering dough.',
+    why: '<ul><li>Determines crumb structure (open vs. tight).</li><li>Influences dough handling and stickiness.</li><li>Affects oven spring and final texture.</li></ul>',
+    howTo: '<ol><li>Input desired hydration % in the calculator.</li><li>The app balances the recipe.</li><li>Higher hydration requires more gentle handling (folds).</li><li>Lower hydration requires more kneading.</li></ol>',
     tips: [
-      'If using whole wheat flour, increase hydration by +2% to +4%.',
-      'Dough with > 80% hydration needs folds instead of kneading.',
-      'Flour bench well to handle very hydrated doughs.'
+      'Whole wheat flours absorb more water; increase hydration by 2-4%.',
+      'For hydration >75%, use the "coil fold" method instead of kneading.',
+      'Use rice flour for dusting to prevent sticking.'
     ],
     reference: {
       name: 'King Arthur Baking – Hydration in Bread Dough, Explained',
@@ -189,17 +188,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'free',
   },
   {
-    id: 'dough_troubleshooting',
+    id: 'troubleshooting_massa',
     section: TutorialSection.TROUBLESHOOTING,
-    title: 'Dough Troubleshooting: Snap-Back, Gum Line & Common Faults',
+    title: 'Troubleshooting: Common Dough Issues',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Problems like snap-back (dough shrinking) or gum line (raw base) are common. "Rapid Diagnosis" module offers checklist of symptoms and suggests automatic corrections.',
-    why: '<ul><li>Dough problems cause frustration and app abandonment.</li><li>Accurate diagnosis strengthens retention and confidence.</li><li>Technical adjustments reduce trial and error.</li></ul>',
-    howTo: '<ol><li>Access Diagnosis and select symptom.</li><li>App displays probable causes and suggests adjustment.</li><li>Apply adjustment and save learning.</li><li>Use history to avoid repeating error.</li></ol>',
+    intro: 'From snap-back (shrinking dough) to gum lines (raw centers), learn to diagnose and fix common pizza problems.',
+    why: '<ul><li>Saves failed batches and reduces waste.</li><li>Teaches you to "read" the dough.</li><li>Improves consistency over time.</li></ul>',
+    howTo: '<ol><li>Identify the symptom (e.g., "Dough won\'t stretch").</li><li>Check potential causes (e.g., "Cold dough", "High protein flour").</li><li>Apply the suggested fix (e.g., "Rest longer", "Increase hydration").</li></ol>',
     tips: [
-      'Always weigh ingredients — small errors affect result.',
-      'On hot days (>30°C), reduce yeast by –10%.',
-      'Calibrate oven before big batch.'
+      'Always weigh ingredients; small errors compound.',
+      'If dough snaps back, let it rest 10-20 minutes.',
+      'If crust is pale, check oven temp or add diastatic malt/sugar.'
     ],
     reference: {
       name: 'Pizza Today – Troubleshooting Your Pizza Dough',
@@ -208,17 +207,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'pro',
   },
   {
-    id: 'flour_library',
+    id: 'banco_farinhas',
     section: TutorialSection.INGREDIENTS,
-    title: 'Flour Database & Smart Substitutions',
+    title: 'Flour Library & Substitutions',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Flour is the core of the dough. "Flour Database" allows registering brand, protein %, and consulting data from other users. If your flour runs out, app suggests alternative and adjusts recipe.',
-    why: '<ul><li>Flour defines structure, texture, and stability.</li><li>Wrong substitution is frequent cause of failure.</li><li>Having database strengthens community.</li></ul>',
-    howTo: '<ol><li>Access Flour Database > Add new.</li><li>Enter brand, %, etc.</li><li>When creating recipe, select your registered flour.</li><li>If unavailable, use substitution suggestion.</li></ol>',
+    intro: 'Different flours absorb water differently. The Flour Library helps you track protein content and W-strength, ensuring accurate hydration adjustments.',
+    why: '<ul><li>Protein content dictates water absorption.</li><li>Using the right flour for the style is crucial.</li><li>Helps you adapt recipes when your usual flour is unavailable.</li></ul>',
+    howTo: '<ol><li>Add your flours to the library with protein/W specs.</li><li>Select your specific flour in the calculator.</li><li>The app suggests hydration adjustments based on flour strength.</li></ol>',
     tips: [
-      'When testing new flour, make small batch and record result.',
-      'Whole wheat flours generally need +2-4% hydration.',
-      'Use precision scale for consistent data.'
+      'High protein (>13%) needs more water.',
+      'Low protein (<10%) creates a softer, cake-like crumb.',
+      '00 Flour is ideal for high-heat ovens; Bread Flour is better for home ovens.'
     ],
     reference: {
       name: 'BakerPedia – Gluten Hydration: Processes',
@@ -227,17 +226,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'pro',
   },
   {
-    id: 'precision_scales',
+    id: 'escalas_precisao',
     section: TutorialSection.FUNDAMENTALS,
-    title: 'Scales, Precision & Baker\'s Percentage',
+    title: 'Scales & Baker\'s Percentage',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Imprecision in measurements is barrier to consistent results. Baker\'s percentage (flour = 100%) is professional method to scale and predict results, and is available in app.',
-    why: '<ul><li>Baker\'s percentage brings clarity and scalability.</li><li>Precision with digital scale reduces errors.</li><li>Allows enthusiast to work like professional.</li></ul>',
-    howTo: '<ol><li>In calculator, activate "Baker\'s Percentage Mode".</li><li>Enter total flour (e.g. 1000 g).</li><li>Use sliders for hydration, salt, oil, etc.</li><li>Calculator displays real weights and you can save preset.</li></ol>',
+    intro: 'Baking is chemistry. Precision scales and Baker\'s Percentage (ratios relative to flour) are the professional standard for consistent results.',
+    why: '<ul><li>Volume measurements (cups) are inaccurate and inconsistent.</li><li>Baker\'s % allows easy scaling of recipes.</li><li>Ensures repeatability of successful batches.</li></ul>',
+    howTo: '<ol><li>Use a digital scale for all ingredients.</li><li>Understand that Flour is always 100%.</li><li>Water, salt, and yeast are calculated as a % of the flour weight.</li></ol>',
     tips: [
-      'Use digital scale with 0.1 g precision for yeast and salt.',
-      'Keep environment controlled to avoid external variables.',
-      'Save your presets with clear name and date.'
+      'Use a micro-scale (0.01g) for yeast and salt.',
+      'Weigh water too; 1ml = 1g.',
+      'Always zero (tare) your scale before adding ingredients.'
     ],
     reference: {
       name: 'BakerPedia – The Baker’s Percentage and How to Use It',
@@ -246,17 +245,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'free'
   },
   {
-    id: 'modes_basic_advanced',
+    id: 'modo_pratico_avancado',
     section: TutorialSection.FUNDAMENTALS,
-    title: 'Practical Mode vs. Advanced Mode',
+    title: 'Practical vs. Advanced Mode',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'App offers two modes: Practical, with automatic presets for quick use, and Advanced, allowing free alteration of all percentages for experimentation, accommodating both casual and technical users.',
-    why: '<ul><li>Casual enthusiast wants simplicity.</li><li>Advanced user seeks complete control.</li><li>Two modes prevent app from being intimidating or too basic.</li></ul>',
-    howTo: '<ol><li>Toggle between "Practical Mode" / "Advanced Mode".</li><li>In Practical: define only style, quantity, and weight.</li><li>In Advanced: all sliders (hydration, salt, etc.) are released.</li><li>Save presets in both modes.</li></ol>',
+    intro: 'DoughLab offers two modes: Practical for quick, reliable presets, and Advanced for full control over every variable.',
+    why: '<ul><li><strong>Practical:</strong> Quick start, guaranteed good results.</li><li><strong>Advanced:</strong> For experimentation and specific adjustments.</li><li>Choose the level of control that fits your current need.</li></ul>',
+    howTo: '<ol><li>Toggle the mode switch in the calculator.</li><li>Practical locks ratios to style standards.</li><li>Advanced unlocks all sliders for custom hydration, salt, etc.</li></ol>',
     tips: [
-      'Use tooltips to understand difference between modes.',
-      'App saves your mode preference for next time.',
-      'In Advanced Mode, there is button to reset to original preset.'
+      'Start with Practical mode to learn the baseline.',
+      'Switch to Advanced to tweak hydration for your specific flour.',
+      'Save your custom Advanced configurations as presets.'
     ],
     reference: {
       name: 'MyPizzaCorner – Common Dough Problems and How to Fix Them',
@@ -265,17 +264,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'free'
   },
   {
-    id: 'reverse_mode',
+    id: 'modo_reverso',
     section: TutorialSection.TECHNIQUES,
-    title: 'Reverse Mode: Calculate with what you have',
+    title: 'Reverse Mode: Bake What You Have',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: '"Reverse Mode" allows entering a fixed variable (e.g. 350 g levain, 1 kg flour) and tool recalculates other ingredients, adapting to real situations and reducing waste.',
-    why: '<ul><li>Meets real kitchen scenario: what do I have on hand?</li><li>Avoids waste and transforms problem into opportunity.</li><li>Differentiates app by functional and adaptive thinking.</li></ul>',
-    howTo: '<ol><li>In calculator, select "Reverse Mode".</li><li>Enter parameter you know (e.g. "I have 350 g levain").</li><li>System calculates other ingredients.</li><li>Save this adapted recipe as new batch.</li></ol>',
+    intro: 'Have a fixed amount of starter or flour? Reverse Mode calculates the rest of the recipe to match what you have on hand.',
+    why: '<ul><li>Reduces waste of expensive ingredients.</li><li>Adapts recipes to real-world constraints.</li><li>Perfect for using up discard starter.</li></ul>',
+    howTo: '<ol><li>Select "Reverse Mode" (coming soon feature).</li><li>Input the fixed amount (e.g., 200g starter).</li><li>The app calculates the flour and water needed to maintain ratios.</li></ol>',
     tips: [
-      'Use this mode for leftover levain or flour.',
-      'Mark as "special batch" to help history.',
-      'Combine with diary to see how many times this mode was used.'
+      'Great for using up the last of a flour bag.',
+      'Use it to scale a recipe to fit a specific mixing bowl.',
+      'Prevents "dough math" headaches.'
     ],
     reference: {
       name: 'Reddit r/Pizza – How to Calculate Biga and Poolish % in Pizza Dough',
@@ -284,17 +283,17 @@ export const TUTORIALS: Tutorial[] = [
     accessLevel: 'pro'
   },
   {
-    id: 'references_credibility',
+    id: 'referencias_credibilidade',
     section: TutorialSection.FUNDAMENTALS,
-    title: 'References & Credibility: Technical Foundations',
+    title: 'References & Credibility',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'For DoughLabPro to be perceived as serious tool, every preset and tutorial is supported by real verifiable references, transmitting professionalism and trust.',
-    why: '<ul><li>Users want proof technique works.</li><li>Transparency in sources increases credibility.</li><li>Helps create technical engaged community.</li></ul>',
-    howTo: '<ol><li>In each preset/technique, we include "Technical Reference" section.</li><li>In "Learn" page, you can filter by "Validation".</li><li>Allows viewing original source.</li><li>We add "Technical Validation" badge for popular recipes.</li></ol>',
+    intro: 'Our formulas aren\'t random. We rely on established standards (AVPN) and scientific literature (Modernist Cuisine) to ensure reliability.',
+    why: '<ul><li>Provides a solid foundation for learning.</li><li>Ensures recipes work as described.</li><li>Connects you to the broader baking community knowledge.</li></ul>',
+    howTo: '<ol><li>Check the "Reference" link at the bottom of tutorials.</li><li>Explore the "References" page for book recommendations.</li><li>Trust the default presets as tested starting points.</li></ol>',
     tips: [
-      'We use recognized sources: associations, magazines, and technical blogs.',
-      'We update references periodically.',
-      'Promote co-creation with experts signing "certified" recipes.'
+      'Read the source material for deeper understanding.',
+      'Compare different sources to see where consensus lies.',
+      'Experiment to find what works best in your specific kitchen.'
     ],
     reference: {
       name: 'Scott’s Pizza Tours – The Dreaded “Gumline”',
@@ -305,15 +304,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'no_knead_method',
     section: TutorialSection.TECHNIQUES,
-    title: 'No-Knead Method for Easy Baking',
+    title: 'The No-Knead Method',
     image: 'https://images.unsplash.com/photo-1589301773952-79055811c47c?q=80&w=2070&auto=format&fit=crop',
-    intro: '"No-Knead" method gained popularity for facilitating high-level technical doughs with minimal effort. Uses high hydration (~75%) and long fermentations (12h or more) to align gluten automatically.',
-    why: '<ul><li>Allows enthusiasts with less equipment to make sophisticated doughs.</li><li>More open crumb texture, crisper crust.</li><li>Elevates technique without complicating interface.</li></ul>',
-    howTo: '<ol><li>In Advanced calculator mode, activate "No-Knead".</li><li>Enter high hydration (e.g. 70-75%).</li><li>Configure long fermentation (e.g. 12-24h).</li><li>Follow rest instructions and record result in diary.</li></ol>',
+    intro: 'Time replaces energy. The No-Knead method uses long fermentation and high hydration to align gluten passively, creating effortless artisan dough.',
+    why: '<ul><li>Requires minimal physical effort or equipment.</li><li>Produces fantastic open crumb structure.</li><li>Accessible to beginner bakers.</li></ul>',
+    howTo: '<ol><li>Mix ingredients just until combined (shaggy mass).</li><li>Cover and let sit for 12-18 hours at room temp.</li><li>Gently fold and shape.</li><li>Proof and bake.</li></ol>',
     tips: [
-      'In hot environment (>28°C) reduce hydration ~2% to avoid super fluid dough.',
-      'Use closed container to ferment avoiding dry crust.',
-      'Make small batch first time to validate process.'
+      'Use a high hydration ratio (>70%).',
+      'Time is the key ingredient; don\'t rush it.',
+      'Use a Dutch oven for baking bread to trap steam.'
     ],
     reference: {
       name: "No-knead Bread – Wikipedia",
@@ -324,15 +323,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'scoring_techniques',
     section: TutorialSection.TECHNIQUES,
-    title: 'Scoring Patterns and Dough Expansion',
+    title: 'Scoring: Controlling Expansion',
     image: 'https://images.unsplash.com/photo-1585399103509-24d119a9f11f?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Cutting dough before baking (*scoring*) isn\'t just aesthetic: regulates where gas escapes, how dough expands, and affects texture and crust.',
-    why: '<ul><li>Controlling dough expansion prevents unwanted ruptures.</li><li>Allows differentiated aesthetics.</li><li>Helps create consistency in final result.</li></ul>',
-    howTo: '<ol><li>In "Techniques" module select "Scoring".</li><li>Choose pattern per bread style.</li><li>Before baking, execute pattern with blade.</li><li>In diary, mark used pattern and evaluate result.</li></ol>',
+    intro: 'Scoring (slashing) dough before baking controls where it expands, preventing blowouts and creating beautiful "ears".',
+    why: '<ul><li>Directs oven spring energy.</li><li>Prevents uncontrolled tearing.</li><li>Creates aesthetic appeal.</li></ul>',
+    howTo: '<ol><li>Use a sharp blade (lame) or razor.</li><li>Cut firmly and swiftly at a 45-degree angle.</li><li>Score just before baking.</li></ol>',
     tips: [
-      'Use sharp blade or *lame* for clean cuts.',
-      'In high hydration doughs (>70%), prefer deeper cuts (~0.5 cm).',
-      'Photograph from top after cut to compare in next batches.'
+      'Cold dough scores easier than warm dough.',
+      'Dip the blade in water or oil to prevent sticking.',
+      'Commit to the cut; hesitation causes dragging.'
     ],
     reference: {
       name: "King Arthur Baking – Bread Scoring Techniques",
@@ -343,15 +342,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'baking_methods',
     section: TutorialSection.FUNDAMENTALS,
-    title: 'Baking Methods: Straight, Sponge & Dough, Sourdough',
+    title: 'Baking Methods: Direct vs. Indirect',
     image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Several preparation methods exist: *straight dough* (all together), *sponge & dough* (with preferment), or *sourdough* (mother dough). Each impacts time, flavor, and final texture.',
-    why: '<ul><li>Method defines flavor, texture, and production rhythm.</li><li>Helps understand why some doughs "ask" for more time or technique.</li><li>Adds depth to app and makes user feel in control.</li></ul>',
-    howTo: '<ol><li>In calculator, select "Dough Method".</li><li>Choose between Straight, Sponge or Sourdough.</li><li>System adjusts visible fields (e.g. % preferment for Sponge).</li><li>Execute process and record in diary.</li></ol>',
+    intro: 'Understanding the difference between straight dough (Direct) and using preferments (Indirect) allows you to manipulate flavor and schedule.',
+    why: '<ul><li><strong>Direct:</strong> Simple, one-step, good for same-day dough.</li><li><strong>Indirect (Poolish/Biga):</strong> Two-step, develops complex flavor and structure.</li></ul>',
+    howTo: '<ol><li>Choose your method in the calculator.</li><li>Direct calculates all ingredients for one mix.</li><li>Indirect calculates the preferment stage separately.</li></ol>',
     tips: [
-      'If less than 4h free, use Straight method.',
-      'For complex flavor, reserve 12-24h for Sponge or Sourdough.',
-      'Start with less yeast if Sourdough and record result.'
+      'Start with Direct method to master the basics.',
+      'Move to Indirect when you want to elevate flavor.',
+      'Indirect methods require planning a day ahead.'
     ],
     reference: {
       name: "Bread-Making Methods: From Basic to Advanced",
@@ -362,15 +361,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'pizza_baking_science',
     section: TutorialSection.ENVIRONMENT,
-    title: 'Pizza Baking Science – Physics & Thermodynamics',
+    title: 'Pizza Baking Science',
     image: 'https://images.unsplash.com/photo-1590947132387-155cc02f3212?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Studies analyze how masonry vs. home ovens impact baking time and texture. App allows entering your oven type and base material to adapt recipe to your reality.',
-    why: '<ul><li>Understanding equipment leads to real consistency.</li><li>Users feel empowered with data, not just "generic recipe".</li><li>High perceived value means greater retention.</li></ul>',
-    howTo: '<ol><li>In oven configuration, enter type, base and temperature.</li><li>Activate "Baking Simulation" to see time/adjustment suggestions.</li><li>In diary, compare result with suggestion and adjust for next.</li></ol>',
+    intro: 'Heat transfer (conduction, convection, radiation) determines how your pizza bakes. Understanding your oven physics is key to a perfect crust.',
+    why: '<ul><li>Conduction cooks the bottom (stone/steel).</li><li>Radiation cooks the top (broiler/dome).</li><li>Balancing these prevents burnt bottoms or raw tops.</li></ul>',
+    howTo: '<ol><li>Preheat your stone/steel thoroughly for conduction.</li><li>Use the broiler for top radiation if needed.</li><li>Adjust rack position to balance heat sources.</li></ol>',
     tips: [
-      'Home ovens < 300°C: increase preheat to >30 min.',
-      'Steel base heats faster than stone — watch base burn.',
-      'Photograph crust and record actual bake time.'
+      'Steel transfers heat faster than stone (good for home ovens).',
+      'If bottom burns, move higher up. If top burns, move lower.',
+      'Rotation ensures even baking.'
     ],
     reference: {
       name: "The Physics of Baking Good Pizza – arXiv",
@@ -381,15 +380,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'cold_retard_flavor',
     section: TutorialSection.FERMENTATION,
-    title: 'Cold Retard Fermentation and Flavor Profile',
+    title: 'Flavor Development via Cold Retard',
     image: 'https://images.unsplash.com/photo-1627435199109-6_m8J4s_V-0?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Cold retard (low temperature fermentation) used by professionals to develop flavor, structure, and aroma. App guides you setting up recipe for this advanced technique.',
-    why: '<ul><li>Slow fermentation = greater flavor complexity.</li><li>User differentiates from basic fast dough practices.</li><li>Offers "professional level production" standard.</li></ul>',
-    howTo: '<ol><li>In calculator, activate "Cold Retard".</li><li>Enter refrigeration time and temperature.</li><li>Engine adjusts yeast % and hydration.</li><li>After baking, save in diary and compare flavor/texture.</li></ol>',
+    intro: 'Slowing yeast down in the fridge (cold retard) allows bacteria and enzymes to produce organic acids and sugars, creating superior flavor.',
+    why: '<ul><li>Produces complex notes (nutty, slight sourness).</li><li>Improves crust color (Maillard reaction).</li><li>Makes dough easier to handle.</li></ul>',
+    howTo: '<ol><li>Mix and bulk ferment for 1-2 hours.</li><li>Ball the dough and place in fridge for 24-72 hours.</li><li>Remove 2 hours before baking.</li></ol>',
     tips: [
-      'Use sealed container to avoid dough drying.',
-      'If fridge is >8°C, manually adjust condition.',
-      'Make test batch before adopting full volume.'
+      '24-48 hours is the sweet spot for most flours.',
+      'Ensure containers are airtight to prevent drying.',
+      'If dough smells strongly of acetone/alcohol, it fermented too long.'
     ],
     reference: {
       name: "The Science Behind Pizza Dough – PizzaVolta",
@@ -400,15 +399,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'yeast_types_dosage',
     section: TutorialSection.INGREDIENTS,
-    title: 'Yeasts: Types, Dosage and Effects',
+    title: 'Yeast Types & Dosage',
     image: 'https://images.unsplash.com/photo-1617470715842-9ebd65b8a03f?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Understanding yeast type (IDY, ADY, Levain) and dosage is vital for consistency. Guide helps choose correct type and dosage for recipe.',
-    why: '<ul><li>Incorrect dosage compromises texture.</li><li>User gains fine control over recipe.</li><li>Allows app to support batch scalability.</li></ul>',
-    howTo: '<ol><li>In calculator, open "Yeast Type".</li><li>Choose between IDY, ADY, or Levain.</li><li>Enter suggested % or use default.</li><li>After batch, record actual fermentation time and adjust % for next.</li></ol>',
+    intro: 'Instant, Active Dry, Fresh, Sourdough. Each behaves differently. Knowing how to convert and dose them is vital.',
+    why: '<ul><li>Wrong dosage leads to under/over proofing.</li><li>Each type has a different potency.</li><li>Sourdough adds flavor but is slower/less predictable.</li></ul>',
+    howTo: '<ol><li>Select your yeast type in the calculator.</li><li>The app suggests a percentage based on fermentation time.</li><li>Active Dry needs activating in water; Instant does not.</li></ol>',
     tips: [
-      'In hot environment (>30°C) reduce yeast ~10-20%.',
-      'In cold environment (<18°C) warm water instead of increasing yeast.',
-      'Keep diary record to evolve personal factor.'
+      'Instant Yeast (IDY) is potent and easy to use.',
+      'Fresh yeast has a short shelf life.',
+      'Store yeast in the fridge or freezer.'
     ],
     reference: {
       name: "Influence of Yeast Concentrations and Fermentation Times on Bread Dough",
@@ -419,15 +418,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'stretch_and_fold_technique',
     section: TutorialSection.TECHNIQUES,
-    title: 'Stretch & Fold Technique: Improving Structure with Low Energy',
+    title: 'Stretch & Fold Technique',
     image: 'https://images.unsplash.com/photo-1614532843595-3b74b1df092b?q=80&w=2070&auto=format&fit=crop',
-    intro: '*Stretch & fold* technique is effective for high hydration doughs, reinforcing gluten and creating large stable bubbles with less effort than traditional kneading.',
-    why: '<ul><li>Avoids excessive effort for those without mixer.</li><li>Improves texture of very hydrated doughs.</li><li>Offers accessible professional technique.</li></ul>',
-    howTo: '<ol><li>In calculator form activate "Use Stretch & Fold".</li><li>Enter number of cycles (e.g. 3-4 every 30 min).</li><li>Engine calculates time and recommended hydration.</li><li>Record in diary and compare with traditional kneading.</li></ol>',
+    intro: 'A gentle method to develop gluten structure in wet doughs without intensive kneading.',
+    why: '<ul><li>Builds strength without oxidation.</li><li>Organizes gluten strands.</li><li>Easy to do by hand.</li></ul>',
+    howTo: '<ol><li>During bulk ferment, grab one side of dough.</li><li>Stretch it up and fold it over the center.</li><li>Rotate bowl and repeat 4 times.</li><li>Perform 3-4 sets at 30-min intervals.</li></ol>',
     tips: [
-      'In very fluid doughs (>68% hydration), prefer folding to kneading.',
-      'If bench is cold, slightly warm dough before starting.',
-      'Photograph cut crumb to see openness and evolution.'
+      'Wet your hands to prevent sticking.',
+      'Stop if the dough fights back (let it rest).',
+      'Essential for high hydration doughs.'
     ],
     reference: {
       name: "Advanced No-Knead Bread – Taste of Artisan",
@@ -438,15 +437,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'connected_oven_profile',
     section: TutorialSection.ENVIRONMENT,
-    title: 'Connected Oven Profile: Automatic Recipe Adjustment',
+    title: 'Connected Oven Profile (Feature)',
     image: 'https://images.unsplash.com/photo-1579752048924-f53d5c58746b?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Knowing your exact oven profile makes difference. App allows registering equipment and with "Connected Profile", calculator recommends hydration, oil, and baking time adjustments.',
-    why: '<ul><li>Ensures recipe works in your oven.</li><li>Reduces frustration of successive attempts.</li><li>Elevates technical app value for enthusiasts.</li></ul>',
-    howTo: '<ol><li>In Settings > Oven Profile, enter equipment data.</li><li>Start "Oven Test" in app to record actual time/temp.</li><li>Activate "Auto-Base Adjustment" for calculator to adapt recipe.</li><li>In diary, mark "Used connected profile" to filter results.</li></ol>',
+    intro: 'Define your oven specs (Max Temp, Stone/Steel) to receive tailored recipe adjustments.',
+    why: '<ul><li>Adapts hydration and oil for your specific equipment.</li><li>Prevents burning or undercooking.</li><li>Makes recipes portable between different kitchens.</li></ul>',
+    howTo: '<ol><li>Go to Settings > Oven Profile.</li><li>Enter your details.</li><li>The calculator will now flag warnings or suggestions.</li></ol>',
     tips: [
-      'Preheat at least 30 min.',
-      'In home oven ≤300°C, increase oil (~1%) or reduce hydration ~2%.',
-      'Replace stone with steel if seeking extra crispness in limited oven.'
+      'Be honest about your max temperature.',
+      'Update if you change from stone to steel.',
+      'Use an oven thermometer to verify accuracy.'
     ],
     reference: {
       name: "Exploring the Role of Baking Process on Technological Properties of Bread",
@@ -457,15 +456,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'error_logging_diary',
     section: TutorialSection.TROUBLESHOOTING,
-    title: 'Error Logging & Diagnosis in Diary',
+    title: 'Error Logging & Diary',
     image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Learning from what went wrong is essential. "Batch Diary" allows logging common errors (e.g. over-proof), associating with parameters used, and analyzing patterns to improve consistently.',
-    why: '<ul><li>Learning from errors differentiates hobby from technique.</li><li>Creates daily logging habit, generating retention.</li><li>Prepares data for future "insights" features.</li></ul>',
-    howTo: '<ol><li>After batch, click "Log Error/Observation" in diary.</li><li>Mark error type and enter parameters used.</li><li>Then, filter in Insights module to see patterns.</li><li>Adjust next bake based on diagnosis.</li></ol>',
+    intro: 'Track your successes and failures. The Diary feature lets you log notes, photos, and ratings for every bake.',
+    why: '<ul><li>Identify patterns (e.g., "Always over-proofed in summer").</li><li>Refine your personal recipes.</li><li>Track your improvement over time.</li></ul>',
+    howTo: '<ol><li>Save your batch in the calculator.</li><li>After baking, go to My Lab.</li><li>Add a rating, notes, and photo to the batch.</li></ol>',
     tips: [
-      'Use before/after photos to visually understand error.',
-      'Use standard tags ("over-proof") for quick filters.',
-      'Compare errors over time to evolve technical level.'
+      'Be specific in notes (e.g., "Dough was sticky", "Crust was pale").',
+      'Log ambient temp if possible.',
+      'Review past notes before starting a new similar batch.'
     ],
     reference: {
       name: "Stages of Bread Making – VegPatch Kitchen",
@@ -476,15 +475,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'recipe_scaling',
     section: TutorialSection.TECHNIQUES,
-    title: 'Recipe Scaling: From 500g to 10kg Without Quality Loss',
+    title: 'Recipe Scaling',
     image: 'https://images.unsplash.com/photo-1627888636881-8985b671f49b?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Baker\'s percentage allows precise recipe scaling. "Batch Scale Mode" recalculates all ingredients and parameters, ensuring quality is maintained in larger batches.',
-    why: '<ul><li>Maintains consistency when producing larger scale.</li><li>Increases app value for semi-professional environments.</li><li>Avoids ratio errors in large batches.</li></ul>',
-    howTo: '<ol><li>In calculator, select "Batch Scale Mode".</li><li>Enter target flour weight (e.g. 5000 g).</li><li>Maintain or adjust percentages.</li><li>System recalculates everything.</li><li>Save as batch and record result.</li></ol>',
+    intro: 'Easily scale recipes up or down using Baker\'s Percentage logic.',
+    why: '<ul><li>Make 1 pizza or 100 without math errors.</li><li>Maintains consistent ratios and texture.</li><li>Professional standard for production.</li></ul>',
+    howTo: '<ol><li>Change the "Number of Pizzas" or "Ball Weight".</li><li>The app automatically scales all ingredients.</li><li>Or switch to "Total Flour" mode to start with a bag size.</li></ol>',
     tips: [
-      'When scaling >10×, check equipment to ensure performance.',
-      'In large batches, dough can heat up faster in mixer.',
-      'Use diary logs to compare batches of different sizes.'
+      'Scaling yeast is linear, but large batches heat up faster.',
+      'Rounding errors are minimized by the app.',
+      'Check your bowl capacity before scaling up massively.'
     ],
     reference: {
       name: "A Pizza Primer – The Fresh Loaf",
@@ -495,15 +494,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'long_term_fermentation',
     section: TutorialSection.FERMENTATION,
-    title: 'Long-Term Fermentation Technique: "Sour Ferment"',
+    title: 'Long-Term Fermentation',
     image: 'https://images.unsplash.com/photo-1594311242637-a2d2a4585c54?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Fermenting for 48h or more allows greater flavor development and starch breakdown. App teaches enabling "Ultra Long Fermentation Mode" and adjusts recipe for advanced technique.',
-    why: '<ul><li>More complex flavor, better crumb alveoli, improved digestibility.</li><li>Perfect for enthusiasts wanting premium artisanal results.</li><li>High perceived value for app.</li></ul>',
-    howTo: '<ol><li>In calculator, enable "Fermentation > 24h".</li><li>Adjust time and mode (e.g. cold/refrigeration).</li><li>System suggests yeast and hydration adjustments.</li><li>Execute and record dough photos and flavor/texture notes.</li></ol>',
+    intro: 'Pushing fermentation beyond 48 hours requires careful management but yields unique results.',
+    why: '<ul><li>Maximum flavor development.</li><li>High digestibility.</li><li>Unique blistering on the crust.</li></ul>',
+    howTo: '<ol><li>Reduce yeast significantly.</li><li>Ensure cold fridge temp (3-4°C).</li><li>Use strong flour to prevent gluten breakdown.</li></ol>',
     tips: [
-      'Use transparent container to observe gas bubbles.',
-      'In large batches, ensure temperature control.',
-      'Compare normal batch vs ultra-fermented to feel difference.'
+      'Watch for "dough soup" (enzyme degradation).',
+      'If dough is weak, ball it tightly and give a short rest.',
+      'Ideally use within 72-96 hours.'
     ],
     reference: {
       name: "High Temperature 1H DOSY NMR Reveals Sourdough Fermentation Changes",
@@ -514,15 +513,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'natural_fermentation_levain',
     section: TutorialSection.FERMENTATION,
-    title: 'Natural Fermentation (Levain) for Premium Pizza & Bread',
+    title: 'Natural Fermentation (Levain)',
     image: 'https://images.unsplash.com/photo-1560181313-a5370557e411?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Natural fermentation via levain brings flavor and technical complexity. App guides activating "Levain Mode", allowing culture registration and diary connection for full history.',
-    why: '<ul><li>Artisanal value and flavor differential.</li><li>User feels app accompanies personal cultivation.</li><li>Facilitates transition from enthusiast to micro-entrepreneur.</li></ul>',
-    howTo: '<ol><li>In "Levain Culture", register starter.</li><li>In calculator choose "Natural Fermentation (Levain)" and enter %.</li><li>Engine adjusts hydration/time per levain profile.</li><li>Record batch, log levain vigor, evaluate result.</li></ol>',
+    intro: 'Using wild yeast starter instead of commercial yeast.',
+    why: '<ul><li>Distinct sour flavor profile.</li><li>Better keeping qualities.</li><li>Chewier crust texture.</li></ul>',
+    howTo: '<ol><li>Select "My Levain" in the calculator.</li><li>Input the percentage (usually 10-20%).</li><li>Account for the flour/water in the starter (app does this).</li></ol>',
     tips: [
-      'Use transparent glass to observe levain activity.',
-      'Feed levain same time consistently.',
-      'Save history to see which feeding generates best doughs.'
+      'Ensure starter is active and bubbly.',
+      'Bulk fermentation takes longer (4-8 hours).',
+      'Acid degrades gluten, so watch the timing.'
     ],
     reference: {
       name: "High Temperature 1H DOSY NMR – Sourdough Fermentation Study",
@@ -533,15 +532,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'micro_batch_mode',
     section: TutorialSection.TECHNIQUES,
-    title: 'Micro-Batch Mode: Bake 1 or 2 Units Precisely',
+    title: 'Micro-Batch Baking',
     image: 'https://images.unsplash.com/photo-1528731708534-816fe59f90cb?q=80&w=2070&auto=format&fit=crop',
-    intro: '*Micro-Batch* mode allows making 1 or 2 pizzas/breads precisely using volume (cups/spoons), ideal for those without precision scale or wanting smaller batches.',
-    why: '<ul><li>Expands user base to enthusiasts with less equipment.</li><li>Increases daily app usage, not just large productions.</li><li>Facilitates practice habit.</li></ul>',
-    howTo: '<ol><li>In calculator select "Micro-Batch Mode".</li><li>Choose size (1 pizza or 2 loaves).</li><li>App swaps units to volume and adjusts recipe.</li><li>Save "Mini Batch" preset for quick repetition.</li></ol>',
+    intro: 'Techniques for making just one or two pizzas without waste.',
+    why: '<ul><li>Perfect for solo dinners or testing.</li><li>Reduces ingredient waste.</li><li>Fast experimentation cycle.</li></ul>',
+    howTo: '<ol><li>Set number of pizzas to 1 or 2.</li><li>Use a small bowl or jar for mixing.</li><li>Techniques remain the same, just smaller scale.</li></ol>',
     tips: [
-      'Use measuring cups if no scale.',
-      'Prefer known brand ingredients to minimize variation.',
-      'Compare result vs larger batch to calibrate palate.'
+      'Measurements must be very precise (use 0.1g scale).',
+      'Temperature swings happen faster in small dough mass.',
+      'Great way to test a new flour or variable.'
     ],
     reference: {
       name: "Easy Homemade Pizza Dough – Girl Versus Dough",
@@ -552,15 +551,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'visual_indicators_photography',
     section: TutorialSection.TROUBLESHOOTING,
-    title: 'Visual Indicators & Photography of Dough and Crust',
+    title: 'Visual Indicators & Photography',
     image: 'https://images.unsplash.com/photo-1513312999432-a7afa260d8a0?q=80&w=2070&auto=format&fit=crop',
-    intro: 'Photographing dough, crumb, and crust provides visual data to calibrate parameters. App integrates "Add Technical Photo" to diary to generate visual evolution charts.',
-    why: '<ul><li>Allows seeing concrete progress, more motivating.</li><li>Helps quick identification of visual problems.</li><li>Differentiates app as visual learning tool.</li></ul>',
-    howTo: '<ol><li>In diary, when saving batch, select "Add Technical Photo".</li><li>Take photos of dough ball, crust, cross-section crumb.</li><li>App analyzes generates "indicator" (e.g. % alveoli).</li><li>Compare with previous batches and visualize evolution.</li></ol>',
+    intro: 'Using photos to track and improve your pizza.',
+    why: '<ul><li>Objective record of results.</li><li>Helps diagnose crumb and crust issues.</li><li>Tracks visual progress over time.</li></ul>',
+    howTo: '<ol><li>Take photos of the dough ball (before/after rise).</li><li>Take photos of the final pizza (top and bottom).</li><li>Take a "crumb shot" (cross section of the rim).</li></ol>',
     tips: [
-      'Use consistent lighting for visual comparison.',
-      'Collect photos of whole crust and cross-section crumb.',
-      'Name photos with date and recipe profile for easy search.'
+      'Good lighting is key.',
+      'Attach photos to your Batch Diary logs.',
+      'Compare crumb shots to check fermentation.'
     ],
     reference: {
       name: "Homemade Pizza Dough from Scratch – Food & Style",
@@ -571,15 +570,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'prefermentos_poolish_biga_sponge',
     section: TutorialSection.FERMENTATION,
-    title: 'Preferments: Poolish, Biga, Sponge',
+    title: 'Preferments In-Depth',
     image: 'placeholder_url_prefermentos.jpg',
-    intro: 'Preferments — like Poolish, Biga, Sponge — are techniques widely used by bakers to generate complex flavors, damage gluten less, improve texture. Per PizzaBlab, involves mixing flour/water (± minimal yeast) fermenting 6-24h before final dough.',
-    why: '<ul><li>Generates deeper flavor via lactic bacteria action.</li><li>Allows lighter dough or open crumb per choice.</li><li>Elevates enthusiast from "dough maker" to "dough engineer".</li></ul>',
-    howTo: '<ol><li>In calculator, select technique "With Preferment".</li><li>Choose type (Poolish/Biga).</li><li>Enter % flour in preferment (e.g. 30%).</li><li>App calculates flour/water/yeast of preferment and final dough.</li><li>Save as preset or batch.</li></ol>',
+    intro: 'A detailed look at Poolish, Biga, and Sponge methods.',
+    why: '<ul><li>Understand the specific benefits of each.</li><li>Match the preferment to your desired style.</li><li>Master advanced flavor building.</li></ul>',
+    howTo: '<ol><li>Select "With Preferment" in the calculator.</li><li>Choose type (Poolish/Biga).</li><li>Set percentage (typically 20-50%).</li></ol>',
     tips: [
-      'In hot environment (>28°C): reduce % preferment or decrease yeast.',
-      'Observe bubbles in preferment — if over-fermented, excess acidity affects color/flavor.',
-      'Record in diary preferment amount + result for comparison.'
+      'Poolish (100% hyd) = Extensibility, nuttiness.',
+      'Biga (50% hyd) = Strength, earthiness.',
+      'Sponge = General purpose, often for enriched doughs.'
     ],
     reference: {
       name: 'The Complete Guide to Preferment in Pizza Dough',
@@ -590,15 +589,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'mistura_tempos_amassamento',
     section: TutorialSection.TECHNIQUES,
-    title: 'Mixing and Kneading Times: Impact',
+    title: 'Mixing Times & Techniques',
     image: 'placeholder_url_mistura_amassamento.jpg',
-    intro: 'Mixing/kneading phase defines gluten formation, protein alignment, gas bubbles, affecting rise and bake. According to academic review, shear forces and flow patterns influence aroma, texture, final quality.',
-    why: '<ul><li>Under-developing gluten → tears/doesn\'t rise.</li><li>Over-mixing → too elastic, hard to open, tight crumb.</li><li>Controlling variable helps repeat recipes accurately.</li></ul>',
-    howTo: '<ol><li>In calculator, open "Time/Folds".</li><li>Select kneading technology (hand/mixer).</li><li>Go to advanced mode adjusting minutes/folds.</li><li>Execute and save result to compare performance.</li></ol>',
+    intro: 'How mixing affects oxidation, gluten development, and final crumb color.',
+    why: '<ul><li>Prevent over-oxidation (bleached flavor).</li><li>Ensure optimal gluten development.</li><li>Control dough temperature.</li></ul>',
+    howTo: '<ol><li>Mix just until ingredients are combined (shaggy).</li><li>Rest (autolyse).</li><li>Mix to windowpane or use folds.</li></ol>',
     tips: [
-      'In high protein flours (>13%), prefer shorter kneading.',
-      'Autolyse before (20-30 min) reduces need for intense kneading.',
-      'Use thermometer: if dough heats >28°C in mixing, reduce time/add ice.'
+      'Mix on low speed to minimize friction heat.',
+      'Don\'t mix to full development if doing long ferment.',
+      'Stop if dough tears; let it rest.'
     ],
     reference: {
       name: 'Impact of Mixing on Flavor and Aroma Development in Fermented Foods',
@@ -609,15 +608,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'controle_temp_umidade_ambiente',
     section: TutorialSection.ENVIRONMENT,
-    title: 'Temp & Humidity Control',
+    title: 'Ambient Temp & Humidity',
     image: 'placeholder_url_controle_ambiente_massa.jpg',
-    intro: 'Temperature and humidity of environment impact fermentation, bubble growth, maturation, flavor. App helps adjust recipe to compensate.',
-    why: '<ul><li>Hot environment ferments too fast → structure/flavor loss.</li><li>Cold environment → slow fermentation, under-rise risk.</li><li>Adjusting with data increases precision.</li></ul>',
-    howTo: '<ol><li>Use thermometer for room/flour temp.</li><li>In app, select "Environment" enter values.</li><li>System suggests: water temp / yeast % / bulk time.</li><li>Save condition and track variations.</li></ol>',
+    intro: 'How your kitchen environment affects fermentation.',
+    why: '<ul><li>Seasonality affects recipe performance.</li><li>Humidity affects flour absorption.</li><li>Temperature drives fermentation rate.</li></ul>',
+    howTo: '<ol><li>Monitor room specs.</li><li>Adjust water temp to compensate.</li><li>Adjust hydration for very dry/humid days.</li></ol>',
     tips: [
-      'In > 30°C, add ice or reduce yeast ~10-20%.',
-      'In dry climates (<30% RH), reduce hydration ~2%.',
-      'Save history of environment vs result.'
+      'Summer: Use ice water, less yeast.',
+      'Winter: Use warm water, proof in oven with light on.',
+      'High humidity: Hold back 2-3% water initially.'
     ],
     reference: {
       name: 'Hydration in Bread Dough, explained',
@@ -630,13 +629,13 @@ export const TUTORIALS: Tutorial[] = [
     section: TutorialSection.TECHNIQUES,
     title: 'Baking Methods & Surfaces',
     image: 'placeholder_url_forno_superficie.jpg',
-    intro: 'Oven type and surface (stone, steel, deck) radically change behavior. App allows adjusting oven profile, calculator suggests adjustments.',
-    why: '<ul><li>"Universal" recipe ignores critical variables.</li><li>Adapting maximizes texture/crispness.</li><li>Empowers user to get pizzeria results at home.</li></ul>',
-    howTo: '<ol><li>In profile, register oven: type, max °C, base.</li><li>In calculator, select oven, app auto-adjusts.</li><li>Record result for history.</li></ol>',
+    intro: 'Choosing the right tool for the job: Stone, Steel, or Pan.',
+    why: '<ul><li>Maximize your oven\'s potential.</li><li>Achieve specific crust textures.</li><li>Avoid baking failures.</li></ul>',
+    howTo: '<ol><li>Identify your oven type (Gas, Electric, Wood).</li><li>Match surface to style (Steel for NY, Pan for Detroit).</li><li>Position rack correctly (bottom for steel, middle for stone).</li></ol>',
     tips: [
-      'Home oven ≤ 300°C: increase oil (~1%) reduce hydration ~2%.',
-      'Wood-fired 485°C: hydration ~60-62%, low conductivity base.',
-      'Check stone/steel preheat ≥30 min.'
+      'Steel is heavy; handle with care.',
+      'Never wash stone with soap.',
+      'Season pans for non-stick performance.'
     ],
     reference: {
       name: 'The Physics of baking good Pizza',
@@ -647,15 +646,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'tecnica_autolise',
     section: TutorialSection.TECHNIQUES,
-    title: 'Autolyse Technique – Increasing Extensibility',
+    title: 'Autolyse Technique',
     image: 'placeholder_url_autolyse.jpg',
-    intro: 'Autolyse mixes flour/water only, resting before salt/yeast. Allows gluten development with less kneading, resulting in extensible dough.',
-    why: '<ul><li>Facilitates handling high hydration.</li><li>Reduces kneading need.</li><li>Increases volume/texture.</li></ul>',
-    howTo: '<ol><li>Activate "Use Autolyse" in calculator.</li><li>Enter time (e.g. 30 min).</li><li>App adjusts process instructions.</li><li>Record result comparing non-autolyse.</li></ol>',
+    intro: 'Resting flour and water before adding salt/yeast.',
+    why: '<ul><li>Improves extensibility (easier stretching).</li><li>Reduces kneading time.</li><li>Makes dough easier to handle.</li></ul>',
+    howTo: '<ol><li>Mix flour and water only.</li><li>Cover and rest 20-60 minutes.</li><li>Add salt and yeast and finish mixing.</li></ol>',
     tips: [
-      'High W flours (>300): 40-45 min autolyse improves structure.',
-      'Cold environment (<20°C): warm water slightly.',
-      'Use closed container.'
+      'Essential for high hydration doughs.',
+      'Don\'t add yeast during autolyse (that\'s fermentolyse).',
+      'Even 15 minutes makes a difference.'
     ],
     reference: {
       name: 'Raymond Calvel – The Taste of Bread',
@@ -666,15 +665,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'tecnica_tangzhong_yudane',
     section: TutorialSection.TECHNIQUES,
-    title: 'Tangzhong/Yudane for Enriched Doughs',
+    title: 'Tangzhong & Yudane',
     image: 'placeholder_url_tangzhong.jpg',
-    intro: 'Tangzhong cooks part of flour with water/milk at ~65°C forming gel. Added to dough allows greater absorption, softness, shelf life.',
-    why: '<ul><li>Increases hydration without losing control.</li><li>Hybrid profiles benefit.</li><li>Advanced technique differentiation.</li></ul>',
-    howTo: '<ol><li>Check "Use Tangzhong".</li><li>Enter % flour (e.g. 20%).</li><li>App calculates hydration.</li><li>Save result.</li></ol>',
+    intro: 'Asian techniques for softer, fluffier breads.',
+    why: '<ul><li>Pre-gelatinized starch holds moisture.</li><li>Extends shelf life significantly.</li><li>Creates "shreddable" soft crumb.</li></ul>',
+    howTo: '<ol><li>Cook ~5% of flour with water/milk to make a roux.</li><li>Cool roux.</li><li>Add to main dough mix.</li></ol>',
     tips: [
-      'Ideal for oil/butter doughs (>2%).',
-      'Keep rest hydration balanced.',
-      'Tends to darken crust faster.'
+      'Use for milk breads, burger buns, cinnamon rolls.',
+      'Ratio is usually 1:5 (flour:liquid) for Tangzhong.',
+      'Yudane uses boiling water on flour (no cooking).'
     ],
     reference: {
       name: 'Tangzhong – Technique of Making Yeast Dough',
@@ -685,15 +684,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'modo_reverso_adaptativo2',
     section: TutorialSection.TECHNIQUES,
-    title: 'Adaptive Reverse Mode: Bake with What You Have',
+    title: 'Adaptive Reverse Mode',
     image: 'placeholder_url_modo_reverso_adaptativo2.jpg',
-    intro: 'For enthusiasts with fixed ingredient (like 300g levain), "Reverse Mode" calculates rest of recipe, avoiding waste.',
-    why: '<ul><li>Solves "what do I have?" scenario.</li><li>Increases retention.</li><li>Competitive differential.</li></ul>',
-    howTo: '<ol><li>Select "Reverse Mode".</li><li>Enter known parameter.</li><li>System recalculates.</li><li>Save as batch.</li></ol>',
+    intro: 'Calculate recipes based on available ingredients.',
+    why: '<ul><li>Prevents waste.</li><li>Flexible baking.</li><li>Empowers creativity.</li></ul>',
+    howTo: '<ol><li>Enter known quantity (e.g., 500g flour).</li><li>App calculates other ingredients to match ratios.</li><li>Bake confidently.</li></ol>',
     tips: [
-      'Use for leftovers.',
-      'Mark "Used Reverse Mode".',
-      'Observe patterns.'
+      'Works for any ingredient (starter, water, etc.).',
+      'Great for using up ends of bags.',
+      'Validates if you have enough for a recipe.'
     ],
     reference: {
       name: 'MyPizzaCorner – Common Dough Problems and How to Fix Them',
@@ -704,15 +703,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'alta_hidratacao_tecnicas',
     section: TutorialSection.INGREDIENTS,
-    title: 'High Hydration: Techniques for Open Crumb',
+    title: 'High Hydration Techniques',
     image: 'placeholder_url_alta_hidracao.jpg',
-    intro: 'Doughs > 70% hydration offer open crumbs/light texture, require good handling/flour. Addresses risks/adjustments.',
-    why: '<ul><li>Technical improvement.</li><li>Increases satisfaction.</li><li>Differentiation.</li></ul>',
-    howTo: '<ol><li>Activate "Free Hydration".</li><li>App adjusts.</li><li>Follow handling (autolyse, folds).</li><li>Save/compare.</li></ol>',
+    intro: 'Handling wet doughs without fear.',
+    why: '<ul><li>Open, airy crumb.</li><li>Crispy, thin crust.</li><li>Artisan quality.</li></ul>',
+    howTo: '<ol><li>Use wet hands or oil.</li><li>Use a bench scraper.</li><li>Focus on folds, not kneading.</li></ol>',
     tips: [
-      'Strong flour/powerful oven helps.',
-      'Limited oven prefer 66-68%.',
-      'Document each bake.'
+      'Confidence is key; don\'t hesitate.',
+      'Cold dough is less sticky.',
+      'Use rice flour for dusting banettons/peels.'
     ],
     reference: {
       name: 'Baking Science: Dough Hydration',
@@ -723,15 +722,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'gerenciar_batch_diario',
     section: TutorialSection.TROUBLESHOOTING,
-    title: 'Batch Management & Diary',
+    title: 'Batch Management',
     image: 'placeholder_url_diario_batches.jpg',
-    intro: '*Batch Diary* offers photo logging, parameters, rating, notes, consistency analysis.',
-    why: '<ul><li>Transform experiment to learning.</li><li>Increase engagement.</li><li>Prepare for insights.</li></ul>',
-    howTo: '<ol><li>Click "Save Batch".</li><li>Fill details.</li><li>See "Reports".</li><li>Use filters.</li></ol>',
+    intro: 'Organize your baking life.',
+    why: '<ul><li>Keep track of what works.</li><li>Plan future bakes.</li><li>Build a personal recipe book.</li></ul>',
+    howTo: '<ol><li>Log every bake in the app.</li><li>Use tags and ratings.</li><li>Review before baking again.</li></ol>',
     tips: [
-      'Consistent photos.',
-      'Apply tags.',
-      'Export reports.'
+      'Consistency in logging leads to consistency in baking.',
+      'Note weather conditions.',
+      'Share successful batches with community.'
     ],
     reference: {
       name: 'Production of pizza dough with reduced fermentation time',
@@ -742,15 +741,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'cadastro_farinhas_substituicoes',
     section: TutorialSection.INGREDIENTS,
-    title: 'Flour Registration & Substitutions',
+    title: 'Flour Registration',
     image: 'placeholder_url_cadastro_farinhas.jpg',
-    intro: 'Understanding flour is differentiator. Register "My Flour", enter technical values, activate "suggested substitution".',
-    why: '<ul><li>Avoid "feeling" dependence.</li><li>Creates history.</li><li>Avoids purchase frustration.</li></ul>',
-    howTo: '<ol><li>"Flour" module > "Add new".</li><li>Enter details.</li><li>Select in calculator.</li><li>Activate substitution.</li></ol>',
+    intro: 'Managing your flour inventory.',
+    why: '<ul><li>Know what you have.</li><li>Understand protein levels.</li><li>Make smart substitutions.</li></ul>',
+    howTo: '<ol><li>Add flours to My Lab.</li><li>Note protein % and brand.</li><li>Use in recipes.</li></ol>',
     tips: [
-      'Test small batch.',
-      'Update on bag change.',
-      'Compare brands.'
+      'Different brands absorb water differently.',
+      'Keep flours sealed and cool.',
+      'Note "best by" dates.'
     ],
     reference: {
       name: 'Milling Technology: Interpreting Functional Properties',
@@ -761,15 +760,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'sustentabilidade_impacto_ambiental',
     section: TutorialSection.ENVIRONMENT,
-    title: 'Sustainability & Impact',
+    title: 'Sustainability in Baking',
     image: 'placeholder_url_sustentabilidade_massas.jpg',
-    intro: '*Environmental Impact* estimates CO₂/water, suggests local flours, long ferments, reuse.',
-    why: '<ul><li>Conscious value.</li><li>Positive feeling.</li><li>Partnership potential.</li></ul>',
-    howTo: '<ol><li>"Sustainability" > "Calculate".</li><li>Enter details.</li><li>See estimate.</li><li>Get suggestions.</li></ol>',
+    intro: 'Minimizing your baking footprint.',
+    why: '<ul><li>Responsible consumption.</li><li>Energy efficiency.</li><li>Waste reduction.</li></ul>',
+    howTo: '<ol><li>Bake multiple items at once.</li><li>Use local grains.</li><li>Compost scraps.</li></ol>',
     tips: [
-      'Local flour.',
-      'Long ferment.',
-      'Reuse scraps.'
+      'Preheat only as long as necessary.',
+      'Don\'t discard starter; use discard recipes.',
+      'Buy flour in bulk to reduce packaging.'
     ],
     reference: {
       name: 'Effect of different producing methods on physicochemical properties of dough',
@@ -780,15 +779,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'assistente_voz_comandos',
     section: TutorialSection.TECHNIQUES,
-    title: 'Voice Assistant & Commands',
+    title: 'Voice Assistant',
     image: 'placeholder_url_assistente_voz.jpg',
-    intro: 'Voice integration (Google, Siri) for hands-free commands.',
-    why: '<ul><li>Practical usability.</li><li>Professional feel.</li><li>Retention.</li></ul>',
-    howTo: '<ol><li>Settings > Voice > Activate.</li><li>Link assistant.</li><li>Use voice.</li><li>Save commands.</li></ol>',
+    intro: 'Hands-free baking help.',
+    why: '<ul><li>Keep hands in dough.</li><li>Hygiene.</li><li>Convenience.</li></ul>',
+    howTo: '<ol><li>Enable voice features.</li><li>Ask for next steps or timers.</li><li>Dictate notes.</li></ol>',
     tips: [
-      'Isolated environment.',
-      'Short commands.',
-      'Note usage.'
+      'Speak clearly.',
+      'Use specific keywords.',
+      'Great for setting multiple timers.'
     ],
     reference: {
       name: 'Modernist Bread – Techniques & Equipment',
@@ -799,15 +798,15 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'leaderboard_desafios_comunidade',
     section: TutorialSection.FUNDAMENTALS,
-    title: 'Leaderboard & Challenges',
+    title: 'Community Challenges',
     image: 'placeholder_url_leaderboard_desafios.jpg',
-    intro: 'Gamification with *Leaderboard* and *Weekly Challenges*.',
-    why: '<ul><li>Engagement.</li><li>Community feedback.</li><li>Social platform.</li></ul>',
-    howTo: '<ol><li>Activate "Community Mode".</li><li>Complete challenge.</li><li>Climb leaderboard.</li><li>Check ranking.</li></ol>',
+    intro: 'Gamified baking improvement.',
+    why: '<ul><li>Motivation to bake.</li><li>Learn new styles.</li><li>Community engagement.</li></ul>',
+    howTo: '<ol><li>Join a weekly challenge.</li><li>Submit your results.</li><li>Earn badges.</li></ol>',
     tips: [
-      'Compete with friends.',
-      'Share badges.',
-      'Notifications.'
+      'Focus on learning, not just winning.',
+      'Share tips with others.',
+      'Try styles outside your comfort zone.'
     ],
     reference: {
       name: 'Serious Eats – The Pizza Lab: Three Doughs to Know',

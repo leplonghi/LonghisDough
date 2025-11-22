@@ -8,16 +8,18 @@ import {
     ChevronRightIcon,
     StarIcon,
     CalculatorIcon,
-    ClockIcon,
-    FlourIcon,
-    PlusCircleIcon,
-    UserCircleIcon,
     TrashIcon,
+    CloseIcon,
+    PlusCircleIcon,
+    FlourIcon,
     SparklesIcon,
+    UserCircleIcon,
+    ClockIcon,
+    GlobeAltIcon,
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
 import { useTranslation } from '@/i18n';
-import { DoughStyleDefinition, DoughConfig, StyleCategory } from '@/types';
+import { DoughStyleDefinition, DoughConfig, StyleCategory, RecipeStyle, FermentationTechnique } from '@/types';
 import { useUser } from '@/contexts/UserProvider';
 import CreateStyleModal from '@/components/styles/CreateStyleModal';
 import AiStyleBuilderModal from '@/components/styles/AiStyleBuilderModal';

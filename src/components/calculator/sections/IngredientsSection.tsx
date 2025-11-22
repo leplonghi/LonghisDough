@@ -8,7 +8,7 @@ import {
   DoughStyleDefinition,
 } from '@/types';
 import { YEAST_OPTIONS } from '@/constants';
-import SliderInput from '@/components/ui/SliderInput';
+import SliderInput from '../../ui/SliderInput';
 import IngredientTableEditor from '@/components/calculator/IngredientTableEditor';
 import {
   CubeIcon,
@@ -32,7 +32,7 @@ interface IngredientsSectionProps {
   onCalculatorModeChange: (mode: 'basic' | 'advanced') => void;
   hasProAccess: boolean;
   onOpenPaywall: () => void;
-  activeStyle?: DoughStyleDefinition; // NEW PROP
+  activeStyle?: DoughStyleDefinition;
 }
 
 const CompactParamCard: React.FC<{

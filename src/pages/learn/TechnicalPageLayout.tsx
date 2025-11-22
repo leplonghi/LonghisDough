@@ -31,14 +31,14 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
 
         {showTeaser ? (
             <div className="relative">
-                <div className="prose mt-8 max-w-none text-slate-800 dark:text-slate-200 h-[300px] overflow-hidden relative leading-relaxed">
+                <div className="prose mt-8 max-w-none text-slate-700 dark:text-slate-300 h-[300px] overflow-hidden relative leading-relaxed">
                     {children}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white pointer-events-none"></div>
                 </div>
                 <div className="absolute bottom-0 left-0 w-full flex justify-center pb-8 z-10">
                      <div className="text-center bg-white/90 p-6 rounded-xl border border-slate-200 shadow-lg backdrop-blur-sm max-w-md">
                         <h3 className="font-bold text-slate-900 text-lg mb-2">Upgrade to Pro to unlock the full advanced dough theory library.</h3>
-                        <p className="text-slate-700 text-sm mb-4">Serious bakers choose Pro for deeper knowledge.</p>
+                        <p className="text-slate-600 text-sm mb-4">Serious bakers choose Pro for deeper knowledge.</p>
                         <button
                             onClick={() => openPaywall('learn')}
                             className="bg-lime-500 text-white font-bold py-2 px-6 rounded-full hover:bg-lime-600 transition-colors flex items-center justify-center gap-2 mx-auto shadow-md"
@@ -50,7 +50,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                 </div>
             </div>
         ) : (
-            <div className="prose mt-8 max-w-none text-slate-800 dark:text-slate-200 leading-relaxed">
+            <div className="prose mt-8 max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
                 {children}
             </div>
         )}
@@ -59,12 +59,12 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
         {!isPro && !hasProAccess && (
             <div className="mt-12 p-6 bg-gradient-to-r from-slate-50 to-lime-50 rounded-xl border border-lime-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                    <h4 className="font-bold text-slate-900">Want to go deeper?</h4>
-                    <p className="text-sm text-slate-700">Pro unlocks expert-level techniques and insights.</p>
+                    <h4 className="font-bold text-slate-800">Want to go deeper?</h4>
+                    <p className="text-sm text-slate-600">Pro unlocks expert-level techniques and insights.</p>
                 </div>
                 <button
                     onClick={() => openPaywall('learn')}
-                    className="text-sm font-bold text-lime-700 hover:underline whitespace-nowrap"
+                    className="text-sm font-bold text-lime-600 hover:underline whitespace-nowrap"
                 >
                     Learn about Pro &rarr;
                 </button>
@@ -80,7 +80,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                     </div>
                     <div>
                         <h3 className="font-bold text-slate-900">{suggestion.title}</h3>
-                        <p className="text-sm text-slate-700">{suggestion.description}</p>
+                        <p className="text-sm text-slate-600">{suggestion.description}</p>
                     </div>
                 </div>
                 <a
@@ -100,7 +100,7 @@ const TechnicalPageLayout: React.FC<TechnicalPageLayoutProps> = ({ title, subtit
                 <BookOpenIcon className="h-6 w-6 text-lime-600" />
                 <span>Technical References</span>
             </h2>
-            <p className="mt-4 text-sm text-slate-600 italic">
+            <p className="mt-4 text-sm text-slate-500 italic">
                 The technical references on this page are based on verifiable sources (AVPN, King Arthur Baking, Serious Eats, scientific literature, etc.). No data is fabricated.
             </p>
           </div>

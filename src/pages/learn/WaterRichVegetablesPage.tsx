@@ -32,4 +32,21 @@ const WaterRichVegetablesPage: React.FC = () => {
             <ul className="list-disc pl-5 mt-2 space-y-1">
                 <li><strong>Salting:</strong> Sprinkling salt on sliced veg (like zucchini or eggplant) and resting extracts water via osmosis.</li>
                 <li><strong>Sautéing or Grilling:</strong> Rapidly cooking mushrooms, spinach, or peppers in pan or grill evaporates most water and concentrates flavor.</li>
-                <li><strong>Roasting:</strong> Baking
+                <li><strong>Roasting:</strong> Baking vegetables before using on pizza is effective for dehydration and caramelizing natural sugars.</li>
+            </ul>
+        </Section>
+        <Section title="Risks of Excess Moisture">
+            <p>Beyond "gum line", excess moisture leads to soggy heavy pizza with limp base. Also dilutes sauce/cheese flavor resulting in bland pizza.</p>
+        </Section>
+        <Section title="Technical References">
+          <ul className="list-disc pl-5 space-y-2">
+              <li>Serious Eats - The Pizza Lab</li>
+              <li>King Arthur Baking - Pizza Toppings Guide</li>
+              <li>"On Food and Cooking" by Harold McGee</li>
+          </ul>
+        </Section>
+    </TechnicalPageLayout>
+  );
+};
+
+export default WaterRichVegetablesPage;

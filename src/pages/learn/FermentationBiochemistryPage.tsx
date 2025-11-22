@@ -5,7 +5,7 @@ import { BookOpenIcon } from '../../components/IconComponents';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mt-8 first:mt-0">
-        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3">
+        <h3 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-slate-200 mb-3">
             {title}
         </h3>
         <div className="prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -30,7 +30,7 @@ const FermentationBiochemistryPage: React.FC = () => {
             <p>LAB produce organic acids, mainly lactic and acetic. Lactic is mild/yogurt-like, acetic is pungent/vinegar-like. Balance fundamental for flavor profile.</p>
         </Section>
         <Section title="Aromatic Compounds">
-            <p>Generates volatile compounds like esters, alcohols, aldehydes forming aromatic bouquet.</p>
+            <p>Besides CO₂ and acids, fermentation generates volatile compounds like esters, alcohols, aldehydes forming aromatic bouquet.</p>
         </Section>
         <Section title="Salt Effect">
             <p>Salt retards yeast via osmosis, moderating fermentation speed allowing flavor development.</p>

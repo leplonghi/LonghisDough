@@ -34,10 +34,10 @@ const LowMoistureCheesesPage: React.FC = () => {
             <p>Concentration of casein (main cheese protein) results in excellent "stretch". Flavor is saltier and more pronounced as flavor components are less diluted in water.</p>
         </Section>
         <Section title="Fundamental Role in Specific Styles">
-            <p>In New York style, low-moisture cheese is essential to create coverage that stays firm on foldable slice without running. Its capability to brown controllably contributes to classic appearance of this pizza style.</p>
+            <p>In New York style, low-moisture cheese is essential to creating topping that stays firm on foldable slice without running. Its controlled browning ability also contributes to classic pizza appearance.</p>
         </Section>
-        <Section title="Risks of Excessive Browning">
-            <p>Having less water, cheese surface reaches Maillard Reaction temperature faster. In very hot ovens or long bake times, this can lead to excessive browning or burning, resulting in bitter taste.</p>
+        <Section title="Excessive Browning Risks">
+            <p>Having less water, cheese surface reaches Maillard Reaction temperature faster. In very hot ovens or long bakes, this can lead to excessive browning or burning, resulting in bitter taste.</p>
         </Section>
         <Section title="Technical References">
           <ul className="list-disc pl-5 space-y-2">
