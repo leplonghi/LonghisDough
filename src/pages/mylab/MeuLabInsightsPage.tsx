@@ -13,7 +13,7 @@ const InsightCard: React.FC<{
   <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm flex flex-col justify-between">
     <div>
       <h3 className="text-lg font-medium text-neutral-900">{title}</h3>
-      <p className="mt-2 text-sm text-neutral-600">{description}</p>
+      <p className="mt-2 text-sm text-neutral-700">{description}</p>
     </div>
     <button onClick={onLinkClick} className="mt-4 text-sm font-semibold text-lime-600 hover:underline text-left">
       {linkText} &rarr;

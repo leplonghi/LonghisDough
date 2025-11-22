@@ -1,3 +1,4 @@
+
 import React, {
   useState,
   useEffect,
@@ -238,6 +239,9 @@ function AppContent() {
   const [unit, setUnit] = useState<Unit>('g');
   const [unitSystem, setUnitSystem] = useState<UnitSystem>(UnitSystem.METRIC);
   const [errors, setErrors] = useState<FormErrors>({});
+  
+  // State to track if user has interacted with calculator to show results
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
@@ -357,11 +361,17 @@ function AppContent() {
 
   const results = useMemo(() => {
     if (hasErrors) return null;
+    // Don't show results if user hasn't interacted yet, unless we are viewing a specific batch (though routing usually handles that separately)
+    // or if we are on calculator page but just arrived.
+    if (!hasInteracted && route === 'calculator' && !routeParams) {
+        return null;
+    }
+    
     const userLevain = config.yeastType === YeastType.USER_LEVAIN
       ? levains.find(l => l.id === config.levainId)
       : null;
     return calculateDoughUniversal(config, calculatorMode, calculationMode, userLevain);
-  }, [config, hasErrors, levains, calculatorMode, calculationMode]);
+  }, [config, hasErrors, levains, calculatorMode, calculationMode, hasInteracted, route, routeParams]);
 
   const isSummaryBarVisible = route === 'calculator' && !!results;
 
@@ -374,6 +384,7 @@ function AppContent() {
   }, [grantSessionProAccess]);
 
   const handleConfigChange = useCallback((newConfig: Partial<DoughConfig>) => {
+    setHasInteracted(true);
     const updatedConfig = { 
         ...config, 
         ...newConfig, 
@@ -409,6 +420,7 @@ function AppContent() {
 
   const handleBakeTypeChange = useCallback(
     (bakeType: BakeType) => {
+      setHasInteracted(true);
       const firstMatchingPreset = DOUGH_STYLE_PRESETS.find(
         (p) => p.type === bakeType,
       );
@@ -458,6 +470,7 @@ function AppContent() {
   );
 
   const handleStyleChange = useCallback((presetId: string) => {
+    setHasInteracted(true);
     const preset = DOUGH_STYLE_PRESETS.find((p) => p.id === presetId);
     if (preset) {
       const { defaultHydration, defaultSalt, defaultOil, defaultYeastPct, defaultSugar, preferredFlourProfileId, recipeStyle, type } = preset;
@@ -494,6 +507,7 @@ function AppContent() {
   }, [config.yeastType, config, config.fermentationTechnique]);
 
   const handleYeastTypeChange = useCallback((yeastType: YeastType) => {
+    setHasInteracted(true);
     setConfig((prev) => {
       const newConfig: Partial<DoughConfig> = { ...prev, yeastType, stylePresetId: undefined };
       if (isAnySourdough(yeastType)) {
@@ -520,6 +534,7 @@ function AppContent() {
   }, [levains, user]);
 
   const handleLoadProRecipe = (newConfig: ProRecipe['config']) => {
+    setHasInteracted(true);
     const fullConfig = { ...config, ...newConfig, stylePresetId: undefined };
     fullConfig.ingredients = syncIngredientsFromConfig(fullConfig);
     setConfig(fullConfig);
@@ -555,6 +570,7 @@ function AppContent() {
 
 
   const handleLoadAndNavigate = useCallback((configToLoad: Partial<DoughConfig>) => {
+    setHasInteracted(true);
     const merged = { ...config, ...configToLoad };
     merged.ingredients = syncIngredientsFromConfig(merged);
     setConfig(merged);
@@ -846,7 +862,10 @@ function AppContent() {
             onBakeTypeChange={handleBakeTypeChange}
             onStyleChange={handleStyleChange}
             onYeastTypeChange={handleYeastTypeChange}
-            onReset={() => setConfig({...initialConfig, stylePresetId: undefined, ingredients: syncIngredientsFromConfig(initialConfig) })}
+            onReset={() => {
+                setConfig({...initialConfig, stylePresetId: undefined, ingredients: syncIngredientsFromConfig(initialConfig) });
+                setHasInteracted(false);
+            }}
             results={results}
             unit={unit}
             onUnitChange={setUnit}

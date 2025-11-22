@@ -2,6 +2,8 @@
 import React from 'react';
 import { Timestamp } from "firebase/firestore";
 
+export type Locale = 'en';
+
 export enum BakeType {
   PIZZAS = 'PIZZAS',
   BREADS_SAVORY = 'BREADS_SAVORY',
@@ -132,8 +134,9 @@ export interface IngredientConfig {
 export interface DoughConfig {
   bakeType: BakeType;
   recipeStyle: RecipeStyle;
-  stylePresetId?: string; 
-  baseStyleName?: string; // New field for displaying the source style
+  stylePresetId?: string;
+  selectedStyleId?: string;
+  baseStyleName?: string;
   flourId: string;
   ambientTemperature: AmbientTemperature;
   numPizzas: number;
@@ -183,7 +186,6 @@ export interface DoughResult {
     yeast: number;
   };
   finalDough?: DoughIngredients;
-  // List of all ingredients with calculated weights
   ingredientWeights?: Array<{
       id: string;
       name: string;
@@ -217,6 +219,7 @@ export interface Batch {
     bulkTimeHours?: number;
     proofTimeHours?: number;
     ovenType?: OvenType;
+    styleId?: string; 
 }
 
 export type SavedDoughConfig = Batch;
@@ -240,11 +243,9 @@ export interface User {
   avatar?: string;
   birthDate?: string;
   gender?: Gender;
-  
-  // Subscription & Permissions
   isPro?: boolean;
   plan?: 'free' | 'pro';
-  trialEndsAt?: string | null; // ISO String or null
+  trialEndsAt?: string | null; 
   stripeCustomerId?: string | null;
   stripeSubscriptionId?: string | null;
 }
@@ -290,6 +291,20 @@ export interface Levain {
   idealFeedingIntervalHours?: number;
 }
 
+// Aliases for firebase compatibility
+export type LevainStarter = Levain;
+export interface LevainFeedingLog {
+  id: string;
+  levainId: string;
+  dateTime: Timestamp;
+  flourAmount: number;
+  waterAmount: number;
+  ratio?: string;
+  flourType?: string;
+  ambientTemperature?: number;
+  notes?: string;
+}
+
 export type GoalStatus = "ativo" | "concluido";
 export type GoalTargetType = "style" | "hydration" | "frequency" | "levain";
 
@@ -322,6 +337,87 @@ export interface TestSeries {
 
 export type PaywallOrigin = 'levain' | 'mylab' | 'calculator' | 'styles' | 'learn' | 'general';
 
+// --- Styles System Extensions ---
+
+export type StyleSource = "official" | "user_manual" | "user_ai";
+
+export interface StyleOrigin {
+    country: string;
+    region?: string;
+    period?: string;
+}
+
+export interface StyleTechnicalProfile {
+    hydration: [number, number];
+    salt: [number, number];
+    oil?: [number, number]; // Range
+    sugar?: [number, number]; // Range
+    prefermentDescription?: string;
+    flourStrength?: string; // e.g. "W280-320"
+    fermentation?: {
+        bulk: string;
+        proof: string;
+        coldRetard?: string;
+    };
+    ovenRecommendations?: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
+    recommendedUse: string;
+}
+
+export interface Reference {
+  source: string;
+  author?: string;
+  year?: string;
+  url?: string;
+  notes?: string;
+}
+
+export interface DoughStyleDefinition {
+    id: string;
+    name: string; // Variant Name in UI
+    family: string; // Grouping key e.g. "Italian Rustic", "Viennoiserie"
+    category: StyleCategory;
+    
+    // Expanded Metadata
+    origin: StyleOrigin;
+    history: string;
+    culturalContext?: string;
+    isCanonical: boolean;
+    source: StyleSource;
+    createdBy?: string; // UID if user-generated
+    createdAt?: string | Timestamp;
+    
+    // Legacy fields maintained for compatibility
+    country: string; 
+    year?: string;
+    releaseDate?: string; 
+    description: string;
+    isPro: boolean;
+    recipeStyle?: RecipeStyle;
+    
+    technical: {
+        hydration: number;
+        salt: number;
+        oil: number;
+        sugar: number;
+        fermentation: string; 
+        fermentationTechnique: FermentationTechnique;
+        bakingTempC: number;
+    };
+
+    technicalProfile?: StyleTechnicalProfile;
+    references?: Reference[]; 
+    allowedFermentationTechniques: FermentationTechnique[]; 
+    defaultFermentationTechnique: FermentationTechnique;
+    ingredients: IngredientConfig[];
+    variations?: string[];
+    risks?: string[];
+    notes?: string[];
+    tags?: string[];
+}
+
+export type DoughStylePreset = any; // Legacy alias
+
 export interface UserContextType {
   isAuthenticated: boolean;
   user: User | null;
@@ -353,6 +449,12 @@ export interface UserContextType {
   setDefaultLevain: (id: string) => void;
   addFeedingEvent: (levainId: string, event: Omit<FeedingEvent, 'id' | 'date'>) => void;
   importLevains: (levainsToImport: Levain[]) => void;
+  
+  // Styles Management
+  userStyles: DoughStyleDefinition[];
+  addUserStyle: (style: Omit<DoughStyleDefinition, 'id' | 'createdAt'>) => Promise<DoughStyleDefinition>;
+  deleteUserStyle: (id: string) => Promise<void>;
+
   preferredFlourId: string | null;
   setPreferredFlour: (id: string | null) => void;
   batches: Batch[];
@@ -374,7 +476,7 @@ export interface UserContextType {
   addCustomIngredient?: (ing: IngredientConfig) => void;
 }
 
-export type Locale = 'en';
+export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "flatbread" | "other";
 
 export type FormErrors = {
   [key in keyof Partial<DoughConfig>]: string | null;
@@ -382,115 +484,7 @@ export type FormErrors = {
 
 export type PrimaryPage = 'mylab' | 'calculator' | 'learn' | 'styles' | 'profile';
 
-export type Page =
-  | PrimaryPage
-  | 'lab'
-  | 'flours'
-  | 'help'
-  | 'references'
-  | 'plans'
-  | 'landing'
-  | 'batch'
-  | `batch/${string}`
-  | 'mylab/levain'
-  | `mylab/levain/${string}`
-  | 'mylab/levain/detail' 
-  | 'mylab/receitas'
-  | 'mylab/receitas/comparar'
-  | 'mylab/massas'
-  | 'mylab/farinhas'
-  | 'mylab/fornadas'
-  | 'mylab/diario-sensorial'
-  | 'mylab/comparacoes'
-  | 'mylab/insights'
-  | 'mylab/timeline'
-  | 'mylab/objetivos'
-  | 'mylab/consistency'
-  | 'mylab/consistency/detail' 
-  | `mylab/consistency/${string}` 
-  | 'mylab/levain-pet'
-  | 'usermenu'
-  | 'styles'
-  | 'styles/detail'
-  | `styles/${string}`
-  | 'tools-oven-analysis'
-  | 'tools-doughbot'
-  | 'settings'
-  | 'settings/theme'
-  | 'settings/language'
-  | 'legal'
-  | 'terms'
-  | 'privacy'
-  | 'legal/terms'
-  | 'legal/privacy'
-  | 'legal/cookies'
-  | 'legal/eula'
-  | 'legal/ip'
-  | 'legal/contact'
-  | 'learn/techniques'
-  | 'learn/fermentation'
-  | 'learn/preferments'
-  | 'learn/dough-science'
-  | 'learn/troubleshooting'
-  | 'learn/ingredients'
-  | 'learn/chemistry-library'
-  | 'learn/style-guide'
-  | 'learn/glossary'
-  | 'learn/oven-science'
-  | 'learn/sensory-guide'
-  | 'learn/temperature-control'
-  | 'learn/storage'
-  | 'learn/hygiene-safety'
-  | 'learn/equipment'
-  | 'learn/oven-spring'
-  | 'learn/fermentation-biochemistry'
-  | 'learn/crumb-structure'
-  | 'learn/dough-aging'
-  | 'learn/ambient-vs-cold-fermentation'
-  | 'learn/mixing-techniques'
-  | 'learn/balling-technique'
-  | 'learn/sensory-maturation'
-  | 'learn/parbaking'
-  | 'learn/water'
-  | 'learn/salt'
-  | 'learn/sugars-malts-enzymes'
-  | 'learn/fats'
-  | 'learn/tomato-preservation'
-  | 'learn/white-sauces'
-  | 'learn/special-sauces'
-  | 'learn/low-moisture-cheeses'
-  | 'learn/smoked-cheeses'
-  | 'learn/cured-meats'
-  | 'learn/smoked-aromatics'
-  | 'learn/water-rich-vegetables'
-  | 'learn/caramelizable-vegetables'
-  | 'learn/regional-combos'
-  | 'learn/sensory-profiles'
-  | 'learn/ingredients/flours'
-  | 'learn/ingredients/yeasts'
-  | 'learn/ingredients/cheeses'
-  | 'learn/ingredients/meats'
-  | 'learn/ingredients/vegetables'
-  | 'learn/ingredients/sauces'
-  | 'learn/ingredients/oils-spices'
-  | 'learn/ingredients/oils'
-  | 'learn/ingredients/herbs-spices'
-  | 'learn/ingredients/classic-combos'
-  | 'learn/ingredients/bold-combos'
-  | 'learn/ingredients/pairing-tool'
-  | 'learn/ingredients/ready-toppings'
-  | 'learn/fundamentals'
-  | 'learn/methods'
-  | 'learn/critical-ingredients'
-  | 'learn/ovens-heat'
-  | 'learn/troubleshooting-guide'
-  | 'shop'
-  | 'community'
-  | `community/${string}`
-  | 'pro/activated'
-  | 'toppings'
-  | 'tools-pantry-pizza';
-
+export type Page = string;
 
 export interface NavLinkItem {
   id: Page;
@@ -500,98 +494,6 @@ export interface NavLinkItem {
   section: 'main' | 'secondary';
   isDropdown?: boolean;
   requiresPro?: boolean;
-}
-
-export interface DoughStylePreset {
-  id: string;
-  name: string;
-  type: BakeType;
-  recipeStyle: RecipeStyle;
-  defaultHydration: number;
-  defaultSalt: number;
-  defaultOil: number;
-  defaultSugar?: number;
-  defaultYeastPct?: number;
-  recommendedRange?: {
-    hydrationMin?: number;
-    hydrationMax?: number;
-    saltMin?: number;
-    saltMax?: number;
-  };
-  preferredFlourProfileId?: string;
-  recommendedFermentationHours?: { min: number; max: number; };
-  recommendedOvenType?: AdviceOvenType;
-  recommendedSurfaceType?: SurfaceType;
-  regulatoryStrict?: boolean;
-  notes?: string;
-  referenceTag?: string;
-  ingredients?: IngredientConfig[]; // New: Universal Ingredient List
-}
-
-export type StyleCategory = "pizza" | "bread" | "enriched_bread" | "burger_bun" | "pastry" | "cookie" | "flatbread" | "other";
-
-export interface Reference {
-  source: string;
-  author?: string;
-  year?: string;
-  url?: string;
-  notes?: string;
-}
-
-export interface StyleTechnicalProfile {
-    hydration: [number, number];
-    salt: [number, number];
-    oil?: [number, number]; // Range
-    sugar?: [number, number]; // Range
-    prefermentDescription?: string;
-    flourStrength?: string; // e.g. "W280-320"
-    fermentation?: {
-        bulk: string;
-        proof: string;
-        coldRetard?: string;
-    };
-    ovenRecommendations?: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
-    recommendedUse: string;
-}
-
-// New Data-Driven Style Definition
-export interface DoughStyleDefinition {
-    id: string;
-    name: string; // Variant Name in UI
-    family: string; // Grouping key e.g. "Italian Rustic", "Viennoiserie"
-    category: StyleCategory;
-    country: string;
-    year?: string;
-    releaseDate?: string; // ISO String for "New" badge
-    description: string;
-    history: string;
-    isPro: boolean;
-    recipeStyle?: RecipeStyle; // Link to enum
-    
-    // Specific single-value technicals for calculator loading
-    technical: {
-        hydration: number;
-        salt: number;
-        oil: number;
-        sugar: number;
-        fermentation: string; // description e.g. "Long cold fermentation"
-        fermentationTechnique: FermentationTechnique;
-        bakingTempC: number;
-    };
-
-    // Validated Range Profile for Reference UI
-    technicalProfile?: StyleTechnicalProfile;
-
-    references?: Reference[]; // Literature sources
-
-    allowedFermentationTechniques: FermentationTechnique[]; // Restrict techniques (e.g. no Biga for Cookies)
-    defaultFermentationTechnique: FermentationTechnique;
-    ingredients: IngredientConfig[];
-    variations?: string[];
-    risks?: string[];
-    notes?: string[];
-    tags?: string[];
 }
 
 export interface SmartAdjustmentSuggestion {
@@ -700,14 +602,6 @@ export interface CommunityBatch {
   likes?: number;
   commentCount?: number;
   bakingTempC?: number;
-}
-
-export interface CommunityFilterState {
-  styleId?: RecipeStyle | 'ALL';
-  minHydration?: number;
-  maxHydration?: number;
-  ovenType?: AdviceOvenType | 'ALL';
-  searchTerm?: string;
 }
 
 export interface InspirationBatch {
@@ -869,35 +763,6 @@ export interface PizzaRecipe {
   techniqueNotes?: string;
 }
 
-export interface LevainStarter {
-  id: string;
-  userId: string;
-  name: string;
-  hydration: number;
-  baseFlourType?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  status: LevainStatus;
-  totalWeight: number;
-  notes?: string;
-  typicalUse?: string;
-  isDefault?: boolean;
-  notificationEnabled?: boolean;
-  idealFeedingIntervalHours?: number;
-}
-
-export interface LevainFeedingLog {
-  id: string;
-  levainId: string;
-  dateTime: Timestamp;
-  flourAmount: number;
-  waterAmount: number;
-  flourType?: string;
-  ratio?: string;
-  ambientTemperature?: number;
-  notes?: string;
-}
-
 export interface ToppingSizeProfile {
   sizeCm: number;
   sauceGrams?: number;
@@ -916,8 +781,6 @@ export interface ToppingCombination {
   referenceTag?: string;
 }
 
-// --- Dynamic Technical Method Types ---
-
 export type TechnicalPhase = 'PREP' | 'MIX' | 'AUTO' | 'KNEAD' | 'BULK' | 'DIVIDE' | 'PROOF' | 'BAKE' | 'COOL';
 
 export interface TechnicalStep {
@@ -928,6 +791,7 @@ export interface TechnicalStep {
   durationLabel?: string;
   temperatureLabel?: string;
   actionInstructions: string;
+  grandmaInstructions: string; // Simple, accessible language
   technicalExplanation?: string;
   proTip?: string;
   criticalPoint?: string;

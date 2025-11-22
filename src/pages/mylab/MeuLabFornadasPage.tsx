@@ -184,14 +184,14 @@ const MeuLabFornadasPage: React.FC<MeuLabFornadasPageProps> = ({
                                <ResultTag rating={batch.rating} />
                              </div>
                              <p className="text-sm font-semibold text-lime-600 mt-1">{t(`form.${batch.doughConfig.recipeStyle.toLowerCase()}`, { defaultValue: batch.doughConfig.recipeStyle })}</p>
-                             <p className="text-xs text-neutral-500 mt-1">{new Date(batch.createdAt).toLocaleDateString()}</p>
+                             <p className="text-xs text-neutral-600 mt-1">{new Date(batch.createdAt).toLocaleDateString()}</p>
                              
                              <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm border-t border-neutral-200 pt-4">
-                                <div className="text-neutral-500">Hydration</div>
+                                <div className="text-neutral-600">Hydration</div>
                                 <div className="font-semibold text-right text-slate-700">{batch.doughConfig.hydration}%</div>
-                                <div className="text-neutral-500">Yeast</div>
+                                <div className="text-neutral-600">Yeast</div>
                                 <div className="font-semibold text-right text-slate-700">{t(`form.yeast_${batch.doughConfig.yeastType.toLowerCase()}`)}</div>
-                                <div className="text-neutral-500">Oven</div>
+                                <div className="text-neutral-600">Oven</div>
                                 <div className="font-semibold text-right text-slate-700">{batch.ovenType ? t(`profile.ovens.types.${batch.ovenType.toLowerCase()}`) : 'N/A'}</div>
                              </div>
                            </div>

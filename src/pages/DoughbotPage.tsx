@@ -30,7 +30,7 @@ const DoughbotPage: React.FC = () => {
       <div className="space-y-8">
         {/* Input Section */}
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-6">
-          <h3 className="text-xl font-semibold text-slate-800 mb-4">
+          <h3 className="text-xl font-semibold text-slate-900 mb-4">
             1. Describe your problem
           </h3>
           <div className="space-y-4">
@@ -76,7 +76,7 @@ const DoughbotPage: React.FC = () => {
 
         {/* Results Section Placeholder */}
         <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-slate-800">
+            <h3 className="text-2xl font-bold text-slate-900">
                 2. Preliminary Diagnosis
             </h3>
             <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
@@ -92,7 +92,7 @@ const DoughbotPage: React.FC = () => {
             </div>
              <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200/50">
                 <h4 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-                    <LightBulbIcon className="h-5 w-5 text-yellow-500" />
+                    <LightBulbIcon className="h-5 w-5 text-yellow-600" />
                     Suggested Solutions
                 </h4>
                 <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-700">

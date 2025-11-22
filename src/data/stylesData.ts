@@ -10,11 +10,15 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Neapolitan (AVPN Standards)',
     family: 'Pizza Napoletana',
     category: 'pizza',
-    country: 'Italy',
-    year: '2024 Revision',
+    origin: { country: 'Italy', region: 'Naples', period: '18th Century' },
+    country: 'Italy', // Legacy
+    year: '2024 Revision', // Legacy
     releaseDate: '2024-06-01',
     description: 'The strict international standard for True Neapolitan Pizza. Soft, elastic, and baked in 60-90 seconds.',
-    history: 'Protected by STG regulations. Requires wood-fire, specific flour, and hand manipulation.',
+    history: 'Originating in Naples, the "Verace Pizza Napoletana" is protected by STG regulations. It strictly defines ingredients (flour, water, salt, yeast) and methods (hand-opening, wood-fire).',
+    culturalContext: 'More than a dish, it is a UNESCO Intangible Cultural Heritage element. The focus is on digestion, simplicity, and the perfect balance of the "cornicione" (rim).',
+    isCanonical: true,
+    source: 'official',
     isPro: false,
     recipeStyle: RecipeStyle.NEAPOLITAN,
     technical: {
@@ -45,7 +49,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
       { source: "AVPN International Regulations", url: "https://www.pizzanapoletana.org/en/ricetta_pizza_napoletana" },
       { source: "Modernist Pizza", author: "Nathan Myhrvold", year: "2021" }
     ],
-    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.BIGA], // Biga allowed in modern variants
+    allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.BIGA], 
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: '00 Flour (W280+)', type: 'solid', role: 'flour', bakerPercentage: 100 },
@@ -64,10 +68,14 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'New York Style (Slice Shop)',
     family: 'North American Pizza',
     category: 'pizza',
-    country: 'USA',
-    year: '1905',
-    description: 'Large, thin, foldable slices with a crisp bottom and chewy crust.',
-    history: 'Adapted from Neapolitan by immigrants using coal ovens and higher protein flour.',
+    origin: { country: 'USA', region: 'New York', period: '1905' },
+    country: 'USA', // Legacy
+    year: '1905', // Legacy
+    description: 'Large, thin, foldable slices with a crisp bottom and chewy crust. The everyday pizza.',
+    history: 'Adapted from Neapolitan by immigrants using coal ovens and high-protein American flour. The addition of oil and sugar helps browning in cooler ovens (280-300°C).',
+    culturalContext: 'The "slice culture" of NYC defines this style. It is meant to be eaten on the go, folded in half.',
+    isCanonical: true,
+    source: 'official',
     isPro: false,
     recipeStyle: RecipeStyle.NEW_YORK,
     technical: {
@@ -75,7 +83,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
       salt: 2.0,
       oil: 2.0,
       sugar: 1.0,
-      fermentation: 'Cold Ferment (24-72h)',
+      fermentation: 'Long cold ferment (24-72h)',
       fermentationTechnique: FermentationTechnique.DIRECT,
       bakingTempC: 280,
     },
@@ -104,7 +112,7 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
       { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 65 },
       { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.0 },
       { id: 'sugar', name: 'Sugar', type: 'solid', role: 'sugar', bakerPercentage: 1.0 },
-      { id: 'oil', name: 'Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 2.0 },
+      { id: 'oil', name: 'Oil/Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 2.0 },
       { id: 'yeast', name: 'IDY', type: 'solid', role: 'yeast', bakerPercentage: 0.4 }
     ],
     tags: ['crispy', 'home-oven', 'foldable']
@@ -114,10 +122,14 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Detroit Style (Red Top)',
     family: 'North American Pizza',
     category: 'pizza',
+    origin: { country: 'USA', region: 'Detroit', period: '1946' },
     country: 'USA',
     year: '1946',
     description: 'Rectangular pan pizza with a thick, airy crust and caramelized cheese edges (frico).',
-    history: 'Originated at Buddy\'s Rendezvous, baked in blue steel automotive parts pans.',
+    history: 'Originated at Buddy\'s Rendezvous, baked in blue steel automotive parts pans. The high sides and oil create a fried texture.',
+    culturalContext: 'A symbol of Motor City ingenuity. The "Red Top" refers to sauce ladled on top of the cheese after baking.',
+    isCanonical: true,
+    source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.DETROIT,
     technical: {
@@ -166,11 +178,15 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Ciabatta (High Hydration)',
     family: 'Italian Rustic Breads',
     category: 'bread',
+    origin: { country: 'Italy', region: 'Veneto', period: '1982' },
     country: 'Italy',
     year: '1982',
     releaseDate: '2024-09-15',
     description: 'Crystal thin crust, massive open crumb. The modern standard for artisan slippers.',
-    history: 'Created in Adria, Italy to combat the baguette. Relies heavily on Biga for structure.',
+    history: 'Created in Adria, Italy by Arnaldo Cavallari to combat the baguette. Relies heavily on Biga for structure and flavor.',
+    culturalContext: 'A symbol of modern Italian baking renaissance.',
+    isCanonical: true,
+    source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.CIABATTA,
     technical: {
@@ -216,18 +232,22 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Focaccia Genovese (Classic)',
     family: 'Italian Rustic Breads',
     category: 'flatbread',
+    origin: { country: 'Italy', region: 'Liguria', period: 'Ancient' },
     country: 'Italy',
     year: 'Ancient',
-    description: 'Not just bread with oil. A precise emulsion of brine and oil creates the crust.',
-    history: 'From Liguria. The secret is the "salamoia" (brine) poured over the dimples before baking.',
+    description: 'Flatbread, oily, with characteristic dimples and a salty crust.',
+    history: 'A classic from Liguria. The secret is the "salamoia" (brine) poured over the dimples before baking.',
+    culturalContext: 'Traditionally eaten at breakfast dipped in cappuccino, or as a street food snack.',
+    isCanonical: true,
+    source: 'official',
     isPro: false,
     recipeStyle: RecipeStyle.FOCACCIA,
     technical: {
-      hydration: 68, // Moderate hydration, oil increases perceived wetness
-      salt: 2.2,
-      oil: 6.0,
+      hydration: 75,
+      salt: 2.5,
+      oil: 5.0, // In dough
       sugar: 1.0,
-      fermentation: 'Direct or Biga',
+      fermentation: 'Medium (direct or poolish)',
       fermentationTechnique: FermentationTechnique.DIRECT,
       bakingTempC: 230,
     },
@@ -253,9 +273,9 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     defaultFermentationTechnique: FermentationTechnique.DIRECT,
     ingredients: [
       { id: 'flour', name: 'AP/Bread Mix', type: 'solid', role: 'flour', bakerPercentage: 100 },
-      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 68 },
-      { id: 'oil', name: 'Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 6.0 },
-      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.2 },
+      { id: 'water', name: 'Water', type: 'liquid', role: 'water', bakerPercentage: 75 },
+      { id: 'oil', name: 'Olive Oil (Dough)', type: 'liquid', role: 'fat', bakerPercentage: 5.0 },
+      { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.5 },
       { id: 'yeast', name: 'IDY', type: 'solid', role: 'yeast', bakerPercentage: 0.8 }
     ],
     tags: ['oily', 'salty', 'beginner']
@@ -269,10 +289,14 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Baguette de Tradition',
     family: 'French Lean Breads',
     category: 'bread',
+    origin: { country: 'France', period: '1993 (Decree)' },
     country: 'France',
-    year: '1993 (Decree)',
+    year: '1993',
     description: 'The legally defined French standard. Creamy crumb, thin crisp crust.',
     history: 'Protected by the 1993 "Décret Pain". No additives allowed. Poolish or cold ferment mandatory for flavor.',
+    culturalContext: 'A daily ritual in France. The law was passed to protect artisanal baking from industrialization.',
+    isCanonical: true,
+    source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.BAGUETTE,
     technical: {
@@ -322,10 +346,14 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Brioche Nanterre',
     family: 'Viennoiserie',
     category: 'enriched_bread',
+    origin: { country: 'France', region: 'Normandy' },
     country: 'France',
     year: 'Classic',
     description: 'Rich, tender crumb with 50% butter. The gold standard of enriched doughs.',
-    history: 'Requires intensive kneading to emulsify the high butter content into the gluten network.',
+    history: 'Originating in Normandy, famous for its high butter and egg content. Named after the city of Nanterre.',
+    culturalContext: 'Served for breakfast or as a base for gourmet dishes.',
+    isCanonical: true,
+    source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.BRIOCHE,
     technical: {
@@ -373,10 +401,14 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     name: 'Hokkaido Milk Bread (Shokupan)',
     family: 'Asian Enriched',
     category: 'enriched_bread',
+    origin: { country: 'Japan', period: '20th Century' },
     country: 'Japan',
     year: '20th Century',
     description: 'Feather-light crumb using the Tangzhong (Yudane) method.',
-    history: 'Pre-gelatinized starch (Tangzhong) allows 70%+ hydration while keeping the crumb structure stable and soft.',
+    history: 'Uses the Tangzhong method to pre-gelatinize starches, holding more moisture and keeping the bread soft for days.',
+    culturalContext: 'The staple "Shokupan" in Japan, prized for its white, fluffy interior.',
+    isCanonical: true,
+    source: 'official',
     isPro: true,
     recipeStyle: RecipeStyle.HOKKAIDO_MILK_BREAD,
     technical: {
@@ -419,19 +451,75 @@ export const STYLES_DATA: DoughStyleDefinition[] = [
     ],
     tags: ['soft', 'asian', 'tangzhong']
   },
+  {
+      id: 'teglia_romana',
+      name: 'Roman Pan Pizza (Teglia)',
+      family: 'Pizza Romana',
+      category: 'pizza',
+      origin: { country: 'Italy', region: 'Rome', period: 'Modern (1980s)' },
+      country: 'Italy',
+      year: '1980s (modern)',
+      description: 'High hydration, baked in rectangular pans. Crispy bottom, very airy crumb.',
+      history: 'The reinvention of Roman pizza al taglio, focused on digestibility and open crumb structure using high hydration.',
+      culturalContext: 'A staple street food in Rome, sold by weight.',
+      isCanonical: true,
+      source: 'official',
+      isPro: true,
+      recipeStyle: RecipeStyle.ROMANA_TONDA, // Mapping to existing enum for Roman style
+      technical: {
+        hydration: 80,
+        salt: 2.5,
+        oil: 3.0,
+        sugar: 0,
+        fermentation: 'Long cold ferment (24-48h)',
+        fermentationTechnique: FermentationTechnique.DIRECT,
+        bakingTempC: 250,
+      },
+      technicalProfile: {
+        hydration: [75, 90],
+        salt: [2.2, 2.8],
+        oil: [2.0, 4.0],
+        sugar: [0, 0],
+        flourStrength: "W320+ (Strong)",
+        fermentation: {
+            bulk: "24-48h Cold",
+            proof: "3-4h Room Temp"
+        },
+        ovenRecommendations: "250°C. Bake on bottom rack first.",
+        difficulty: "Expert",
+        recommendedUse: "Light, crunchy snack."
+      },
+      references: [
+          { source: "Bonci", notes: "Gabriele Bonci methodology" }
+      ],
+      allowedFermentationTechniques: [FermentationTechnique.DIRECT, FermentationTechnique.POOLISH, FermentationTechnique.BIGA],
+      defaultFermentationTechnique: FermentationTechnique.DIRECT,
+      ingredients: [
+        { id: 'flour', name: 'Very Strong Flour (W320+)', type: 'solid', role: 'flour', bakerPercentage: 100 },
+        { id: 'water', name: 'Ice Water', type: 'liquid', role: 'water', bakerPercentage: 80 },
+        { id: 'salt', name: 'Salt', type: 'solid', role: 'salt', bakerPercentage: 2.5 },
+        { id: 'oil', name: 'Olive Oil', type: 'liquid', role: 'fat', bakerPercentage: 3.0 },
+        { id: 'yeast', name: 'Yeast', type: 'solid', role: 'yeast', bakerPercentage: 0.6 }
+      ],
+      tags: ['high-hydration', 'crispy', 'airy']
+  },
   
   // ========================================================================
   // FAMILY: COOKIES & CONFECTIONERY
   // ========================================================================
   {
     id: 'ny_cookie_levain',
-    name: 'NY Giant Cookie (Levain Style)',
+    name: 'NY Giant Cookie',
     family: 'American Cookies',
     category: 'cookie',
+    origin: { country: 'USA', region: 'New York', period: '1995' },
     country: 'USA',
     year: '1995',
     description: '6oz monster cookie. Walnut-packed, gooey center, crispy shell.',
     history: 'Popularized by Levain Bakery in NYC. Uses cold butter and very high temperature to arrest spread.',
+    culturalContext: 'A dessert that challenges the traditional flat cookie.',
+    isCanonical: true,
+    source: 'official',
     isPro: false,
     recipeStyle: RecipeStyle.COOKIE_NY_CHOC_CHIP,
     technical: {

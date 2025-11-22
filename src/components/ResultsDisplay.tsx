@@ -1,3 +1,4 @@
+
 import React, { useRef, useMemo } from 'react';
 import {
   DoughResult,
@@ -9,7 +10,6 @@ import {
 } from '@/types';
 import { gramsToVolume } from '@/helpers';
 import {
-  DocumentDuplicateIcon,
   ShareIcon,
   DownloadIcon,
   BatchesIcon,
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/Icons';
 import { useToast } from '@/components/ToastProvider';
 import { useTranslation } from '@/i18n';
-import { exportBatchToJSON, exportBatchToPDF } from '@/services/exportService';
+import { exportBatchToPDF } from '@/services/exportService';
 import TechnicalMethodPanel from '@/components/calculator/TechnicalMethodPanel';
 import { generateTechnicalMethod } from '@/logic/methodGenerator';
 
@@ -60,7 +60,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   }, [config, results]);
 
   if (!results) {
-    return null;
+    return (
+        <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center h-full flex flex-col items-center justify-center text-slate-500 min-h-[300px]">
+            <p className="font-medium">Ready to calculate?</p>
+            <p className="text-sm mt-1">Select a style or adjust parameters to see the results.</p>
+        </div>
+    );
   }
 
   const displayValue = (grams: number) => {
@@ -131,32 +136,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   };
 
-  const handleExportJSON = () => {
-     if (!hasProAccess) {
-        addToast("Your recipes deserve to be shared — unlock exports with Pro.", "info");
-        onOpenPaywall('calculator');
-        return;
-    }
-     try {
-        const batchMock: any = {
-            name: 'Calculator Export',
-            createdAt: new Date().toISOString(),
-            doughConfig: config,
-            doughResult: results,
-            notes: config.notes,
-        };
-        exportBatchToJSON(batchMock, t);
-        addToast(t('results.export_json_aria', {defaultValue: 'Exporting JSON...'}), "info");
-     } catch (e) {
-         addToast("Export failed", "error");
-     }
-  };
-
   const renderRow = (label: string, grams: number, ingredientId: string, subtext?: string) => (
     <div className="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">
       <div>
         <p className="font-medium text-slate-700">{label}</p>
-        {subtext && <p className="text-xs text-slate-500">{subtext}</p>}
+        {subtext && <p className="text-xs text-slate-600">{subtext}</p>}
       </div>
       <span className="font-mono font-semibold text-slate-900">
         {displayIngredient(label, grams, ingredientId)}
@@ -282,7 +266,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 {t('diary_page.new_batch')}
                 </button>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={handleShare}
                         className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
@@ -297,14 +281,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                     >
                         <DownloadIcon className="h-4 w-4" />
                         PDF
-                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
-                    </button>
-                    <button
-                        onClick={handleExportJSON}
-                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
-                    >
-                        <DocumentDuplicateIcon className="h-4 w-4" />
-                        JSON
                         {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
                     </button>
                 </div>

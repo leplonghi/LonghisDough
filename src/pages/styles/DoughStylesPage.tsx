@@ -10,10 +10,18 @@ import {
     CalculatorIcon,
     ClockIcon,
     FlourIcon,
+    PlusCircleIcon,
+    UserCircleIcon,
+    TrashIcon,
+    SparklesIcon,
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
 import { useTranslation } from '@/i18n';
 import { DoughStyleDefinition, DoughConfig, StyleCategory } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
+import CreateStyleModal from '@/components/styles/CreateStyleModal';
+import AiStyleBuilderModal from '@/components/styles/AiStyleBuilderModal';
+import ProFeatureLock from '@/components/ui/ProFeatureLock';
 
 interface DoughStylesPageProps {
   doughConfig: DoughConfig;
@@ -56,7 +64,7 @@ const ReferenceList: React.FC<{ references?: DoughStyleDefinition['references'] 
     );
 };
 
-const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; onUse: (e: React.MouseEvent) => void }> = ({ style, onClick, onUse }) => {
+const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; onUse: (e: React.MouseEvent) => void; onDelete?: (e: React.MouseEvent) => void }> = ({ style, onClick, onUse, onDelete }) => {
     // New Badge Logic (last 30 days)
     const isNew = useMemo(() => {
         if (!style.releaseDate) return false;
@@ -76,19 +84,27 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
                     PRO
                 </div>
             )}
-            {isNew && (
+            {!style.isCanonical && (
+                 <div className={`absolute top-0 left-0 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg shadow-sm z-10 uppercase tracking-wide flex items-center gap-1 ${style.source === 'user_ai' ? 'bg-indigo-500' : 'bg-sky-500'}`}>
+                    {style.source === 'user_ai' ? <SparklesIcon className="h-3 w-3" /> : <UserCircleIcon className="h-3 w-3" />}
+                    {style.source === 'user_ai' ? 'AI Style' : 'USER'}
+                </div>
+            )}
+            {isNew && style.isCanonical && (
                 <div className="absolute top-0 left-0 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg shadow-sm z-10 uppercase tracking-wide">
                     NEW
                 </div>
             )}
             
             <div className="p-5 flex-grow flex flex-col">
-                <div className="flex justify-between items-start mb-1">
+                <div className="flex justify-between items-start mb-1 mt-2">
                     <h3 className="font-bold text-lg text-slate-900 group-hover:text-lime-600 transition-colors line-clamp-1">
                         {style.name}
                     </h3>
                 </div>
-                <p className="text-xs text-slate-500 mb-3">{style.country}, {style.year}</p>
+                <p className="text-xs text-slate-500 mb-3">
+                    {style.country}, {style.year}
+                </p>
 
                 <p className="text-sm text-slate-600 mb-4 line-clamp-2 flex-grow">
                     {style.description}
@@ -96,7 +112,7 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
                 
                 <div className="grid grid-cols-3 gap-2 mb-4">
                     <TechnicalBadge label="Hydration" value={style.technicalProfile ? `${style.technicalProfile.hydration[0]}-${style.technicalProfile.hydration[1]}%` : `${style.technical.hydration}%`} />
-                    <TechnicalBadge label="Ferment" value={style.technicalProfile ? style.technicalProfile.fermentation.bulk.split(' ')[0] : 'Std'} />
+                    <TechnicalBadge label="Ferment" value={style.technicalProfile ? style.technicalProfile.fermentation?.bulk.split(' ')[0] : 'Std'} />
                     <TechnicalBadge label="Skill" value={style.technicalProfile?.difficulty || 'Med'} />
                 </div>
 
@@ -109,6 +125,15 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
                     >
                         <CalculatorIcon className="h-3 w-3" /> Use
                     </button>
+                     {!style.isCanonical && onDelete && (
+                        <button 
+                            onClick={onDelete}
+                            className="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg transition-colors"
+                            title="Delete Style"
+                        >
+                            <TrashIcon className="h-4 w-4" />
+                        </button>
+                    )}
                     <button className="flex-1 bg-slate-50 text-slate-600 hover:bg-slate-100 text-xs font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1">
                         Details <ChevronRightIcon className="h-3 w-3" />
                     </button>
@@ -121,10 +146,18 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
 const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadStyle, onNavigateToDetail }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<StyleCategory | 'all'>('all');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+    const [styleToEdit, setStyleToEdit] = useState<Partial<DoughStyleDefinition> | undefined>(undefined);
+    
+    const { userStyles, addUserStyle, deleteUserStyle } = useUser();
+    
+    // Combine Official and User Styles
+    const allStyles = useMemo(() => [...STYLES_DATA, ...userStyles], [userStyles]);
     
     // Group styles by Family
     const stylesByFamily = useMemo(() => {
-        const filtered = STYLES_DATA.filter(style => {
+        const filtered = allStyles.filter(style => {
             const matchesSearch = style.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                   style.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory = selectedCategory === 'all' || style.category === selectedCategory;
@@ -133,12 +166,14 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
 
         const grouped: Record<string, DoughStyleDefinition[]> = {};
         filtered.forEach(style => {
+            // Group AI/User styles separately or by family if defined
             const family = style.family || 'Other';
             if (!grouped[family]) grouped[family] = [];
             grouped[family].push(style);
         });
+        
         return grouped;
-    }, [searchTerm, selectedCategory]);
+    }, [searchTerm, selectedCategory, allStyles]);
 
     const handleUseStyle = (e: React.MouseEvent, style: DoughStyleDefinition) => {
         e.stopPropagation();
@@ -146,8 +181,22 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
             onLoadStyle(style);
         }
     };
+    
+    const handleDeleteUserStyle = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this custom style?')) {
+            await deleteUserStyle(id);
+        }
+    };
+
+    const handleAiStyleGenerated = (style: Partial<DoughStyleDefinition>) => {
+        setStyleToEdit({ ...style, source: 'user_ai' });
+        setIsCreateModalOpen(true);
+        setIsAiModalOpen(false);
+    };
 
     return (
+        <>
         <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
             <div className="text-center mb-10">
                 <BookOpenIcon className="mx-auto h-12 w-12 text-lime-500" />
@@ -157,6 +206,29 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
                     A rigorous technical compendium of baking styles, validated by international standards and scientific literature.
                 </p>
+            </div>
+
+             <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 p-6 rounded-xl bg-white border border-slate-200 shadow-sm">
+                <div className="flex flex-col justify-center">
+                     <h3 className="font-bold text-slate-800 text-lg">Create Your Own</h3>
+                     <p className="text-sm text-slate-500 mt-1">Define your own unique methods or ask AI to generate a technical profile for you.</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 justify-end items-center">
+                    <ProFeatureLock origin='styles' featureName="AI Style Builder" className="w-full sm:w-auto">
+                        <button 
+                            onClick={() => setIsAiModalOpen(true)} 
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 px-5 font-bold text-white shadow-sm hover:bg-indigo-700 transition-transform hover:scale-105"
+                        >
+                            <SparklesIcon className="h-5 w-5"/> Ask AI for a Style
+                        </button>
+                    </ProFeatureLock>
+                    <button 
+                        onClick={() => { setStyleToEdit(undefined); setIsCreateModalOpen(true); }} 
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 py-2.5 px-5 font-bold text-slate-700 shadow-sm hover:bg-slate-200 transition-transform hover:scale-105"
+                    >
+                        <PlusCircleIcon className="h-5 w-5"/> Manual Create
+                    </button>
+                </div>
             </div>
 
             {/* Search and Filter Bar */}
@@ -189,10 +261,11 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                         No styles found matching criteria.
                     </div>
                 ) : (
-                    Object.entries(stylesByFamily).map(([family, styles]: [string, DoughStyleDefinition[]]) => (
+                    Object.entries(stylesByFamily).sort().map(([family, styles]: [string, DoughStyleDefinition[]]) => (
                         <section key={family} className="animate-fade-in">
                             <div className="flex items-center gap-4 mb-6">
                                 <h2 className="text-2xl font-bold text-slate-800">{family}</h2>
+                                <span className="text-xs font-medium px-2 py-1 bg-slate-100 rounded-full text-slate-500">{styles.length} variants</span>
                                 <div className="h-px bg-slate-200 flex-grow"></div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -202,6 +275,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                                         style={style} 
                                         onClick={() => onNavigateToDetail(style.id)} 
                                         onUse={(e) => handleUseStyle(e, style)}
+                                        onDelete={!style.isCanonical ? (e) => handleDeleteUserStyle(e, style.id) : undefined}
                                     />
                                 ))}
                             </div>
@@ -210,6 +284,23 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                 )}
             </div>
         </div>
+        
+        <CreateStyleModal 
+            isOpen={isCreateModalOpen} 
+            onClose={() => setIsCreateModalOpen(false)}
+            defaultValues={styleToEdit}
+            onSave={async (style) => {
+                await addUserStyle(style);
+                setIsCreateModalOpen(false);
+            }}
+        />
+        
+        <AiStyleBuilderModal
+            isOpen={isAiModalOpen}
+            onClose={() => setIsAiModalOpen(false)}
+            onStyleGenerated={handleAiStyleGenerated}
+        />
+        </>
     );
 };
 
