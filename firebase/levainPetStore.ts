@@ -29,7 +29,13 @@ export const createLevainStarter = async (
     updatedAt: now,
     status: 'precisa_atencao', // Starts needing attention
   });
-  return { ...starterData, id: docRef.id, createdAt: now, updatedAt: now, status: 'precisa_atencao' };
+  return { 
+    ...starterData, 
+    id: docRef.id, 
+    createdAt: now.toDate().toISOString(), 
+    updatedAt: now.toDate().toISOString(), 
+    status: 'precisa_atencao' 
+  };
 };
 
 export const updateLevainStarter = async (
@@ -58,7 +64,18 @@ export const listLevainStartersByUser = async (userId: string): Promise<LevainSt
     where('status', '!=', 'arquivado')
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LevainStarter));
+  return querySnapshot.docs.map(doc => {
+    const data = doc.data();
+    // Convert Timestamps to ISO strings for the frontend type
+    const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : data.createdAt;
+    const updatedAt = data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt;
+    return { 
+        id: doc.id, 
+        ...data,
+        createdAt,
+        updatedAt
+    } as LevainStarter;
+  });
 };
 
 // --- Feeding Log Services ---

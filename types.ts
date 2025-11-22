@@ -280,6 +280,7 @@ export interface Levain {
   hydration: number; 
   baseFlourType?: string;
   createdAt: string; 
+  updatedAt?: string;
   lastFeeding: string; 
   totalWeight: number; 
   isDefault: boolean;

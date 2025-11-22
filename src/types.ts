@@ -2,6 +2,8 @@
 import React from 'react';
 import { Timestamp } from "firebase/firestore";
 
+export type Locale = 'en';
+
 export enum BakeType {
   PIZZAS = 'PIZZAS',
   BREADS_SAVORY = 'BREADS_SAVORY',
@@ -278,6 +280,7 @@ export interface Levain {
   hydration: number; 
   baseFlourType?: string;
   createdAt: string; 
+  updatedAt?: string;
   lastFeeding: string; 
   totalWeight: number; 
   isDefault: boolean;
@@ -287,6 +290,20 @@ export interface Levain {
   feedingHistory: FeedingEvent[];
   notificationEnabled?: boolean;
   idealFeedingIntervalHours?: number;
+}
+
+// Aliases for firebase compatibility
+export type LevainStarter = Levain;
+export interface LevainFeedingLog {
+  id: string;
+  levainId: string;
+  dateTime: Timestamp;
+  flourAmount: number;
+  waterAmount: number;
+  ratio?: string;
+  flourType?: string;
+  ambientTemperature?: number;
+  notes?: string;
 }
 
 export type GoalStatus = "ativo" | "concluido";

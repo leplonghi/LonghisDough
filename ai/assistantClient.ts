@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { DoughConfig, DoughResult, Batch, FlourDefinition, Oven, RecipeStyle, Levain, FeedingEvent } from '../types';
+import { DoughConfig, DoughResult, Batch, FlourDefinition, Oven, RecipeStyle, Levain, FeedingEvent, DoughStyleDefinition } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -85,9 +85,8 @@ export async function askGeneralAssistant(input: AssistantInput): Promise<string
   const userPrompt = buildRichContext(t, question, doughConfig, flour, oven, lastBatch);
 
   try {
-    // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-3-pro-preview',
       contents: userPrompt,
       config: {
         systemInstruction,
@@ -154,9 +153,8 @@ export async function askLevainAssistant(levain: Levain, question: string): Prom
     }
 
     try {
-        // FIX: Updated model from gemini-1.5-pro to gemini-2.5-pro
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-pro',
+            model: 'gemini-3-pro-preview',
             contents: userPrompt,
             config: {
                 systemInstruction,
@@ -170,5 +168,69 @@ export async function askLevainAssistant(levain: Levain, question: string): Prom
     } catch (error) {
         console.error('[Levain Assistant] Error calling AI model:', error);
         throw new Error("Sorry, I couldn't process your question right now. Please try again.");
+    }
+}
+
+// --- STYLE BUILDER ---
+
+export async function generateStyleFromDescription(description: string): Promise<Partial<DoughStyleDefinition>> {
+    const systemInstruction = `You are a master baker and food scientist. Your task is to convert a user's description of a bread or pizza style into a structured technical JSON object compatible with the DoughLabPro application schema.
+    
+    Input: A natural language description of a dough style.
+    Output: A valid JSON object adhering to the following structure (do not include markdown formatting):
+    
+    {
+      "name": "Style Name (Short)",
+      "family": "General Family (e.g., 'Italian Rustic', 'Pan Pizza', 'Viennoiserie')",
+      "category": "One of: 'pizza', 'bread', 'enriched_bread', 'burger_bun', 'pastry', 'cookie', 'flatbread'",
+      "origin": { "country": "String", "region": "String (Optional)", "period": "String (Optional)" },
+      "description": "Short UI description (max 140 chars)",
+      "history": "Factual history and context (2-3 sentences)",
+      "culturalContext": "How it is eaten or cultural significance",
+      "technical": {
+        "hydration": Number (0-120, target average),
+        "salt": Number (0-5, target),
+        "oil": Number (0-50, target),
+        "sugar": Number (0-50, target),
+        "fermentation": "String description (e.g. '24h Cold')",
+        "fermentationTechnique": "One of: 'DIRECT', 'POOLISH', 'BIGA'",
+        "bakingTempC": Number (100-500)
+      },
+      "technicalProfile": {
+        "hydration": [Min, Max],
+        "salt": [Min, Max],
+        "oil": [Min, Max],
+        "sugar": [Min, Max],
+        "flourStrength": "String (e.g. 'W300' or 'High Protein')",
+        "fermentation": { "bulk": "String", "proof": "String" },
+        "ovenRecommendations": "String",
+        "difficulty": "One of: 'Easy', 'Medium', 'Hard', 'Expert'",
+        "recommendedUse": "String"
+      },
+      "references": [ { "source": "Real source name", "url": "Optional URL" } ],
+      "recipeStyle": "NEAPOLITAN" (Map to closest enum: NEAPOLITAN, NEW_YORK, DETROIT, ROMAN, FOCACCIA, BAGUETTE, BRIOCHE, SOURDOUGH, CIABATTA, BURGER_BUN, COOKIE_NY_CHOC_CHIP)
+    }
+    
+    Be technically accurate. If data is missing, infer reasonable defaults based on baking science.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-pro-preview',
+            contents: description,
+            config: {
+                systemInstruction,
+                responseMimeType: 'application/json',
+            }
+        });
+        
+        const text = response.text;
+        if (!text) throw new Error("Empty response");
+        
+        const styleData = JSON.parse(text);
+        return styleData;
+
+    } catch (error) {
+        console.error('[Style Builder] Error:', error);
+        throw new Error("Failed to generate style. Please try a different description.");
     }
 }

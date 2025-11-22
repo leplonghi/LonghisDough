@@ -31,6 +31,7 @@ export function generateTechnicalMethod(config: DoughConfig, result: DoughResult
       phase,
       title,
       actionInstructions,
+      grandmaInstructions: actionInstructions, // Fallback if not explicitly provided, matching src version expectations
       ...options,
     });
   };
