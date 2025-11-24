@@ -9,8 +9,11 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  public state: ErrorBoundaryState = { hasError: false };
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   static getDerivedStateFromError(_: Error): ErrorBoundaryState {
     return { hasError: true };
@@ -54,3 +57,5 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;

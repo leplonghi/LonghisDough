@@ -1,5 +1,3 @@
-
-
 import { PizzaRecipe } from './types';
 
 export const PIZZA_RECIPES: PizzaRecipe[] = [

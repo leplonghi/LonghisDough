@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
@@ -17,17 +16,16 @@ import {
   PhotoIcon,
   YeastIcon,
   ClockIcon,
-  DocumentTextIcon,
-  FireIcon
+  FireIcon,
 } from '@/components/ui/Icons';
 import { saveCommunityBatch } from '@/data/communityStore';
 import { FLOURS } from '@/flours-constants';
-import { exportBatchToJSON, exportBatchToPDF } from '@/services/exportService';
+import { exportBatchToPDF } from '@/services/exportService';
 
 interface BatchDetailPageProps {
   batchId: string | null;
   onNavigate: (page: Page, params?: string) => void;
-  onLoadAndNavigate: (config: Partial<DoughConfig>) => void;
+  onLoadAndNavigate: (config: DoughConfig) => void;
 }
 
 const DetailRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
@@ -80,8 +78,8 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
         <table className="w-full text-sm">
             <thead>
                 <tr className="border-b-2 border-slate-300">
-                    <th className="text-left py-2">Ingredient</th>
-                    <th className="text-right py-2">Amount</th>
+                    <th className="text-left py-2">Ingrediente</th>
+                    <th className="text-right py-2">Quantidade</th>
                     <th className="text-right py-2"></th>
                 </tr>
             </thead>
@@ -91,9 +89,9 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t(`form.${doughConfig.fermentationTechnique.toLowerCase()}`)}</td>
                         </tr>
-                        {renderRow('Flour', result.preferment.flour)}
-                        {renderRow('Water', result.preferment.water)}
-                        {result.preferment.yeast > 0 && renderRow('Yeast', result.preferment.yeast)}
+                        {renderRow('Farinha', result.preferment.flour)}
+                        {renderRow('Água', result.preferment.water)}
+                        {result.preferment.yeast > 0 && renderRow('Fermento', result.preferment.yeast)}
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t('results.final_dough_title')}</td>
                         </tr>
@@ -181,21 +179,24 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
 
   const handleDuplicate = async () => {
       if(!editableBatch) return;
+      
+      // --- BATCH LIMIT CHECK ---
       const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
       if (!hasProAccess && savedBatches.length >= 1) {
           openPaywall('mylab');
           return;
       }
+      // -------------------------
 
       const newBatchData: Omit<Batch, 'id' | 'createdAt'|'updatedAt'> = {
           ...JSON.parse(JSON.stringify(editableBatch)),
-          name: `${editableBatch.name} (Copy)`,
+          name: `${editableBatch.name} (Cópia)`,
           status: BatchStatus.DRAFT,
           rating: undefined,
           isPublic: false,
       };
       const added = await addBatch(newBatchData);
-      addToast(`Batch "${editableBatch.name}" duplicated.`, 'success');
+      addToast(`Fornada "${editableBatch.name}" duplicada.`, 'success');
       onNavigate('batch', added.id);
   };
   
@@ -203,19 +204,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     if(editableBatch && window.confirm(t('confirmations.delete_batch', {name: editableBatch.name}))) {
         await deleteBatch(editableBatch.id);
         onNavigate('mylab/fornadas');
-    }
-  };
-
-  const handleExportJSON = () => {
-    if (!hasProAccess) {
-        openPaywall('mylab');
-        return;
-    }
-    if (!editableBatch) return;
-    try {
-      exportBatchToJSON(editableBatch, t);
-    } catch (e) {
-      addToast('Could not export at this time.', 'error');
     }
   };
 
@@ -346,7 +334,6 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
                     <button onClick={() => onLoadAndNavigate(doughConfig)} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><BatchesIcon className="h-5 w-5"/> {t('batch_detail.actions.repeat')}</button>
                     <button onClick={handleDuplicate} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DocumentDuplicateIcon className="h-5 w-5"/> {t('batch_detail.actions.duplicate')}</button>
                     <button onClick={handleExportPDF} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DownloadIcon className="h-5 w-5"/> {t('batch_detail.actions.export_pdf')}</button>
-                    <button onClick={handleExportJSON} className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-200 py-2.5 font-semibold text-slate-700 hover:bg-slate-300"><DocumentTextIcon className="h-5 w-5"/> {t('batch_detail.actions.export_json')}</button>
                     <button onClick={handleDelete} className="w-full flex items-center justify-center gap-2 rounded-lg text-red-600 py-2.5 font-semibold hover:bg-red-50"><TrashIcon className="h-5 w-5"/> {t('batch_detail.actions.delete')}</button>
                 </div>
              </div>
