@@ -1,27 +1,28 @@
+
+
 import React from 'react';
 import { useTranslation } from '@/i18n';
 import { Page } from '@/types';
 import { 
     AcademicCapIcon, 
     WrenchScrewdriverIcon,
-    BeakerIcon,
-    FireIcon,
+    FermentationIcon,
+    SparklesIcon,
     QuestionMarkCircleIcon,
     FlourIcon,
-    SparklesIcon,
+    FlaskIcon,
+    BookOpenIcon,
+    ListBulletIcon,
+    FireIcon,
+    BeakerIcon,
+    SunIcon,
     CubeIcon,
-    FermentationIcon,
+    ShieldCheckIcon,
     WaterIcon,
     SaltIcon,
     OilIcon,
     TagIcon,
     GlobeAltIcon,
-    ListBulletIcon,
-    BookOpenIcon,
-    PuzzlePieceIcon,
-    FlaskIcon,
-    ShieldCheckIcon,
-    SunIcon,
 } from '@/components/ui/Icons';
 
 interface LearnPageProps {
@@ -40,12 +41,12 @@ const LearnCategoryCard: React.FC<{
     >
         <div className="flex-shrink-0 text-lime-500">{icon}</div>
         <div className="mt-4 flex-grow">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
                 {title}
             </h3>
             <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{description}</p>
         </div>
-        <p className="mt-4 text-sm font-semibold text-slate-600 dark:text-slate-400 group-hover:text-lime-600 transition-colors">
+        <p className="mt-4 text-sm font-semibold text-slate-500 dark:text-slate-400 group-hover:text-lime-500 transition-colors">
             Explore &rarr;
         </p>
     </button>
@@ -113,19 +114,19 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
         {
             page: 'learn/water' as Page,
             title: 'Water in Dough',
-            description: 'The science of hardness, minerals, and water impact on gluten.',
+            description: 'The science of hardness, minerals, and the impact of water on gluten structure.',
             icon: <WaterIcon className="h-8 w-8" />,
         },
         {
             page: 'learn/salt' as Page,
             title: 'The Role of Salt',
-            description: 'Chemical and structural functions of salt, beyond flavor.',
+            description: 'Chemical and structural functions of salt, far beyond flavor.',
             icon: <SaltIcon className="h-8 w-8" />,
         },
         {
             page: 'learn/sugars-malts-enzymes' as Page,
             title: 'Sugars & Enzymes',
-            description: 'How sugars, malts, and enzymes influence fermentation, color, and flavor.',
+            description: 'How sugars, malts, and enzymes influence fermentation, color, and taste.',
             icon: <SparklesIcon className="h-8 w-8" />,
         },
         {
@@ -167,7 +168,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
         {
             page: 'learn/cured-meats' as Page,
             title: 'Cured Meats',
-            description: 'From pepperoni to prosciutto. Tips on prep, curing, and pairing.',
+            description: 'Understanding curing science and how it transforms flavor.',
             icon: <TagIcon className="h-8 w-8" />,
         },
         {
@@ -197,7 +198,7 @@ const LearnPage: React.FC<LearnPageProps> = ({ onNavigate }) => {
         {
             page: 'learn/sensory-profiles' as Page,
             title: 'Sensory Profiles',
-            description: 'Balancing umami, fat, acidity, and sweetness in pizza.',
+            description: 'The balance of umami, fat, acidity, sweetness, and crunch.',
             icon: <BeakerIcon className="h-8 w-8" />,
         },
         {

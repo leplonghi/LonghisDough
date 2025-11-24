@@ -1,4 +1,5 @@
 
+
 import { Tutorial, TutorialSection, YeastType } from './types';
 
 export const TUTORIALS: Tutorial[] = [
@@ -684,7 +685,7 @@ export const TUTORIALS: Tutorial[] = [
   {
     id: 'modo_reverso_adaptativo2',
     section: TutorialSection.TECHNIQUES,
-    title: 'Adaptive Reverse Mode 2',
+    title: 'Adaptive Reverse Mode',
     image: 'placeholder_url_modo_reverso_adaptativo2.jpg',
     intro: 'Advanced reverse calculations.',
     why: '<ul><li>Handling complex preferment leftovers.</li><li>Balancing multiple flours.</li></ul>',

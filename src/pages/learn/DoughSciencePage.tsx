@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
 import { BeakerIcon, BookOpenIcon, FireIcon } from '../../components/IconComponents';
@@ -18,7 +19,7 @@ const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React
 
 const DoughSciencePage: React.FC = () => {
   return (
-    <TechnicalPageLayout title="The Science of Dough" showReferencesSection>
+    <TechnicalPageLayout title="Dough Science 101" showReferencesSection>
         <Section title="Introduction: Dough as a Complex System">
             <p>
                 Far from being a simple mixture, pizza or bread dough is a complex biochemical ecosystem. Each component plays a fundamental and interdependent role, and changing any variable can completely transform the final result. Baking science, referenced by sources like "Modernist Bread," studies how the following elements interact to create the desired structure, texture, and flavor:

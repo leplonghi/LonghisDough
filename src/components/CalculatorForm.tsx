@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -22,7 +21,7 @@ import {
 } from '@/components/ui/Icons';
 import FormSection from '@/components/calculator/AccordionSection';
 import { useToast } from '@/components/ToastProvider';
-import IngredientsSection from './calculator/sections/IngredientsSection';
+import IngredientsSection from '@/components/calculator/sections/IngredientsSection';
 import StyleSection from '@/components/calculator/sections/StyleSection';
 import FermentationSection from '@/components/calculator/sections/FermentationSection';
 import QuantitySection from '@/components/calculator/sections/QuantitySection';

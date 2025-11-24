@@ -6,15 +6,16 @@ import {
     FireIcon,
     CubeIcon,
     ChevronRightIcon,
+    StarIcon,
     CalculatorIcon,
     TrashIcon,
+    CloseIcon,
     PlusCircleIcon,
     FlourIcon,
     SparklesIcon,
     UserCircleIcon,
     ClockIcon,
     GlobeAltIcon,
-    StarIcon,
     TagIcon
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
@@ -27,13 +28,13 @@ import ProFeatureLock from '@/components/ui/ProFeatureLock';
 
 interface DoughStylesPageProps {
   doughConfig: DoughConfig;
-  onLoadStyle?: (style: DoughStyleDefinition) => void;
+  onLoadStyle: (style: DoughStyleDefinition) => void;
   onNavigateToDetail: (styleId: string) => void;
 }
 
 // Navigation Categories matching the new taxonomy
 const CATEGORY_FILTERS: { id: StyleCategory | 'all', label: string }[] = [
-    { id: 'all', label: 'All' },
+    { id: 'all', label: 'All Styles' },
     { id: 'pizza', label: 'Pizza' },
     { id: 'bread', label: 'Breads' },
     { id: 'enriched_bread', label: 'Enriched' },
@@ -46,9 +47,9 @@ const CATEGORY_FILTERS: { id: StyleCategory | 'all', label: string }[] = [
 const getDisplayGroup = (category: StyleCategory): string => {
     switch (category) {
         case 'pizza': return 'Pizzas';
-        case 'bread':
-        case 'enriched_bread':
-        case 'flatbread': return 'Breads & Enriched Breads';
+        case 'bread': return 'Breads & Rustic Loaves';
+        case 'enriched_bread': return 'Enriched Breads';
+        case 'flatbread': return 'Flatbreads';
         case 'burger_bun': return 'Burger Buns';
         case 'pastry': return 'Pastry & Sweet Doughs';
         case 'cookie': return 'Cookies & Confectionery';
@@ -59,7 +60,8 @@ const getDisplayGroup = (category: StyleCategory): string => {
 // Priority order for display groups
 const GROUP_ORDER = [
     'Pizzas',
-    'Breads & Enriched Breads',
+    'Breads & Rustic Loaves',
+    'Enriched Breads',
     'Burger Buns',
     'Pastry & Sweet Doughs',
     'Cookies & Confectionery',
@@ -156,7 +158,7 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
                     </h3>
                 </div>
                 
-                <div className="mb-3 flex flex-wrap gap-2">
+                <div className="mb-3 flex gap-2 flex-wrap">
                     <CategoryBadge category={style.category} />
                     <span className="text-[10px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100 flex items-center gap-1">
                         <GlobeAltIcon className="h-3 w-3" /> {style.country}
@@ -213,15 +215,32 @@ const StyleCard: React.FC<{ style: DoughStyleDefinition; onClick: () => void; on
 const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadStyle, onNavigateToDetail }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<StyleCategory | 'all'>('all');
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isAiModalOpen, setIsAiModalOpen] = useState(false);
     const [styleToEdit, setStyleToEdit] = useState<Partial<DoughStyleDefinition> | undefined>(undefined);
+    const [isPlannerOpen, setIsPlannerOpen] = useState(false);
     
     const { userStyles, addUserStyle, deleteUserStyle } = useUser();
     
     // Combine Official and User Styles
     const allStyles = useMemo(() => [...STYLES_DATA, ...userStyles], [userStyles]);
     
+    // Extract unique tags from all available styles
+    const availableTags = useMemo(() => {
+        const tags = new Set<string>();
+        allStyles.forEach(style => {
+            style.tags?.forEach(t => tags.add(t));
+        });
+        return Array.from(tags).sort();
+    }, [allStyles]);
+    
+    // Helper to count styles in a category
+    const countByCategory = (cat: string) => {
+        if (cat === 'all') return allStyles.length;
+        return allStyles.filter(s => s.category === cat).length;
+    };
+
     // Group styles by Display Section
     const stylesByGroup = useMemo(() => {
         const filtered = allStyles.filter(style => {
@@ -231,7 +250,10 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                                   (style.tags && style.tags.some(t => t.toLowerCase().includes(searchLower)));
             
             const matchesCategory = selectedCategory === 'all' || style.category === selectedCategory;
-            return matchesSearch && matchesCategory;
+            
+            const matchesTag = selectedTag ? style.tags?.includes(selectedTag) : true;
+
+            return matchesSearch && matchesCategory && matchesTag;
         });
 
         const grouped: Record<string, DoughStyleDefinition[]> = {};
@@ -242,7 +264,7 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
         });
         
         return grouped;
-    }, [searchTerm, selectedCategory, allStyles]);
+    }, [searchTerm, selectedCategory, selectedTag, allStyles]);
 
     const handleUseStyle = (e: React.MouseEvent, style: DoughStyleDefinition) => {
         e.stopPropagation();
@@ -299,17 +321,27 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                     </button>
                 </div>
             </div>
+            
+             <div className="mb-8 flex flex-col md:flex-row gap-4 justify-center items-center p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <p className="text-sm font-semibold text-slate-700 text-center md:text-left">Need to calculate topping ingredients for your pizza bake?</p>
+                 <button onClick={() => setIsPlannerOpen(true)} className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 py-2 px-4 font-semibold text-white shadow-sm hover:bg-lime-600">
+                    <CalculatorIcon className="h-5 w-5"/> Open Toppings Planner
+                </button>
+            </div>
 
             {/* Search and Filter Bar */}
-            <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 sticky top-20 z-20 shadow-sm">
+            <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 sticky top-20 z-20 shadow-sm">
                 <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto no-scrollbar">
                     {CATEGORY_FILTERS.map(cat => (
                         <button 
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id as any)}
-                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat.id ? 'bg-lime-500 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}`}
+                            className={`whitespace-nowrap px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${selectedCategory === cat.id ? 'bg-lime-500 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}`}
                         >
                             {cat.label}
+                            <span className={`text-[10px] py-0.5 px-1.5 rounded-full ${selectedCategory === cat.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                                {countByCategory(cat.id)}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -323,6 +355,36 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
                     />
                 </div>
             </div>
+
+            {/* Tags Filter */}
+            {availableTags.length > 0 && (
+                <div className="mb-8 flex flex-wrap items-center gap-2 px-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                        <TagIcon className="h-3 w-3" /> Filter by Tag:
+                    </span>
+                    {availableTags.map(tag => (
+                        <button
+                            key={tag}
+                            onClick={() => setSelectedTag(prev => prev === tag ? null : tag)}
+                            className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                                selectedTag === tag 
+                                ? 'bg-slate-700 text-white border-slate-700 shadow-sm' 
+                                : 'bg-white text-slate-600 border-slate-200 hover:border-lime-500 hover:text-lime-600'
+                            }`}
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                    {selectedTag && (
+                        <button 
+                            onClick={() => setSelectedTag(null)}
+                            className="text-xs text-red-500 hover:text-red-700 ml-2 font-medium"
+                        >
+                            Clear Filter
+                        </button>
+                    )}
+                </div>
+            )}
             
             <div className="space-y-12">
                 {Object.keys(stylesByGroup).length === 0 ? (
@@ -374,7 +436,124 @@ const DoughStylesPage: React.FC<DoughStylesPageProps> = ({ doughConfig, onLoadSt
             onClose={() => setIsAiModalOpen(false)}
             onStyleGenerated={handleAiStyleGenerated}
         />
+
+        {isPlannerOpen && <ToppingPlannerModal onClose={() => setIsPlannerOpen(false)} totalBalls={doughConfig.numPizzas} />}
         </>
+    );
+};
+
+// ToppingPlannerModal component
+const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }> = ({ onClose, totalBalls }) => {
+    const [flavors, setFlavors] = useState<{ name: string, ingredients: { name: string, amount: string }[], assignedBalls: number }[]>([{ name: 'Flavor 1', ingredients: [{ name: '', amount: '' }], assignedBalls: totalBalls }]);
+    const [results, setResults] = useState<Record<string, number> | null>(null);
+
+    const allocatedBalls = flavors.reduce((sum, item) => sum + item.assignedBalls, 0);
+    const remainingBalls = totalBalls - allocatedBalls;
+
+    const handleFlavorChange = (index: number, field: string, value: string | number) => {
+        const newFlavors = [...flavors];
+        if (field === 'name') {
+            // @ts-ignore
+            newFlavors[index].name = value as string;
+        } else if (field === 'assignedBalls') {
+            const newCount = Number(value);
+            const countDiff = newCount - newFlavors[index].assignedBalls;
+            if (countDiff <= remainingBalls) {
+                newFlavors[index].assignedBalls = Math.max(0, newCount);
+            }
+        }
+        setFlavors(newFlavors);
+    };
+
+    const handleIngredientChange = (flavorIndex: number, ingIndex: number, field: string, value: string) => {
+        const newFlavors = [...flavors];
+        // @ts-ignore
+        newFlavors[flavorIndex].ingredients[ingIndex] = { ...newFlavors[flavorIndex].ingredients[ingIndex], [field]: value };
+        setFlavors(newFlavors);
+    };
+    
+    const addIngredient = (flavorIndex: number) => {
+        const newFlavors = [...flavors];
+        newFlavors[flavorIndex].ingredients.push({ name: '', amount: '' });
+        setFlavors(newFlavors);
+    };
+    
+    const removeIngredient = (flavorIndex: number, ingIndex: number) => {
+        const newFlavors = [...flavors];
+        newFlavors[flavorIndex].ingredients.splice(ingIndex, 1);
+        setFlavors(newFlavors);
+    };
+
+    const addFlavor = () => {
+        if (remainingBalls > 0) {
+            setFlavors([...flavors, { name: `Flavor ${flavors.length + 1}`, ingredients: [{ name: '', amount: '' }], assignedBalls: 1 }]);
+        }
+    };
+    
+    const removeFlavor = (index: number) => {
+        setFlavors(flavors.filter((_, i) => i !== index));
+    };
+
+    const calculateToppings = () => {
+        const consolidated: Record<string, number> = {};
+        flavors.forEach(flavor => {
+            flavor.ingredients.forEach(ing => {
+                const amount = parseFloat(ing.amount);
+                if (ing.name && !isNaN(amount)) {
+                    consolidated[ing.name] = (consolidated[ing.name] || 0) + (amount * flavor.assignedBalls);
+                }
+            });
+        });
+        setResults(consolidated);
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+            <div className="relative w-full max-w-3xl bg-white rounded-2xl p-6 shadow-xl" onClick={e => e.stopPropagation()}>
+                <h2 className="text-xl font-bold mb-4">Toppings Planner</h2>
+                <div className="p-3 rounded-lg bg-slate-100 text-center font-semibold mb-4">
+                    Total Balls in Bake: {totalBalls}
+                </div>
+                
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {flavors.map((flavor, flavorIndex) => (
+                        <div key={flavorIndex} className="p-4 border rounded-lg">
+                            <div className="flex items-center gap-3 mb-3">
+                                <input type="text" value={flavor.name} onChange={e => handleFlavorChange(flavorIndex, 'name', e.target.value)} className="font-semibold text-lg flex-grow border-0 p-1 focus:ring-0" />
+                                <input type="number" value={flavor.assignedBalls} onChange={e => handleFlavorChange(flavorIndex, 'assignedBalls', e.target.value)} className="w-20 rounded-md border-slate-300 text-sm"/>
+                                {flavors.length > 1 && <button onClick={() => removeFlavor(flavorIndex)}><TrashIcon className="h-5 w-5 text-red-500"/></button>}
+                            </div>
+                             <div className="space-y-2">
+                                {flavor.ingredients.map((ing, ingIndex) => (
+                                    <div key={ingIndex} className="flex items-center gap-2">
+                                        <input type="text" value={ing.name} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'name', e.target.value)} placeholder="Ingredient" className="flex-grow rounded-md border-slate-300 text-sm"/>
+                                        <input type="text" value={ing.amount} onChange={e => handleIngredientChange(flavorIndex, ingIndex, 'amount', e.target.value)} placeholder="Qty/unit" className="w-24 rounded-md border-slate-300 text-sm"/>
+                                        {flavor.ingredients.length > 1 && <button onClick={() => removeIngredient(flavorIndex, ingIndex)}><CloseIcon className="h-4 w-4 text-slate-400"/></button>}
+                                    </div>
+                                ))}
+                                <button onClick={() => addIngredient(flavorIndex)} className="text-xs font-semibold text-lime-600 flex items-center gap-1"><PlusCircleIcon className="h-4 w-4"/> Add ingredient</button>
+                             </div>
+                        </div>
+                    ))}
+                    <button onClick={addFlavor} disabled={remainingBalls <= 0} className="w-full text-sm font-semibold text-lime-600 flex items-center justify-center gap-1 p-2 border-2 border-dashed rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"><PlusCircleIcon className="h-5 w-5"/> Add flavor</button>
+                </div>
+
+                <button onClick={calculateToppings} disabled={remainingBalls !== 0} className="mt-4 w-full bg-lime-500 text-white font-semibold py-2 rounded-lg disabled:bg-slate-400 disabled:cursor-not-allowed">
+                    {remainingBalls !== 0 ? `${remainingBalls} ball(s) remaining to allocate` : 'Calculate Shopping List'}
+                </button>
+
+                {results && (
+                    <div className="mt-6 border-t pt-4">
+                        <h3 className="font-bold">Consolidated Shopping List:</h3>
+                        <ul className="list-disc list-inside mt-2 text-sm columns-2">
+                            {Object.entries(results).map(([name, total]) => (
+                                <li key={name}><strong>{name}:</strong> {total} (units)</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

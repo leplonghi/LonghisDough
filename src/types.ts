@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Timestamp } from "firebase/firestore";
 
@@ -75,6 +76,7 @@ export enum RecipeStyle {
   PIE_DOUGH = 'PIE_DOUGH',
   BOLO_SIMPLES = 'BOLO_SIMPLES',
   BROWNIE = 'BROWNIE',
+  SWEETS_PASTRY = 'SWEETS_PASTRY',
   
   // --- NEW STYLES (PASTRY/COOKIES) ---
   PASTRY_CINNAMON_ROLL = 'PASTRY_CINNAMON_ROLL',
@@ -437,6 +439,7 @@ export interface DoughStyleDefinition {
     allowedFermentationTechniques: FermentationTechnique[]; 
     defaultFermentationTechnique: FermentationTechnique;
     ingredients: IngredientConfig[];
+    ingredientDetails?: IngredientConfig[];
     variations?: string[];
     risks?: string[];
     notes?: string[];

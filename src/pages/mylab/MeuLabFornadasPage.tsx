@@ -1,12 +1,11 @@
-
 import React, { useState, useMemo } from 'react';
-import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '../../types';
-import { useUser } from '../../contexts/UserProvider';
-import { useTranslation } from '../../i18n';
+import { DoughConfig, Page, Batch, RecipeStyle, OvenType, BatchStatus } from '@/types';
+import { useUser } from '@/contexts/UserProvider';
+import { useTranslation } from '@/i18n';
 import MyLabLayout from './MyLabLayout';
-import { BatchesIcon, CalculatorIcon, PlusCircleIcon, StarIcon, LockClosedIcon } from '../../components/IconComponents';
-import { OVEN_TYPE_OPTIONS } from '../../constants';
-import { useToast } from '../../components/ToastProvider';
+import { BatchesIcon, CalculatorIcon, LockClosedIcon } from '@/components/ui/Icons';
+import { OVEN_TYPE_OPTIONS } from '@/constants';
+import { useToast } from '@/components/ToastProvider';
 
 interface MeuLabFornadasPageProps {
   onLoadAndNavigate: (config: Partial<DoughConfig>) => void;

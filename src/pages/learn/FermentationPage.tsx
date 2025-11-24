@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
 import { BookOpenIcon, BeakerIcon } from '../../components/IconComponents';
@@ -18,7 +19,7 @@ const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React
 const FermentationPage: React.FC = () => {
   return (
     <TechnicalPageLayout 
-        title="Cold Fermentation (Cold Retard)" 
+        title="Cold Fermentation: The Science of Time" 
         showReferencesSection
     >
         <Section title="1. Introduction: The Art of Patience">

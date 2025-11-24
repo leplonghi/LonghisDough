@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
@@ -15,11 +14,10 @@ import {
   TrashIcon,
   DownloadIcon,
   PhotoIcon,
-  BeakerIcon,
-  FireIcon,
   YeastIcon,
   ClockIcon,
   DocumentTextIcon,
+  FireIcon
 } from '@/components/ui/Icons';
 import { saveCommunityBatch } from '@/data/communityStore';
 import { FLOURS } from '@/flours-constants';
@@ -81,8 +79,8 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
         <table className="w-full text-sm">
             <thead>
                 <tr className="border-b-2 border-slate-300">
-                    <th className="text-left py-2">Ingrediente</th>
-                    <th className="text-right py-2">Quantidade</th>
+                    <th className="text-left py-2">Ingredient</th>
+                    <th className="text-right py-2">Amount</th>
                     <th className="text-right py-2"></th>
                 </tr>
             </thead>
@@ -92,9 +90,9 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t(`form.${doughConfig.fermentationTechnique.toLowerCase()}`)}</td>
                         </tr>
-                        {renderRow('Farinha', result.preferment.flour)}
-                        {renderRow('Água', result.preferment.water)}
-                        {result.preferment.yeast > 0 && renderRow('Fermento', result.preferment.yeast)}
+                        {renderRow('Flour', result.preferment.flour)}
+                        {renderRow('Water', result.preferment.water)}
+                        {result.preferment.yeast > 0 && renderRow('Yeast', result.preferment.yeast)}
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t('results.final_dough_title')}</td>
                         </tr>
@@ -141,7 +139,7 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     const foundBatch = batches.find((b) => b.id === batchId);
     if (foundBatch) {
       setEditableBatch(JSON.parse(JSON.stringify(foundBatch)));
-      setIsEditingNotes(!foundBatch.notes); // Start in edit mode if no notes
+      setIsEditingNotes(!foundBatch.notes);
     } else {
       setEditableBatch(null);
     }
@@ -182,26 +180,21 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
 
   const handleDuplicate = async () => {
       if(!editableBatch) return;
-      
-      // --- BATCH LIMIT CHECK ---
       const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
       if (!hasProAccess && savedBatches.length >= 1) {
           openPaywall('mylab');
           return;
       }
-      // -------------------------
 
-      const now = new Date().toISOString();
-      // Deep copy and update necessary fields
       const newBatchData: Omit<Batch, 'id' | 'createdAt'|'updatedAt'> = {
           ...JSON.parse(JSON.stringify(editableBatch)),
-          name: `${editableBatch.name} (Cópia)`,
+          name: `${editableBatch.name} (Copy)`,
           status: BatchStatus.DRAFT,
           rating: undefined,
           isPublic: false,
       };
       const added = await addBatch(newBatchData);
-      addToast(`Fornada "${editableBatch.name}" duplicada.`, 'success');
+      addToast(`Batch "${editableBatch.name}" duplicated.`, 'success');
       onNavigate('batch', added.id);
   };
   
@@ -221,7 +214,7 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     try {
       exportBatchToJSON(editableBatch, t);
     } catch (e) {
-      addToast('Não foi possível exportar agora. Tente novamente em instantes.', 'error');
+      addToast('Could not export at this time.', 'error');
     }
   };
 
@@ -234,7 +227,7 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
     try {
       exportBatchToPDF(editableBatch, t);
     } catch (e) {
-      addToast('Não foi possível exportar agora. Tente novamente em instantes.', 'error');
+      addToast('Could not export PDF at this time.', 'error');
     }
   };
 
@@ -281,9 +274,9 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
                     <KeyStatCard label={t('batch_detail.hydration')} value={`${doughConfig.hydration}%`} icon={<InfoIcon className="h-6 w-6"/>} />
                     <KeyStatCard label={t('form.flour_type')} value={flour?.name || 'N/A'} icon={<InfoIcon className="h-6 w-6"/>} />
                     <KeyStatCard label={t('batch_detail.yeast')} value={t(`form.yeast_${doughConfig.yeastType.toLowerCase()}`)} icon={<YeastIcon className="h-6 w-6"/>} />
-                    <KeyStatCard label="Tempo Total" value={`${(editableBatch.bulkTimeHours || 0) + (editableBatch.proofTimeHours || 0)}h`} icon={<ClockIcon className="h-6 w-6"/>} />
-                    <KeyStatCard label="Temp. Média" value={t(`form.temp_${doughConfig.ambientTemperature.toLowerCase()}`)} icon={<InfoIcon className="h-6 w-6"/>} />
-                    <KeyStatCard label="Forno" value={editableBatch.ovenType ? t(`profile.ovens.types.${editableBatch.ovenType.toLowerCase()}`) : 'N/A'} icon={<FireIcon className="h-6 w-6"/>} />
+                    <KeyStatCard label="Total Time" value={`${(editableBatch.bulkTimeHours || 0) + (editableBatch.proofTimeHours || 0)}h`} icon={<ClockIcon className="h-6 w-6"/>} />
+                    <KeyStatCard label="Avg Temp" value={t(`form.temp_${doughConfig.ambientTemperature.toLowerCase()}`)} icon={<InfoIcon className="h-6 w-6"/>} />
+                    <KeyStatCard label="Oven" value={editableBatch.ovenType ? t(`profile.ovens.types.${editableBatch.ovenType.toLowerCase()}`) : 'N/A'} icon={<FireIcon className="h-6 w-6"/>} />
                 </dl>
             </div>
 
@@ -300,7 +293,7 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
                     {!isEditingNotes && (
                         <button onClick={() => setIsEditingNotes(true)} className="flex items-center gap-1.5 rounded-md py-1 px-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100">
                            <PencilIcon className="h-3 w-3" />
-                           <span>{editableBatch.notes ? 'Editar' : 'Adicionar'}</span>
+                           <span>{editableBatch.notes ? 'Edit' : 'Add'}</span>
                         </button>
                     )}
                  </div>
@@ -336,7 +329,7 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
                     <PhotoIcon className="h-10 w-10 text-slate-400" />
                 </div>
                 <button className="w-full mt-4 rounded-md bg-slate-200 text-slate-700 py-2 text-sm font-semibold hover:bg-slate-300">
-                    {t('common.add')} Foto
+                    {t('common.add')} Photo
                 </button>
             </div>
              <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200/50">

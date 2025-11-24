@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
-import { CommunityBatch, DoughConfig, Page } from '../types';
-import { getCommunityBatchById } from '../data/communityStore';
-import { useTranslation } from '../i18n';
-import { DocumentDuplicateIcon } from '../components/IconComponents';
+import { CommunityBatch, DoughConfig, Page } from '@/types';
+import { getCommunityBatchById } from '@/data/communityStore';
+import { useTranslation } from '@/i18n';
+import { DocumentDuplicateIcon } from '@/components/ui/Icons';
 
 interface CommunityBatchDetailPageProps {
   batchId: string | null;

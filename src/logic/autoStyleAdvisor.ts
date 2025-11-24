@@ -58,6 +58,7 @@ const STYLE_CHARACTERISTICS: Record<
   [RecipeStyle.DONUT]: { hydrationRange: [50, 60], idealW: [240, 300], idealOvenTemp: [180, 200], name: 'Yeast Donut' },
   [RecipeStyle.SHORTBREAD]: { hydrationRange: [0, 10], idealW: [150, 200], idealOvenTemp: [160, 170], name: 'Shortbread' },
   [RecipeStyle.BROWNIE]: { hydrationRange: [20, 30], idealW: [150, 200], idealOvenTemp: [160, 180], name: 'Brownie' },
+  [RecipeStyle.SWEETS_PASTRY]: { hydrationRange: [5, 20], idealW: [150, 220], idealOvenTemp: [160, 190], name: 'Pastry & Sweets' },
   
   // New Styles from Types
   [RecipeStyle.BREAD_RUSTIC_SOURDOUGH]: { hydrationRange: [70, 80], idealW: [280, 350], idealOvenTemp: [230, 250], name: 'Rustic Sourdough' },

@@ -1,6 +1,7 @@
 
+
 import React, { ReactNode } from 'react';
-import { BeakerIcon, BookOpenIcon, ChartBarIcon, ListBulletIcon } from '../../../components/IconComponents';
+import { BeakerIcon, BookOpenIcon, ChartBarIcon, ListBulletIcon } from '@/components/ui/Icons';
 
 type LevainDetailTab = 'summary' | 'feedings' | 'profile' | 'insights';
 
