@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { useTranslation } from '@/i18n';
@@ -182,6 +183,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
   return (
     <>
     <div className="mx-auto max-w-2xl animate-[fadeIn_0.5s_ease-in-out]">
+      <button 
+        onClick={() => window.history.back()} 
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+      >
+        &larr; Back
+      </button>
+
       <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 sm:p-10">
         <div className="flex flex-col items-center text-center">
           {user.avatar ? (

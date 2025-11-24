@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { CommunityBatch, DoughConfig, Page } from '@/types';
 import { getCommunityBatchById } from '@/data/communityStore';
@@ -44,6 +45,13 @@ const CommunityBatchDetailPage: React.FC<CommunityBatchDetailPageProps> = ({ bat
 
     return (
         <div className="mx-auto max-w-4xl animate-[fadeIn_0.5s_ease-in-out]">
+            <button 
+              onClick={() => window.history.back()} 
+              className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            >
+              &larr; Back
+            </button>
+
             <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50 dark:border dark:border-slate-700/50 dark:bg-slate-800 sm:p-10">
                  <div className="mb-6 border-b border-slate-200 pb-6 dark:border-slate-700">
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">

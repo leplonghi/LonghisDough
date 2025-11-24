@@ -3,7 +3,7 @@ import React from 'react';
 import { Page } from '@/types';
 import TechnicalPageLayout from './TechnicalPageLayout';
 import LearnTopicCard from '@/components/learn/LearnTopicCard';
-import { SunIcon, WrenchScrewdriverIcon, CubeIcon, SparklesIcon, FireIcon, BeakerIcon, ShieldCheckIcon } from '@/components/ui/Icons';
+import { SunIcon, WrenchScrewdriverIcon, CubeIcon, SparklesIcon, FireIcon, BeakerIcon, ShieldCheckIcon, ClockIcon } from '@/components/ui/Icons';
 
 interface MethodsPageProps {
   onNavigate: (page: Page) => void;
@@ -11,6 +11,7 @@ interface MethodsPageProps {
 
 const MethodsPage: React.FC<MethodsPageProps> = ({ onNavigate }) => {
     const topics = [
+        { page: 'learn/autolyse', title: 'Autolyse', description: 'The passive rest technique for gluten development and extensibility.', icon: <ClockIcon className="h-8 w-8" /> },
         { page: 'learn/ambient-vs-cold-fermentation', title: 'Ambient vs. Cold', description: 'A scientific comparison of fermentation methods.', icon: <SunIcon className="h-8 w-8" /> },
         { page: 'learn/mixing-techniques', title: 'Mixing Techniques', description: 'The science behind kneading, folding, and the Rubaud method.', icon: <WrenchScrewdriverIcon className="h-8 w-8" /> },
         { page: 'learn/balling-technique', title: 'Balling Science', description: 'How surface tension organizes gluten and retains gas.', icon: <CubeIcon className="h-8 w-8" /> },

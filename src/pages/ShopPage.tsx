@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AFFILIATE_LINKS, AffiliateProduct } from '@/data/affiliateLinks';
 import { ShoppingBagIcon, ExternalLinkIcon, InfoIcon } from '@/components/ui/Icons';
@@ -41,6 +42,13 @@ const ShopPage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
+      <button 
+        onClick={() => window.history.back()} 
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+      >
+        &larr; Back
+      </button>
+
       {/* Header */}
       <div className="text-center mb-10">
         <ShoppingBagIcon className="mx-auto h-12 w-12 text-lime-500" />

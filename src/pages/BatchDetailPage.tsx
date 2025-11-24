@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
@@ -248,6 +249,13 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
 
   return (
     <div className="animate-[fadeIn_0.5s_ease-in-out]">
+      <button 
+        onClick={() => window.history.back()} 
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+      >
+        &larr; Back
+      </button>
+
       {/* Header */}
       <div className="mb-8 space-y-2">
           <input

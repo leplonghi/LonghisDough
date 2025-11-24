@@ -1,3 +1,4 @@
+
 import React, {
   useState,
   useEffect,
@@ -141,6 +142,7 @@ const CommunityBatchDetailPage = React.lazy(() => import('@/pages/CommunityBatch
 const ProActivatedPage = React.lazy(() => import('@/pages/pro/ProActivatedPage'));
 const FloursPage = React.lazy(() => import('@/pages/FloursPage'));
 const DoughbotPage = React.lazy(() => import('@/pages/DoughbotPage'));
+const AutolysePage = React.lazy(() => import('@/pages/learn/AutolysePage'));
 
 
 // --- Placeholder Pages ---
@@ -872,6 +874,8 @@ function AppContent() {
         return protect(<FloursPage onNavigate={navigate} />);
       case 'community':
         return protect(<CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />);
+      case 'learn/autolyse':
+        return <AutolysePage />;
       default:
         return protect(
           <MyLabPage

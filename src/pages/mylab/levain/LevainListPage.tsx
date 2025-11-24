@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Levain, Page } from '@/types';
 import { useTranslation } from '@/i18n';
@@ -112,6 +113,13 @@ const LevainListPage: React.FC<LevainListPageProps> = ({ onNavigate }) => {
     return (
         <>
         <div className="mx-auto max-w-7xl animate-[fadeIn_0.5s_ease-in_out]">
+            <button 
+                onClick={() => window.history.back()} 
+                className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+            >
+                &larr; Back
+            </button>
+
             <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">

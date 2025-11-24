@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Page, TestSeries, Batch } from '@/types';
 import MyLabLayout from './MyLabLayout';
@@ -63,6 +64,12 @@ const ConsistencyDetailPage: React.FC<ConsistencyDetailPageProps> = ({ seriesId,
     return (
         <MyLabLayout activePage="mylab/consistency" onNavigate={onNavigate}>
              <div className="mb-6">
+                <button 
+                    onClick={() => window.history.back()} 
+                    className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+                >
+                    &larr; Back to Series
+                </button>
                 <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">{series.name}</h1>
                 <p className="mt-1 text-sm text-neutral-600">Summary of your controlled test series.</p>
             </div>

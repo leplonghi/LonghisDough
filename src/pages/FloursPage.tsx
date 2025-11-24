@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useTranslation } from '@/i18n';
 import { FlourIcon, StarIcon } from '@/components/ui/Icons';
@@ -15,6 +16,13 @@ const FloursPage: React.FC<FloursPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="mx-auto max-w-4xl animate-[fadeIn_0.5s_ease-in-out]">
+      <button 
+        onClick={() => window.history.back()} 
+        className="mb-6 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+      >
+        &larr; Back
+      </button>
+
       <div className="text-center">
         <FlourIcon className="mx-auto h-12 w-12 text-lime-500" />
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
