@@ -8,7 +8,7 @@ import {
   DoughStyleDefinition,
 } from '@/types';
 import { YEAST_OPTIONS } from '@/constants';
-import SliderInput from '../../ui/SliderInput';
+import SliderInput from '@/components/ui/SliderInput';
 import IngredientTableEditor from '@/components/calculator/IngredientTableEditor';
 import {
   CubeIcon,
@@ -96,6 +96,7 @@ const IngredientsSection: React.FC<IngredientsSectionProps> = ({
   // Helper to get ranges safely
   const getRange = (key: 'hydration' | 'salt' | 'oil' | 'sugar') => {
       if (!activeStyle || !activeStyle.technicalProfile) return undefined;
+      // @ts-ignore - technicalProfile keys match
       return activeStyle.technicalProfile[key];
   }
 

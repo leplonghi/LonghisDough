@@ -120,6 +120,15 @@ export function syncIngredientsFromConfig(config: DoughConfig): IngredientConfig
 
 // --- Calculation Logic ---
 
+/**
+ * THE CORE CALCULATOR ENGINE
+ * 
+ * This function takes the configuration and outputs exact weights.
+ * It handles:
+ * 1. Baker's Percentage Math (Weight = Flour * %)
+ * 2. Pre-ferment decomposition (Splitting flour/water/yeast into Day 1 vs Day 2)
+ * 3. Sourdough Hydration logic
+ */
 export const calculateDoughUniversal = (
   config: DoughConfig,
   calculatorMode: 'basic' | 'advanced',
@@ -130,35 +139,31 @@ export const calculateDoughUniversal = (
     const normalizedConfig = normalizeDoughConfigWithIngredients(config);
     const ingredients = normalizedConfig.ingredients || [];
 
-    // 1. Calculate Total Flour Weight
+    // 1. Calculate Total Target Weight
     // Standard calc: Total Dough = NumPizzas * BallWeight * Scale
     let totalTargetWeight = config.numPizzas * config.doughBallWeight * config.scale;
     
-    // If calculating by total flour
-    if (calculationMode === 'flour' && config.totalFlour) {
-        // This path is slightly different, but for now let's stick to mass mode as primary for V1 universal
-        // or derive target weight from total flour if needed.
-    }
+    // If calculating by total flour input, logic reverses
+    let totalFlour = 0;
 
-    // Calculate Sum of Percentages
+    // Calculate Sum of Percentages (The "Factor")
+    // Example: 100 (flour) + 65 (water) + 3 (salt) = 168%
     let totalPercentage = 0;
     ingredients.forEach(ing => {
         totalPercentage += ing.bakerPercentage;
     });
 
-    // Calculate Flour Weight (The Base)
-    // If we are in flour mode, we use config.totalFlour directly
-    let totalFlour = 0;
     if (calculationMode === 'flour' && config.totalFlour) {
+        // Mode: "I have 1kg of flour, how much dough does it make?"
         totalFlour = config.totalFlour;
-        // Re-calculate total dough weight
         totalTargetWeight = totalFlour * (totalPercentage / 100);
     } else {
-        // Mass mode
+        // Mode: "I need 1kg of dough, how much flour do I need?"
+        // Formula: Flour = TotalDough * (100 / SumPercentages)
         totalFlour = totalTargetWeight * (100 / totalPercentage);
     }
 
-    // Calculate Individual Weights
+    // 2. Calculate Absolute Weights for ALL ingredients based on Total Flour
     const ingredientWeights = ingredients.map(ing => ({
         id: ing.id,
         name: ing.name,
@@ -166,9 +171,6 @@ export const calculateDoughUniversal = (
         role: ing.role,
         bakerPercentage: ing.bakerPercentage
     }));
-
-    // Map to DoughResult structure for UI Compatibility
-    // We need to separate Pre-ferment vs Final Dough logic here.
 
     const result: DoughResult = {
         totalFlour: totalFlour,
@@ -181,7 +183,7 @@ export const calculateDoughUniversal = (
         ingredientWeights: ingredientWeights
     };
 
-    // Extract base weights for legacy summary
+    // Extract base weights for easy access
     const waterWeight = ingredientWeights.find(i => i.role === 'water')?.weight || 0;
     const saltWeight = ingredientWeights.find(i => i.role === 'salt')?.weight || 0;
     const oilWeight = ingredientWeights.find(i => i.role === 'fat')?.weight || 0;
@@ -194,52 +196,65 @@ export const calculateDoughUniversal = (
     result.totalSugar = sugarWeight;
     result.totalYeast = yeastOrStarterWeight;
 
-    // Handle Pre-ferments Logic (Levain, Poolish, Biga)
+    // 3. PRE-FERMENT DECOMPOSITION LOGIC
+    // If using Biga/Poolish, we must subtract their flour/water from the main mix.
     
     const isChemicalOrNoFerment = config.fermentationTechnique === FermentationTechnique.CHEMICAL || config.fermentationTechnique === FermentationTechnique.NO_FERMENT;
 
+    // CASE A: Sourdough / Levain
     if (!isChemicalOrNoFerment && (config.yeastType === YeastType.SOURDOUGH_STARTER || config.yeastType === YeastType.USER_LEVAIN)) {
-        // Levain Logic
         const starterWeight = yeastOrStarterWeight;
-        let levainHydration = 100; // Default 100%
+        
+        // Determine starter hydration (default 100% or user defined)
+        let levainHydration = 100; 
         if (config.yeastType === YeastType.USER_LEVAIN && userLevain) {
             levainHydration = userLevain.hydration;
         }
 
-        // Calculate flour and water INSIDE the starter
+        // Math: StarterWeight = Flour + Water
+        // Water = Flour * Hydration
+        // StarterWeight = Flour + (Flour * Hydration) = Flour * (1 + Hydration)
+        // Flour = StarterWeight / (1 + Hydration)
         const starterFlour = starterWeight / (1 + (levainHydration / 100));
         const starterWater = starterWeight - starterFlour;
 
         result.preferment = {
             flour: starterFlour,
             water: starterWater,
-            yeast: 0 // Starter itself is the yeast source
+            yeast: 0 // The starter IS the yeast culture
         };
 
         result.finalDough = {
-            flour: totalFlour - starterFlour,
-            water: waterWeight - starterWater,
+            flour: totalFlour - starterFlour, // "Reforço" flour
+            water: waterWeight - starterWater, // "Reforço" water
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
             yeast: 0
         };
 
+    // CASE B: Poolish or Biga (Commercial Yeast Preferments)
     } else if (!isChemicalOrNoFerment && (config.fermentationTechnique === FermentationTechnique.POOLISH || config.fermentationTechnique === FermentationTechnique.BIGA)) {
-        // Poolish or Biga
-        // The 'yeastOrStarterWeight' here is commercial yeast.
-        // We need to calculate the preferment flour amount based on prefermentFlourPercentage
         
+        // How much of the Total Flour goes into the preferment?
+        // defined by prefermentFlourPercentage (e.g., 30%)
         const prefermentFlour = totalFlour * (config.prefermentFlourPercentage / 100);
-        let prefermentWater = prefermentFlour; // Poolish default (100%)
+        
+        let prefermentWater = 0;
         
         if (config.fermentationTechnique === FermentationTechnique.BIGA) {
-            prefermentWater = prefermentFlour * 0.5; // Biga (50%)
+            // BIGA: Traditionally 45-50% hydration. We use 50% for calculation simplicity.
+            prefermentWater = prefermentFlour * 0.5; 
+        } else {
+            // POOLISH: Always 100% hydration (1:1 ratio)
+            prefermentWater = prefermentFlour * 1.0;
         }
 
-        // Yeast in preferment (usually small fixed % of preferment flour, e.g. 0.1% - 0.5% or tiny amount)
-        // Legacy logic used: const prefermentYeast = prefermentFlour * 0.002;
-        const prefermentYeast = prefermentFlour * 0.002;
+        // Yeast in preferment
+        // Standard practice: Use a tiny fraction (0.1% - 0.2%) of the preferment flour for the preferment,
+        // and put the rest in the final dough if needed.
+        // For this calculator, we assume a fixed small amount for the preferment to ensure it activates.
+        const prefermentYeast = prefermentFlour * 0.002; // 0.2% of preferment flour
         
         result.preferment = {
             flour: prefermentFlour,
@@ -247,17 +262,20 @@ export const calculateDoughUniversal = (
             yeast: prefermentYeast
         };
 
+        // Final Dough (The Mix Day)
         result.finalDough = {
             flour: totalFlour - prefermentFlour,
             water: waterWeight - prefermentWater,
             salt: saltWeight,
             oil: oilWeight,
             sugar: sugarWeight,
+            // Remaining yeast is added to final dough. 
+            // If yeastOrStarterWeight (total yeast) is less than what we put in preferment, we assume 0 added.
             yeast: Math.max(0, yeastOrStarterWeight - prefermentYeast)
         };
 
     } else {
-        // Direct Method / Chemical / No Ferment - No preferment calculation
+        // CASE C: Direct Method (Everything mixed at once)
         result.finalDough = {
             flour: totalFlour,
             water: waterWeight,

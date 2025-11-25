@@ -51,13 +51,11 @@ const PhaseIcon: React.FC<{ phase: TechnicalPhase }> = ({ phase }) => {
 };
 
 const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: () => void; mode: 'technical' | 'grandma' }> = ({ step, isExpanded, onToggle, mode }) => {
-    // Detect if this is a preferment step based on keywords
     const isPreferment = step.title.toLowerCase().includes('poolish') || 
                          step.title.toLowerCase().includes('biga') || 
                          step.title.toLowerCase().includes('sponge') ||
                          (step.phase === 'PREP' && step.title.toLowerCase().includes('levain'));
 
-    // Dynamic styling based on step type
     const containerClasses = isPreferment
         ? "border-amber-200 bg-amber-50/80 hover:border-amber-300 hover:shadow-md ring-1 ring-amber-100"
         : "border-slate-200 bg-white hover:border-lime-400 hover:shadow-md hover:ring-1 hover:ring-lime-400/50";
@@ -66,20 +64,16 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
 
     return (
         <div className="relative pb-10 pl-8 sm:pl-12 last:pb-0">
-            {/* Connector Line */}
             <div className="absolute left-[15px] top-8 h-full w-0.5 bg-slate-200 last:hidden" aria-hidden="true"></div>
             
-            {/* Icon */}
             <div className="absolute left-0 top-0">
                 <PhaseIcon phase={step.phase} />
             </div>
 
-            {/* Content Card */}
             <div 
                 className={`group relative flex flex-col rounded-2xl border p-5 shadow-sm transition-all cursor-pointer ${containerClasses}`}
                 onClick={onToggle}
             >
-                {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -106,12 +100,10 @@ const StepCard: React.FC<{ step: TechnicalStep; isExpanded: boolean; onToggle: (
                     </div>
                 </div>
 
-                {/* Main Instruction */}
                 <p className="mt-3 text-sm font-medium text-slate-700 leading-relaxed">
                     {isGrandma ? (step.grandmaInstructions || step.actionInstructions) : step.actionInstructions}
                 </p>
 
-                {/* Details (Collapsible) */}
                 <div 
                     className={`grid grid-cols-1 gap-3 overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'mt-5 opacity-100 max-h-[1000px]' : 'max-h-0 opacity-0'}`}
                 >
@@ -203,7 +195,6 @@ const TechnicalMethodPanel: React.FC<TechnicalMethodPanelProps> = ({ steps }) =>
             </div>
         </div>
 
-        {/* Grandma Mode Toggle */}
         <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
             <button
                 onClick={() => setMode('technical')}

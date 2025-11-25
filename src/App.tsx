@@ -12,7 +12,10 @@ import Footer from '@/components/layout/Footer';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import RequireAuth from '@/components/RequireAuth';
 import RequirePro from '@/components/RequirePro';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
+import FloatingActionButton from '@/components/ui/FloatingActionButton';
 
+// Constants & Types
 import {
   DoughConfig,
   BakeType,
@@ -29,20 +32,24 @@ import {
   DoughStyleDefinition,
 } from '@/types';
 import { DOUGH_STYLE_PRESETS, DEFAULT_CONFIG } from '@/constants';
-import { STYLES_DATA, getStyleById, getAllowedFermentationTechniques } from '@/data/stylesData';
-import { PaywallModal } from '@/components/PaywallModal';
-import AuthModal from '@/components/AuthModal';
 import { FLOURS } from '@/flours-constants';
-import { ToastProvider, useToast } from '@/components/ToastProvider';
-import { UserProvider, useUser } from '@/contexts/UserProvider';
-import FloatingActionButton from '@/components/ui/FloatingActionButton';
-import ErrorBoundary from '@/components/ui/ErrorBoundary';
-import { AuthProvider } from '@/contexts/AuthContext';
-import LevainOnboardingModal from '@/components/onboarding/LevainOnboardingModal';
-import { logEvent } from '@/services/analytics';
+import { getStyleById, getAllowedFermentationTechniques } from '@/data/stylesData';
+
+// Logic & Services
 import { calculateDoughUniversal, syncIngredientsFromConfig } from '@/logic/doughMath';
 import { normalizeDoughConfig } from '@/logic/normalization';
+import { logEvent } from '@/services/analytics';
+
+// Contexts
+import { ToastProvider, useToast } from '@/components/ToastProvider';
+import { UserProvider, useUser } from '@/contexts/UserProvider';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { I18nProvider } from '@/i18n';
+
+// Modals
+import { PaywallModal } from '@/components/PaywallModal';
+import AuthModal from '@/components/AuthModal';
+import LevainOnboardingModal from '@/components/onboarding/LevainOnboardingModal';
 
 // Lazy Load Pages
 const CalculatorPage = React.lazy(() => import('@/pages/CalculatorPage'));
@@ -65,7 +72,13 @@ const EulaPage = React.lazy(() => import('@/pages/legal/EulaPage'));
 const IpPage = React.lazy(() => import('@/pages/legal/IpPage'));
 const ContactPage = React.lazy(() => import('@/pages/legal/ContactPage'));
 const LegalIndexPage = React.lazy(() => import('@/pages/legal/LegalIndexPage'));
-const TechniquesPage = React.lazy(() => import('@/pages/learn/TechniquesPage'));
+
+// Lazy Load Learn Sub-Pages
+const FundamentalsPage = React.lazy(() => import('@/pages/learn/FundamentalsPage'));
+const MethodsPage = React.lazy(() => import('@/pages/learn/MethodsPage'));
+const CriticalIngredientsPage = React.lazy(() => import('@/pages/learn/CriticalIngredientsPage'));
+const OvensHeatPage = React.lazy(() => import('@/pages/learn/OvensHeatPage'));
+const TroubleshootingGuidePage = React.lazy(() => import('@/pages/learn/TroubleshootingGuidePage'));
 const FermentationPage = React.lazy(() => import('@/pages/learn/FermentationPage'));
 const DoughSciencePage = React.lazy(() => import('@/pages/learn/DoughSciencePage'));
 const TroubleshootingPage = React.lazy(() => import('@/pages/learn/TroubleshootingPage'));
@@ -73,27 +86,7 @@ const IngredientsPage = React.lazy(() => import('@/pages/learn/IngredientsPage')
 const ChemistryLibraryPage = React.lazy(() => import('@/pages/learn/ChemistryLibraryPage'));
 const StyleGuidePage = React.lazy(() => import('@/pages/learn/StyleGuidePage'));
 const GlossaryPage = React.lazy(() => import('@/pages/learn/GlossaryPage'));
-const CheesesPage = React.lazy(() => import('@/pages/learn/ingredients/CheesesPage'));
-const MeatsPage = React.lazy(() => import('@/pages/learn/ingredients/MeatsPage'));
-const VegetablesPage = React.lazy(() => import('@/pages/learn/ingredients/VegetablesPage'));
-const SaucesPage = React.lazy(() => import('@/pages/learn/ingredients/SaucesPage'));
-const OilsSpicesPage = React.lazy(() => import('@/pages/learn/ingredients/OilsSpicesPage'));
-const OilsPage = React.lazy(() => import('@/pages/learn/ingredients/OilsPage'));
-const ClassicCombosPage = React.lazy(() => import('@/pages/learn/ingredients/ClassicCombosPage'));
-const BoldCombosPage = React.lazy(() => import('@/pages/learn/ingredients/BoldCombosPage'));
-const SensoryGuidePage = React.lazy(() => import('@/pages/learn/SensoryGuidePage'));
-const PairingToolPage = React.lazy(() => import('@/pages/learn/ingredients/PairingToolPage'));
-const ReadyToppingsPage = React.lazy(() => import('@/pages/learn/ingredients/ReadyToppingsPage'));
-const MeuLabReceitasPage = React.lazy(() => import('@/pages/mylab/MeuLabReceitasPage'));
-const MeuLabLevainPetPage = React.lazy(() => import('@/pages/mylab/MeuLabLevainPetPage'));
 const OvenSciencePage = React.lazy(() => import('@/pages/learn/OvenSciencePage'));
-const IngredientsFloursPage = React.lazy(() => import('@/pages/learn/ingredients/FloursPage'));
-const YeastsPage = React.lazy(() => import('@/pages/learn/ingredients/YeastsPage'));
-const PrefermentsPage = React.lazy(() => import('@/pages/learn/PrefermentsPage'));
-const TemperatureControlPage = React.lazy(() => import('@/pages/learn/TemperatureControlPage'));
-const StoragePage = React.lazy(() => import('@/pages/learn/StoragePage'));
-const HygieneSafetyPage = React.lazy(() => import('@/pages/learn/HygieneSafetyPage'));
-const EquipmentPage = React.lazy(() => import('@/pages/learn/EquipmentPage'));
 const OvenSpringPage = React.lazy(() => import('@/pages/learn/OvenSpringPage'));
 const FermentationBiochemistryPage = React.lazy(() => import('@/pages/learn/FermentationBiochemistryPage'));
 const CrumbStructurePage = React.lazy(() => import('@/pages/learn/CrumbStructurePage'));
@@ -118,6 +111,33 @@ const WaterRichVegetablesPage = React.lazy(() => import('@/pages/learn/WaterRich
 const CaramelizableVegetablesPage = React.lazy(() => import('@/pages/learn/CaramelizableVegetablesPage'));
 const RegionalCombosPage = React.lazy(() => import('@/pages/learn/RegionalCombosPage'));
 const SensoryProfilesPage = React.lazy(() => import('@/pages/learn/SensoryProfilesPage'));
+const AutolysePage = React.lazy(() => import('@/pages/learn/AutolysePage'));
+const TechniquesPage = React.lazy(() => import('@/pages/learn/TechniquesPage'));
+const PrefermentsPage = React.lazy(() => import('@/pages/learn/PrefermentsPage'));
+const TemperatureControlPage = React.lazy(() => import('@/pages/learn/TemperatureControlPage'));
+const StoragePage = React.lazy(() => import('@/pages/learn/StoragePage'));
+const HygieneSafetyPage = React.lazy(() => import('@/pages/learn/HygieneSafetyPage'));
+const EquipmentPage = React.lazy(() => import('@/pages/learn/EquipmentPage'));
+const SensoryGuidePage = React.lazy(() => import('@/pages/learn/SensoryGuidePage'));
+
+
+// Ingredient Sub-Pages
+const IngredientsFloursPage = React.lazy(() => import('@/pages/learn/ingredients/FloursPage'));
+const YeastsPage = React.lazy(() => import('@/pages/learn/ingredients/YeastsPage'));
+const CheesesPage = React.lazy(() => import('@/pages/learn/ingredients/CheesesPage'));
+const MeatsPage = React.lazy(() => import('@/pages/learn/ingredients/MeatsPage'));
+const VegetablesPage = React.lazy(() => import('@/pages/learn/ingredients/VegetablesPage'));
+const SaucesPage = React.lazy(() => import('@/pages/learn/ingredients/SaucesPage'));
+const OilsSpicesPage = React.lazy(() => import('@/pages/learn/ingredients/OilsSpicesPage'));
+const OilsPage = React.lazy(() => import('@/pages/learn/ingredients/OilsPage'));
+const ClassicCombosPage = React.lazy(() => import('@/pages/learn/ingredients/ClassicCombosPage'));
+const BoldCombosPage = React.lazy(() => import('@/pages/learn/ingredients/BoldCombosPage'));
+const PairingToolPage = React.lazy(() => import('@/pages/learn/ingredients/PairingToolPage'));
+const ReadyToppingsPage = React.lazy(() => import('@/pages/learn/ingredients/ReadyToppingsPage'));
+
+// My Lab Pages
+const MeuLabReceitasPage = React.lazy(() => import('@/pages/mylab/MeuLabReceitasPage'));
+const MeuLabLevainPetPage = React.lazy(() => import('@/pages/mylab/MeuLabLevainPetPage'));
 const MeuLabFornadasPage = React.lazy(() => import('@/pages/mylab/MeuLabFornadasPage'));
 const MeuLabFarinhasPage = React.lazy(() => import('@/pages/mylab/MeuLabFarinhasPage'));
 const MeuLabMassasPage = React.lazy(() => import('@/pages/mylab/MeuLabMassasPage'));
@@ -126,24 +146,19 @@ const MeuLabComparacoesPage = React.lazy(() => import('@/pages/mylab/MeuLabCompa
 const MeuLabInsightsPage = React.lazy(() => import('@/pages/mylab/MeuLabInsightsPage'));
 const TimelinePage = React.lazy(() => import('@/pages/mylab/TimelinePage'));
 const ObjectivesPage = React.lazy(() => import('@/pages/mylab/ObjectivesPage'));
-const FundamentalsPage = React.lazy(() => import('@/pages/learn/FundamentalsPage'));
-const MethodsPage = React.lazy(() => import('@/pages/learn/MethodsPage'));
-const CriticalIngredientsPage = React.lazy(() => import('@/pages/learn/CriticalIngredientsPage'));
-const OvensHeatPage = React.lazy(() => import('@/pages/learn/OvensHeatPage'));
-const TroubleshootingGuidePage = React.lazy(() => import('@/pages/learn/TroubleshootingGuidePage'));
 const LevainListPage = React.lazy(() => import('@/pages/mylab/levain/LevainListPage'));
 const LevainDetailPage = React.lazy(() => import('@/pages/mylab/levain/LevainDetailPage'));
 const CompareReceitasPage = React.lazy(() => import('@/pages/mylab/CompareReceitasPage'));
 const ConsistencyListPage = React.lazy(() => import('@/pages/mylab/ConsistencyListPage'));
 const ConsistencyDetailPage = React.lazy(() => import('@/pages/mylab/ConsistencyDetailPage'));
+
+// Feature Pages
 const ShopPage = React.lazy(() => import('@/pages/ShopPage'));
 const CommunityPage = React.lazy(() => import('@/pages/CommunityPage'));
 const CommunityBatchDetailPage = React.lazy(() => import('@/pages/CommunityBatchDetailPage'));
 const ProActivatedPage = React.lazy(() => import('@/pages/pro/ProActivatedPage'));
 const FloursPage = React.lazy(() => import('@/pages/FloursPage'));
 const DoughbotPage = React.lazy(() => import('@/pages/DoughbotPage'));
-const AutolysePage = React.lazy(() => import('@/pages/learn/AutolysePage'));
-
 
 // --- Placeholder Pages ---
 function HelpPage() {
@@ -153,47 +168,8 @@ function LandingPage() {
   return <div className="p-8 text-center">Landing Page (Coming Soon)</div>;
 }
 
-// --- Validation Logic ---
-const validateConfig = (
-  config: DoughConfig
-): FormErrors => {
-  const errors: FormErrors = {};
-
-  if (config.numPizzas < 1 || config.numPizzas > 100) {
-    errors.numPizzas = 'A value between 1 and 100 is recommended.';
-  }
-  if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
-    errors.doughBallWeight = 'A value between 100g and 2000g is recommended.';
-  }
-  if (config.hydration < 0 || config.hydration > 120) {
-    errors.hydration = 'A value between 0% and 120% is recommended.';
-  }
-  if (config.scale < 0.25 || config.scale > 4) {
-    errors.scale = 'A scale multiplier between 0.25x and 4x is recommended.';
-  }
-  if (config.bakingTempC < 150 || config.bakingTempC > 500) {
-    errors.bakingTempC = 'A value between 150°C and 500°C is recommended.';
-  }
-  const maxYeast = isAnySourdough(config.yeastType) ? 50 : 5;
-  if (config.yeastPercentage < 0 || config.yeastPercentage > maxYeast) {
-    errors.yeastPercentage = `A value between 0% and ${maxYeast}% is recommended.`;
-  }
-  if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
-    if (
-      config.prefermentFlourPercentage < 10 ||
-      config.prefermentFlourPercentage > 100
-    ) {
-      errors.prefermentFlourPercentage = 'A value between 10% and 100% is recommended.';
-    }
-  }
-
-  return errors;
-};
-
 const isAnySourdough = (yeastType: YeastType) => 
     [YeastType.SOURDOUGH_STARTER, YeastType.USER_LEVAIN].includes(yeastType);
-
-
 
 function AppContent() {
   const [route, setRoute] = useState<Page>('mylab');
@@ -340,9 +316,38 @@ function AppContent() {
     };
   }, [navigate]);
 
+  // Use the validation logic directly inside useEffect
   useEffect(() => {
-    const validationErrors = validateConfig(config);
-    setErrors(validationErrors);
+      const validationErrors: FormErrors = {};
+
+      if (config.numPizzas < 1 || config.numPizzas > 100) {
+        validationErrors.numPizzas = 'A value between 1 and 100 is recommended.';
+      }
+      if (config.doughBallWeight < 100 || config.doughBallWeight > 2000) {
+        validationErrors.doughBallWeight = 'A value between 100g and 2000g is recommended.';
+      }
+      if (config.hydration < 0 || config.hydration > 120) {
+        validationErrors.hydration = 'A value between 0% and 120% is recommended.';
+      }
+      if (config.scale < 0.25 || config.scale > 4) {
+        validationErrors.scale = 'A scale multiplier between 0.25x and 4x is recommended.';
+      }
+      if (config.bakingTempC < 150 || config.bakingTempC > 500) {
+        validationErrors.bakingTempC = 'A value between 150°C and 500°C is recommended.';
+      }
+      const maxYeast = isAnySourdough(config.yeastType) ? 50 : 5;
+      if (config.yeastPercentage < 0 || config.yeastPercentage > maxYeast) {
+        validationErrors.yeastPercentage = `A value between 0% and ${maxYeast}% is recommended.`;
+      }
+      if (config.fermentationTechnique !== FermentationTechnique.DIRECT) {
+        if (
+          config.prefermentFlourPercentage < 10 ||
+          config.prefermentFlourPercentage > 100
+        ) {
+          validationErrors.prefermentFlourPercentage = 'A value between 10% and 100% is recommended.';
+        }
+      }
+      setErrors(validationErrors);
   }, [config]);
 
   useEffect(() => {
@@ -587,7 +592,8 @@ function AppContent() {
         bakingTempC: style.technical.bakingTempC,
         fermentationTechnique: style.technical.fermentationTechnique,
         ingredients: style.ingredients.map(ing => ({...ing, manualOverride: false})),
-        stylePresetId: undefined
+        stylePresetId: undefined,
+        selectedStyleId: style.id
       };
       
       const tempConfig = { ...config, ...newDoughConfig };
@@ -806,6 +812,8 @@ function AppContent() {
         return <RegionalCombosPage />;
       case 'learn/sensory-profiles':
         return <SensoryProfilesPage />;
+      case 'learn/autolyse':
+        return <AutolysePage />;
       case 'profile':
         return protect(<ProfilePage onNavigate={navigate} />);
       case 'references':
@@ -874,8 +882,6 @@ function AppContent() {
         return protect(<FloursPage onNavigate={navigate} />);
       case 'community':
         return protect(<CommunityPage onLoadInspiration={handleLoadAndNavigate} onNavigate={navigate} />);
-      case 'learn/autolyse':
-        return <AutolysePage />;
       default:
         return protect(
           <MyLabPage

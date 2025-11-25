@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -8,7 +9,7 @@ import {
   Levain,
 } from '@/types';
 import { DOUGH_STYLE_PRESETS } from '@/constants';
-import { STYLES_DATA, getStyleById } from '@/data/stylesData';
+import { STYLES_DATA, getStyleById, getAllowedFermentationTechniques } from '@/data/stylesData';
 import * as customPresets from '@/logic/customPresets';
 import {
   PencilIcon,
@@ -26,7 +27,6 @@ import StyleSection from '@/components/calculator/sections/StyleSection';
 import FermentationSection from '@/components/calculator/sections/FermentationSection';
 import QuantitySection from '@/components/calculator/sections/QuantitySection';
 import EnvironmentSection from '@/components/calculator/sections/EnvironmentSection';
-import { getAllowedFermentationTechniques } from '@/data/stylesData';
 import StyleContextBar from '@/components/calculator/StyleContextBar';
 import { useUser } from '@/contexts/UserProvider';
 
@@ -144,8 +144,8 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           if (userStyle) return userStyle;
       }
       // Fallback to finding by preset ID if selectedStyleId is missing (legacy compatibility)
-      return STYLES_DATA.find(s => s.id === config.stylePresetId);
-  }, [config.selectedStyleId, config.stylePresetId, userStyles]);
+      return STYLES_DATA.find(s => s.recipeStyle === config.recipeStyle);
+  }, [config.selectedStyleId, config.stylePresetId, config.recipeStyle, userStyles]);
 
   const recipeStylesToShow = DOUGH_STYLE_PRESETS.filter(
     (p) => p.type === config.bakeType,
@@ -305,7 +305,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           onCalculatorModeChange={onCalculatorModeChange}
           hasProAccess={hasProAccess}
           onOpenPaywall={onOpenPaywall}
-          activeStyle={activeStyle} // Pass active style for ranges
+          activeStyle={activeStyle}
         />
       </FormSection>
 
