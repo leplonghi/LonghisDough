@@ -1,3 +1,4 @@
+
 import React, { useRef, useMemo } from 'react';
 import {
   DoughResult,
@@ -18,7 +19,7 @@ import {
 import { useToast } from '@/components/ToastProvider';
 import { useTranslation } from '@/i18n';
 import { exportBatchToPDF } from '@/services/exportService';
-import TechnicalMethod from '@/components/calculator/TechnicalMethod';
+import TechnicalMethodPanel from '@/components/calculator/TechnicalMethodPanel';
 import { generateTechnicalMethod } from '@/logic/methodGenerator';
 
 interface ResultsDisplayProps {
@@ -69,7 +70,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   const displayValue = (grams: number) => {
     if (unit === 'volume') {
-      return grams.toFixed(0) + 'g'; 
+      // This is handled per row, passing ingredient name
+      return grams.toFixed(0) + 'g'; // Fallback
     }
     if (unit === 'oz') {
       return (grams * 0.035274).toFixed(2) + ' oz';
@@ -83,8 +85,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     ingredientId: string
   ) => {
     if (unit === 'volume') {
+      // Map internal IDs to density keys
       let densityKey = ingredientId;
       if (ingredientId === 'base-flour') densityKey = 'flour';
+      // Add more mappings if needed
       
       return gramsToVolume(
         densityKey,
@@ -262,15 +266,32 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 <BatchesIcon className="h-5 w-5" />
                 {t('diary_page.new_batch')}
                 </button>
+
+                <div className="grid grid-cols-2 gap-3">
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+                    >
+                        <ShareIcon className="h-4 w-4" />
+                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                        Share
+                    </button>
+                    <button
+                        onClick={handleExportPDF}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors relative group"
+                    >
+                        <DownloadIcon className="h-4 w-4" />
+                        PDF
+                        {!hasProAccess && <LockClosedIcon className="absolute top-1 right-1 h-3 w-3 text-slate-300" />}
+                    </button>
+                </div>
             </div>
         </div>
 
         {/* Technical Method Section */}
         <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200/50">
-            <TechnicalMethod steps={technicalSteps} />
-            
-            {/* Footer Actions: Share and PDF */}
-             <div className="mt-8 border-t border-slate-100 pt-6 flex justify-center gap-4">
+            <TechnicalMethodPanel steps={technicalSteps} />
+            <div className="mt-8 border-t border-slate-100 pt-6 flex justify-center gap-4">
                  <button
                     onClick={handleShare}
                     className="flex items-center gap-2 text-sm font-semibold text-lime-600 hover:text-lime-700 transition-colors"

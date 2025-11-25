@@ -8,7 +8,7 @@ import {
   DoughStyleDefinition,
 } from '@/types';
 import { YEAST_OPTIONS } from '@/constants';
-import SliderInput from '@/components/ui/SliderInput';
+import SliderInput from '../../ui/SliderInput';
 import IngredientTableEditor from '@/components/calculator/IngredientTableEditor';
 import {
   CubeIcon,
@@ -17,7 +17,6 @@ import {
   OilIcon,
   WrenchScrewdriverIcon,
   LockClosedIcon,
-  InfoIcon,
 } from '@/components/ui/Icons';
 import { timeSince } from '@/helpers';
 

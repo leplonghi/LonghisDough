@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   DoughConfig,
@@ -306,7 +305,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           onCalculatorModeChange={onCalculatorModeChange}
           hasProAccess={hasProAccess}
           onOpenPaywall={onOpenPaywall}
-          activeStyle={activeStyle}
+          activeStyle={activeStyle} // Pass active style for ranges
         />
       </FormSection>
 

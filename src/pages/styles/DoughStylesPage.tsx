@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/Icons';
 import { STYLES_DATA } from '@/data/stylesData';
 import { useTranslation } from '@/i18n';
-import { DoughStyleDefinition, DoughConfig, StyleCategory, RecipeStyle, FermentationTechnique } from '@/types';
+import { DoughStyleDefinition, DoughConfig, StyleCategory } from '@/types';
 import { useUser } from '@/contexts/UserProvider';
 import CreateStyleModal from '@/components/styles/CreateStyleModal';
 import AiStyleBuilderModal from '@/components/styles/AiStyleBuilderModal';
@@ -519,8 +519,8 @@ const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }
                     {flavors.map((flavor, flavorIndex) => (
                         <div key={flavorIndex} className="p-4 border rounded-lg">
                             <div className="flex items-center gap-3 mb-3">
-                                <input type="text" value={flavor.name} onChange={e => handleFlavorChange(flavorIndex, 'name', e.target.value)} className="font-semibold text-lg flex-grow border-0 p-1 focus:ring-0" placeholder="Flavor Name" />
-                                <input type="number" value={flavor.assignedBalls} onChange={e => handleFlavorChange(flavorIndex, 'assignedBalls', e.target.value)} className="w-20 rounded-md border-slate-300 text-sm" min="0" max={remainingBalls + flavor.assignedBalls} />
+                                <input type="text" value={flavor.name} onChange={e => handleFlavorChange(flavorIndex, 'name', e.target.value)} className="font-semibold text-lg flex-grow border-0 p-1 focus:ring-0" />
+                                <input type="number" value={flavor.assignedBalls} onChange={e => handleFlavorChange(flavorIndex, 'assignedBalls', e.target.value)} className="w-20 rounded-md border-slate-300 text-sm"/>
                                 {flavors.length > 1 && <button onClick={() => removeFlavor(flavorIndex)}><TrashIcon className="h-5 w-5 text-red-500"/></button>}
                             </div>
                              <div className="space-y-2">
@@ -547,14 +547,11 @@ const ToppingPlannerModal: React.FC<{ onClose: () => void; totalBalls: number; }
                         <h3 className="font-bold">Consolidated Shopping List:</h3>
                         <ul className="list-disc list-inside mt-2 text-sm columns-2">
                             {Object.entries(results).map(([name, total]) => (
-                                <li key={name}><strong>{name}:</strong> {total.toFixed(1)} (units)</li>
+                                <li key={name}><strong>{name}:</strong> {total} (units)</li>
                             ))}
                         </ul>
                     </div>
                 )}
-                 <button onClick={onClose} className="absolute top-4 right-4 p-1 text-slate-400 hover:bg-slate-100 rounded-full">
-                     <CloseIcon className="h-6 w-6" />
-                 </button>
             </div>
         </div>
     );

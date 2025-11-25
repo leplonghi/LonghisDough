@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserProvider';
 import { Batch, BatchStatus, Page, CommunityBatch, DoughConfig, DoughResult } from '@/types';
@@ -16,7 +17,7 @@ import {
   PhotoIcon,
   YeastIcon,
   ClockIcon,
-  FireIcon,
+  FireIcon
 } from '@/components/ui/Icons';
 import { saveCommunityBatch } from '@/data/communityStore';
 import { FLOURS } from '@/flours-constants';
@@ -78,8 +79,8 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
         <table className="w-full text-sm">
             <thead>
                 <tr className="border-b-2 border-slate-300">
-                    <th className="text-left py-2">Ingrediente</th>
-                    <th className="text-right py-2">Quantidade</th>
+                    <th className="text-left py-2">Ingredient</th>
+                    <th className="text-right py-2">Quantity</th>
                     <th className="text-right py-2"></th>
                 </tr>
             </thead>
@@ -89,9 +90,9 @@ const IngredientTable: React.FC<{ result: DoughResult, doughConfig: DoughConfig 
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t(`form.${doughConfig.fermentationTechnique.toLowerCase()}`)}</td>
                         </tr>
-                        {renderRow('Farinha', result.preferment.flour)}
-                        {renderRow('Água', result.preferment.water)}
-                        {result.preferment.yeast > 0 && renderRow('Fermento', result.preferment.yeast)}
+                        {renderRow('Flour', result.preferment.flour)}
+                        {renderRow('Water', result.preferment.water)}
+                        {result.preferment.yeast > 0 && renderRow('Yeast', result.preferment.yeast)}
                         <tr className="bg-slate-50">
                             <td colSpan={3} className="py-1 px-2 font-bold text-xs uppercase tracking-wider text-slate-600">{t('results.final_dough_title')}</td>
                         </tr>
@@ -179,24 +180,21 @@ const BatchDetailPage: React.FC<BatchDetailPageProps> = ({ batchId, onNavigate, 
 
   const handleDuplicate = async () => {
       if(!editableBatch) return;
-      
-      // --- BATCH LIMIT CHECK ---
       const savedBatches = batches.filter(b => b.status !== BatchStatus.DRAFT);
       if (!hasProAccess && savedBatches.length >= 1) {
           openPaywall('mylab');
           return;
       }
-      // -------------------------
 
       const newBatchData: Omit<Batch, 'id' | 'createdAt'|'updatedAt'> = {
           ...JSON.parse(JSON.stringify(editableBatch)),
-          name: `${editableBatch.name} (Cópia)`,
+          name: `${editableBatch.name} (Copy)`,
           status: BatchStatus.DRAFT,
           rating: undefined,
           isPublic: false,
       };
       const added = await addBatch(newBatchData);
-      addToast(`Fornada "${editableBatch.name}" duplicada.`, 'success');
+      addToast(`Batch "${editableBatch.name}" duplicated.`, 'success');
       onNavigate('batch', added.id);
   };
   
