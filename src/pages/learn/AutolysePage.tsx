@@ -1,7 +1,7 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { BookOpenIcon, LightBulbIcon, ExclamationCircleIcon, ClockIcon, BeakerIcon } from '../../components/ui/Icons';
+import { BookOpenIcon, LightBulbIcon, ExclamationCircleIcon, ClockIcon, BeakerIcon } from '@/components/ui/Icons';
 
 const Section: React.FC<{ title: string; icon?: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="mt-8 first:mt-0">

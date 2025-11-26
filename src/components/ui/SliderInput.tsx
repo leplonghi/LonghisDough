@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { InfoIcon, LockClosedIcon, ExclamationCircleIcon } from './Icons';
+import { InfoIcon, LockClosedIcon, ExclamationCircleIcon } from '@/components/ui/Icons';
 
 interface SliderInputProps {
   label: string;

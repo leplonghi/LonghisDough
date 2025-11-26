@@ -1,7 +1,7 @@
 
 import React from 'react';
 import TechnicalPageLayout from './TechnicalPageLayout';
-import { FireIcon, BeakerIcon, BookOpenIcon, LightBulbIcon } from '../../components/IconComponents';
+import { FireIcon, BeakerIcon, BookOpenIcon, LightBulbIcon } from '@/components/ui/Icons';
 
 // Local Section component for structuring content
 const Section: React.FC<{ title: string, icon?: React.ReactNode, children: React.ReactNode }> = ({ title, icon, children }) => (

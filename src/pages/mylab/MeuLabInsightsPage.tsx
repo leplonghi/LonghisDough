@@ -3,7 +3,7 @@ import React from 'react';
 import { Page } from '../../types';
 import MyLabLayout from './MyLabLayout';
 import ProFeatureLock from '../../components/ui/ProFeatureLock';
-import { ChartBarIcon } from '../../components/ui/Icons';
+import { ChartBarIcon } from '@/components/ui/Icons';
 
 const InsightCard: React.FC<{
   title: string;
